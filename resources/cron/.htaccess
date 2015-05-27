@@ -1,0 +1,13 @@
+# Deny access to this directory from web
+
+Deny from all
+
+#<Files cron_md5.txt>
+#	Order allow,deny
+#	Deny from all
+#</Files>
+
+#<Files cron_maintenance.php>
+#	Order allow,deny
+#	Deny from all
+#</Files>

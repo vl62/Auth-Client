@@ -1,0 +1,81 @@
+body {
+	padding-top: 20px;
+	padding-bottom: 40px;
+	background-image:url('../img/squairy_light.png');
+	background-color:#cccccc;
+}
+
+#main {
+ margin:0 auto;
+ float:none;
+}
+
+.center { float: none; margin:0 auto; }
+
+table.table.table-hover{ width:65%; }
+
+.ui-progressbar {
+    position: relative;
+}
+.progress-label {
+    position: absolute;
+    left: 50%;
+    top: 4px;
+    font-weight: bold;
+    text-shadow: 1px 1px 0 #fff;
+}
+
+
+#progressbar .ui-progressbar-value {
+	background-color: #ccc;
+	width: 20%;
+}
+
+
+.table-centered
+{
+  margin: 0 auto !important;
+  float: none !important;
+}
+
+/* Center align tabs */
+.nav-tabs > li, .nav-pills > li {
+    float:none;
+    display:inline-block;
+    *display:inline; /* ie7 fix */
+     zoom:1; /* hasLayout ie7 trigger */
+}
+nav-tabs, .nav-pills {
+    text-align:center;
+}
+
+/* Custom container */
+.container-narrow {
+	margin: 0 auto;
+	max-width: 800px;
+}
+.container-narrow > hr {
+	margin: 30px 0;
+}
+
+/* Main marketing message and sign up button */
+.jumbotron {
+	margin: 60px 0;
+	text-align: center;
+}
+.jumbotron h1 {
+	font-size: 72px;
+	line-height: 1;
+}
+.jumbotron .btn {
+	font-size: 21px;
+	padding: 14px 24px;
+}
+
+/* Supporting marketing content */
+.marketing {
+	margin: 60px 0;
+}
+.marketing p + h4 {
+	margin-top: 28px;
+}
