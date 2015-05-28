@@ -44,7 +44,6 @@ class Home extends MY_Controller {
 			$user_id = $this->session->userdata( 'user_id' );
 			$this->data['user_id'] = $user_id;
 		}
-		
 //		$this->load->model('sources_model');
 //		$sources_options = $this->sources_model->getSources(); // Get all the available sources from db
 //		$this->data['sources_options'] = $sources_options;

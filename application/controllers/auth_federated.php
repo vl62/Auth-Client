@@ -5,7 +5,7 @@ class Auth_federated extends MY_Controller {
 	function __construct()
 	{
 		parent::__construct();
-		$this->load->library('ion_auth_federated');
+		$this->load->library('ion_auth');
 		$this->load->library('session');
 		$this->load->library('form_validation');
 		$this->load->helper('url');
@@ -51,9 +51,11 @@ class Auth_federated extends MY_Controller {
 	}
 
 	//log the user in
-	function login()
+	function login($data = "")
 	{
-		if ($this->ion_auth->logged_in()) {
+                if($data == "error")  echo "<script>alert('login error');</script>";
+                
+		if ($this->session->userdata('email')) {
 			redirect('/', 'refresh');
 		}
 		$this->title = "Login";
@@ -63,33 +65,17 @@ class Auth_federated extends MY_Controller {
 
 		if ($this->form_validation->run() == true)
 		{
-			//check to see if the user is logging in
-			//check for "remember me"
-			$remember = (bool) $this->input->post('remember');
+                        
+                        $data_login[0] = $this->input->post('identity');
+                        $data_login[1] = $this->input->post('password');
+                        $data_login[2] = (bool) $this->input->post('remember');
+                        
+                        $pubKey = $this->loadPubicKey();
+                        $post_data = implode(",", $data_login);
+                        openssl_public_encrypt($post_data, $crypted, $pubKey);
 
-			if ($this->ion_auth->login($this->input->post('identity'), $this->input->post('password'), $remember))
-			{
-				//if the login is successful
-				//redirect them back to the home page
-				// Owen - modified this from how it was in ion auth so that instead it redirects to the session variable return_to - set in the Current hook to store the previous page the user was on before they clicked login (or was redirected there)
-				$this->session->set_flashdata('message', $this->ion_auth->messages());
-//				if ( $this->session->userdata('return_to') ) {
-////					error_log("return to -> " . $this->session->userdata('return_to'));
-//					redirect($this->session->userdata('return_to'));
-//				}
-//				else {
-					redirect('home');
-//					redirect('/', 'refresh');
-//				}
-//				$this->session->unset_userdata('return_to');
-			}
-			else
-			{
-				//if the login was un-successful
-				//redirect them back to the login page
-				$this->session->set_flashdata('message', $this->ion_auth->errors());
-				redirect('auth_federated/login', 'refresh'); //use redirects instead of loading views for compatibility with MY_Controller libraries
-			}
+                        $data = strtr(base64_encode($crypted), '+/=', '-_~');
+                        redirect("http://localhost:8888/cafevariome_server/auth_accounts/login/" . $data);                                                    
 		}
 		else
 		{
@@ -110,18 +96,41 @@ class Auth_federated extends MY_Controller {
 //			$this->load->view('auth/login', $this->data);
 		}
 	}
+        
+        function login_success($cipher_session_data) {
+                $raw_cipher = base64_decode(strtr($cipher_session_data, '-_~', '+/='));
+                $prvKey = $this->loadPubicKey();
 
+                openssl_public_decrypt($raw_cipher, $decrypted, $prvKey);
+                $data = explode(",", $decrypted);
+                
+                $session_data = array(
+                    'identity'             => $data[0],
+                    'username'             => $data[1],
+                    'email'                => $data[2],
+                    'user_id'              => $data[3],
+                    'old_last_login'       => $data[4],
+                    'is_admin'             => $data[5]
+                );
+                
+                $this->session->set_userdata($session_data);
+                
+                redirect('home');
+        }
+        
 	//log the user out
 	function logout()
 	{
-		$this->title = "Logout";
-
-		//log the user out
-		$logout = $this->ion_auth->logout();
-
-		//redirect them to the login page
-		$this->session->set_flashdata('message', $this->ion_auth->messages());
-//		redirect('auth/login', 'refresh');
+            	$this->title = "Logout";
+                $session_data = array(
+                    'identity'          => '',
+                    'username'          => '',
+                    'email'             => '',
+                    'user_id'           => '',
+                    'old_last_login'    => '',
+                    'is_admin'          => '');
+                $this->session->unset_userdata($session_data);
+                
 		redirect('home', 'refresh');
 	}
 
@@ -456,9 +465,16 @@ class Auth_federated extends MY_Controller {
 
 		$this->_render('federated/auth/users');
 	}
+        
+        private function loadPubicKey() {
+            return file_get_contents("/Applications/MAMP/htdocs/cafevariome_client/application/controllers/rsa_key.pub");
+        }
 	
 	//signup and register
-	function signup() {
+	function signup($data = "") {
+            
+                if($data == "error")  echo "<script>alert('Error in registration. Try again later.');</script>";
+                
 		$this->title = "Registration";
 		
 		if ( ! $this->config->item('allow_registrations') ) {
@@ -467,10 +483,10 @@ class Auth_federated extends MY_Controller {
 		
 		if (!$this->ion_auth->logged_in()) {
 			//validate form input
-			$this->form_validation->set_rules('username', 'Username', 'required|xss_clean|alpha_numeric');
+			$this->form_validation->set_rules('username', 'Username', 'required|xss_clean|alpha_numeric|callback_username_uniquename_check');
 			$this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');
 			$this->form_validation->set_rules('last_name', 'Last Name', 'required|xss_clean');
-			$this->form_validation->set_rules('email', 'Email Address', 'required|valid_email');
+			$this->form_validation->set_rules('email', 'Email Address', 'required|valid_email|callback_email_uniquename_check');
 			$this->form_validation->set_rules('company', 'Institute Name', 'required|xss_clean');
 			$this->form_validation->set_rules('orcid', 'ORCID', 'xss_clean');
 			$this->form_validation->set_rules('password', 'Password', 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
@@ -498,29 +514,22 @@ class Auth_federated extends MY_Controller {
 			// load vars into view
 //			$this->load->vars(array( 'captcha' => (string)$xml->question ));
 			
-			if ($this->form_validation->run() == true ) {
-//				$username = strtolower($this->input->post('first_name')) . ' ' . strtolower($this->input->post('last_name'));
-				$username = strtolower($this->input->post('username'));
-				$email = $this->input->post('email');
-				$password = $this->input->post('password');
-
-				$additional_data = array(
-					'first_name' => $this->input->post('first_name'),
-					'last_name' => $this->input->post('last_name'),
-					'company' => $this->input->post('company'),
-					'orcid' => $this->input->post('orcid')
-				);
-			}
-			
-			if ( $this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data)) { //check to see if we are creating the user
-				cafevariomeEmail($this->config->item('email'), "Cafe Variome Admin", $this->config->item('email'), "Cafe Variome Registration", "New registration by $username $email");
-				
-				if ( ! $this->config->item('manual_activation', 'ion_auth') ) {
-					$this->_render('federated/auth/signup-success');
-				}
-				else {
-					$this->_render('federated/auth/signup-success-manual');
-				}
+			if ( $this->form_validation->run() == true) { //check to see if we are creating the user
+                            
+                            $data_register[0] = strtolower($this->input->post('username'));
+                            $data_register[1] = $this->input->post('email');
+                            $data_register[2] = $this->input->post('password');
+                            $data_register[3] = $this->input->post('first_name');
+                            $data_register[4] = $this->input->post('last_name');
+                            $data_register[5] = $this->input->post('company');
+                            $data_register[6] = $this->input->post('orcid');
+                            
+                            $pubKey = $this->loadPubicKey();
+                            $post_data = implode(",", $data_register);
+                            openssl_public_encrypt($post_data, $crypted, $pubKey);
+            
+                            $data = strtr(base64_encode($crypted), '+/=', '-_~');
+                            redirect("http://localhost:8888/cafevariome_server/auth_accounts/register/" . $data);                            
 			}
 			else {
 				//display the create user form
@@ -582,7 +591,39 @@ class Auth_federated extends MY_Controller {
 		else {
 			redirect('home', 'refresh');
 		}
-	}
+    }
+    
+    function signup_success($email = "") {
+        if(!empty($email)) {
+            $this->data['email'] = urldecode($email);
+            $this->_render("federated/auth/signup-success");
+        } else {
+            echo "2"; return;
+            $this->_render("federated/auth/signup-success-manual");
+        }
+    }
+        
+    function username_uniquename_check($username) {
+//            $this->load->model('auth_accounts_model');
+//            $res = $this->auth_accounts_model->check_user_exists("username", $username, 0);
+//            if($res) {
+//                $this->form_validation->set_message('username_uniquename_check', 'The %s '. $username .' already exists');
+//                return false;
+//            }
+//            else        
+//                return true;
+    }
+        
+    function email_uniquename_check($userEmail) {
+//            $this->load->model('auth_accounts_model');
+//            $res = $this->auth_accounts_model->check_user_exists("email", $userEmail, 0);
+//            if($res) {
+//                $this->form_validation->set_message('email_uniquename_check', 'The %s '. $userEmail .' already exists');
+//                return false;
+//            }
+//            else        
+//                return true;
+    }
 
     function check_captcha( $string ) {
 		$user_answer = md5(strtolower(trim($string)));
@@ -678,9 +719,9 @@ class Auth_federated extends MY_Controller {
 		}
 		
 		if ($this->ion_auth->is_admin())
-        {
+                {
 			$this->data['groups'] = $this->ion_auth->getGroups();
-        }
+                }
 		$type = "admin"; // Used to specify that ion_auth registration function send a different email to the user since account was created through admin interface
 		if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data, $groups, $type))
 		{
