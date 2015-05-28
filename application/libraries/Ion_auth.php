@@ -423,11 +423,13 @@ class Ion_auth
 	 **/
 	public function logged_in()
 	{
-		$this->ion_auth_model->trigger_events('logged_in');
-
-		$identity = $this->config->item('identity', 'ion_auth');
-
-		return (bool) $this->session->userdata($identity);
+            return (bool) $this->session->userdata('email');
+            
+//		$this->ion_auth_model->trigger_events('logged_in');
+//
+//		$identity = $this->config->item('identity', 'ion_auth');
+//
+//		return (bool) $this->session->userdata($identity);
 	}
 
 	/**
@@ -438,11 +440,12 @@ class Ion_auth
 	 **/
 	public function is_admin($id=false)
 	{
-		$this->ion_auth_model->trigger_events('is_admin');
-
-		$admin_group = $this->config->item('admin_group', 'ion_auth');
-
-		return $this->in_group($admin_group, $id);
+//		$this->ion_auth_model->trigger_events('is_admin');
+//
+//		$admin_group = $this->config->item('admin_group', 'ion_auth');
+//
+//		return $this->in_group($admin_group, $id);
+            return (bool) $this->session->userdata('is_admin');
 	}
 
 	/**
