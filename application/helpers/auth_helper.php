@@ -3,8 +3,8 @@
 // Helper for shared federated auth functions
 
 function authPostRequest($token, $data, $uri) {
-	error_log("test $token $uri");
-	error_log(print_r($data, 1));
+//	error_log("test $token $uri");
+//	error_log(print_r($data, 1));
 	$url = $uri . '/format/json';
 	error_log($url);
 	$opts = array('http' =>
@@ -24,6 +24,8 @@ function authPostRequest($token, $data, $uri) {
 
 function authGetRequest($token, $uri) {
 	$url = $uri . '/format/json';
+	error_log("token -> $token");
+	error_log("url -> $url");
 	$opts = array('http' =>
 		array(
 			'method'  => 'GET',
@@ -53,7 +55,7 @@ function networksGetRequest($uri) {
 }
 
 function networksPostRequest($data, $uri) {
-	error_log(print_r($data, 1));
+//	error_log(print_r($data, 1));
 	$url = $uri . '/format/json';
 	error_log($url);
 	$opts = array('http' =>

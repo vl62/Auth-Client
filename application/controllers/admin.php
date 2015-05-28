@@ -2158,13 +2158,34 @@ class Admin extends MY_Controller {
 
 	
 	public function header_token_test() {
-		$this->session->set_userdata('Token', 'e69316a167a423d1395f484784616f30');
+//		$this->session->set_userdata('Token', 'e69316a167a423d1395f484784616f30');
 		
-		$token = $this->session->userdata('Token');
-		if ( $token ) {
-			$this->output->set_header("Access-Control-Allow-Origin: *");
-			$this->output->set_header("Token: " . $token);
-		}
+//		$token = $this->session->userdata('Token');
+//		if ( $token ) {
+//			$this->output->set_header("Access-Control-Allow-Origin: *");
+//			$this->output->set_header("Token: " . $token);
+//		}
+		
+		$session_data = array(
+				    'identity'             => 'email',
+				    'username'             => 'test',
+				    'email'                => 'test@gmail.com',
+					'password'			   => 'password',
+				    'user_id'              => '1', //everyone likes to overwrite id so we'll use user_id
+				    'old_last_login'       => 'test',
+					'is_admin'			   => '1'
+		);
+					
+		//outgoing
+		$post_data = implode(",", $session_data);
+		$token = strtr(base64_encode($post_data), '+/=', '-_~');
+		error_log($token);
+		$get_data = authGetRequest($token, "http://127.0.0.1/cafevariome_server/api/auth/get_token_test");
+		echo "returned $get_data";
+//		//incoming
+//		$result = base64_decode(strtr($received_post_data, '-_~', '+/='));
+//		$data = explode(",", $result);
+		
 	}
 	
 	public function network_tests() {	

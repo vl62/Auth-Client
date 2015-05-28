@@ -45,7 +45,7 @@ function updateNode($data, $node_uri) {
 }
 
 function createNetwork($data, $central_uri) {
-	$url = $central_uri . '/api/central/create_network/format/json';
+	$url = $central_uri . '/api/auth/create_network/format/json';
 	$opts = array('http' =>
 		array(
 			'method'  => 'POST',
@@ -60,7 +60,7 @@ function createNetwork($data, $central_uri) {
 }
 
 function checkNetworkExists($data, $central_uri) {
-	$url = $central_uri . '/api/central/check_network_exists/format/json';
+	$url = $central_uri . '/api/auth/check_network_exists/format/json';
 	$opts = array('http' =>
 		array(
 			'method'  => 'POST',
@@ -74,10 +74,8 @@ function checkNetworkExists($data, $central_uri) {
 	
 }
 
-
-
 function joinNetwork($data, $central_uri) {
-	$url = $central_uri . '/api/central/join_network/format/json';
+	$url = $central_uri . '/api/auth/join_network/format/json';
 	$opts = array('http' =>
 		array(
 			'method'  => 'POST',
@@ -92,7 +90,7 @@ function joinNetwork($data, $central_uri) {
 }
 
 function getNetworks($central_uri) {
-	$url = $central_uri . '/api/central/get_networks/format/json';
+	$url = $central_uri . '/api/auth/get_networks/format/json';
 	$opts = array('http' =>
 		array(
 			'method'  => 'GET',
@@ -105,7 +103,7 @@ function getNetworks($central_uri) {
 }
 
 function getNetworksInstallationNotMemberOf($data, $central_uri) {
-	$url = $central_uri . '/api/central/get_networks_installation_not_a_member_of/format/json';
+	$url = $central_uri . '/api/auth/get_networks_installation_not_a_member_of/format/json';
 	$opts = array('http' =>
 		array(
 			'method'  => 'POST',
@@ -119,7 +117,7 @@ function getNetworksInstallationNotMemberOf($data, $central_uri) {
 }
 
 function getNetworksInstallationMemberOf($data, $central_uri) {
-	$url = $central_uri . '/api/central/get_networks_installation_member_of/format/json';
+	$url = $central_uri . '/api/auth/get_networks_installation_member_of/format/json';
 	$opts = array('http' =>
 		array(
 			'method'  => 'POST',
@@ -133,7 +131,7 @@ function getNetworksInstallationMemberOf($data, $central_uri) {
 }
 
 function countNumberOfInstallationsForNetwork($data, $central_uri) {
-	$url = $central_uri . '/api/central/count_number_of_installations_for_network/format/json';
+	$url = $central_uri . '/api/auth/count_number_of_installations_for_network/format/json';
 	$opts = array('http' =>
 		array(
 			'method'  => 'POST',
@@ -147,7 +145,7 @@ function countNumberOfInstallationsForNetwork($data, $central_uri) {
 }
 
 function getNetworkRequestsForInstallation($data, $central_uri) {
-	$url = $central_uri . '/api/central/get_network_requests_for_installation/format/json';
+	$url = $central_uri . '/api/auth/get_network_requests_for_installation/format/json';
 	
 	$opts = array('http' =>
 		array(
@@ -162,7 +160,7 @@ function getNetworkRequestsForInstallation($data, $central_uri) {
 }
 
 function getNetworkRequestsForNetworksThisInstallationBelongsTo($data, $central_uri) {
-	$url = $central_uri . '/api/central/get_network_requests_for_networks_this_installation_belongs_to/format/json';
+	$url = $central_uri . '/api/auth/get_network_requests_for_networks_this_installation_belongs_to/format/json';
 	$opts = array('http' =>
 		array(
 			'method'  => 'POST',
@@ -178,7 +176,7 @@ function getNetworkRequestsForNetworksThisInstallationBelongsTo($data, $central_
 
 
 function isInstallationPartOfNetwork($data, $central_uri) {
-	$url = $central_uri . '/api/central/is_installation_part_of_network/format/json';
+	$url = $central_uri . '/api/auth/is_installation_part_of_network/format/json';
 	$opts = array('http' =>
 		array(
 			'method'  => 'POST',
@@ -192,7 +190,7 @@ function isInstallationPartOfNetwork($data, $central_uri) {
 }
 
 function viewNetworkRequestsForInstallation($data, $central_uri) {
-	$url = $central_uri . '/api/central/view_network_requests_for_installation/format/json';
+	$url = $central_uri . '/api/auth/view_network_requests_for_installation/format/json';
 	$opts = array('http' =>
 		array(
 			'method'  => 'POST',
@@ -206,7 +204,7 @@ function viewNetworkRequestsForInstallation($data, $central_uri) {
 }
 
 function leaveNetwork($data, $central_uri) {
-	$url = $central_uri . '/api/central/leave_network/format/json';
+	$url = $central_uri . '/api/auth/leave_network/format/json';
 	$opts = array('http' =>
 		array(
 			'method'  => 'POST',

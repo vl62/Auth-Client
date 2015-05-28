@@ -1731,12 +1731,21 @@ class Variants extends MY_Controller {
 						foreach ( $data as $column ) {
 							$column_count++;
 							if ( $column ) { // Only store if there's data for this column
-								$core_fields[] = $column; // Store the header name
-								if ( ! array_key_exists($column, $variant_table_fields)) { // Check whether this header is defined in the core fields table, return an error if not since there's a mismatch
-//									error_log("HEADER CELL ->  $cell_value");
-									$return_data['result_flag'] = 0;
-									$return_data['error'] = "There are headers in your import template that do not match up to a field in the " . $this->config->item('feature_table_name') . " table. Import cannot proceed, email admin@cafevariome.org if you cannot resolve this problem.";
-									return $return_data;
+								
+								$cell_value = (string) $column;
+								if (preg_match('/phenotype\:(.*)/', $cell_value, $phenotype_match)) {
+//									error_log('match -> ' . print_r($phenotype_match, 1));
+									$core_fields[] = $phenotype_match[0]; // Store the header name
+//									error_log("okay $cell_value");
+								}
+								else {
+									$core_fields[] = $column; // Store the header name
+									if ( ! array_key_exists($column, $variant_table_fields)) { // Check whether this header is defined in the core fields table, return an error if not since there's a mismatch
+//										error_log("HEADER CELL ->  $cell_value");
+										$return_data['result_flag'] = 0;
+										$return_data['error'] = "There are headers in your import template that do not match up to a field in the " . $this->config->item('feature_table_name') . " table. Import cannot proceed, email admin@cafevariome.org if you cannot resolve this problem.";
+										return $return_data;
+									}
 								}
 							}
 						}
@@ -1764,13 +1773,13 @@ class Variants extends MY_Controller {
 							elseif ( $column ) { // Only store if there's data for this column
 								$column = trim($column); // Remove whitespace from start and end of the string
 								
-								$cell_value = trim($cell_value);
-								error_log("value -> $cell_value");
+								$cell_value = trim($column);
+//								error_log("value -> $cell_value");
 								if (preg_match('/phenotype:(.*)/i', $current_header, $phenotype_match)) {
-//									error_log("phenotype -> " . print_r($phenotype_match, 1) . " -> $cell_value");
+									error_log("phenotype -> " . print_r($phenotype_match, 1) . " -> $cell_value");
 									$phenotype_attribute = preg_replace('/phenotype\:/', '', $phenotype_match[0]);
 									$phenotype_value = $cell_value;
-//									error_log("attribute -> $phenotype_attribute --- value -> $phenotype_value");
+									error_log("attribute -> $phenotype_attribute --- value -> $phenotype_value");
 									// TODO: Add this into the EAV table as it's a phenotype
 									$phenotype_data_array = $this->_parse_phenotype_data_eav($phenotype_attribute, $phenotype_value);
 //									error_log(print_r($phenotype_data_array, 1));
@@ -1926,7 +1935,7 @@ class Variants extends MY_Controller {
 						elseif ( $column ) { // Check to see there's a value present for this column
 							$cell_value = (string) $column;
 							$cell_value = trim($cell_value);
-							error_log("value -> $cell_value");
+//							error_log("value -> $cell_value");
 							if (preg_match('/phenotype:(.*)/i', $current_header, $phenotype_match)) {
 //								error_log("phenotype -> " . print_r($phenotype_match, 1) . " -> $cell_value");
 								$phenotype_attribute = preg_replace('/phenotype\:/', '', $phenotype_match[0]);
