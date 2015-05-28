@@ -6,7 +6,7 @@
 				<h1>Login</h1>
 				<p>Please login with your email address below.</p>
 				<div id="infoMessage"><b><?php echo $message;?></b></div>
-				<?php echo form_open("auth/login");?>
+				<?php echo form_open("auth_federated/login");?>
 				<p>
 					<label for="identity">Email:</label>
 					<?php echo form_input($identity); ?>

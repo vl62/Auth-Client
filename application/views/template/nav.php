@@ -37,22 +37,22 @@ if ( strtolower($current_page) == "discover" || strtolower($current_page) == "au
 				<!--<a title="Discover data" class="btn btn-small btn-success search-navbar" data-container="body" data-placement="bottom" rel="popover" data-content="Click to discover data" data-original-title="Discover Data" id="search-popover" href="#"><i class="icon-search icon-white"></i></a>&nbsp;&nbsp;-->
 				<?php if (! $this->ion_auth->logged_in()): ?>	
 					<?php if ( ! preg_match('/login/i', $this->uri->rsegment(2))): ?>
-						<a class="btn btn-small" href="<?php echo base_url() . "auth/login";?>" class="navbar-link">Login</a>
+						<a class="btn btn-small" href="<?php echo base_url() . "auth_federated/login";?>" class="navbar-link">Login</a>
 						<?php if ( $this->config->item('allow_registrations') ): ?>
 							<?php if ( ! preg_match('/signup/i', $this->uri->rsegment(2))): ?>
-							 <a class="btn btn-small btn-primary" href="<?php echo base_url() . "auth/signup";?>" class="navbar-link">Sign up</a>
+							 <a class="btn btn-small btn-primary" href="<?php echo base_url() . "auth_federated/signup";?>" class="navbar-link">Sign up</a>
 							<?php endif; ?>
 						<?php endif; ?>
 					<?php else: ?>
 						<?php if ( $this->config->item('allow_registrations') ): ?>
 							<?php if ( ! preg_match('/signup/i', $this->uri->rsegment(2))): ?>
-							<a class="btn btn-small btn-primary" href="<?php echo base_url() . "auth/signup";?>" class="navbar-link">Sign up</a>
+							<a class="btn btn-small btn-primary" href="<?php echo base_url() . "auth_federated/signup";?>" class="navbar-link">Sign up</a>
 							<?php endif; ?>
 						<?php endif; ?>
 					<?php endif; ?>
 				<?php else: ?>
 					<?php $user_id = $this->session->userdata( 'user_id' ); ?>
-					<?php if ( $this->ion_auth->is_admin()): ?>
+					<?php if ( $this->session->userdata( 'is_admin' )): ?>
 					<a data-placement="bottom" rel="popover" data-content="Administrator Dashboard" class="btn btn-small btn-primary" href="<?php echo base_url(); ?>admin" class="navbar-link"><i class="icon-cog icon-white"></i></a>  
 					<?php endif; ?>
 					<?php if ($this->ion_auth->in_group("curator")): ?>
@@ -61,7 +61,7 @@ if ( strtolower($current_page) == "discover" || strtolower($current_page) == "au
 					<?php if ($this->config->item('messaging')): ?>
 					<a data-placement="bottom" rel="popover" data-content="Messaging Dashboard" class="btn btn-small btn-primary" href="<?php echo base_url(); ?>messages" class="navbar-link"><i class="icon-envelope icon-white" ></i><?php if ( $unread_messages ) { echo " <small>($unread_messages)</small>"; } ?></a> 
 					<?php endif; ?>
-					<a data-placement="bottom" rel="popover" data-content="User Profile" class="btn btn-small btn-primary" href="<?php echo base_url() . "auth/user_profile/" . $user_id;?>" class="navbar-link"><i class="icon-user icon-white" ></i></a> <a class="btn btn-small btn-primary" href="<?php echo base_url() . "auth/logout";?>" class="navbar-link">Logout</a>
+					<a data-placement="bottom" rel="popover" data-content="User Profile" class="btn btn-small btn-primary" href="<?php echo base_url() . "auth/user_profile/" . $user_id;?>" class="navbar-link"><i class="icon-user icon-white" ></i></a> <a class="btn btn-small btn-primary" href="<?php echo base_url() . "auth_federated/logout";?>" class="navbar-link">Logout</a>
 				<?php endif; ?>
             </p>
 

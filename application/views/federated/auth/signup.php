@@ -7,7 +7,7 @@
 				<hr>
 				<p>Please enter your information below. Required fields are marked (*).</p><br />
 				<div id="infoMessage"><b><?php echo $message; ?></b></div>
-				<?php echo form_open("auth/signup"); ?>
+				<?php echo form_open("auth_federated/signup"); ?>
 				<div class="row">
 					<label>ORCID:</label>
 				</div>
