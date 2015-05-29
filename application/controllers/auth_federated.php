@@ -59,63 +59,64 @@ class Auth_federated extends MY_Controller {
 			redirect('/', 'refresh');
 		}
 		$this->title = "Login";
-		//validate form input
-		$this->form_validation->set_rules('identity', 'Identity', 'required');
-		$this->form_validation->set_rules('password', 'Password', 'required');
+                $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
 
-		if ($this->form_validation->run() == true)
-		{
-                        
-                        $data_login[0] = $this->input->post('identity');
-                        $data_login[1] = $this->input->post('password');
-                        $data_login[2] = (bool) $this->input->post('remember');
-                        
-                        $pubKey = $this->loadPubicKey();
-                        $post_data = implode(",", $data_login);
-                        openssl_public_encrypt($post_data, $crypted, $pubKey);
-
-                        $data = strtr(base64_encode($crypted), '+/=', '-_~');
-                        redirect("http://localhost:8888/cafevariome_server/auth_accounts/login/" . $data);                                                    
-		}
-		else
-		{
-			//the user is not logging in so display the login page
-			//set the flash data error message if there is one
-			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-
-			$this->data['identity'] = array('name' => 'identity',
-				'id' => 'identity',
-				'type' => 'text',
-				'value' => $this->form_validation->set_value('identity'),
-			);
-			$this->data['password'] = array('name' => 'password',
-				'id' => 'password',
-				'type' => 'password',
-			);
-			$this->_render('federated/auth/login');
-//			$this->load->view('auth/login', $this->data);
-		}
+                $this->data['identity'] = array('name' => 'identity',
+                        'id' => 'identity',
+                        'type' => 'text',
+                        'value' => $this->form_validation->set_value('identity'),
+                );
+                $this->data['password'] = array('name' => 'password',
+                        'id' => 'password',
+                        'type' => 'password',
+                );
+                $this->_render('federated/auth/login');
 	}
         
-        function login_success($cipher_session_data) {
-                $raw_cipher = base64_decode(strtr($cipher_session_data, '-_~', '+/='));
-                $prvKey = $this->loadPubicKey();
-
-                openssl_public_decrypt($raw_cipher, $decrypted, $prvKey);
-                $data = explode(",", $decrypted);
+        function validate_login() {
+        
+            $this->form_validation->set_rules('identity', 'Identity', 'required');
+            $this->form_validation->set_rules('password', 'Password', 'required');
+                
+            if($this->form_validation->run()) {
+                echo json_encode(array('success' => 'no errors'));
+                return;
+            } else {
+                echo json_encode(array('error' => validation_errors()));
+                return;
+            }
+        }
+        
+        function login_success() {
                 
                 $session_data = array(
-                    'identity'             => $data[0],
-                    'username'             => $data[1],
-                    'email'                => $data[2],
-                    'user_id'              => $data[3],
-                    'old_last_login'       => $data[4],
-                    'is_admin'             => $data[5]
+                    'user_id'                   => $this->input->post('user_id'),
+                    'ip_address'                => $this->input->post('ip_address'),
+                    'username'                  => $this->input->post('username'),
+                    'password'                  => $this->input->post('password'),
+                    'salt'                      => $this->input->post('salt'),
+                    'email'                     => $this->input->post('email'),
+                    'activation_code'           => $this->input->post('activation_code'),
+                    'forgotten_password_code'   => $this->input->post('forgotten_password_code'),
+                    'forgotten_password_time'   => $this->input->post('forgotten_password_time'),
+                    'remember_code'             => $this->input->post('remember_code'),
+                    'created_on'                => $this->input->post('created_on'),
+                    'old_last_login'            => $this->input->post('last_login'),
+                    'active'                    => $this->input->post('active'),
+                    'first_name'                => $this->input->post('first_name'),
+                    'last_name'                 => $this->input->post('last_name'),
+                    'company'                   => $this->input->post('company'),
+                    'orcid'                     => $this->input->post('orcid'),
+                    'is_admin'                  => $this->input->post('is_admin') === "admin" ? TRUE : FALSE
                 );
                 
                 $this->session->set_userdata($session_data);
+
+                $result = $this->ion_auth_model->custom_register($session_data);
                 
-                redirect('home');
+                echo json_encode(array('success' => "no error"));
+                return;
+                
         }
         
 	//log the user out
@@ -123,12 +124,25 @@ class Auth_federated extends MY_Controller {
 	{
             	$this->title = "Logout";
                 $session_data = array(
-                    'identity'          => '',
-                    'username'          => '',
-                    'email'             => '',
-                    'user_id'           => '',
-                    'old_last_login'    => '',
-                    'is_admin'          => '');
+                    'user_id'                   => '',
+                    'ip_address'                => '',
+                    'username'                  => '',
+                    'password'                  => '',
+                    'salt'                      => '',
+                    'email'                     => '',
+                    'activation_code'           => '',
+                    'forgotten_password_code'   => '',
+                    'forgotten_password_time'   => '',
+                    'remember_code'             => '',
+                    'created_on'                => '',
+                    'old_last_login'            => '',
+                    'active'                    => '',
+                    'first_name'                => '',
+                    'last_name'                 => '',
+                    'company'                   => '',
+                    'orcid'                     => '',
+                    'is_admin'                  => ''
+                );
                 $this->session->unset_userdata($session_data);
                 
 		redirect('home', 'refresh');
@@ -471,10 +485,8 @@ class Auth_federated extends MY_Controller {
         }
 	
 	//signup and register
-	function signup($data = "") {
+	function signup() {
             
-                if($data == "error")  echo "<script>alert('Error in registration. Try again later.');</script>";
-                
 		$this->title = "Registration";
 		
 		if ( ! $this->config->item('allow_registrations') ) {
@@ -483,14 +495,7 @@ class Auth_federated extends MY_Controller {
 		
 		if (!$this->ion_auth->logged_in()) {
 			//validate form input
-			$this->form_validation->set_rules('username', 'Username', 'required|xss_clean|alpha_numeric|callback_username_uniquename_check');
-			$this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');
-			$this->form_validation->set_rules('last_name', 'Last Name', 'required|xss_clean');
-			$this->form_validation->set_rules('email', 'Email Address', 'required|valid_email|callback_email_uniquename_check');
-			$this->form_validation->set_rules('company', 'Institute Name', 'required|xss_clean');
-			$this->form_validation->set_rules('orcid', 'ORCID', 'xss_clean');
-			$this->form_validation->set_rules('password', 'Password', 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
-			$this->form_validation->set_rules('password_confirm', 'Password Confirmation', 'required');
+			
 //			$this->form_validation->set_rules('captcha', 'captcha', 'required|callback_check_captcha');
 
 			
@@ -514,83 +519,84 @@ class Auth_federated extends MY_Controller {
 			// load vars into view
 //			$this->load->vars(array( 'captcha' => (string)$xml->question ));
 			
-			if ( $this->form_validation->run() == true) { //check to see if we are creating the user
-                            
-                            $data_register[0] = strtolower($this->input->post('username'));
-                            $data_register[1] = $this->input->post('email');
-                            $data_register[2] = $this->input->post('password');
-                            $data_register[3] = $this->input->post('first_name');
-                            $data_register[4] = $this->input->post('last_name');
-                            $data_register[5] = $this->input->post('company');
-                            $data_register[6] = $this->input->post('orcid');
-                            
-                            $pubKey = $this->loadPubicKey();
-                            $post_data = implode(",", $data_register);
-                            openssl_public_encrypt($post_data, $crypted, $pubKey);
-            
-                            $data = strtr(base64_encode($crypted), '+/=', '-_~');
-                            redirect("http://localhost:8888/cafevariome_server/auth_accounts/register/" . $data);                            
-			}
-			else {
-				//display the create user form
-				//set the flash data error message if there is one
-				$this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
+                    //display the create user form
+                    //set the flash data error message if there is one
+                    $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
 //				print_r($this->data['message']);
-				$this->data['username'] = array(
-					'name' => 'username',
-					'id' => 'username',
-					'type' => 'text',
-					'value' => $this->form_validation->set_value('username'),
-				);
-				$this->data['first_name'] = array(
-					'name' => 'first_name',
-					'id' => 'first_name',
-					'type' => 'text',
-					'value' => $this->form_validation->set_value('first_name'),
-				);
-				$this->data['last_name'] = array(
-					'name' => 'last_name',
-					'id' => 'last_name',
-					'type' => 'text',
-					'value' => $this->form_validation->set_value('last_name'),
-				);
-				$this->data['email'] = array(
-					'name' => 'email',
-					'id' => 'email',
-					'type' => 'text',
-					'value' => $this->form_validation->set_value('email'),
-				);
-				$this->data['company'] = array(
-					'name' => 'company',
-					'id' => 'company',
-					'type' => 'text',
-					'value' => $this->form_validation->set_value('company'),
-				);
-				$this->data['orcid'] = array(
-					'name' => 'orcid',
-					'id' => 'orcid',
-					'type' => 'text',
-					'value' => $this->form_validation->set_value('orcid'),
-				);
-				$this->data['password'] = array(
-					'name' => 'password',
-					'id' => 'password',
-					'type' => 'password',
-					'value' => $this->form_validation->set_value('password'),
-				);
-				$this->data['password_confirm'] = array(
-					'name' => 'password_confirm',
-					'id' => 'password_confirm',
-					'type' => 'password',
-					'value' => $this->form_validation->set_value('password_confirm'),
-				);
+                    $this->data['username'] = array(
+                            'name' => 'username',
+                            'id' => 'username',
+                            'type' => 'text',
+                            'value' => $this->form_validation->set_value('username'),
+                    );
+                    $this->data['first_name'] = array(
+                            'name' => 'first_name',
+                            'id' => 'first_name',
+                            'type' => 'text',
+                            'value' => $this->form_validation->set_value('first_name'),
+                    );
+                    $this->data['last_name'] = array(
+                            'name' => 'last_name',
+                            'id' => 'last_name',
+                            'type' => 'text',
+                            'value' => $this->form_validation->set_value('last_name'),
+                    );
+                    $this->data['email'] = array(
+                            'name' => 'email',
+                            'id' => 'email',
+                            'type' => 'text',
+                            'value' => $this->form_validation->set_value('email'),
+                    );
+                    $this->data['company'] = array(
+                            'name' => 'company',
+                            'id' => 'company',
+                            'type' => 'text',
+                            'value' => $this->form_validation->set_value('company'),
+                    );
+                    $this->data['orcid'] = array(
+                            'name' => 'orcid',
+                            'id' => 'orcid',
+                            'type' => 'text',
+                            'value' => $this->form_validation->set_value('orcid'),
+                    );
+                    $this->data['password'] = array(
+                            'name' => 'password',
+                            'id' => 'password',
+                            'type' => 'password',
+                            'value' => $this->form_validation->set_value('password'),
+                    );
+                    $this->data['password_confirm'] = array(
+                            'name' => 'password_confirm',
+                            'id' => 'password_confirm',
+                            'type' => 'password',
+                            'value' => $this->form_validation->set_value('password_confirm'),
+                    );
 
-				$this->_render('federated/auth/signup');
-			}
+                    $this->_render('federated/auth/signup');
 		}
 		else {
 			redirect('home', 'refresh');
 		}
+    }
+    
+    function validate_signup() {
+        $this->form_validation->set_error_delimiters('', '');
+        $this->form_validation->set_rules('username', 'Username', 'required|xss_clean|alpha_numeric');
+        $this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');
+        $this->form_validation->set_rules('last_name', 'Last Name', 'required|xss_clean');
+        $this->form_validation->set_rules('email', 'Email Address', 'required|valid_email');
+        $this->form_validation->set_rules('company', 'Institute Name', 'required|xss_clean');
+        $this->form_validation->set_rules('orcid', 'ORCID', 'xss_clean');
+        $this->form_validation->set_rules('password', 'Password', 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
+        $this->form_validation->set_rules('password_confirm', 'Password Confirmation', 'required');
+        
+        if($this->form_validation->run()) {
+            echo json_encode(array('success' => 'no errors'));
+            return;
+        } else {
+            echo json_encode(array('error' => validation_errors()));
+            return;
+        }
     }
     
     function signup_success($email = "") {
@@ -598,33 +604,10 @@ class Auth_federated extends MY_Controller {
             $this->data['email'] = urldecode($email);
             $this->_render("federated/auth/signup-success");
         } else {
-            echo "2"; return;
             $this->_render("federated/auth/signup-success-manual");
         }
     }
         
-    function username_uniquename_check($username) {
-//            $this->load->model('auth_accounts_model');
-//            $res = $this->auth_accounts_model->check_user_exists("username", $username, 0);
-//            if($res) {
-//                $this->form_validation->set_message('username_uniquename_check', 'The %s '. $username .' already exists');
-//                return false;
-//            }
-//            else        
-//                return true;
-    }
-        
-    function email_uniquename_check($userEmail) {
-//            $this->load->model('auth_accounts_model');
-//            $res = $this->auth_accounts_model->check_user_exists("email", $userEmail, 0);
-//            if($res) {
-//                $this->form_validation->set_message('email_uniquename_check', 'The %s '. $userEmail .' already exists');
-//                return false;
-//            }
-//            else        
-//                return true;
-    }
-
     function check_captcha( $string ) {
 		$user_answer = md5(strtolower(trim($string)));
 		$answers = $this->session->userdata('captcha_answers');

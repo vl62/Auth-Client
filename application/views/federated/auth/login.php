@@ -5,8 +5,8 @@
 			<div class="well">
 				<h1>Login</h1>
 				<p>Please login with your email address below.</p>
-				<div id="infoMessage"><b><?php echo $message;?></b></div>
-				<?php echo form_open("auth_federated/login");?>
+				<strong id="loginError" class="hide" style="color: red;"></strong>
+				<?php echo form_open("auth_federated/signup", array('name' => 'loginUser')); ?>
 				<p>
 					<label for="identity">Email:</label>
 					<?php echo form_input($identity); ?>
@@ -19,7 +19,7 @@
 					<label for="remember">Remember Me:</label>
 					<?php echo form_checkbox('remember', '1', FALSE, 'id="remember"'); ?>
 				</p>
-				<p><button type="submit" name="submit" class="btn btn-large"><i class="icon-user"></i>  Login</button></p>
+				<p><button type="submit" name="submit" onclick="login_user();" class="btn btn-large"><i class="icon-user"></i>  Login</button></p>
 				<p><a href="forgot_password">Forgot your password?</a></p>
 				<?php if ( $this->config->item('allow_registrations') ): ?><p><a href="signup">Register for a new account?</a></p><?php endif; ?>
 				<!--<p><a href="openid">Login with OpenID</a>-->
