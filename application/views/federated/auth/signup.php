@@ -6,8 +6,8 @@
 				<h3>Register for an account</h3>
 				<hr>
 				<p>Please enter your information below. Required fields are marked (*).</p><br />
-				<div id="infoMessage"><b><?php echo $message; ?></b></div>
-				<?php echo form_open("auth_federated/signup"); ?>
+                                <strong id="signupError" class="hide" style="color: red;"></strong>
+				<?php echo form_open("auth_federated/signup", array('name' => 'registerUser')); ?>
 				<div class="row">
 					<label>ORCID:</label>
 				</div>
@@ -65,7 +65,7 @@
 					<label>Confirm Password: (*)</label>
 					<?php echo form_input($password_confirm); ?>
 				</p>
-				<p><button type="submit" name="submit" class="btn btn-primary"><i class="icon-user"></i>  Create User</button><?php echo nbs(6); ?><button type="reset" class="btn"><i class="icon-remove-sign"></i> Clear</button></p>
+                                <p><button type="submit" name="submit" onclick="register_user();" class="btn btn-primary"><i class="icon-user"></i>  Create User</button><?php echo nbs(6); ?><button type="reset" class="btn"><i class="icon-remove-sign"></i> Clear</button></p>
 			</div>
 		</div>
 	</div>

@@ -779,6 +779,36 @@ class Ion_auth_model extends CI_Model
 		$this->trigger_events(array('post_forgotten_password_complete', 'post_forgotten_password_complete_unsuccessful'));
 		return FALSE;
 	}
+        
+        public function custom_register($data) {
+            
+            $sql = "INSERT INTO `users`(`id`, `ip_address`, `username`, `password`, `salt`, `email`, `activation_code`, "
+                    . "`forgotten_password_code`, `forgotten_password_time`, `remember_code`, `created_on`, `last_login`, "
+                    . "`active`, `first_name`, `last_name`, `company`, `orcid`) "
+                    . "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) "
+                    
+                    . "ON DUPLICATE KEY UPDATE "
+                    
+                    . "`id`=?, `ip_address`=?, `username`=?, `password`=?, `salt`=?, `email`=?, `activation_code`=?, "
+                    . "`forgotten_password_code`=?, `forgotten_password_time`=?, `remember_code`=?, `created_on`=?, `last_login`=?, "
+                    . "`active`=?, `first_name`=?, `last_name`=?, `company`=?, `orcid`=?";
+            
+            $this->db->query($sql, array(
+                $data['user_id'], $data['ip_address'], $data['username'], $data['password'], 
+                $data['salt'], $data['email'], $data['activation_code'], $data['forgotten_password_code'], 
+                $data['forgotten_password_time'], $data['remember_code'], $data['created_on'], 
+                $data['old_last_login'], $data['active'], $data['first_name'], $data['last_name'], 
+                $data['company'], $data['orcid'], 
+                
+                $data['user_id'], $data['ip_address'], $data['username'], $data['password'], 
+                $data['salt'], $data['email'], $data['activation_code'], $data['forgotten_password_code'], 
+                $data['forgotten_password_time'], $data['remember_code'], $data['created_on'], 
+                $data['old_last_login'], $data['active'], $data['first_name'], $data['last_name'], 
+                $data['company'], $data['orcid']));
+            
+            return $this->db->affected_rows();
+            
+        }
 
 	/**
 	 * register

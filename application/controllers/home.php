@@ -24,9 +24,13 @@ class Home extends MY_Controller {
 			$news = $this->rss->parse();
 			$this->data['news'] = $news; // Pass news data to the view
 		}
+                
+//                echo $this->ion_auth->logged_in() ? "hi" : "bye";
+//                exit;
 		
 		// Check that the user has an ORCID linked to their profile. TODO: possibly store in session variable instead of database so that alert is shown each time they re-login
 		if ($this->ion_auth->logged_in()) {
+                        
 			if ( $this->config->item('show_orcid_reminder')) { // Only show reminder if it's set to true in the cafevariome config file
 				$this->load->model('general_model');
 				$user_id = $this->session->userdata( 'user_id' );

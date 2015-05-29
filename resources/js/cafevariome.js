@@ -2717,3 +2717,94 @@ function create_network() {
 	});
     });
 }
+
+function register_user() {
+        $callAjax = true;
+	$('form[name="registerUser"]').submit(function(e) {
+        e.preventDefault();
+        $postData = $(this).serialize();
+        $.ajax({url: baseurl + 'auth_federated/validate_signup/',
+		data: $postData,
+		dataType: 'json',
+		delay: 200,
+		type: 'POST',
+                async: 'false',
+		success: function(data) {
+                    if (data.error) {
+                            $("#signupError").removeClass('hide');
+                            $("#signupError").text(data.error);
+                    } else if (data.success) {
+                        if($callAjax)
+                        {$.ajax({url: 'http://localhost:8888/cafevariome_server/auth_accounts/register/',
+                                data: $postData,
+                                dataType: 'json',
+                                delay: 200,
+                                type: 'POST',
+                                success: function(result) {
+                                    if (result.error) {
+                                            $("#signupError").removeClass('hide');
+                                            $("#signupError").text(result.error);
+                                    } else if (result.success) {
+                                        if(result.success === "no_email")
+                                            window.location = baseurl + "auth_federated/signup_success";
+                                        else
+                                            window.location = baseurl + "auth_federated/signup_success/" + result.success ;
+                                    }
+                                }
+                        }); $callAjax = false;
+                        }
+                    }
+		}
+	});
+    });
+}
+
+function login_user() {
+        $callAjax = true;
+	$('form[name="loginUser"]').submit(function(e) {
+        e.preventDefault();
+        $postData = $(this).serialize();
+        $.ajax({url: baseurl + 'auth_federated/validate_login/',
+		data: $postData,
+		dataType: 'json',
+		delay: 200,
+		type: 'POST',
+                async: 'false',
+		success: function(data) {
+                    if (data.error) {
+                            $("#loginError").removeClass('hide');
+                            $("#loginError").text(data.error);
+                    } else if (data.success) {
+                        if($callAjax)
+                        {$.ajax({url: 'http://localhost:8888/cafevariome_server/auth_accounts/login/',
+                                data: $postData,
+                                dataType: 'json',
+                                delay: 200,
+                                type: 'POST',
+                                success: function(result) {
+                                    if (result.error) {
+                                            alert(result.error);
+                                            $("#loginError").removeClass('hide');
+                                            $("#loginError").text(result.error);
+                                    } else if (result.success) {
+                                        $.ajax({url: baseurl + 'auth_federated/login_success/',
+                                                data: result,
+                                                dataType: 'json',
+                                                delay: 200,
+                                                type: 'POST',
+                                                success: function(data) {
+                                                    if (data.success) {
+//                                                            alert(data.success);
+                                                            window.location = baseurl;
+                                                    }
+                                                }
+                                        });
+                                    }
+                                }
+                        }); $callAjax = false;
+                        }
+                    }
+		}
+	});
+    });
+}
