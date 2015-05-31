@@ -1,6 +1,6 @@
 <?php
 
-class Federated_settings extends MY_Controller {
+class Networks extends MY_Controller {
 
 	function __construct() {
 		parent::__construct();
@@ -15,7 +15,7 @@ class Federated_settings extends MY_Controller {
 	
 		$this->load->model('federated_model');
 		$this->data['title'] = "Federated Management";
-		$this->_render('federated/dashboard');
+		$this->_render('federated/networks/dashboard');
 	}
 	
 	function create_network() {
@@ -40,7 +40,7 @@ class Federated_settings extends MY_Controller {
                             'value' => $this->form_validation->set_value('name'),
                     );
 
-                    $this->_render('federated/create_network');
+                    $this->_render('federated/networks/create_network');
 
 		}
 		else {
@@ -52,7 +52,7 @@ class Federated_settings extends MY_Controller {
 //			echo "create network:<br />";
 //			print_r($data);
 			$this->session->set_flashdata('message', "Successfully created network $name");
-			redirect("federated_settings/create_network", 'refresh');
+			redirect("networks/create_network", 'refresh');
 		}		
 	}
 	
@@ -167,7 +167,7 @@ class Federated_settings extends MY_Controller {
 //				error_log("decoded -> " . print_r($data, 1));
 //				$jsonp_decode = $this->jsonp_decode($data);
                 $this->data['networks'] = $data;
-                $this->_render('federated/join_network');
+                $this->_render('federated/networks/join_network');
 
             }
         }
@@ -223,7 +223,7 @@ class Federated_settings extends MY_Controller {
 			$data = json_decode($network_requests, true);
 //			print_r($data);
 			$this->data['network_requests'] = $data;
-			$this->_render('federated/network_requests_incoming');
+			$this->_render('federated/networks/network_requests_incoming');
         }
 		
         function network_requests_outgoing() {
@@ -235,7 +235,7 @@ class Federated_settings extends MY_Controller {
 			$network_requests = getNetworkRequestsForInstallation(array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
 			$data = json_decode($network_requests, true);
 			$this->data['network_requests'] = $data;
-			$this->_render('federated/network_requests_outgoing');
+			$this->_render('federated/networks/network_requests_outgoing');
         }
         
         function process_network_request($result, $request_id) {
@@ -248,9 +248,9 @@ class Federated_settings extends MY_Controller {
 	}
 	
 	function my_networks() {
-		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
-			redirect('auth', 'refresh');
-		}
+//		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+//			redirect('auth', 'refresh');
+//		}
 		
 		$getNetworks = getNetworksInstallationMemberOf(array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
 //		print_r($getNetworks);
@@ -270,13 +270,13 @@ class Federated_settings extends MY_Controller {
 		
 		$this->data['networks'] = $data;
 		
-		$this->_render('federated/my_networks');
+		$this->_render('federated/networks/my_networks');
 	}
 	
 	function leave_network($network_key, $installation_count_for_network) {
-		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
-			redirect('auth', 'refresh');
-		}
+//		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+//			redirect('auth', 'refresh');
+//		}
 		
 		$data = leaveNetwork(array('installation_count_for_network' => $installation_count_for_network, 'network_key' => $network_key, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
 
@@ -289,7 +289,7 @@ class Federated_settings extends MY_Controller {
 		else {
 			$this->session->set_flashdata('message', 'Successfully left network');
 		}
-		redirect("federated_settings/my_networks", 'refresh');
+		redirect("networks/my_networks", 'refresh');
 	}
 	
 	function view_networks_old() {
@@ -310,7 +310,7 @@ class Federated_settings extends MY_Controller {
 		}
 		$this->data['node_statuses'] = $node_statuses;
 		$this->data['node_list'] = $node_list;
-		$this->_render('federated/view_networks');
+		$this->_render('federated/networks/view_networks');
 	}
 	
 	function send_federated_switch($on_or_off) {

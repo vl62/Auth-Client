@@ -2180,7 +2180,7 @@ class Admin extends MY_Controller {
 		$post_data = implode(",", $session_data);
 		$token = strtr(base64_encode($post_data), '+/=', '-_~');
 		error_log($token);
-		$get_data = authGetRequest($token, "http://127.0.0.1/cafevariome_server/api/auth/get_token_test");
+		$get_data = authGetRequest($token, "http://127.0.0.1/cafevariome_server/api/auth/validate_token_test");
 		echo "returned $get_data";
 //		//incoming
 //		$result = base64_decode(strtr($received_post_data, '-_~', '+/='));
