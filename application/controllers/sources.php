@@ -12,6 +12,7 @@ class Sources extends MY_Controller {
 //		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
 //			redirect('auth', 'refresh');
 //		}
+
 		$this->load->model('sources_model');
 		$this->data['variant_counts'] = $this->sources_model->countSourceEntries();
 		$sources = $this->sources_model->getSourcesFull();
@@ -32,7 +33,7 @@ class Sources extends MY_Controller {
 		
 		$this->data['source_groups'] = $source_groups;
 		$this->data['sources'] = $sources;
-		$this->_render('admin/sources');
+		$this->_render('sources/sources');
 	}
 	
 	function delete_source($source_id = NULL, $source = NULL) {
@@ -47,7 +48,7 @@ class Sources extends MY_Controller {
 			// insert csrf check
 			$this->data['source_id'] = $source_id;
 			$this->data['source'] = $source;
-			$this->_render('admin/delete_source');
+			$this->_render('sources/delete_source');
 		}
 		else {
 			// do we really want to delete?
@@ -66,18 +67,19 @@ class Sources extends MY_Controller {
 				}
 			}
 			//redirect them back to the auth page
-			redirect('admin/sources', 'refresh');
+			redirect('sources', 'refresh');
 		}
 	}
 	
 	public function edit_source($source_id = NULL) {
-		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
-			redirect('auth', 'refresh');
-		}
+//		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+//			redirect('auth', 'refresh');
+//		}
 //		if ( ! isset($source_id)) {
 //			print "You must specify a source id to edit";
 //			show_404();
 //		}
+		
 		$this->data['source_id'] = $source_id;
 		$this->data['title'] = "Edit Source";
 		$this->load->model('sources_model');
@@ -107,89 +109,87 @@ class Sources extends MY_Controller {
 			
 			// Check if there any groups selected
 			if ($this->input->post('groups')) {
-				// Get all the groups that this source is currently in
-				$current_user_groups = $this->sources_model->getSourceGroups($this->input->post('source_id'));
-				$groups_in = array();
-				foreach ( $current_user_groups as $group_id => $group_data ) {
-					$groups_in[] = $group_data['group_id'];
-//					error_log($group_data['group_id']);
-					log_message('debug', "Some variable was correctly set $group_id");
+				$group_data_array = array();
+				foreach ($this->input->post('groups') as $group_data) {
+					// Need to explode the group multi select to get the group_id and the network_key since the value is comma separated as I needed to pass both in the value
+					$group_data_array[] = $group_data;
 				}
-				
-				// Find which current groups have been deselected and therefore need to be removed from this source
-				$diff = array_diff($groups_in, $this->input->post('groups'));
-//				print_r($diff);
-				if ( ! empty($diff) ) {
-					foreach ( $diff as $delete_group_id ) {
-						$this->sources_model->remove_sources_from_group($delete_group_id, $this->input->post('source_id'));
-					}
-				}
+				// Create the post string that will get sent
+				// Each group will be 2 string comma separate variable (first the group ID and then the network_key)
+				// if multiple groups are selected then they'll be delimited by a | which will be exploded auth server side
+				$group_post_data = implode("|", $group_data_array);
+				error_log("group data string to send -> $group_post_data");
+				// Make API to auth central for the source for this installation for the network groups
+				$groups = authPostRequest('testedtoken', array('group_post_data' => $group_post_data, 'source_id' => $this->input->post('source_id'), 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/modify_current_network_groups_for_source_in_installation");
+					
 
-				// Find which groups need to be added - go through the selected groups to see if they are not in the sources currently assigned groups
-				foreach ($this->input->post('groups') as $group_id) {
-					if (! in_array($group_id, $groups_in)) {
-						$this->sources_model->add_to_sources_group($group_id, $this->input->post('source_id'));
-					}
-				}
 				
 			}
 			else {
+//				error_log("no groups selected");
 				// All groups were de-selected so remove this source from all groups - do this by passing NULL to ion_auth remove_sources_from_group function
 				$this->sources_model->remove_sources_from_group(NULL, $this->input->post('source_id'));
 			}
 			
 			// Get the curators selected
-			if ($this->input->post('curators')) {
-				
-				// Get all the curators for this source
-				$current_curators = $this->sources_model->getSourceCurators($this->input->post('source_id'));
-				$curators_in = array();
-				foreach ( $current_curators as $user_id => $source_id ) {
-					$curators_in[] = $user_id;
-				}
-				
-				// Find which current curators have been deselected and therefore need to be removed from this source
-				$diff = array_diff($curators_in, $this->input->post('curators'));
-//				error_log("diff -> " . print_r($diff, 1));
-				if ( ! empty($diff) ) {
-					foreach ( $diff as $delete_user_id ) {
-//						error_log("delete $delete_user_id");
-						$this->sources_model->deleteCuratorFromSource($delete_user_id, $this->input->post('source_id'));
-//						$this->sources_model->remove_sources_from_group($delete_group_id, $this->input->post('source_id'));
-					}
-				}
-				
-//				error_log("curators current -> " . print_r($current_curators, 1));
-//				error_log("curators post -> " . print_r($this->input->post('curators'), 1));
+//			if ($this->input->post('curators')) {
+//				// Get all the curators for this source
+//				$current_curators = $this->sources_model->getSourceCurators($this->input->post('source_id'));
+//				$curators_in = array();
+//				foreach ( $current_curators as $user_id => $source_id ) {
+//					$curators_in[] = $user_id;
+//				}
+//				// Find which current curators have been deselected and therefore need to be removed from this source
+//				$diff = array_diff($curators_in, $this->input->post('curators'));
+////				error_log("diff -> " . print_r($diff, 1));
+//				if ( ! empty($diff) ) {
+//					foreach ( $diff as $delete_user_id ) {
+////						error_log("delete $delete_user_id");
+//						$this->sources_model->deleteCuratorFromSource($delete_user_id, $this->input->post('source_id'));
+////						$this->sources_model->remove_sources_from_group($delete_group_id, $this->input->post('source_id'));
+//					}
+//				}
+////				error_log("curators current -> " . print_r($current_curators, 1));
+////				error_log("curators post -> " . print_r($this->input->post('curators'), 1));
+////				$this->sources_model->deleteSourceCurators($this->input->post('source_id'));
+//				foreach ($this->input->post('curators') as $user_id) {
+//					if ( ! array_key_exists($user_id, $current_curators)) {
+//						$curator_data = array("user_id" => $user_id, "source_id" => $this->input->post('source_id'));
+//						$insert_id = $this->sources_model->insertSourceCurator($curator_data);
+//						if ( $insert_id ) {
+////							error_log("inserted curator_id -> " . $insert_id);
+//						}
+//					}
+//				}
+//			}
+//			else { // No curators selected, delete all for this source
 //				$this->sources_model->deleteSourceCurators($this->input->post('source_id'));
-				foreach ($this->input->post('curators') as $user_id) {
-					if ( ! array_key_exists($user_id, $current_curators)) {
-						$curator_data = array("user_id" => $user_id, "source_id" => $this->input->post('source_id'));
-						$insert_id = $this->sources_model->insertSourceCurator($curator_data);
-						if ( $insert_id ) {
-//							error_log("inserted curator_id -> " . $insert_id);
-						}
-					}
-				}
-			}
-			else { // No curators selected, delete all for this source
-				$this->sources_model->deleteSourceCurators($this->input->post('source_id'));
-			}
+//			}
 			
 //			echo "---> $name $uri $description $type<br />";
-			redirect("admin/sources", 'refresh');
+			redirect("sources", 'refresh');
 		}
 		else {
 			// Get all the users in this installation for the curator select list
-			$this->data['users'] = $this->ion_auth->users()->result();
-			// Get the current curators for this source
-			$selected_curators = $this->sources_model->getSourceCurators($source_id);
-			$this->data['selected_curators'] = $selected_curators;
-			// Get all the available groups for the multiselect list
-			$this->data['groups'] = $this->ion_auth->getGroups();
-			// Get the groups that this source belongs to so that these can be pre selected in the multiselect list
-			$selected_groups = $this->sources_model->getSourceGroups($source_id);
+//			$this->data['users'] = $this->ion_auth->users()->result();
+//			// Get the current curators for this source
+//			$selected_curators = $this->sources_model->getSourceCurators($source_id);
+//			$this->data['selected_curators'] = $selected_curators;
+
+			// Get all available groups for the networks this installation is a member of from auth central for multi select list
+			$groups = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
+//			print_r($groups);
+			$this->data['groups'] = json_decode($groups, TRUE);
+
+			// Get all the network groups that this source from this installation is currently in so that these can be pre selected in the multiselect list
+			$returned_groups = authPostRequest('', array('source_id' => $source_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_source_in_installation");
+			$tmp_selected_groups = json_decode($returned_groups, TRUE);
+			$selected_groups = array();
+			foreach ( $tmp_selected_groups as $tmp_group ) {
+				$selected_groups[$tmp_group['group_id']] = "group_description";
+			}
 			$this->data['selected_groups'] = $selected_groups;
+			
 			// Get all the data for this source
 			$source_data = $this->sources_model->getSourceSingleFull($source_id);
 			$this->data['source_data'] = $source_data;
@@ -246,7 +246,7 @@ class Sources extends MY_Controller {
 				'value' => $this->form_validation->set_value('type', $source_data['type']),
 			);
 
-			$this->_render('admin/edit_source');
+			$this->_render('sources/edit_source');
 
 		}
 	}
@@ -255,9 +255,9 @@ class Sources extends MY_Controller {
 		
 		$this->data['title'] = "Add Source";
 
-		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
-			redirect('auth', 'refresh');
-		}
+//		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+//			redirect('auth', 'refresh');
+//		}
 
 		//validate form input
 		
@@ -269,10 +269,15 @@ class Sources extends MY_Controller {
 		$this->form_validation->set_rules('long_description', 'Long Source Description', 'xss_clean');
 		$this->form_validation->set_rules('status', 'Source Status', 'required|xss_clean');
 //		$this->form_validation->set_rules('type', 'Source Type', 'required|xss_clean');
-		// Get all available groups
-		$this->data['groups'] = $this->ion_auth->getGroups();
+
+		// Get all available groups for the networks this installation is a member of
+		$groups = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
+//		print_r($groups);
+		$this->data['groups'] = json_decode($groups, TRUE);
+		
+//		$this->data['groups'] = $this->ion_auth->getGroups();
 		// Get all the users in this installation for the curator select list
-		$this->data['users'] = $this->ion_auth->users()->result();
+//		$this->data['users'] = $this->ion_auth->users()->result();
 		if ($this->form_validation->run() == FALSE) {
 			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
 
@@ -335,7 +340,7 @@ class Sources extends MY_Controller {
 				'type'  => 'select',
 				'value' => $this->form_validation->set_value('type'),
 			);
-			$this->_render('admin/add_source');
+			$this->_render('sources/add_source');
 
 		}
 		else {
@@ -355,22 +360,29 @@ class Sources extends MY_Controller {
 			
 			if ($this->input->post('groups')) {
 				// Add the groups that were selected to this source
-				foreach ($this->input->post('groups') as $group_id) {
-					$this->sources_model->add_to_sources_group($group_id, $insert_id); // Add the groups to this source using the source ID that has been created
+				foreach ($this->input->post('groups') as $group_data) {
+					// Need to explode the group multi select to get the group_id and the network_key since the value is comma separated as I needed to pass both in the value
+					$groups_exploded = explode(',', $group_data);
+					$group_id = $groups_exploded[0];
+					$network_key = $groups_exploded[1];
+					// Add the new source for this installation to the network group via central auth API call
+					$groups = authPostRequest('', array('group_id' => $group_id, 'source_id' => $insert_id, 'installation_key' => $this->config->item('installation_key'), 'network_key' => $network_key), $this->config->item('auth_server') . "/api/auth/add_source_from_installation_to_network_group");
+					
+//					$this->sources_model->add_to_sources_group($group_id, $insert_id); // Add the groups to this source using the source ID that has been created
 //					error_log("add -> " . $group_id . " insert -> " .  $insert_id );
 				}
 			}
 			
-			if ($this->input->post('curators')) {
-				foreach ($this->input->post('curators') as $user_id) {
-					$curator_data = array("user_id" => $user_id, "source_id" => $insert_id);
-					$insert_id = $this->sources_model->insertSourceCurator($curator_data);
-					if ( $insert_id ) {
-//						error_log("inserted curator_id -> " . $insert_id);
-					}
-				}
-			}
-			redirect("admin/sources", 'refresh');
+//			if ($this->input->post('curators')) {
+//				foreach ($this->input->post('curators') as $user_id) {
+//					$curator_data = array("user_id" => $user_id, "source_id" => $insert_id);
+//					$insert_id = $this->sources_model->insertSourceCurator($curator_data);
+//					if ( $insert_id ) {
+////						error_log("inserted curator_id -> " . $insert_id);
+//					}
+//				}
+//			}
+			redirect("sources", 'refresh');
 		}
 	}
 
@@ -461,7 +473,7 @@ class Sources extends MY_Controller {
 		$federated_sources = $this->federated_model->getFederatedSources();
 		$this->data['federated_sources'] = $federated_sources;
 		
-		$this->_render('admin/add_federated_source');
+		$this->_render('sources/add_federated_source');
 
 	}
 
@@ -526,7 +538,7 @@ class Sources extends MY_Controller {
 		$central_sources = $this->sources_model->getCentralSources();
 		$this->data['central_sources'] = $central_sources;
 //		
-		$this->_render('admin/add_central_source');
+		$this->_render('sources/add_central_source');
 
 	}
 	
@@ -598,7 +610,7 @@ class Sources extends MY_Controller {
 					$subject = "Sharing invite sent";
 					$body = "A sharing invite was sent to $email inviting them to signup to Cafe Variome and become a member of the $group_name group. Once they have registered they will be able to access all restrictedAccess variants for sources that belong to the $group_name group. If this was a mistake you should delete the invited user via the user section of the admin interface.";
 					$this->messages_model->send_new_message($user_id, $user_id, $subject, $body);
-//					redirect('admin/sources', 'refresh');
+//					redirect('sources/sources', 'refresh');
 				}
 				else {
 					echo "There was a problem inviting the user to share this source";
@@ -629,7 +641,7 @@ class Sources extends MY_Controller {
 			// E.g. you have been invited to share restrictedAccess variants that belong to the X group, please confirm or deny this request
 			// If they confirm then go to registration page and when register activate account log them in and email and message the group owner to say it was confirmed
 			// If deny then email the group owner and say they refuse and then delete the entry in users table
-			$this->_render('admin/share_request');
+			$this->_render('sources/share_request');
 		}
 		else {
 			show_error("The md5 token is not valid or this sharing invite has already been processed.");
