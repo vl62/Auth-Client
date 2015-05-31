@@ -67,7 +67,8 @@
 							<a href="#" rel="popover" data-content="You cannot assign groups federated source. All access to these records is controlled via the source installation." data-original-title="Cannot Edit Groups" ><i class="icon-minus-sign"></i></a>
 						<?php endif; ?>
 					</td>
-					<td><?php if ( $source->type != "api" && $source->type != "central" ): ?><a href="#shareModal<?php echo $c; ?>" data-toggle="modal" data-backdrop="false" rel="popover" data-content="Invite a user to become a member of a group that has pre-approved access to restrictedAccess records in this source." data-original-title="Share Source"><i class="icon-share"></i></a>&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url('admin/edit_source'). "/" . $source->source_id; ?>" rel="popover" data-content="Modify curators, groups general information for this source" data-original-title="Edit Source"><i class="icon-edit"></i></a>&nbsp;&nbsp;&nbsp;<?php endif; ?><a href="<?php echo base_url('admin/delete_source'). "/" . $source->source_id . "/" . $source->name; ?>" rel="popover" data-content="Delete the source entry. N.B. records related to this source will not be deleted from the database." data-original-title="Delete Source"></i><i class="icon-trash"></i></a></td>
+					<!--<a href="#shareModal<?php // echo $c; ?>" data-toggle="modal" data-backdrop="false" rel="popover" data-content="Invite a user to become a member of a group that has pre-approved access to restrictedAccess records in this source." data-original-title="Share Source"><i class="icon-share"></i></a>&nbsp;&nbsp;&nbsp;-->
+					<td><?php if ( $source->type != "api" && $source->type != "central" ): ?><a href="<?php echo base_url('sources/edit_source'). "/" . $source->source_id; ?>" rel="popover" data-content="Modify curators, groups general information for this source" data-original-title="Edit Source"><i class="icon-edit"></i></a>&nbsp;&nbsp;&nbsp;<?php endif; ?><a href="<?php echo base_url('sources/delete_source'). "/" . $source->source_id . "/" . $source->name; ?>" rel="popover" data-content="Delete the source entry. N.B. records related to this source will not be deleted from the database." data-original-title="Delete Source"></i><i class="icon-trash"></i></a></td>
 					<td>
 						<?php if ( $source->status == "online" ): ?>
 <!--						<input type="checkbox" id="online-offline" name="online-offline" class="{labelOn: 'Online', labelOff: 'Offline'} online-offline" checked/>-->
@@ -120,7 +121,7 @@
 									<option value="<?php echo $group['group_id']; ?>"><?php echo $group['group_name']; ?></option>
 								<?php endforeach; ?>
 								</select>
-								<br /><br /><p>N.B. If you want to add an existing user to a source group, go to the <a href="<?php echo base_url('auth/users'); ?>">edit users</a> admin page. To assign groups to this source go to the <a href="<?php echo base_url('admin/edit_source'). "/" . $source->source_id; ?>">edit source</a> admin page.</p>
+								<br /><br /><p>N.B. If you want to add an existing user to a source group, go to the <a href="<?php echo base_url('auth/users'); ?>">edit users</a> admin page. To assign groups to this source go to the <a href="<?php echo base_url('sources/edit_source'). "/" . $source->source_id; ?>">edit source</a> admin page.</p>
 							<?php else: ?>
 								No groups have been assigned to this source, click the button below to edit the source and assign groups:<br /><br />
 								<a href="<?php echo base_url('admin/edit_source'). "/" . $source->source_id; ?>" rel="popover" data-content="Modify curators, groups general information for this source" data-original-title="Edit Source"><i class="icon-edit"></i></a>
@@ -188,14 +189,14 @@
 	</div>
 	<div class="modal-body">
 		<div class="well">
-			<p align="center"><br /><a class="btn btn-primary btn-medium" href="<?php echo base_url('admin/add_source') ?>" ><i class="icon-file icon-white"></i>  Add local source</a><br /><br /><small>Create a new source in your local installation to which records can be added.</small></p>
+			<p align="center"><br /><a class="btn btn-primary btn-medium" href="<?php echo base_url('sources/add_source') ?>" ><i class="icon-file icon-white"></i>  Add local source</a><br /><br /><small>Create a new source in your local installation to which records can be added.</small></p>
 			<?php if ( $this->config->item('federated') ): ?>
 			<hr>
-			<p align="center"><br /><a class="btn btn-primary btn-medium" href="<?php echo base_url('admin/add_federated_source') ?>" ><i class="icon-file icon-white"></i>  Add federated source</a><br /><br /><small>Select which federated sources are discoverable, N.B. you must have set up federated source details in the settings page of the admin dashboard.</small></p>
+			<p align="center"><br /><a class="btn btn-primary btn-medium" href="<?php echo base_url('sources/add_federated_source') ?>" ><i class="icon-file icon-white"></i>  Add federated source</a><br /><br /><small>Select which federated sources are discoverable, N.B. you must have set up federated source details in the settings page of the admin dashboard.</small></p>
 			<?php endif; ?>
 			<?php if ( ! $this->config->item('cafevariome_central') ): ?>
 			<hr>
-			<p align="center"><br /><a class="btn btn-primary btn-medium" href="<?php echo base_url('admin/add_central_source') ?>" ><i class="icon-file icon-white"></i>  Add Cafe Variome Central source</a><br /><br /><small>Cafe Variome Central contains a number of sources of public records such as dbSNP, 1000 genomes project etc. You can add these sources and make records discoverable through your own Cafe Variome instance search interface by clicking this button and selecting which sources you want to add/remove.</small></p>
+			<p align="center"><br /><a class="btn btn-primary btn-medium" href="<?php echo base_url('sources/add_central_source') ?>" ><i class="icon-file icon-white"></i>  Add Cafe Variome Central source</a><br /><br /><small>Cafe Variome Central contains a number of sources of public records such as dbSNP, 1000 genomes project etc. You can add these sources and make records discoverable through your own Cafe Variome instance search interface by clicking this button and selecting which sources you want to add/remove.</small></p>
 			<?php endif; ?>
 		</div>
 	</div>
