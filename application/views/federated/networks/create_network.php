@@ -6,7 +6,7 @@
 					<a href="<?php echo base_url() . "admin";?>">Dashboard Home</a> <span class="divider">></span>  
 				</li>
 				<li>
-					<a href="<?php echo base_url() . "federated_settings";?>">Federated Settings</a> <span class="divider">></span>
+					<a href="<?php echo base_url() . "networks";?>">Networks</a> <span class="divider">></span>
 				</li>
 				<li class="active">Create Network</li>
 			</ul>  
@@ -19,7 +19,7 @@
 				<p>Please enter the network information below.</p>
 				<b><strong><?php echo validation_errors(); ?></strong></b>
 				
-				<?php echo form_open("federated_settings/create_network", array('name' => 'createNetwork')); ?>
+				<?php echo form_open("networks/create_network", array('name' => 'createNetwork')); ?>
 				<p>
 					Network Name:<br />
 					<?php echo form_input($name); ?>

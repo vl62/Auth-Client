@@ -2648,7 +2648,7 @@ function join_network() {
         
 //        console.log($("#networks option:selected").text());
         
-        $.ajax({url: baseurl + 'federated_settings/process_network_join_request/',
+        $.ajax({url: baseurl + 'networks/process_network_join_request/',
 		data: $(this).serialize(),
 		dataType: 'json',
 		delay: 200,
@@ -2660,7 +2660,7 @@ function join_network() {
 			}
 			else if (data.success) {
 				alert(data.success);
-				window.location = baseurl + "federated_settings";
+				window.location = baseurl + "networks";
 //				window.location.reload(true);
 			}
 			else {

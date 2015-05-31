@@ -6,7 +6,7 @@
 					<a href="<?php echo base_url() . "admin";?>">Dashboard Home</a> <span class="divider">></span>  
 				</li>
 				<li>
-					<a href="<?php echo base_url() . "federated_settings";?>">Federated Settings</a> <span class="divider">></span>
+					<a href="<?php echo base_url() . "networks";?>">Networks</a> <span class="divider">></span>
 				</li>
 				<li class="active">Network Requests</li>
 			</ul>  

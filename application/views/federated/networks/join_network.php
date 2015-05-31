@@ -6,7 +6,7 @@
 					<a href="<?php echo base_url() . "admin";?>">Dashboard Home</a> <span class="divider">></span>  
 				</li>
 				<li>
-					<a href="<?php echo base_url() . "federated_settings";?>">Federated Settings</a> <span class="divider">></span>
+					<a href="<?php echo base_url() . "networks";?>">Networks</a> <span class="divider">></span>
 				</li>
 				<li class="active">Join Network</li>
 			</ul>  
@@ -18,9 +18,9 @@
 				<h2>Join Network</h2>
 				<?php if (array_key_exists('error', $networks) ): ?>
 				<p>There are no networks available for you to join (or you are already a member of all existing networks).</p>
-				<p>Go to the <a href="<?php echo base_url() . "federated_settings/create_network"; ?>">create networks page</a> if you would like to start a new network.</p>
+				<p>Go to the <a href="<?php echo base_url() . "networks/create_network"; ?>">create networks page</a> if you would like to start a new network.</p>
 				<?php else: ?>
-				<?php echo form_open("federated_settings/join_network", array('name' => 'joinNetwork')); ?>
+				<?php echo form_open("networks/join_network", array('name' => 'joinNetwork')); ?>
 				<p>Select a network you wish to join.<br/>
 					<?php $network_count = count($networks) + 1; ?>
 					<select size="<?php echo $network_count; ?>" name="networks" id="networks" >
