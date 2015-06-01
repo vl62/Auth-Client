@@ -7,7 +7,7 @@
 					<a href="<?php echo base_url() . "admin";?>">Dashboard Home</a> <span class="divider">></span>  
 				</li>
 				<li>
-					<a href="<?php echo base_url() . "auth/users";?>">Users</a> <span class="divider">></span>
+					<a href="<?php echo base_url() . "auth_federated/users";?>">Users</a> <span class="divider">></span>
 				</li>
 				<li class="active">Edit User</li>
 			</ul>  
@@ -69,12 +69,12 @@
 					Edit Groups (control click to select multiple): <br />
 					<?php $count = count($groups) + 1; ?>
 					<select size="<?php echo $count; ?>" name="groups[]"  multiple="multiple">
-						<?php foreach ($groups as $group_id => $group_description): ?>
-							<option value="<?php echo $group_id; ?>" <?php if (array_key_exists($group_id, $selected_groups)) {
+						<?php foreach ($groups as $group): ?>
+							<option value="<?php echo $group['id']; ?>" <?php if (array_key_exists($group['id'], $selected_groups)) {
 							echo 'selected="selected"';
-						} ?>><?php echo $group_description; ?></option>
+						} ?>><?php echo $group['description']; ?></option>
 				<?php endforeach; ?>
-					</select>						   
+					</select>			   
 				</p>
 
 				<?php echo form_hidden('id', $user->id); ?>

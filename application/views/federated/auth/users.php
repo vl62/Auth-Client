@@ -42,19 +42,21 @@
 							<td><?php echo $user->company; ?></td>
 							<td><?php echo $user->email; ?></td>
 							<td>
-								<?php if( empty($user->groups)) { echo "-"; }?>
-								<?php foreach ($user->groups as $group): ?>
-									<?php echo $group->name; ?><br />
+								<?php if( empty($users_groups)) { echo "-"; }?>
+								<?php foreach ($users_groups as $group): ?>
+									<?php foreach ( $group as $g ): ?>
+										<?php echo $g['group_name']; ?><br />
+									<?php endforeach; ?>
 								<?php endforeach ?>
 							</td>
 							<td><?php if ( $user->id != 1 ) : ?><?php echo ($user->active) ? anchor("auth/deactivate/" . $user->id, 'Active') : anchor("auth/activate/" . $user->id, 'Inactive'); ?><?php else: ?>Active<?php endif; ?></td>
-							<td><a rel="popover" data-content="Create/modify/delete users" data-original-title="Edit User" href="<?php echo base_url('auth/edit_user'). "/" . $user->id; ?>" ><i class="icon-edit"></i></a>&nbsp;&nbsp;&nbsp;<?php if ( $user->id != 1 ) : ?><a rel="popover" data-content="Permanently delete this user" data-original-title="Delete User" href="<?php echo base_url('auth/delete'). "/" . $user->id; ?>" ></i><i class="icon-trash"></i></a><?php endif; ?></td>
+							<td><a rel="popover" data-content="Create/modify/delete users" data-original-title="Edit User" href="<?php echo base_url('auth_federated/edit_user'). "/" . $user->id; ?>" ><i class="icon-edit"></i></a>&nbsp;&nbsp;&nbsp;<?php if ( $user->id != 1 ) : ?><a rel="popover" data-content="Permanently delete this user" data-original-title="Delete User" href="<?php echo base_url('auth_federated/delete'). "/" . $user->id; ?>" ></i><i class="icon-trash"></i></a><?php endif; ?></td>
 						</tr>
 						<?php endforeach; ?>
 					</tbody>
 				</table>
 			
-			<div class="span12 pagination-centered"><p><a href="<?php echo base_url() . "auth/create_user";?>" class="btn btn-primary btn-medium" ><i class="icon-user icon-white"></i> Create new user</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "admin";?>" class="btn" ><i class="icon-home"></i> Admin Dashboard</a></p></div>
+			<div class="span12 pagination-centered"><p><a href="<?php echo base_url() . "auth_federated/create_user";?>" class="btn btn-primary btn-medium" ><i class="icon-user icon-white"></i> Create new user</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "admin";?>" class="btn" ><i class="icon-home"></i> Admin Dashboard</a></p></div>
 		</div>
 	</div><!--/span-->
 </div><!--/row-->
