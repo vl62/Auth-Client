@@ -122,30 +122,14 @@ class Auth_federated extends MY_Controller {
 	//log the user out
 	function logout()
 	{
-            	$this->title = "Logout";
-                $session_data = array(
-                    'user_id'                   => '',
-                    'ip_address'                => '',
-                    'username'                  => '',
-                    'password'                  => '',
-                    'salt'                      => '',
-                    'email'                     => '',
-                    'activation_code'           => '',
-                    'forgotten_password_code'   => '',
-                    'forgotten_password_time'   => '',
-                    'remember_code'             => '',
-                    'created_on'                => '',
-                    'old_last_login'            => '',
-                    'active'                    => '',
-                    'first_name'                => '',
-                    'last_name'                 => '',
-                    'company'                   => '',
-                    'orcid'                     => '',
-                    'is_admin'                  => ''
-                );
-                $this->session->unset_userdata($session_data);
-                
-		redirect('home', 'refresh');
+//                if (get_cookie('identity')) delete_cookie('identity');
+//                if (get_cookie('remember_code'))    delete_cookie('remember_code');
+
+                //Recreate the session
+                $this->session->sess_destroy();
+                $this->session->sess_create();
+
+                redirect('home', 'refresh');
 	}
 
 	//change password
@@ -479,10 +463,6 @@ class Auth_federated extends MY_Controller {
 
 		$this->_render('federated/auth/users');
 	}
-        
-        private function loadPubicKey() {
-            return file_get_contents("/Applications/MAMP/htdocs/cafevariome_client/application/controllers/rsa_key.pub");
-        }
 	
 	//signup and register
 	function signup() {
