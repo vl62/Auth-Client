@@ -55,9 +55,10 @@
 					<td>
 						<?php
 						if ( $source->type != "api" && $source->type != "central" ):
-							if (array_key_exists($source->source_id, $source_groups)):
-								foreach ($source_groups[$source->source_id] as $group):
-									echo $group['group_name'] . "<br />";
+							if (array_key_exists($source->source_id, $source_network_groups)):
+								foreach ($source_network_groups[$source->source_id] as $group):
+//									print_r($group);
+									echo $group['name'] . " (Network:" . $group['network_name'] . ")<br />";
 //									echo anchor("auth/edit_group/" . $group['group_id'], $group['group_description']);
 								endforeach;
 							else:

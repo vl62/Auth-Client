@@ -18,8 +18,19 @@ class Sources extends MY_Controller {
 		$sources = $this->sources_model->getSourcesFull();
 //		print_r($sources, 1);
 		$source_groups = array();
+		$source_ids_array = array();
+		$source_network_groups = array();
 		foreach ($sources->result() as $source) {
 //			echo $source->source_id;
+//			// TODO: Instead of making multiple API calls to central server then instead get the source IDs into array and pass that way
+			// Get all the network groups that this source from this installation is currently in
+			$returned_groups = authPostRequest('', array('source_id' => $source->source_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_source_in_installation");
+			$tmp_selected_groups = json_decode($returned_groups, TRUE);
+			if ( !array_key_exists('error', $tmp_selected_groups) ) {
+//				print_r($tmp_selected_groups);
+				$this->data['source_network_groups'][$source->source_id] = $tmp_selected_groups;
+			}
+			$source_ids_array[] = $source->source_id;
 			$source_group_data = $this->sources_model->getSourceGroups($source->source_id);
 //			print_r($source_group_data);
 //			print "group data -> " . $source_group_data['group_id'] . "<br />";
@@ -28,6 +39,9 @@ class Sources extends MY_Controller {
 				$source_groups[$source->source_id] = $source_group_data;	
 			}
 		}
+//			$group_post_data = implode("|", $group_data_array);
+//				error_log("group data string to send -> $group_post_data");
+		
 		// Get all the available groups
 //		$this->data['groups'] = $this->ion_auth->getGroups();
 		
