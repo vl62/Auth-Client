@@ -25,7 +25,10 @@ class Discover extends MY_Controller {
 	public function index() {
 
 		$this->title = "Discover";
-//		$this->benchmark->mark('search_start');
+		
+		$sources = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_available_sources_from_networks_this_installation_is_a_member_of");
+		$sources_array = json_decode($sources, TRUE);
+
 		$sources_options = $this->sources_model->getSources(); // Get all the available sources from db
 		$this->setSources($sources_options);
 //		$this->benchmark->mark('search_end');
