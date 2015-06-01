@@ -2808,3 +2808,41 @@ function login_user() {
 	});
     });
 }
+
+function login_forgot_password() {
+    $callAjax = true;
+    $('form[name="forgot_password"]').submit(function(e) {
+        e.preventDefault();
+        $postData = $(this).serialize();
+        
+        $.ajax({url: baseurl + 'auth_federated/validate_forgot_password/',
+		data: $postData,
+		dataType: 'json',
+		delay: 200,
+		type: 'POST',
+		success: function(data) {
+                    if (data.error) {
+                            $("#forgotPasswordError").removeClass('hide');
+                            $("#forgotPasswordError").text(data.error);
+                    } else if (data.success) {
+                            $.ajax({url: 'http://localhost:8888/cafevariome_server/auth_accounts/forgot_password/',
+                            data: $postData,
+                            dataType: 'json',
+                            delay: 200,
+                            type: 'POST',
+                            success: function(data) {
+                                if (data.error) {
+                                        $("#forgotPasswordError").removeClass('hide');
+                                        $("#forgotPasswordError").text(data.error);
+                                } else if (data.success) {
+//                                        alert(data.success);
+//                                        alert("Check your email to change your password and follow the instructions.");
+                                        window.location = baseurl + "auth_federated/success_forgot_password/" + data.success;
+                                }
+                            }
+                        });
+                    }
+		}
+	});
+    });
+}
