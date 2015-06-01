@@ -61,7 +61,7 @@ if ( strtolower($current_page) == "discover" || strtolower($current_page) == "au
 					<?php if ($this->config->item('messaging')): ?>
 					<a data-placement="bottom" rel="popover" data-content="Messaging Dashboard" class="btn btn-small btn-primary" href="<?php echo base_url(); ?>messages" class="navbar-link"><i class="icon-envelope icon-white" ></i><?php if ( $unread_messages ) { echo " <small>($unread_messages)</small>"; } ?></a> 
 					<?php endif; ?>
-					<a data-placement="bottom" rel="popover" data-content="User Profile" class="btn btn-small btn-primary" href="<?php echo base_url() . "auth/user_profile/" . $user_id;?>" class="navbar-link"><i class="icon-user icon-white" ></i></a> <a class="btn btn-small btn-primary" href="<?php echo base_url() . "auth_federated/logout";?>" class="navbar-link">Logout</a>
+					<a data-placement="bottom" rel="popover" data-content="User Profile" class="btn btn-small btn-primary" href="<?php echo base_url() . "auth_federated/user_profile/" . $user_id;?>" class="navbar-link"><i class="icon-user icon-white" ></i></a> <a class="btn btn-small btn-primary" href="<?php echo base_url() . "auth_federated/logout";?>" class="navbar-link">Logout</a>
 				<?php endif; ?>
             </p>
 

@@ -200,45 +200,58 @@ class Auth_federated extends MY_Controller {
 			}
 		}
 	}
+        
+        function validate_change_password() {
+            
+        }
 
 	//forgot password
 	function forgot_password()
 	{
-		$this->form_validation->set_rules('email', 'Email Address', 'required');
-		if ($this->form_validation->run() == false)
-		{
-			//setup the input
-			$this->data['email'] = array('name' => 'email',
-				'id' => 'email',
-			);
+                //setup the input
+                $this->data['email'] = array('name' => 'email', 'id' => 'email');
 
-			//set any errors and display the form
-			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-			$this->_render('federated/auth/forgot_password');
-//			$this->load->view('auth/forgot_password', $this->data);
-		}
-		else
-		{
-			// get identity for that email
-			$config_tables = $this->config->item('tables', 'ion_auth');
-			$identity = $this->db->where('email', $this->input->post('email'))->limit('1')->get($config_tables['users'])->row();
-
-			//run the forgotten password method to email an activation code to the user
-			$forgotten = $this->ion_auth->forgotten_password($identity->{$this->config->item('identity', 'ion_auth')});
-
-			if ($forgotten)
-			{
-				//if there were no errors
-				$this->session->set_flashdata('message', $this->ion_auth->messages());
-				redirect("auth_federated/login", 'refresh'); //we should display a confirmation page here instead of the login page
-			}
-			else
-			{
-				$this->session->set_flashdata('message', $this->ion_auth->errors());
-				redirect("auth_federated/forgot_password", 'refresh');
-			}
-		}
+                //set any errors and display the form
+                $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+                $this->_render('federated/auth/forgot_password');
 	}
+        
+        function validate_forgot_password() {
+                $this->form_validation->set_error_delimiters('', '');
+                $this->form_validation->set_rules('email', 'Email Address', 'required');
+                
+                if($this->form_validation->run()) {
+                    echo json_encode(array('success' => 'no errors'));
+                    return;
+                } else {
+                    echo json_encode(array('error' => validation_errors()));
+                    return;
+                }
+                
+                // get identity for that email
+                $config_tables = $this->config->item('tables', 'ion_auth');
+                $identity = $this->db->where('email', $this->input->post('email'))->limit('1')->get($config_tables['users'])->row();
+
+                //run the forgotten password method to email an activation code to the user
+                $forgotten = $this->ion_auth->forgotten_password($identity->{$this->config->item('identity', 'ion_auth')});
+
+                if ($forgotten)
+                {
+                        //if there were no errors
+                        $this->session->set_flashdata('message', $this->ion_auth->messages());
+                        redirect("auth_federated/login", 'refresh'); //we should display a confirmation page here instead of the login page
+                }
+                else
+                {
+                        $this->session->set_flashdata('message', $this->ion_auth->errors());
+                        redirect("auth_federated/forgot_password", 'refresh');
+                }
+        }
+        
+        function success_forgot_password($email) {
+            $this->data['email'] = urldecode($email);
+            $this->_render("federated/auth/forgot-password-success");
+        }
 
 	//reset password - final step for forgotten password
 	public function reset_password($code = NULL)
@@ -568,7 +581,7 @@ class Auth_federated extends MY_Controller {
     }
     
     function validate_signup() {
-        $this->form_validation->set_error_delimiters('', '');
+//        $this->form_validation->set_error_delimiters('', '');
         $this->form_validation->set_rules('username', 'Username', 'required|xss_clean|alpha_numeric');
         $this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');
         $this->form_validation->set_rules('last_name', 'Last Name', 'required|xss_clean');
