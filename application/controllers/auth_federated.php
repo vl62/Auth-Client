@@ -451,15 +451,23 @@ class Auth_federated extends MY_Controller {
 	function users() {
 		$this->title = "Users";
 
-		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
-			redirect('auth_federated', 'refresh');
-		}
+//		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+//			redirect('auth_federated', 'refresh');
+//		}
 		$this->data['message'] = $this->session->flashdata('activation_email_unsuccessful');
 		//list the users
-		$this->data['users'] = $this->ion_auth->users()->result();
-		foreach ($this->data['users'] as $k => $user) {
-			$this->data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->id)->result();
+//		echo $this->config->item('installation_key');
+//		$users = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_users_and_network_groups_for_installation");
+		$users = authPostRequest('', array(), $this->config->item('auth_server') . "/api/auth/get_all_users");
+		$this->data['users'] = json_decode($users);
+//		$this->data['users'] = $this->ion_auth->users()->result();
+		$users_groups_data = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_users_in_installation");
+		$users_groups = array();
+		foreach ( json_decode($users_groups_data, 1) as $group ) {
+//			print_r($group);
+			$users_groups[$group['user_id']][] = array('group_id' => $group['group_id'], 'group_name' => $group['name']);
 		}
+		$this->data['users_groups'] = $users_groups;
 
 		$this->_render('federated/auth/users');
 	}
@@ -651,10 +659,10 @@ class Auth_federated extends MY_Controller {
 	{
 		$this->title = "Create User";
 
-		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
-		{
-			redirect('auth', 'refresh');
-		}
+//		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
+//		{
+//			redirect('auth', 'refresh');
+//		}
 
 		//validate form input
 		$this->form_validation->set_rules('username', 'Username', 'required|xss_clean|alpha_dash');
@@ -681,10 +689,13 @@ class Auth_federated extends MY_Controller {
 			);
 		}
 		
-		if ($this->ion_auth->is_admin())
-                {
-			$this->data['groups'] = $this->ion_auth->getGroups();
-                }
+//		if ($this->ion_auth->is_admin()) {
+			// Get all available groups for the networks this installation is a member of from auth central for multi select list
+			$groups = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
+			$this->data['groups'] = json_decode($groups, TRUE);
+//			print_r($this->data['groups']);
+//			$this->data['groups'] = $this->ion_auth->getGroups();
+//		}
 		$type = "admin"; // Used to specify that ion_auth registration function send a different email to the user since account was created through admin interface
 		if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data, $groups, $type))
 		{
@@ -759,10 +770,10 @@ class Auth_federated extends MY_Controller {
 	{
 		$this->title = "Edit User";
 
-		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
-		{
-			redirect('auth', 'refresh');
-		}
+//		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
+//		{
+//			redirect('auth', 'refresh');
+//		}
 
 		$user = $this->ion_auth->user($id)->row();
 		//validate form input
@@ -847,6 +858,24 @@ class Auth_federated extends MY_Controller {
 		
 		$this->data['groups'] = $this->ion_auth->getGroups();
 
+		
+		// Get all available groups for the networks this installation is a member of from auth central for multi select list
+		$groups = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
+		$this->data['groups'] = json_decode($groups, TRUE);
+//		print_r($this->data['groups']);
+		
+		$user_groups_data = authPostRequest('', array('user_id' => $id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_users_in_installation");
+		$user_groups = array();
+		$selected_groups = array();
+		foreach ( json_decode($user_groups_data, 1) as $group ) {
+//			print_r($group);
+			$selected_groups[$group['id']] = $group['id'];
+			$user_groups[$group['user_id']][] = array('group_id' => $group['group_id'], 'group_name' => $group['name']);
+		}
+		$this->data['selected_groups'] = $selected_groups;
+//		$this->data['users_groups'] = $users_groups;
+
+		
 		// Find which groups the user belongs to and then pass this information to the view so that these groups are pre-selected in the multiselect box
 		$selected_groups = array();
 		foreach ($this->ion_auth->get_users_groups($id)->result() as $group) {

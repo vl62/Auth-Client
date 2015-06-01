@@ -16,7 +16,7 @@ class Sources extends MY_Controller {
 		$this->load->model('sources_model');
 		$this->data['variant_counts'] = $this->sources_model->countSourceEntries();
 		$sources = $this->sources_model->getSourcesFull();
-//		print_r($sources);
+//		print_r($sources, 1);
 		$source_groups = array();
 		foreach ($sources->result() as $source) {
 //			echo $source->source_id;
@@ -29,7 +29,7 @@ class Sources extends MY_Controller {
 			}
 		}
 		// Get all the available groups
-		$this->data['groups'] = $this->ion_auth->getGroups();
+//		$this->data['groups'] = $this->ion_auth->getGroups();
 		
 		$this->data['source_groups'] = $source_groups;
 		$this->data['sources'] = $sources;
@@ -115,10 +115,10 @@ class Sources extends MY_Controller {
 					$group_data_array[] = $group_data;
 				}
 				// Create the post string that will get sent
-				// Each group will be 2 string comma separate variable (first the group ID and then the network_key)
+				// Each group will be a comma separated variable (first the group ID and then the network_key)
 				// if multiple groups are selected then they'll be delimited by a | which will be exploded auth server side
 				$group_post_data = implode("|", $group_data_array);
-				error_log("group data string to send -> $group_post_data");
+//				error_log("group data string to send -> $group_post_data");
 				// Make API to auth central for the source for this installation for the network groups
 				$groups = authPostRequest('testedtoken', array('group_post_data' => $group_post_data, 'source_id' => $this->input->post('source_id'), 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/modify_current_network_groups_for_source_in_installation");
 					
@@ -127,8 +127,9 @@ class Sources extends MY_Controller {
 			}
 			else {
 //				error_log("no groups selected");
+				$groups = authPostRequest('testedtoken', array('group_post_data' => 'null', 'source_id' => $this->input->post('source_id'), 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/modify_current_network_groups_for_source_in_installation");
 				// All groups were de-selected so remove this source from all groups - do this by passing NULL to ion_auth remove_sources_from_group function
-				$this->sources_model->remove_sources_from_group(NULL, $this->input->post('source_id'));
+//				$this->sources_model->remove_sources_from_group(NULL, $this->input->post('source_id'));
 			}
 			
 			// Get the curators selected
@@ -185,8 +186,10 @@ class Sources extends MY_Controller {
 			$returned_groups = authPostRequest('', array('source_id' => $source_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_source_in_installation");
 			$tmp_selected_groups = json_decode($returned_groups, TRUE);
 			$selected_groups = array();
-			foreach ( $tmp_selected_groups as $tmp_group ) {
-				$selected_groups[$tmp_group['group_id']] = "group_description";
+			if (! array_key_exists('error', $tmp_selected_groups)) {
+				foreach ( $tmp_selected_groups as $tmp_group ) {
+					$selected_groups[$tmp_group['group_id']] = "group_description";
+				}
 			}
 			$this->data['selected_groups'] = $selected_groups;
 			

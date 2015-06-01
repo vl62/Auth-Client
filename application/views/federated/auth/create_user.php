@@ -71,7 +71,12 @@
 				<p>
 					Add to Group (control click to select multiple): <br />
 					<?php $count = count($groups) + 1; $additional = 'size="' . $count . '"'; ?>
-					<?php echo form_multiselect('groups[]', $groups, '2', $additional); ?>
+					<?php // echo form_multiselect('groups[]', $groups, '2', $additional); ?>
+					<select size="<?php echo $count; ?>" name="groups[]"  multiple="multiple">
+						<?php foreach ($groups as $group): ?>
+							<option value="<?php echo $group['id']; ?>" ><?php echo $group['description']; ?></option>
+						<?php endforeach; ?>
+					</select>
 				</p>
 					
 				<p><button type="submit" name="submit" class="btn btn-primary"><i class="icon-user icon-white"></i>  Create User</button><?php echo nbs(6); ?><button type="reset" class="btn"><i class="icon-remove-sign"></i> Clear</button><?php echo nbs(6); ?><a href="<?php echo base_url() . "auth/users"; ?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
