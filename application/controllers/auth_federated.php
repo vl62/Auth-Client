@@ -397,88 +397,110 @@ class Auth_federated extends MY_Controller {
 			redirect("auth_federated/forgot_password", 'refresh');
 		}
 	}
-
+        
 	//deactivate the user
 	function deactivate($id = NULL)
 	{
-		$id = $this->config->item('use_mongodb', 'ion_auth') ? (string) $id : (int) $id;
-
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('confirm', 'confirmation', 'required');
-		$this->form_validation->set_rules('id', 'user ID', 'required|alpha_numeric');
-
-		if ($this->form_validation->run() == FALSE)
-		{
-			// insert csrf check
-			$this->data['csrf'] = $this->_get_csrf_nonce();
-			$this->data['user'] = $this->ion_auth->user($id)->row();
-			$this->_render('federated/auth/deactivate_user');
-//			$this->load->view('auth/deactivate_user', $this->data);
-		}
-		else
-		{
-			// do we really want to deactivate?
-			if ($this->input->post('confirm') == 'yes')
-			{
-				// do we have a valid request?
-				if ($id != $this->input->post('id'))
-//				if ($this->_valid_csrf_nonce() === FALSE || $id != $this->input->post('id'))
-				{
-					show_error('This form post did not pass our security checks.');
-				}
-
-				// do we have the right userlevel?
-				if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin())
-				{
-					$this->ion_auth->deactivate($id);
-				}
-			}
-
-			//redirect them back to the auth page
-			redirect('auth_federated/users', 'refresh');
-		}
+                $this->session->set_userdata(array("userId" => $id));
+                
+//                $this->data['csrf'] = $this->_get_csrf_nonce();
+//                $this->data['user'] = $this->ion_auth->user($id)->row();
+                $this->data['id'] = $id;
+                $this->_render('federated/auth/deactivate_user');
+                
 	}
+        
+        function validate_deactivate() {
+            
+//            $id = $this->config->item('use_mongodb', 'ion_auth') ? (string) $id : (int) $id;
+
+            $this->load->library('form_validation');
+            $this->form_validation->set_rules('confirm', 'confirmation', 'required');
+            $this->form_validation->set_rules('id', 'user ID', 'required|alpha_numeric');
+            
+            if (($this->input->post('confirm') == 'yes') && $this->form_validation->run() === TRUE)
+            {       
+                    // do we have a valid request?
+                    if ($this->session->userdata("userId") != $this->input->post('id'))
+                    {
+                            echo json_encode(array('error' => "This form post did not pass our security checks."));
+                            return;
+                    }
+
+                    // do we have the right userlevel?
+                    if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin())
+                    {       
+                            $this->session->unset_userdata("userId");
+                            echo json_encode(array('success' => 'no errors'));
+                            return;
+//                            $this->ion_auth->deactivate($id);
+                    }
+            } elseif(($this->input->post('confirm') == 'no') && $this->form_validation->run() === TRUE) {
+                    
+                    $this->session->unset_userdata("userId");
+                    echo json_encode(array('error' => "no"));
+                
+            } else {
+                    $this->session->unset_userdata("userId");
+                    echo json_encode(array('error' => validation_errors()));
+                    return;
+            }
+
+            //redirect them back to the auth page
+//            redirect('auth_federated/users', 'refresh');
+        }
 
 	//delete the user
 	function delete($id = NULL)
 	{
-		$id = $this->config->item('use_mongodb', 'ion_auth') ? (string) $id : (int) $id;
+//		$id = $this->config->item('use_mongodb', 'ion_auth') ? (string) $id : (int) $id;
 
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('confirm', 'confirmation', 'required');
-		$this->form_validation->set_rules('id', 'user ID', 'required|alpha_numeric');
-
-		if ($this->form_validation->run() == FALSE)
-		{
+                        $this->session->set_userdata(array("userId" => $id));
 			// insert csrf check
-			$this->data['csrf'] = $this->_get_csrf_nonce();
-			$this->data['user'] = $this->ion_auth->user($id)->row();
+//			$this->data['csrf'] = $this->_get_csrf_nonce();
+//			$this->data['user'] = $this->ion_auth->user($id)->row();
+                        $this->data['id'] = $id;
 			$this->_render('federated/auth/delete_user');
 //			$this->load->view('auth/deactivate_user', $this->data);
-		}
-		else
-		{
 			// do we really want to deactivate?
-			if ($this->input->post('confirm') == 'yes')
-			{
-				// do we have a valid request?
-//				if ($this->_valid_csrf_nonce() === FALSE || $id != $this->input->post('id'))
-				if ($id != $this->input->post('id'))
-				{
-					show_error('This form post did not pass our security checks.');
-				}
-
-				// do we have the right userlevel?
-				if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin())
-				{
-					$this->ion_auth->delete_user($id);
-				}
-			}
+			
 
 			//redirect them back to the auth page
-			redirect('auth_federated/users', 'refresh');
-		}
+//			redirect('auth_federated/users', 'refresh');
 	}
+        
+        function validate_delete() {
+            $this->load->library('form_validation');
+            $this->form_validation->set_rules('confirm', 'confirmation', 'required');
+            $this->form_validation->set_rules('id', 'user ID', 'required|alpha_numeric');
+            
+            if ($this->input->post('confirm') == 'yes' && $this->form_validation->run() === TRUE)
+            {
+                    if ($this->session->userdata("userId") != $this->input->post('id'))
+                    {
+                            echo json_encode(array('error' => "This form post did not pass our security checks."));
+                            return;
+                    }
+
+                    // do we have the right userlevel?
+                    if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin())
+                    {
+                            $this->session->unset_userdata("userId");
+                            echo json_encode(array('success' => 'no errors'));
+                            return;
+                    }
+            } elseif(($this->input->post('confirm') == 'no') && $this->form_validation->run() === TRUE) {
+            
+                $this->session->unset_userdata("userId");
+                echo json_encode(array('error' => "no"));
+        
+            } else {
+                $this->session->unset_userdata("userId");
+                echo json_encode(array('error' => validation_errors()));
+                return;
+            }
+            
+        }
 
 	function users() {
 		$this->title = "Users";
@@ -905,6 +927,7 @@ class Auth_federated extends MY_Controller {
                     
                     if ($this->form_validation->run() === TRUE)
                     {
+                        $this->session->unset_userdata("userId");
                         echo json_encode(array('success' => 'no errors'));
                         return;
 //				$this->ion_auth->update($user->id, $data);
