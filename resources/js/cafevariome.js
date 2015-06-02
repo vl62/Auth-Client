@@ -2911,8 +2911,8 @@ function edit_user() {
                                             $("#editUserError").removeClass('hide');
                                             $("#editUserError").text(result.error);
                                     } else if (result.success) {
-                                            alert(result.success);
-//                                            window.location = baseurl + "auth_federated";
+//                                            alert(result.success);
+                                            window.location = baseurl + "auth_federated/users";
                                     }
                                 }
                         }); $callAjax = false;
@@ -2922,3 +2922,107 @@ function edit_user() {
 	});
     });
 }
+
+function deactivate_user() {
+    $callAjax = true;
+    $('form[name="deactivateUser"]').submit(function(e) {
+        e.preventDefault();
+        $postData = $(this).serialize();
+        $.ajax({url: baseurl + 'auth_federated/validate_deactivate/',
+		data: $postData,
+		dataType: 'json',
+		delay: 200,
+		type: 'POST',
+		success: function(data) {
+                    if (data.error) {
+                        if(data.error === "no") {
+                            window.location = baseurl + "auth_federated/users";
+                        } else {
+                            $("#deactivateUserError").removeClass('hide');
+                            $("#deactivateUserError").text(data.error);
+                        }
+                    } else if (data.success) {
+                        if($callAjax)
+                        {$.ajax({url: 'http://localhost:8888/cafevariome_server/auth_accounts/deactivate_user/',
+                                data: $postData,
+                                dataType: 'json',
+                                delay: 200,
+                                type: 'POST',
+                                success: function(result) {
+                                    if (result.error) {
+                                            $("#deactivateUserError").removeClass('hide');
+                                            $("#deactivateUserError").text(result.error);
+                                    } else if (result.success) {
+//                                            alert(result.success);
+                                            window.location = baseurl + "auth_federated/users";
+                                    }
+                                }
+                        }); $callAjax = false;
+                        }
+                    }
+		}
+	});
+    });
+}
+
+function delete_user() {
+    $callAjax = true;
+    $('form[name="deleteUser"]').submit(function(e) {
+        e.preventDefault();
+        $postData = $(this).serialize();
+        $.ajax({url: baseurl + 'auth_federated/validate_delete/',
+		data: $postData,
+		dataType: 'json',
+		delay: 200,
+		type: 'POST',
+		success: function(data) {
+                    if (data.error) {
+                        if(data.error === "no") {
+                            window.location = baseurl + "auth_federated/users";
+                        } else {
+                            $("#deleteError").removeClass('hide');
+                            $("#deleteError").text(data.error);
+                        }
+                    } else if (data.success) {
+                        if($callAjax)
+                        {$.ajax({url: 'http://localhost:8888/cafevariome_server/auth_accounts/delete_user/',
+                                data: $postData,
+                                dataType: 'json',
+                                delay: 200,
+                                type: 'POST',
+                                success: function(result) {
+                                    if (result.error) {
+                                            $("#deleteError").removeClass('hide');
+                                            $("#deleteError").text(result.error);
+                                    } else if (result.success) {
+//                                            alert(result.success);
+                                            window.location = baseurl + "auth_federated/users";
+                                    }
+                                }
+                        }); $callAjax = false;
+                        }
+                    }
+		}
+	});
+    });
+}
+
+// activate user
+$(document).ready(function(){
+    $(".activateUser").click(function(e){
+        e.preventDefault();
+        $.ajax({url: 'http://localhost:8888/cafevariome_server/auth_accounts/activate_user/',
+		data: {'id': $(this).attr('id')},
+		dataType: 'json',
+		delay: 200,
+		type: 'POST',
+		success: function(data) {
+                    if (data.error) {
+                        alert("unable to activate user. Try again.")
+                    } else if (data.success) {
+                        window.location = baseurl + "auth_federated/users";
+                    }
+		},
+	});
+    });
+  });
