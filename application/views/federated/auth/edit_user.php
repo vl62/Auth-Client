@@ -20,8 +20,8 @@
 
 				<p>Please enter the users information below.</p>
 
-				<div id="infoMessage"><b><?php echo $message; ?></b></div>
-				<?php echo form_open(current_url()); ?>
+				<strong id="editUserError" class="hide" style="color: red;"></strong>
+				<?php echo form_open("auth_federated/edit_user", array('name' => 'editUser')); ?>
 				<div class="row">
 					<label>ORCID:</label>
 				</div>
@@ -65,7 +65,7 @@
 					<?php echo form_input($password_confirm); ?>
 				</p>
 
-				<p>
+<!--				<p>
 					Edit Groups (control click to select multiple): <br />
 					<?php $count = count($groups) + 1; ?>
 					<select size="<?php echo $count; ?>" name="groups[]"  multiple="multiple">
@@ -75,11 +75,10 @@
 						} ?>><?php echo $group['description']; ?></option>
 				<?php endforeach; ?>
 					</select>			   
-				</p>
-
+				</p>-->
 				<?php echo form_hidden('id', $user->id); ?>
 				<?php echo form_hidden($csrf); ?>
-				<p><button type="submit" name="submit" class="btn btn-primary"><i class="icon-user"></i>  Save User</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "auth/users"; ?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
+				<p><button type="submit" onclick="edit_user();" name="submit" class="btn btn-primary"><i class="icon-user"></i>  Save User</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "auth/users"; ?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
 			</div>
 		</div>
 	</div>
