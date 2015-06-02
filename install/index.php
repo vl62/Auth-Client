@@ -19,7 +19,6 @@ if ($_POST):
         $errors = array();
         // First create the database, then check strict mode is off, then create tables, then create admin user, then write config file - if anything fails at each stage it will not proceed and report the error message
         error_log("0%");
-
         if ($database->create_database($_POST) == false) {
             $message = $database->getErrorMessage();
             $errors['create_db'] = $message;
@@ -253,6 +252,10 @@ if ($_POST):
 															</div>
 															<div class="tab-pane" id="site_details">
 																<br /><h3>Site Details</h3><hr>
+																	<label for="adminusername">External base URL</label><div class="input-prepend"><span class="add-on"><i class="icon-question-sign" rel="popover" data-content="You must provide the external base URL of this installation that will be used as the entry point for querying. This URL can be changed later in the administrator interface but you will not be able to proceed with installation unless this URL is validated."></i></span><input type="text" id="externalurl" value="" class="input_text" name="externalurl" /></div>
+																	<br /><a href="#" id="external_url_button" class="btn btn-small btn-success" rel="popover" data-content="Click to validate that the external URL is contactable by other installations." data-original-title="Validate Prefix ID"><i class="icon-check icon-white"></i> Validate base URL</a>
+																	<div id="externalurlvalidateresult"></div>
+																	<br />
 																	<label for="adminusername">Site Title</label><div class="input-prepend"><span class="add-on"><i class="icon-question-sign" rel="popover" data-content="Main title for the site that will be shown in metadata."></i></span><input type="text" id="sitetitle" value="Cafe Variome" class="input_text" name="sitetitle" /></div>
 																	<label for="adminemail">Site Description</label><div class="input-prepend"><span class="add-on"><i class="icon-question-sign" rel="popover" data-content="Brief description of the site that will be shown in metadata."></i></span><input type="text" id="sitedescription" class="input_text" name="sitedescription" value="Cafe Variome Instance" /></div>
 																	<label for="adminpassword">Site Author</label><div class="input-prepend"><span class="add-on"><i class="icon-question-sign" rel="popover" data-content="Name of site author that will be shown in metadata."></i></span><input type="text" id="siteauthor" class="input_text" name="siteauthor" value="Administrator" /></div>

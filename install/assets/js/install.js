@@ -38,7 +38,7 @@ function startInstall() {
 		url: baseurl + "index.php",
 //		dataType: 'html',
 		dataType: 'json',
-		data: {'hostname': $('#hostname').val(), 'username' : $('#username').val(), 'password' : $('#password').val(), 'database' : $('#database').val(), 'adminusername' : $('#adminusername').val(), 'adminpassword' : $('#adminpassword').val(), 'adminemail' : $('#adminemail').val(), 'include_data' : $("#sampledata").val(), 'adminstats' : adminstats, 'bioportalkey' : $('#bioportalkey').val(), 'is_valid' : is_valid, 'sources' : sources, 'prefix': $('#prefix').val(), 'sitetitle': $('#sitetitle').val(), 'sitedescription': $('#sitedescription').val(), 'siteauthor': $('#siteauthor').val(), 'sitekeywords': $('#sitekeywords').val()},
+		data: {'hostname': $('#hostname').val(), 'username' : $('#username').val(), 'password' : $('#password').val(), 'database' : $('#database').val(), 'adminusername' : $('#adminusername').val(), 'adminpassword' : $('#adminpassword').val(), 'adminemail' : $('#adminemail').val(), 'include_data' : $("#sampledata").val(), 'adminstats' : adminstats, 'bioportalkey' : $('#bioportalkey').val(), 'is_valid' : is_valid, 'sources' : sources, 'prefix': $('#prefix').val(), 'externalurl': $('#externalurl').val(), 'sitetitle': $('#sitetitle').val(), 'sitedescription': $('#sitedescription').val(), 'siteauthor': $('#siteauthor').val(), 'sitekeywords': $('#sitekeywords').val()},
 		start: $('#dialog').modal('show'),
 //		progress: function(update) {
 //			alert("update");
@@ -262,12 +262,14 @@ function isLastTab() {
 		var adminpasswordStatus = ($('#adminpassword').val()) ? "<td style='text-align: center;'><span class='badge badge-success'><i class='icon-thumbs-up icon-white'></i></span></td>" : "<td style='text-align: center;'><span class='badge badge-important'><i class='icon-thumbs-down icon-white'></i></span></td>", complete = false;
 		var password = $('#password').val().replace(/./gi, "*");
 		var adminpassword = $('#adminpassword').val().replace(/./gi, "*");
+		var externalurlStatus = ($('#is_externalurl_valid').val()) ? "<td style='text-align: center;'><span class='badge badge-success'><i class='icon-thumbs-up icon-white'></i></span></td>" : "<td style='text-align: center;'><span class='badge badge-important'><i class='icon-thumbs-down icon-white'></i></span></td>", complete = false;
 		if ( $('#adminstats').is(":checked") ) { // Append the validation status of the prefix if notify button is unchecked
 			var prefixStatus = ($('#is_prefix_unique').val()) ? "<td style='text-align: center;'><span class='badge badge-success'><i class='icon-thumbs-up icon-white'></i></span></td>" : "<td style='text-align: center;'><span class='badge badge-important'><i class='icon-thumbs-down icon-white'></i></span></td>", complete = false;
-			$("#finalise-settings").html("<table class='table-centered table table-hover table-bordered'><thead><tr><th>Setting</th><th>Value</th><th>Status</th></tr></thead><tbody>" + "<tr><td>Hostname</td><td>" + $('#hostname').val() + "</td>" + hostnameStatus + "</tr>" + "<tr><td>MySQL Username</td><td>" + $('#username').val() + "</td>" + usernameStatus + "</tr>" + "<tr><td>MySQL Password</td><td>" + password + "</td>" + passwordStatus + "</tr>" + "<tr><td>MySQL Database</td><td>" + $('#database').val() + "</td>" + databaseStatus + "</tr>" + "<tr><td>Admin Username</td><td>" + $('#adminusername').val() + "</td>" + adminusernameStatus + "</tr><tr><td>Admin Email</td><td>" + $('#adminemail').val() + "</td>" + adminemailStatus + "</tr><tr><td>Admin Password</td><td>" + adminpassword + "</td>" + adminpasswordStatus + "</tr><tr><td>Variant ID Prefix</td><td>" + $('#prefix').val() + "</td>" + prefixStatus + "</tr>" + "</tbody></table><br />");
+			
+			$("#finalise-settings").html("<table class='table-centered table table-hover table-bordered'><thead><tr><th>Setting</th><th>Value</th><th>Status</th></tr></thead><tbody>" + "<tr><td>Hostname</td><td>" + $('#hostname').val() + "</td>" + hostnameStatus + "</tr>" + "<tr><td>MySQL Username</td><td>" + $('#username').val() + "</td>" + usernameStatus + "</tr>" + "<tr><td>MySQL Password</td><td>" + password + "</td>" + passwordStatus + "</tr>" + "<tr><td>MySQL Database</td><td>" + $('#database').val() + "</td>" + databaseStatus + "</tr>" + "<tr><td>Admin Username</td><td>" + $('#adminusername').val() + "</td>" + adminusernameStatus + "</tr><tr><td>Admin Email</td><td>" + $('#adminemail').val() + "</td>" + adminemailStatus + "</tr><tr><td>Admin Password</td><td>" + adminpassword + "</td>" + adminpasswordStatus + "</tr><tr><td>Variant ID Prefix</td><td>" + $('#prefix').val() + "</td>" + prefixStatus + "</tr>" + "<tr><td>External URL</td><td>" + $('#externalurl').val() + "</td>" + externalurlStatus + "</tr>" + "</tbody></table><br />");
 		}
 		else { // Otherwise don't include the validation status for the prefix (as it isn't going to get reported to CV Central
-			$("#finalise-settings").html("<table class='table-centered table table-hover table-bordered'><thead><tr><th>Setting</th><th>Value</th><th>Status</th></tr></thead><tbody>" + "<tr><td>Hostname</td><td>" + $('#hostname').val() + "</td>" + hostnameStatus + "</tr>" + "<tr><td>MySQL Username</td><td>" + $('#username').val() + "</td>" + usernameStatus + "</tr>" + "<tr><td>MySQL Password</td><td>" + password + "</td>" + passwordStatus + "</tr>" + "<tr><td>MySQL Database</td><td>" + $('#database').val() + "</td>" + databaseStatus + "</tr>" + "<tr><td>Admin Username</td><td>" + $('#adminusername').val() + "</td>" + adminusernameStatus + "</tr><tr><td>Admin Email</td><td>" + $('#adminemail').val() + "</td>" + adminemailStatus + "</tr><tr><td>Admin Password</td><td>" + adminpassword + "</td>" + adminpasswordStatus + "</tr>" + "</tbody></table><br />");
+			$("#finalise-settings").html("<table class='table-centered table table-hover table-bordered'><thead><tr><th>Setting</th><th>Value</th><th>Status</th></tr></thead><tbody>" + "<tr><td>Hostname</td><td>" + $('#hostname').val() + "</td>" + hostnameStatus + "</tr>" + "<tr><td>MySQL Username</td><td>" + $('#username').val() + "</td>" + usernameStatus + "</tr>" + "<tr><td>MySQL Password</td><td>" + password + "</td>" + passwordStatus + "</tr>" + "<tr><td>MySQL Database</td><td>" + $('#database').val() + "</td>" + databaseStatus + "</tr>" + "<tr><td>Admin Username</td><td>" + $('#adminusername').val() + "</td>" + adminusernameStatus + "</tr><tr><td>Admin Email</td><td>" + $('#adminemail').val() + "</td>" + adminemailStatus + "</tr><tr><td>Admin Password</td><td>" + adminpassword + "</td>" + adminpasswordStatus + "</tr>" + "<tr><td>External URL</td><td>" + $('#externalurl').val() + "</td>" + externalurlStatus + "</tr>" + "</tbody></table><br />");
 			
 		}
 	}
@@ -431,6 +433,74 @@ function compare(a,b) {
 		return 1;
 	return 0;
 }
+
+// Validate prefix ID button was clicked - check if the prefix is unique across all CV installs using CV central web service to check this
+$(document).ready(function() {
+	$("#external_url_button").click(function(e) {
+		e.preventDefault();
+
+		var externalurl = document.getElementById("externalurl").value;
+		if ( externalurl.length === 0 ) {
+			$('#externalurlvalidateresult').empty();
+			alert("Please enter an external URL");
+		}
+		
+//		if (externalurl.search(/^[a-zA-Z]+$/)) {
+//			alert("Only letters of the alphabet (upper or lower case) are allowed.");
+//		}
+//		
+//		if (externalurl.length > 3) {
+//			alert("The prefix length must be 3 characters or less");
+//		}
+		
+		else {
+			$.ajax({
+				url: baseurl + 'check_external_url.php',
+				data: {
+					externalurl: externalurl
+				},
+				dataType: 'json',
+//				delay: 200,
+				type: 'POST',
+				success: function(data) {
+					if (data) {
+//						JSON.stringify(data);
+//						alert("test -> " + data);
+						var data_json = jQuery.parseJSON( data );
+						var is_valid = data_json.is_valid;
+//						alert("is_valid -> " + is_valid);
+						if ( is_valid == 'yes') {
+							$('#externalurlvalidateresult').empty();
+							$('#externalurlvalidateresult').append('<br /><button class="btn btn-mini btn-success" disabled="disabled" rel="popover" data-content="This external URL is contactable by Cafe Variome authentication server." data-original-title="Valid external URL"><i class="icon-ok"></i></button>');
+							$('#externalurlvalidateresult').append('<input type="hidden" id="is_externalurl_valid" name="is_externalurl_valid" value="1" />');
+						}
+						else if ( is_valid == 'no') {
+							$('#externalurlvalidateresult').empty();
+							$('#externalurlvalidateresult').append('<br /><button class="btn btn-mini btn-danger" disabled="disabled" rel="popover" data-content="This external URL is not contactable by Cafe Variome authentication server." data-original-title="Invalid external URL"><i class="icon-remove-sign icon-white"></i></button>');
+							alert("The external is not contactable from the Cafe Variome authentication server, please enter a valid external url.");
+						}
+						else {
+							$('#externalurlvalidateresult').empty();
+							$('#externalurlvalidateresult').append('<br /><p>Unknown error</p>');
+						}
+					}
+				},
+				async: true
+			}).fail(function (error) {
+				// error
+			});
+		}
+//		return false;
+	});
+});
+
+// Remove prefix validation if any key is pressed (to avoid user deleting or changing the ID after it has been validated
+$(document).ready(function() {
+	$('#externalurl').keyup(function() {
+//		alert("Key up detected");
+		$('#externalurlvalidateresult').empty();
+	});
+});
 
 // Validate prefix ID button was clicked - check if the prefix is unique across all CV installs using CV central web service to check this
 $(document).ready(function() {
