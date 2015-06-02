@@ -17,9 +17,10 @@
 			<div class="well">
 				<h2>Create User</h2>
 				<p>Please enter the users information below. Required fields are marked (*).</p>
-				<div id="infoMessage"><b><?php echo $message; ?></b></div>
+				
+                                <strong id="createUserError" class="hide" style="color: red;"></strong>
 					
-				<?php echo form_open("auth_federated/create_user"); ?>
+				<?php echo form_open("auth_federated/create_user", array('name' => 'createUser')); ?>
 				<div class="row">
 					<label>ORCID:</label>
 				</div>
@@ -79,7 +80,7 @@
 					</select>
 				</p>
 					
-				<p><button type="submit" name="submit" class="btn btn-primary"><i class="icon-user icon-white"></i>  Create User</button><?php echo nbs(6); ?><button type="reset" class="btn"><i class="icon-remove-sign"></i> Clear</button><?php echo nbs(6); ?><a href="<?php echo base_url() . "auth_federated/users"; ?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
+                                <p><button type="submit" name="submit" onclick="create_user();" class="btn btn-primary"><i class="icon-user icon-white"></i>  Create User</button><?php echo nbs(6); ?><button type="reset" class="btn"><i class="icon-remove-sign"></i> Clear</button><?php echo nbs(6); ?><a href="<?php echo base_url() . "auth_federated/users"; ?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
 			</div>
 		</div>
 	</div>

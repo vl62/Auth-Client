@@ -2783,7 +2783,7 @@ function login_user() {
                                 type: 'POST',
                                 success: function(result) {
                                     if (result.error) {
-                                            alert(result.error);
+//                                            alert(result.error);
                                             $("#loginError").removeClass('hide');
                                             $("#loginError").text(result.error);
                                     } else if (result.success) {
@@ -2841,6 +2841,82 @@ function login_forgot_password() {
                                 }
                             }
                         });
+                    }
+		}
+	});
+    });
+}
+
+function create_user() {
+    $callAjax = true;
+    $('form[name="createUser"]').submit(function(e) {
+        e.preventDefault();
+        $postData = $(this).serialize();
+        $.ajax({url: baseurl + 'auth_federated/validate_create_user/',
+		data: $postData,
+		dataType: 'json',
+		delay: 200,
+		type: 'POST',
+		success: function(data) {
+                    if (data.error) {
+                            $("#createUserError").removeClass('hide');
+                            $("#createUserError").text(data.error);
+                    } else if (data.success) {
+                        if($callAjax)
+                        {$.ajax({url: 'http://localhost:8888/cafevariome_server/auth_accounts/create_user/',
+                                data: $postData,
+                                dataType: 'json',
+                                delay: 200,
+                                type: 'POST',
+                                success: function(result) {
+                                    if (result.error) {
+                                            $("#createUserError").removeClass('hide');
+                                            $("#createUserError").text(result.error);
+                                    } else if (result.success) {
+//                                            alert(result.success);
+                                            window.location = baseurl + "auth_federated/users";
+                                    }
+                                }
+                        }); $callAjax = false;
+                        }
+                    }
+		}
+	});
+    });
+}
+
+function edit_user() {
+    $callAjax = true;
+    $('form[name="editUser"]').submit(function(e) {
+        e.preventDefault();
+        $postData = $(this).serialize();
+        $.ajax({url: baseurl + 'auth_federated/validate_edit_user/',
+		data: $postData,
+		dataType: 'json',
+		delay: 200,
+		type: 'POST',
+		success: function(data) {
+                    if (data.error) {
+                            $("#editUserError").removeClass('hide');
+                            $("#editUserError").text(data.error);
+                    } else if (data.success) {
+                        if($callAjax)
+                        {$.ajax({url: 'http://localhost:8888/cafevariome_server/auth_accounts/edit_user/',
+                                data: $postData,
+                                dataType: 'json',
+                                delay: 200,
+                                type: 'POST',
+                                success: function(result) {
+                                    if (result.error) {
+                                            $("#editUserError").removeClass('hide');
+                                            $("#editUserError").text(result.error);
+                                    } else if (result.success) {
+                                            alert(result.success);
+//                                            window.location = baseurl + "auth_federated";
+                                    }
+                                }
+                        }); $callAjax = false;
+                        }
                     }
 		}
 	});

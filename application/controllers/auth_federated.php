@@ -125,10 +125,29 @@ class Auth_federated extends MY_Controller {
 //                if (get_cookie('identity')) delete_cookie('identity');
 //                if (get_cookie('remember_code'))    delete_cookie('remember_code');
 
-                //Recreate the session
-                $this->session->sess_destroy();
-                $this->session->sess_create();
-
+                $this->session->destroy();
+                
+//                $session_data = array(
+//                    'user_id'                   => '',
+//                    'ip_address'                => '',
+//                    'username'                  => '',
+//                    'password'                  => '',
+//                    'salt'                      => '',
+//                    'email'                     => '',
+//                    'activation_code'           => '',
+//                    'forgotten_password_code'   => '',
+//                    'forgotten_password_time'   => '',
+//                    'remember_code'             => '',
+//                    'created_on'                => '',
+//                    'old_last_login'            => '',
+//                    'active'                    => '',
+//                    'first_name'                => '',
+//                    'last_name'                 => '',
+//                    'company'                   => '',
+//                    'orcid'                     => '',
+//                    'is_admin'                  => ''
+//                );
+                
                 redirect('home', 'refresh');
 	}
 
@@ -467,6 +486,7 @@ class Auth_federated extends MY_Controller {
 //		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
 //			redirect('auth_federated', 'refresh');
 //		}
+                
 		$this->data['message'] = $this->session->flashdata('activation_email_unsuccessful');
 		//list the users
 //		echo $this->config->item('installation_key');
@@ -669,234 +689,140 @@ class Auth_federated extends MY_Controller {
 		
 	//create a new user (in admin interface, see signup for standard non-admin user registration)
 	function create_user()
-	{
+	{       
+                if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+			redirect('auth_federated', 'refresh');
+		}
+                
 		$this->title = "Create User";
+                $groups = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
+                $this->data['groups'] = json_decode($groups, TRUE);
 
-//		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
-//		{
-//			redirect('auth', 'refresh');
-//		}
+                //display the create user form
+                //set the flash data error message if there is one
+                $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
 
-		//validate form input
-		$this->form_validation->set_rules('username', 'Username', 'required|xss_clean|alpha_dash');
-		$this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');
-		$this->form_validation->set_rules('last_name', 'Last Name', 'required|xss_clean');
-		$this->form_validation->set_rules('email', 'Email Address', 'required|valid_email');
-		$this->form_validation->set_rules('company', 'Institute Name', 'required|xss_clean');
-		$this->form_validation->set_rules('password', 'Password', 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
-		$this->form_validation->set_rules('password_confirm', 'Password Confirmation', 'required');
-		$this->form_validation->set_rules('orcid', 'ORCID', 'xss_clean');
 
-		if ($this->form_validation->run() == true)
-		{
-//			$username = strtolower($this->input->post('first_name')) . ' ' . strtolower($this->input->post('last_name'));
-			$username = strtolower($this->input->post('username'));
-			$email    = $this->input->post('email');
-			$password = $this->input->post('password');
-			$groups = $this->input->post('groups');
-			$additional_data = array(
-				'first_name' => $this->input->post('first_name'),
-				'last_name'  => $this->input->post('last_name'),
-				'company'    => $this->input->post('company'),
-				'orcid' => $this->input->post('orcid')
-			);
-		}
-		
-//		if ($this->ion_auth->is_admin()) {
-			// Get all available groups for the networks this installation is a member of from auth central for multi select list
-			$groups = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
-			$this->data['groups'] = json_decode($groups, TRUE);
-//			print_r($this->data['groups']);
-//			$this->data['groups'] = $this->ion_auth->getGroups();
-//		}
-		$type = "admin"; // Used to specify that ion_auth registration function send a different email to the user since account was created through admin interface
-		if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $additional_data, $groups, $type))
-		{
-			$user_id = $this->ion_auth->getUserIDFromUsername($username);
-//			error_log("userid -> " . $user_id . " user -> " . $username);
-//			$this->ion_auth->activate($user_id);
-			$this->session->set_flashdata('message', $this->ion_auth->messages());
-			redirect('auth_federated/users', 'refresh');
-		}
-		else
-		{
-			//display the create user form
-			//set the flash data error message if there is one
-			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
-
-			
-			$this->data['username'] = array(
-				'name' => 'username',
-				'id' => 'username',
-				'type' => 'text',
-				'value' => $this->form_validation->set_value('username'),
-			);
-			$this->data['first_name'] = array(
-				'name'  => 'first_name',
-				'id'    => 'first_name',
-				'type'  => 'text',
-				'value' => $this->form_validation->set_value('first_name'),
-			);
-			$this->data['last_name'] = array(
-				'name'  => 'last_name',
-				'id'    => 'last_name',
-				'type'  => 'text',
-				'value' => $this->form_validation->set_value('last_name'),
-			);
-			$this->data['email'] = array(
-				'name'  => 'email',
-				'id'    => 'email',
-				'type'  => 'text',
-				'value' => $this->form_validation->set_value('email'),
-			);
-			$this->data['company'] = array(
-				'name'  => 'company',
-				'id'    => 'company',
-				'type'  => 'text',
-				'value' => $this->form_validation->set_value('company'),
-			);
-			$this->data['password'] = array(
-				'name'  => 'password',
-				'id'    => 'password',
-				'type'  => 'password',
-				'value' => $this->form_validation->set_value('password'),
-			);
-			$this->data['password_confirm'] = array(
-				'name'  => 'password_confirm',
-				'id'    => 'password_confirm',
-				'type'  => 'password',
-				'value' => $this->form_validation->set_value('password_confirm'),
-			);
-			$this->data['orcid'] = array(
-				'name' => 'orcid',
-				'id' => 'orcid',
-				'type' => 'text',
-				'value' => $this->form_validation->set_value('orcid'),
-			);
-			$this->_render('federated/auth/create_user');
+                $this->data['username'] = array(
+                        'name' => 'username',
+                        'id' => 'username',
+                        'type' => 'text',
+                        'value' => $this->form_validation->set_value('username'),
+                );
+                $this->data['first_name'] = array(
+                        'name'  => 'first_name',
+                        'id'    => 'first_name',
+                        'type'  => 'text',
+                        'value' => $this->form_validation->set_value('first_name'),
+                );
+                $this->data['last_name'] = array(
+                        'name'  => 'last_name',
+                        'id'    => 'last_name',
+                        'type'  => 'text',
+                        'value' => $this->form_validation->set_value('last_name'),
+                );
+                $this->data['email'] = array(
+                        'name'  => 'email',
+                        'id'    => 'email',
+                        'type'  => 'text',
+                        'value' => $this->form_validation->set_value('email'),
+                );
+                $this->data['company'] = array(
+                        'name'  => 'company',
+                        'id'    => 'company',
+                        'type'  => 'text',
+                        'value' => $this->form_validation->set_value('company'),
+                );
+                $this->data['password'] = array(
+                        'name'  => 'password',
+                        'id'    => 'password',
+                        'type'  => 'password',
+                        'value' => $this->form_validation->set_value('password'),
+                );
+                $this->data['password_confirm'] = array(
+                        'name'  => 'password_confirm',
+                        'id'    => 'password_confirm',
+                        'type'  => 'password',
+                        'value' => $this->form_validation->set_value('password_confirm'),
+                );
+                $this->data['orcid'] = array(
+                        'name' => 'orcid',
+                        'id' => 'orcid',
+                        'type' => 'text',
+                        'value' => $this->form_validation->set_value('orcid'),
+                );
+                $this->_render('federated/auth/create_user');
 //			$this->load->view('auth/create_user', $this->data);
-		}
 	}
-
+        
+        function validate_create_user() {
+            //validate form input
+            $this->form_validation->set_rules('username', 'Username', 'required|xss_clean|alpha_dash');
+            $this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');
+            $this->form_validation->set_rules('last_name', 'Last Name', 'required|xss_clean');
+            $this->form_validation->set_rules('email', 'Email Address', 'required|valid_email');
+            $this->form_validation->set_rules('company', 'Institute Name', 'required|xss_clean');
+            $this->form_validation->set_rules('password', 'Password', 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
+            $this->form_validation->set_rules('password_confirm', 'Password Confirmation', 'required');
+            $this->form_validation->set_rules('orcid', 'ORCID', 'xss_clean');
+            
+            if ($this->form_validation->run() == true)
+            {   echo json_encode(array('success' => "no errors"));
+                return;    
+            } else {
+                echo json_encode(array('error' => validation_errors()));
+                return;
+            }
+            
+        }
+        
+        function disp() {
+            echo "<pre>";
+            var_dump($this->session->userdata);
+            echo "</pre>";
+        }
+        
 	//edit a user
 	function edit_user($id)
 	{
 		$this->title = "Edit User";
 
-//		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
-//		{
-//			redirect('auth', 'refresh');
-//		}
-
-		$user = $this->ion_auth->user($id)->row();
-		//validate form input
-		$this->form_validation->set_rules('username', 'Username', 'required|xss_clean|alpha_dash');
-		$this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');
-		$this->form_validation->set_rules('last_name', 'Last Name', 'required|xss_clean');
-		$this->form_validation->set_rules('email', 'Email Address', 'required|valid_email');
-		$this->form_validation->set_rules('company', 'Institute Name', 'required|xss_clean');
-		$this->form_validation->set_rules('orcid', 'ORCID', 'xss_clean');
-
-		if (isset($_POST) && !empty($_POST))
+		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
 		{
-			// do we have a valid request?
-			if ($id != $this->input->post('id'))
-			{
-				show_error('This form post did not pass our security checks.');
-			}
-
-			$data = array(
-				'username' => strtolower($this->input->post('username')),
-				'first_name' => $this->input->post('first_name'),
-				'last_name'  => $this->input->post('last_name'),
-				'email'      => $this->input->post('email'),
-				'company'    => $this->input->post('company'),
-				'orcid'		 => $this->input->post('orcid')
-			);
-
-			//update the password if it was posted
-			if ($this->input->post('password'))
-			{
-				$this->form_validation->set_rules('password', 'Password', 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
-				$this->form_validation->set_rules('password_confirm', 'Password Confirmation', 'required');
-
-				$data['password'] = $this->input->post('password');
-			}
-
-			// Check if there any groups selected
-			if ($this->input->post('groups')) {
-
-				// Get all the groups that this user is currently in
-				$groups_in = array();
-				foreach ($this->ion_auth->get_users_groups($id)->result() as $group) {
-//					echo "groupid -> " . $group->id . " groupname -> " . $group->name . " description -> " . $group->description;
-					$groups_in[] = $group->id;
-				}
-
-				// Find which current groups have been deselected and therefore need to be removed from this user
-				$diff = array_diff($groups_in, $this->input->post('groups'));
-//				print_r($diff);
-				if ( ! empty($diff) ) {
-					foreach ( $diff as $delete_group_id ) {
-						$this->ion_auth->remove_from_group($delete_group_id, $id);
-					}
-				}
-
-				// Find which groups need to be added - go through the selected groups to see if they are not in the users currently assigned groups
-				foreach ($this->input->post('groups') as $group_id) {
-//					error_log("sgid -> $group_id");
-					if (! in_array($group_id, $groups_in)) {
-						if (!$this->ion_auth->check_if_in_group($group_id, $id)) {
-//							error_log("NOT IN GROUP SO ADD");
-							$this->ion_auth->add_to_group($group_id, $id);
-						}
-					}
-				}
-			}
-			else {
-				// All groups were de-selected so remove this user from all groups - do this by passing NULL to ion_auth remove_from_group function
-				$this->ion_auth->remove_from_group(NULL, $id);
-			}
-			
-			if ($this->form_validation->run() === TRUE)
-			{
-				$this->ion_auth->update($user->id, $data);
-
-				//check to see if we are creating the user
-				//redirect them back to the admin page
-				$this->session->set_flashdata('message', "User Saved");
-				redirect("auth_federated", 'refresh');
-			}
+			redirect('auth', 'refresh');
 		}
-		
-		$this->data['groups'] = $this->ion_auth->getGroups();
-
-		
-		// Get all available groups for the networks this installation is a member of from auth central for multi select list
-		$groups = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
-		$this->data['groups'] = json_decode($groups, TRUE);
-//		print_r($this->data['groups']);
-		
-		$user_groups_data = authPostRequest('', array('user_id' => $id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_users_in_installation");
-		$user_groups = array();
-		$selected_groups = array();
-		foreach ( json_decode($user_groups_data, 1) as $group ) {
-//			print_r($group);
-			$selected_groups[$group['id']] = $group['id'];
-			$user_groups[$group['user_id']][] = array('group_id' => $group['group_id'], 'group_name' => $group['name']);
-		}
-		$this->data['selected_groups'] = $selected_groups;
-//		$this->data['users_groups'] = $users_groups;
-
-		
-		// Find which groups the user belongs to and then pass this information to the view so that these groups are pre-selected in the multiselect box
-		$selected_groups = array();
-		foreach ($this->ion_auth->get_users_groups($id)->result() as $group) {
-//			echo "groupid -> " . $group->id . " groupname -> " . $group->name . " description -> " . $group->description;
-			$selected_groups[$group->id] = $group->id;
-		}
-
-		$this->data['selected_groups'] = $selected_groups;
+                
+                $user = $this->ion_auth->user($id)->row();
+                $this->session->set_userdata(array("userId" => $user->id));
+                
+//		$this->data['groups'] = $this->ion_auth->getGroups();
+//
+//		
+//		// Get all available groups for the networks this installation is a member of from auth central for multi select list
+//		$groups = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
+//		$this->data['groups'] = json_decode($groups, TRUE);
+////		print_r($this->data['groups']);
+//		
+//		$user_groups_data = authPostRequest('', array('user_id' => $id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_users_in_installation");
+//		$user_groups = array();
+//		$selected_groups = array();
+//		foreach ( json_decode($user_groups_data, 1) as $group ) {
+////			print_r($group);
+//			$selected_groups[$group['id']] = $group['id'];
+//			$user_groups[$group['user_id']][] = array('group_id' => $group['group_id'], 'group_name' => $group['name']);
+//		}
+//		$this->data['selected_groups'] = $selected_groups;
+////		$this->data['users_groups'] = $users_groups;
+//
+//		
+//		// Find which groups the user belongs to and then pass this information to the view so that these groups are pre-selected in the multiselect box
+//		$selected_groups = array();
+//		foreach ($this->ion_auth->get_users_groups($id)->result() as $group) {
+////			echo "groupid -> " . $group->id . " groupname -> " . $group->name . " description -> " . $group->description;
+//			$selected_groups[$group->id] = $group->id;
+//		}
+//
+//		$this->data['selected_groups'] = $selected_groups;
 //		$this->data['current_groups'] = $this->ion_auth->get_users_groups($id)->result();
 
 		//display the edit user form
@@ -958,6 +884,92 @@ class Auth_federated extends MY_Controller {
 		$this->_render('federated/auth/edit_user');
 //		$this->load->view('auth/edit_user', $this->data);
 	}
+        
+        function validate_edit_user() {
+            
+            //validate form input
+            $this->form_validation->set_rules('username', 'Username', 'required|xss_clean|alpha_dash');
+            $this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');
+            $this->form_validation->set_rules('last_name', 'Last Name', 'required|xss_clean');
+            $this->form_validation->set_rules('email', 'Email Address', 'required|valid_email');
+            $this->form_validation->set_rules('company', 'Institute Name', 'required|xss_clean');
+            $this->form_validation->set_rules('orcid', 'ORCID', 'xss_clean');
+            
+            if (isset($_POST) && !empty($_POST))
+            {
+                    // do we have a valid request?
+                    if ($this->session->userdata("userId") != $this->input->post('id'))
+                    {       echo json_encode(array('error' => "This form post did not pass our security checks."));
+                            return;
+                    } 
+                    
+                    if ($this->form_validation->run() === TRUE)
+                    {
+                        echo json_encode(array('success' => 'no errors'));
+                        return;
+//				$this->ion_auth->update($user->id, $data);
+
+//				$this->session->set_flashdata('message', "User Saved");
+//				redirect("auth_federated", 'refresh');
+                    } else {
+                        echo json_encode(array('error' => validation_errors()));
+                        return;
+                    }
+
+//                    $data = array(
+//                            'username'   => strtolower($this->input->post('username')),
+//                            'first_name' => $this->input->post('first_name'),
+//                            'last_name'  => $this->input->post('last_name'),
+//                            'email'      => $this->input->post('email'),
+//                            'company'    => $this->input->post('company'),
+//                            'orcid'	     => $this->input->post('orcid')
+//                    );
+//
+//                    //update the password if it was posted
+//                    if ($this->input->post('password'))
+//                    {
+//                            $this->form_validation->set_rules('password', 'Password', 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
+//                            $this->form_validation->set_rules('password_confirm', 'Password Confirmation', 'required');
+//
+//                            $data['password'] = $this->input->post('password');
+//                    }
+
+                    // Check if there any groups selected
+//			if ($this->input->post('groups')) {
+//
+//				// Get all the groups that this user is currently in
+//				$groups_in = array();
+//				foreach ($this->ion_auth->get_users_groups($id)->result() as $group) {
+////					echo "groupid -> " . $group->id . " groupname -> " . $group->name . " description -> " . $group->description;
+//					$groups_in[] = $group->id;
+//				}
+//
+//				// Find which current groups have been deselected and therefore need to be removed from this user
+//				$diff = array_diff($groups_in, $this->input->post('groups'));
+////				print_r($diff);
+//				if ( ! empty($diff) ) {
+//					foreach ( $diff as $delete_group_id ) {
+//						$this->ion_auth->remove_from_group($delete_group_id, $id);
+//					}
+//				}
+//
+//				// Find which groups need to be added - go through the selected groups to see if they are not in the users currently assigned groups
+//				foreach ($this->input->post('groups') as $group_id) {
+////					error_log("sgid -> $group_id");
+//					if (! in_array($group_id, $groups_in)) {
+//						if (!$this->ion_auth->check_if_in_group($group_id, $id)) {
+////							error_log("NOT IN GROUP SO ADD");
+//							$this->ion_auth->add_to_group($group_id, $id);
+//						}
+//					}
+//				}
+//			} else {
+//				// All groups were de-selected so remove this user from all groups - do this by passing NULL to ion_auth remove_from_group function
+//				$this->ion_auth->remove_from_group(NULL, $id);
+//			}
+
+            }
+        }
 	
 	
 	//view user profile (for non-admin user)
