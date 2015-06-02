@@ -1792,6 +1792,25 @@ class Admin extends MY_Controller {
 		echo json_encode($phenotype_ontologies);
 	}
 	
+	function get_record_and_phenotype_display_fields_nr_list() {
+		$this->load->model('phenotypes_model');
+		$phenotype_attributes_nr_list = $this->phenotypes_model->getPhenotypeAttributesNRList();
+		$this->load->model('general_model');
+		$variants_table_structure = $this->db->list_fields('variants');
+		error_log(print_r($variants_table_structure, 1));
+
+//		$this->data['table_structure'] = $this->general_model->describeTable("variants");
+//		$this->load->model('settings_model');
+//		$this->data['display_fields'] = $this->settings_model->getDisplayFields();
+//		$this->data['display_fields_grouped'] = $this->settings_model->getDisplayFieldsGroupBySharingPolicy();
+//		$this->data['individual_record_display_fields'] = $this->settings_model->getIndividualRecordDisplayFields();
+
+		
+//		print_r($phenotype_attributes_nr_list);
+//		error_log(print_r($phenotype_attributes_nr_list, 1));
+		echo json_encode($phenotype_attributes_nr_list);
+	}
+	
 	function get_phenotype_attributes_nr_list() {
 		$this->load->model('phenotypes_model');
 		$phenotype_attributes_nr_list = $this->phenotypes_model->getPhenotypeAttributesNRList();

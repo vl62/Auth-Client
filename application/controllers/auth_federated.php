@@ -712,13 +712,15 @@ class Auth_federated extends MY_Controller {
 	//create a new user (in admin interface, see signup for standard non-admin user registration)
 	function create_user()
 	{       
-                if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
 			redirect('auth_federated', 'refresh');
 		}
                 
 		$this->title = "Create User";
+				// Get all the available network groups for this installation
                 $groups = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
-                $this->data['groups'] = json_decode($groups, TRUE);
+//                error_log(print_r($groups, 1));
+				$this->data['groups'] = json_decode($groups, TRUE);
 
                 //display the create user form
                 //set the flash data error message if there is one
@@ -817,36 +819,6 @@ class Auth_federated extends MY_Controller {
                 $user = $this->ion_auth->user($id)->row();
                 $this->session->set_userdata(array("userId" => $user->id));
                 
-//		$this->data['groups'] = $this->ion_auth->getGroups();
-//
-//		
-//		// Get all available groups for the networks this installation is a member of from auth central for multi select list
-//		$groups = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
-//		$this->data['groups'] = json_decode($groups, TRUE);
-////		print_r($this->data['groups']);
-//		
-//		$user_groups_data = authPostRequest('', array('user_id' => $id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_users_in_installation");
-//		$user_groups = array();
-//		$selected_groups = array();
-//		foreach ( json_decode($user_groups_data, 1) as $group ) {
-////			print_r($group);
-//			$selected_groups[$group['id']] = $group['id'];
-//			$user_groups[$group['user_id']][] = array('group_id' => $group['group_id'], 'group_name' => $group['name']);
-//		}
-//		$this->data['selected_groups'] = $selected_groups;
-////		$this->data['users_groups'] = $users_groups;
-//
-//		
-//		// Find which groups the user belongs to and then pass this information to the view so that these groups are pre-selected in the multiselect box
-//		$selected_groups = array();
-//		foreach ($this->ion_auth->get_users_groups($id)->result() as $group) {
-////			echo "groupid -> " . $group->id . " groupname -> " . $group->name . " description -> " . $group->description;
-//			$selected_groups[$group->id] = $group->id;
-//		}
-//
-//		$this->data['selected_groups'] = $selected_groups;
-//		$this->data['current_groups'] = $this->ion_auth->get_users_groups($id)->result();
-
 		//display the edit user form
 		$this->data['csrf'] = $this->_get_csrf_nonce();
 
@@ -855,6 +827,22 @@ class Auth_federated extends MY_Controller {
 
 		//pass the user to the view
 		$this->data['user'] = $user;
+
+		// Get all the available network groups for this installation
+		$groups = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
+//		print_r($groups);
+		$this->data['groups'] = json_decode($groups, TRUE);
+
+		// Get all the network groups that this source from this installation is currently in so that these can be pre selected in the multiselect list
+		$returned_groups = authPostRequest('', array('user_id' => $id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_user_in_installation");
+		$tmp_selected_groups = json_decode($returned_groups, TRUE);
+		$selected_groups = array();
+		if (! array_key_exists('error', $tmp_selected_groups)) {
+			foreach ( $tmp_selected_groups as $tmp_group ) {
+				$selected_groups[$tmp_group['group_id']] = "group_description";
+			}
+		}
+		$this->data['selected_groups'] = $selected_groups;
 
 		
 		$this->data['username'] = array(

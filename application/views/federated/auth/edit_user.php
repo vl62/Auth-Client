@@ -64,18 +64,20 @@
 					Confirm Password: (if changing password)<br />
 					<?php echo form_input($password_confirm); ?>
 				</p>
-
-<!--				<p>
-					Edit Groups (control click to select multiple): <br />
-					<?php $count = count($groups) + 1; ?>
-					<select size="<?php echo $count; ?>" name="groups[]"  multiple="multiple">
-						<?php foreach ($groups as $group): ?>
-							<option value="<?php echo $group['id']; ?>" <?php if (array_key_exists($group['id'], $selected_groups)) {
-							echo 'selected="selected"';
-						} ?>><?php echo $group['description']; ?></option>
-				<?php endforeach; ?>
-					</select>			   
-				</p>-->
+						
+				<p>
+					Assign user to groups that given them openAccess to restrictedAccess records<br />(control click to select multiple): <br />
+					<?php 
+						$group_count = count($groups) + 1;
+//						$curator_count = count($users) + 1;
+					?>
+					<select size="<?php echo $group_count; ?>" name="groups[]"  multiple="multiple">
+						<?php foreach ($groups as $group ): ?>
+							<option value="<?php echo $group['id'] . "," . $group['network_key']; ?>" <?php if (array_key_exists($group['id'], $selected_groups)) { echo 'selected="selected"'; } ?>><?php echo $group['description'] . " (Network:" . $group['network_name'] . ")"; ?></option>
+						<?php endforeach; ?>
+					</select>						   
+				</p>
+						
 				<?php echo form_hidden('id', $user->id); ?>
 				<?php echo form_hidden($csrf); ?>
 				<p><button type="submit" onclick="edit_user();" name="submit" class="btn btn-primary"><i class="icon-user"></i>  Save User</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "auth/users"; ?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
