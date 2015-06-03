@@ -48,9 +48,10 @@ class Networks extends MY_Controller {
 //			print "$name";
 //			$base_url = urlencode(base64_encode(base_url()));
 			$base_url = base_url();
-			$data = json_decode(createNetwork(array('installation_base_url' => $base_url, 'network_name' => $name, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server')));
+			$network = authPostRequest('', array('installation_base_url' => $base_url, 'network_name' => $name, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/create_network");
+//			$data = json_decode(createNetwork(array('installation_base_url' => $base_url, 'network_name' => $name, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server')));
 //			echo "create network:<br />";
-//			print_r($data);
+			print_r($network);
 			$this->session->set_flashdata('message', "Successfully created network $name");
 			redirect("networks/create_network", 'refresh');
 		}		
@@ -142,7 +143,7 @@ class Networks extends MY_Controller {
         }
         
         function join_network() {
-            $this->data['title'] = "Join Network";
+			$this->data['title'] = "Join Network";
 
 //            if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
 //                    redirect('auth', 'refresh');
@@ -161,9 +162,10 @@ class Networks extends MY_Controller {
                             'value' => $this->form_validation->set_value('justification'),
                     );
                 
-                $getNetworks = getNetworksInstallationNotMemberOf(array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
+				$networks = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_not_a_member_of");
+//				$networks = getNetworksInstallationNotMemberOf(array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
 //				error_log("getnetworks -> $getNetworks");
-				$data = json_decode($getNetworks, true);
+				$data = json_decode($networks, true);
 //				error_log("decoded -> " . print_r($data, 1));
 //				$jsonp_decode = $this->jsonp_decode($data);
                 $this->data['networks'] = $data;
@@ -252,16 +254,15 @@ class Networks extends MY_Controller {
 //			redirect('auth', 'refresh');
 //		}
 		
-		$getNetworks = getNetworksInstallationMemberOf(array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
-//		print_r($getNetworks);
-		$data = json_decode($getNetworks, true);
-		
+		$networks = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of");
+		$data = json_decode($networks, true);
+//		print_r($data);
 		$installation_count_for_networks = array();
 		// Loop through each network and get the count of the installations for that network (only if this installation is part of a network
 		if ( $data ) {
 			foreach ($data as $network) {
 //				error_log(print_r($network,1));
-				$count = json_decode(countNumberOfInstallationsForNetwork(array('network_key' => $network['network_key']), $this->config->item('auth_server')),1);
+				$count = json_decode(authPostRequest('', array('network_key' => $network['network_key']), $this->config->item('auth_server') . "/api/auth/count_number_of_installations_for_network"), 1);
 				// the count of installations for this network will be position zero in the returned array and have a key of total
 				$installation_count_for_networks[$network['network_key']] = $count[0]['total'];
 			}
