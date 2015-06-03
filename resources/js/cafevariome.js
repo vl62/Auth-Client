@@ -2760,16 +2760,17 @@ function register_user() {
 }
 
 function login_user() {
-	alert("authurl -> " + authurl + '/auth_federated/validate_login/');
+//	alert("authurl -> " + authurl + '/auth_federated/validate_login/');
         $callAjax = true;
 	$('form[name="loginUser"]').submit(function(e) {
         e.preventDefault();
         $postData = $(this).serialize();
-        $.ajax({url: baseurl + '/auth_federated/validate_login/',
+        $.ajax({url: baseurl + 'auth_federated/validate_login/',
 		data: $postData,
 		dataType: 'json',
 		delay: 200,
 		type: 'POST',
+                crossDomain: true,
                 async: 'false',
 		success: function(data) {
                     if (data.error) {
@@ -3026,4 +3027,43 @@ $(document).ready(function(){
 		},
 	});
     });
-  });
+});
+
+function edit_user_profile() {
+    $callAjax = true;
+    $('form[name="editUserProfile"]').submit(function(e) {
+        e.preventDefault();
+        $postData = $(this).serialize();
+        $.ajax({url: baseurl + 'auth_federated/validate_user_edit_profile/',
+		data: $postData,
+		dataType: 'json',
+		delay: 200,
+		type: 'POST',
+		success: function(data) {
+                    if (data.error) {
+                            $("#editUserProfileError").removeClass('hide');
+                            $("#editUserProfileError").text(data.error);
+                    } else if (data.success) {
+                        if($callAjax)
+                        {$.ajax({url: authurl + '/auth_accounts/edit_user/TRUE',
+                                data: $postData,
+                                dataType: 'json',
+                                delay: 200,
+                                type: 'POST',
+                                success: function(result) {
+                                    if (result.error) {
+                                            $("#editUserProfileError").removeClass('hide');
+                                            $("#editUserProfileError").text(result.error);
+                                    } else if (result.success) {
+//                                            alert(result.success);
+                                            location.reload();
+                                    }
+                                }
+                        }); $callAjax = false;
+                        }
+                    }
+		}
+	});
+    });
+}
+  

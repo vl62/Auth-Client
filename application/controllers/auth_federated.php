@@ -1016,66 +1016,19 @@ class Auth_federated extends MY_Controller {
 		{
 			redirect('auth_federated', 'refresh');
 		}
-		if ( $this->session->userdata( 'user_id' ) != $id ) {
-//			show_404();
-			show_error("You do not have the required permissions to edit that user profile.");
-		}
 		$user = $this->ion_auth->user($id)->row();
-		//validate form input
-		$this->form_validation->set_rules('username', 'Username', 'xss_clean|alpha_dash');
-		$this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');
-		$this->form_validation->set_rules('last_name', 'Last Name', 'required|xss_clean');
-		$this->form_validation->set_rules('email', 'Email Address', 'valid_email');
-		$this->form_validation->set_rules('company', 'Institute Name', 'required|xss_clean');
-		$this->form_validation->set_rules('orcid', 'ORCID', 'xss_clean');
-
-		if (isset($_POST) && !empty($_POST))
-		{
-			// do we have a valid request?
-			if ($id != $this->input->post('id'))
-			{
-				show_error('This form post did not pass our security checks.');
-			}
-
-			$data = array(
-//				'username' => strtolower($this->input->post('username')),
-				'first_name' => $this->input->post('first_name'),
-				'last_name'  => $this->input->post('last_name'),
-//				'email'      => $this->input->post('email'),
-				'company'    => $this->input->post('company'),
-				'orcid'		 => $this->input->post('orcid')
-			);
-
-			//update the password if it was posted
-			if ($this->input->post('password'))
-			{
-				$this->form_validation->set_rules('password', 'Password', 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
-				$this->form_validation->set_rules('password_confirm', 'Password Confirmation', 'required');
-
-				$data['password'] = $this->input->post('password');
-			}
-			
-			if ($this->form_validation->run() === TRUE)
-			{
-				$this->ion_auth->update($user->id, $data);
-
-				//check to see if we are creating the user
-				//redirect them back to the admin page
-				$this->session->set_flashdata('message', "User Saved");
-				redirect("auth_federated/user_profile/" . $id, 'refresh');
-			}
-		}
-		
-		$this->data['groups'] = $this->ion_auth->getGroups();
-
-		// Find which groups the user belongs to and then pass this information to the view so that these groups are pre-selected in the multiselect box
-		$selected_groups = array();
-		foreach ($this->ion_auth->get_users_groups($id)->result() as $group) {
-//			echo "groupid -> " . $group->id . " groupname -> " . $group->name . " description -> " . $group->description;
-			$selected_groups[$group->id] = $group->id;
-		}
-
-		$this->data['selected_groups'] = $selected_groups;
+                $this->session->set_userdata(array("userId" => $user->id));
+                
+//		$this->data['groups'] = $this->ion_auth->getGroups();
+//
+//		// Find which groups the user belongs to and then pass this information to the view so that these groups are pre-selected in the multiselect box
+//		$selected_groups = array();
+//		foreach ($this->ion_auth->get_users_groups($id)->result() as $group) {
+////			echo "groupid -> " . $group->id . " groupname -> " . $group->name . " description -> " . $group->description;
+//			$selected_groups[$group->id] = $group->id;
+//		}
+//
+//		$this->data['selected_groups'] = $selected_groups;
 //		$this->data['current_groups'] = $this->ion_auth->get_users_groups($id)->result();
 
 		//display the edit user form
@@ -1139,6 +1092,39 @@ class Auth_federated extends MY_Controller {
 		$this->_render('federated/auth/user_edit_profile');
 //		$this->load->view('auth/edit_user', $this->data);
 	}
+        
+        function validate_user_edit_profile() {
+            //validate form input
+            $this->form_validation->set_rules('username', 'Username', 'xss_clean|alpha_dash');
+            $this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');
+            $this->form_validation->set_rules('last_name', 'Last Name', 'required|xss_clean');
+            $this->form_validation->set_rules('email', 'Email Address', 'valid_email');
+            $this->form_validation->set_rules('company', 'Institute Name', 'required|xss_clean');
+            $this->form_validation->set_rules('orcid', 'ORCID', 'xss_clean');
+
+            if (isset($_POST) && !empty($_POST))
+            {
+                    // do we have a valid request?
+                    if ($this->session->userdata("userId") != $this->input->post('id'))
+                    {       echo json_encode(array('error' => "This form post did not pass our security checks."));
+                            return;
+                    } 
+                    
+                    if ($this->form_validation->run() === TRUE)
+                    {
+                        $this->session->unset_userdata("userId");
+                        echo json_encode(array('success' => 'no errors'));
+                        return;
+//				$this->ion_auth->update($user->id, $data);
+
+//				$this->session->set_flashdata('message', "User Saved");
+//				redirect("auth_federated", 'refresh');
+                    } else {
+                        echo json_encode(array('error' => validation_errors()));
+                        return;
+                    }
+            }
+        }
 	
 	// Allows viewing and controlling user groups
 	function user_groups() {
