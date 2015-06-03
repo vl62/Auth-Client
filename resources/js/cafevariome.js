@@ -2735,7 +2735,7 @@ function register_user() {
                             $("#signupError").text(data.error);
                     } else if (data.success) {
                         if($callAjax)
-                        {$.ajax({url: 'http://localhost:8888/cafevariome_server/auth_accounts/register/',
+                        {$.ajax({url: authurl + '/cafevariome_server/auth_accounts/register/',
                                 data: $postData,
                                 dataType: 'json',
                                 delay: 200,
@@ -2776,7 +2776,7 @@ function login_user() {
                             $("#loginError").text(data.error);
                     } else if (data.success) {
                         if($callAjax)
-                        {$.ajax({url: 'http://localhost:8888/cafevariome_server/auth_accounts/login/',
+                        {$.ajax({url: authurl + '/auth_accounts/login/',
                                 data: $postData,
                                 dataType: 'json',
                                 delay: 200,
@@ -2825,7 +2825,7 @@ function login_forgot_password() {
                             $("#forgotPasswordError").removeClass('hide');
                             $("#forgotPasswordError").text(data.error);
                     } else if (data.success) {
-                            $.ajax({url: 'http://localhost:8888/cafevariome_server/auth_accounts/forgot_password/',
+                            $.ajax({url: authurl + '/auth_accounts/forgot_password/',
                             data: $postData,
                             dataType: 'json',
                             delay: 200,
@@ -2863,7 +2863,7 @@ function create_user() {
                             $("#createUserError").text(data.error);
                     } else if (data.success) {
                         if($callAjax)
-                        {$.ajax({url: 'http://localhost:8888/cafevariome_server/auth_accounts/create_user/',
+                        {$.ajax({url: authurl + '/cafevariome_server/auth_accounts/create_user/',
                                 data: $postData,
                                 dataType: 'json',
                                 delay: 200,
@@ -2901,7 +2901,7 @@ function edit_user() {
                             $("#editUserError").text(data.error);
                     } else if (data.success) {
                         if($callAjax)
-                        {$.ajax({url: 'http://localhost:8888/cafevariome_server/auth_accounts/edit_user/',
+                        {$.ajax({url: authurl + '/cafevariome_server/auth_accounts/edit_user/',
                                 data: $postData,
                                 dataType: 'json',
                                 delay: 200,
@@ -2943,7 +2943,7 @@ function deactivate_user() {
                         }
                     } else if (data.success) {
                         if($callAjax)
-                        {$.ajax({url: 'http://localhost:8888/cafevariome_server/auth_accounts/deactivate_user/',
+                        {$.ajax({url: authurl + '/cafevariome_server/auth_accounts/deactivate_user/',
                                 data: $postData,
                                 dataType: 'json',
                                 delay: 200,
@@ -2985,7 +2985,7 @@ function delete_user() {
                         }
                     } else if (data.success) {
                         if($callAjax)
-                        {$.ajax({url: 'http://localhost:8888/cafevariome_server/auth_accounts/delete_user/',
+                        {$.ajax({url: authurl + '/cafevariome_server/auth_accounts/delete_user/',
                                 data: $postData,
                                 dataType: 'json',
                                 delay: 200,
@@ -3011,7 +3011,7 @@ function delete_user() {
 $(document).ready(function(){
     $(".activateUser").click(function(e){
         e.preventDefault();
-        $.ajax({url: 'http://localhost:8888/cafevariome_server/auth_accounts/activate_user/',
+        $.ajax({url: authurl + '/cafevariome_server/auth_accounts/activate_user/',
 		data: {'id': $(this).attr('id')},
 		dataType: 'json',
 		delay: 200,
