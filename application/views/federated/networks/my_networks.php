@@ -30,7 +30,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<?php foreach ( $networks as $network ): ?>
+						<?php foreach ( $networks as $network ):  ?>
 						<tr>
 							<td><?php echo $network['network_id']; ?></td>
 							<td><?php echo $network['network_name']; ?></td>

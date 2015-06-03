@@ -102,48 +102,6 @@ function getNetworks($central_uri) {
 	return $result;
 }
 
-function getNetworksInstallationNotMemberOf($data, $central_uri) {
-	$url = $central_uri . '/api/auth/get_networks_installation_not_a_member_of/format/json';
-	$opts = array('http' =>
-		array(
-			'method'  => 'POST',
-			'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-			'content' => http_build_query($data)
-		)
-	);
-	$context  = stream_context_create($opts);
-	$result = file_get_contents($url, false, $context);
-	return $result;
-}
-
-function getNetworksInstallationMemberOf($data, $central_uri) {
-	$url = $central_uri . '/api/auth/get_networks_installation_member_of/format/json';
-	$opts = array('http' =>
-		array(
-			'method'  => 'POST',
-			'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-			'content' => http_build_query($data)
-		)
-	);
-	$context  = stream_context_create($opts);
-	$result = file_get_contents($url, false, $context);
-	return $result;
-}
-
-function countNumberOfInstallationsForNetwork($data, $central_uri) {
-	$url = $central_uri . '/api/auth/count_number_of_installations_for_network/format/json';
-	$opts = array('http' =>
-		array(
-			'method'  => 'POST',
-			'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-			'content' => http_build_query($data)
-		)
-	);
-	$context  = stream_context_create($opts);
-	$result = file_get_contents($url, false, $context);
-	return $result;	
-}
-
 function getNetworkRequestsForInstallation($data, $central_uri) {
 	$url = $central_uri . '/api/auth/get_network_requests_for_installation/format/json';
 	
