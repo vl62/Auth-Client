@@ -2760,7 +2760,6 @@ function register_user() {
 }
 
 function login_user() {
-//	alert("authurl -> " + authurl + '/auth_federated/validate_login/');
         $callAjax = true;
 	$('form[name="loginUser"]').submit(function(e) {
         e.preventDefault();
