@@ -421,13 +421,15 @@ class Ion_auth
 	 **/
 	public function logged_in()
 	{
+            
             if($this->session->userdata('controller') === "auth_federated")
                 return (bool) $this->session->userdata('email');
-            else {
+            else if($this->session->userdata('controller') === "auth") {
                 $this->ion_auth_model->trigger_events('logged_in');
                 $identity = $this->config->item('identity', 'ion_auth');
                 return (bool) $this->session->userdata($identity);
             } 
+            return false;
 	}
 
 	/**
@@ -440,11 +442,12 @@ class Ion_auth
 	{
             if($this->session->userdata('controller') === "auth_federated")
                 return (bool) $this->session->userdata('is_admin');
-            else {
+            else if($this->session->userdata('controller') === "auth") {
                 $this->ion_auth_model->trigger_events('is_admin');
 		$admin_group = $this->config->item('admin_group', 'ion_auth');
 		return $this->in_group($admin_group, $id);
             }
+            return false;
 	}
 
 	/**

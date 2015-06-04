@@ -5,6 +5,11 @@ class Auth extends MY_Controller {
 	function __construct()
 	{
 		parent::__construct();
+                
+                if($this->session->userdata("controller") === "auth_federated") {
+                    show_error("Restricted Access!");
+                }
+                
 		$this->load->library('ion_auth');
 		$this->load->library('session');
 		$this->load->library('form_validation');

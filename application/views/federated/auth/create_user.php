@@ -18,7 +18,7 @@
 				<h2>Create User</h2>
 				<p>Please enter the users information below. Required fields are marked (*).</p>
 				
-                                <strong id="createUserError" class="hide" style="color: red;"></strong>
+                                <div id="createUserError" class="hide" style="color: red;"></div>
 					
 				<?php echo form_open("auth_federated/create_user", array('name' => 'createUser')); ?>
 				<div class="row">

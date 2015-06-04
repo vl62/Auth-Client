@@ -5,6 +5,11 @@ class Auth_federated extends MY_Controller {
 	function __construct()
 	{
 		parent::__construct();
+                
+                if($this->session->userdata("controller") === "auth") {
+                    show_error("Restricted Access!");
+                }
+                
 		$this->load->library('ion_auth');
 		$this->load->library('session');
 		$this->load->library('form_validation');
@@ -37,13 +42,14 @@ class Auth_federated extends MY_Controller {
 			redirect('auth_federated/users', 'refresh');
 		}
 	}
-
+        
 	//log the user in
 	function login()
 	{
-		if ($this->session->userdata('email')) {
+		if ($this->ion_auth->logged_in()) {
 			redirect('/', 'refresh');
 		}
+                
 		$this->title = "Login";
                 $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
 
@@ -60,7 +66,11 @@ class Auth_federated extends MY_Controller {
 	}
         
         function validate_login() {
-        
+            
+            if(! $this->input->is_ajax_request()) {
+                    redirect('404');
+            }
+
             $this->form_validation->set_rules('identity', 'Identity', 'required');
             $this->form_validation->set_rules('password', 'Password', 'required');
                 
@@ -74,7 +84,11 @@ class Auth_federated extends MY_Controller {
         }
         
         function login_success() {
-                
+            
+            if(! $this->input->is_ajax_request()) {
+                    redirect('404');
+            }
+            
                 $session_data = array(
                     'user_id'                   => $this->input->post('user_id'),
                     'ip_address'                => $this->input->post('ip_address'),
@@ -138,79 +152,6 @@ class Auth_federated extends MY_Controller {
                 redirect('home', 'refresh');
 	}
 
-	//change password
-	function change_password()
-	{
-		$this->form_validation->set_rules('old', 'Old password', 'required');
-		$this->form_validation->set_rules('new', 'New Password', 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[new_confirm]');
-		$this->form_validation->set_rules('new_confirm', 'Confirm New Password', 'required');
-
-		if (!$this->ion_auth->logged_in())
-		{
-			redirect('auth_federated/login', 'refresh');
-		}
-
-		$user = $this->ion_auth->user()->row();
-
-		if ($this->form_validation->run() == false)
-		{
-			//display the form
-			//set the flash data error message if there is one
-			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-
-			$this->data['min_password_length'] = $this->config->item('min_password_length', 'ion_auth');
-			$this->data['old_password'] = array(
-				'name' => 'old',
-				'id'   => 'old',
-				'type' => 'password',
-			);
-			$this->data['new_password'] = array(
-				'name' => 'new',
-				'id'   => 'new',
-				'type' => 'password',
-				'pattern' => '^.{'.$this->data['min_password_length'].'}.*$',
-			);
-			$this->data['new_password_confirm'] = array(
-				'name' => 'new_confirm',
-				'id'   => 'new_confirm',
-				'type' => 'password',
-				'pattern' => '^.{'.$this->data['min_password_length'].'}.*$',
-			);
-			$this->data['user_id'] = array(
-				'name'  => 'user_id',
-				'id'    => 'user_id',
-				'type'  => 'hidden',
-				'value' => $user->id,
-			);
-
-			//render
-			$this->_render('federated/auth/change_password');
-//			$this->load->view('auth/change_password', $this->data);
-		}
-		else
-		{
-			$identity = $this->session->userdata($this->config->item('identity', 'ion_auth'));
-
-			$change = $this->ion_auth->change_password($identity, $this->input->post('old'), $this->input->post('new'));
-
-			if ($change)
-			{
-				//if the password was successfully changed
-				$this->session->set_flashdata('message', $this->ion_auth->messages());
-				$this->logout();
-			}
-			else
-			{
-				$this->session->set_flashdata('message', $this->ion_auth->errors());
-				redirect('auth_federated/change_password', 'refresh');
-			}
-		}
-	}
-        
-        function validate_change_password() {
-            
-        }
-
 	//forgot password
 	function forgot_password()
 	{
@@ -223,6 +164,11 @@ class Auth_federated extends MY_Controller {
 	}
         
         function validate_forgot_password() {
+            
+            if(! $this->input->is_ajax_request()) {
+                    redirect('404');
+            }
+            
                 $this->form_validation->set_error_delimiters('', '');
                 $this->form_validation->set_rules('email', 'Email Address', 'required');
                 
@@ -255,13 +201,22 @@ class Auth_federated extends MY_Controller {
         }
         
         function success_forgot_password($email) {
+            
+            if(! $this->input->is_ajax_request()) {
+                    redirect('404');
+            }
+            
             $this->data['email'] = urldecode($email);
             $this->_render("federated/auth/forgot-password-success");
         }
 
 	//reset password - final step for forgotten password
 	public function reset_password($code = NULL)
-	{
+	{       
+                if(! $this->input->is_ajax_request()) {
+                    redirect('404');
+                }
+                
 		if (!$code)
 		{
 			show_404();
@@ -388,6 +343,12 @@ class Auth_federated extends MY_Controller {
 	//deactivate the user
 	function deactivate($id = NULL)
 	{
+            if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
+            {
+                    //redirect them to the login page
+                    redirect('/', 'refresh');
+            }
+            
                 $this->session->set_userdata(array("userId" => $id));
                 
 //                $this->data['csrf'] = $this->_get_csrf_nonce();
@@ -398,6 +359,10 @@ class Auth_federated extends MY_Controller {
 	}
         
         function validate_deactivate() {
+            
+            if(! $this->input->is_ajax_request()) {
+                    redirect('404');
+            }
             
 //            $id = $this->config->item('use_mongodb', 'ion_auth') ? (string) $id : (int) $id;
 
@@ -440,6 +405,10 @@ class Auth_federated extends MY_Controller {
 	//delete the user
 	function delete($id = NULL)
 	{
+            if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
+            {
+                redirect('/', 'refresh');
+            }
 //		$id = $this->config->item('use_mongodb', 'ion_auth') ? (string) $id : (int) $id;
 
                         $this->session->set_userdata(array("userId" => $id));
@@ -457,6 +426,11 @@ class Auth_federated extends MY_Controller {
 	}
         
         function validate_delete() {
+            
+            if(! $this->input->is_ajax_request()) {
+                    redirect('404');
+            }
+            
             $this->load->library('form_validation');
             $this->form_validation->set_rules('confirm', 'confirmation', 'required');
             $this->form_validation->set_rules('id', 'user ID', 'required|alpha_numeric');
@@ -493,7 +467,7 @@ class Auth_federated extends MY_Controller {
 		$this->title = "Users";
 
 		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
-			redirect('auth_federated', 'refresh');
+			redirect('/', 'refresh');
 		}
 
 		$this->data['message'] = $this->session->flashdata('activation_email_unsuccessful');
@@ -612,6 +586,10 @@ class Auth_federated extends MY_Controller {
     }
     
     function validate_signup() {
+        if(! $this->input->is_ajax_request()) {
+                    redirect('404');
+        }
+        
 //        $this->form_validation->set_error_delimiters('', '');
         $this->form_validation->set_rules('username', 'Username', 'required|xss_clean|alpha_numeric');
         $this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');
@@ -632,6 +610,11 @@ class Auth_federated extends MY_Controller {
     }
     
     function signup_success($email = "") {
+        
+        if(! $this->input->is_ajax_request()) {
+                    redirect('404');
+        }
+            
         if(!empty($email)) {
             $this->data['email'] = urldecode($email);
             $this->_render("federated/auth/signup-success");
@@ -702,7 +685,7 @@ class Auth_federated extends MY_Controller {
 	function create_user()
 	{       
 		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
-			redirect('auth_federated', 'refresh');
+			redirect('/', 'refresh');
 		}
                 
 		$this->title = "Create User";
@@ -769,6 +752,11 @@ class Auth_federated extends MY_Controller {
 	}
         
         function validate_create_user() {
+            
+            if(! $this->input->is_ajax_request()) {
+                    redirect('404');
+            }
+            
             //validate form input
             $this->form_validation->set_rules('username', 'Username', 'required|xss_clean|alpha_dash');
             $this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');
@@ -799,6 +787,10 @@ class Auth_federated extends MY_Controller {
 	//edit a user
 	function edit_user($id)
 	{
+                if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
+                {
+                    redirect('/', 'refresh');
+                }
 		$this->title = "Edit User";
 
 		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
@@ -886,6 +878,10 @@ class Auth_federated extends MY_Controller {
 	}
         
         function validate_edit_user() {
+            
+            if(! $this->input->is_ajax_request()) {
+                    redirect('404');
+            }
             
             //validate form input
             $this->form_validation->set_rules('username', 'Username', 'required|xss_clean|alpha_dash');
@@ -980,7 +976,7 @@ class Auth_federated extends MY_Controller {
 
 		if (!$this->ion_auth->logged_in())
 		{
-			redirect('auth_federated', 'refresh');
+			redirect('/', 'refresh');
 		}
 		if (!$this->ion_auth->is_admin()) {
 			if ( $this->session->userdata( 'user_id' ) != $id ) {
@@ -999,12 +995,12 @@ class Auth_federated extends MY_Controller {
 
 	//edit user profile (for non-admin users)
 	function user_edit_profile($id)
-	{
+	{   
 		$this->title = "Edit Profile";
 
 		if (!$this->ion_auth->logged_in())
 		{
-			redirect('auth_federated', 'refresh');
+			redirect('/', 'refresh');
 		}
 		$user = $this->ion_auth->user($id)->row();
                 $this->session->set_userdata(array("userId" => $user->id));
@@ -1084,6 +1080,11 @@ class Auth_federated extends MY_Controller {
 	}
         
         function validate_user_edit_profile() {
+            
+            if(! $this->input->is_ajax_request()) {
+                    redirect('404');
+            }
+                
             //validate form input
             $this->form_validation->set_rules('username', 'Username', 'xss_clean|alpha_dash');
             $this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');
@@ -1146,8 +1147,6 @@ class Auth_federated extends MY_Controller {
 		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
 			redirect('auth_federated', 'refresh');
 		}
-
-
 
 		$this->data['groups'] = $this->ion_auth->getGroupsFull();
 //		$this->load->model('sources_model');
@@ -1335,7 +1334,5 @@ class Auth_federated extends MY_Controller {
 			return FALSE;
 		}
 	}
-	
-
-
+        
 }

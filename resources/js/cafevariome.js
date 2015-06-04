@@ -2695,28 +2695,28 @@ function join_network() {
 //    });
 //});
 
-function create_network() {
-	$('form[name="createNetwork"]').submit(function(e) {
-//        console.log($("#networks option:selected").text());
-        e.preventDefault();
-        
-        $.ajax({url: baseurl + 'federated_settings/validate_create_network/',
-		data: $(this).serialize(),
-		dataType: 'json',
-		delay: 200,
-		type: 'POST',
-		success: function(data) {
-                    if (data.error) {
-                            $("#createNetworkError").removeClass('hide');
-                            $("#createNetworkError").text(data.error);
-                    } else if (data.ok) {
-                            alert(data.ok);
-                            window.location = baseurl + "federated_settings";
-                    }
-		}
-	});
-    });
-}
+//function create_network() {
+//	$('form[name="createNetwork"]').submit(function(e) {
+////        console.log($("#networks option:selected").text());
+//        e.preventDefault();
+//        
+//        $.ajax({url: baseurl + 'federated_settings/validate_create_network/',
+//		data: $(this).serialize(),
+//		dataType: 'json',
+//		delay: 200,
+//		type: 'POST',
+//		success: function(data) {
+//                    if (data.error) {
+//                            $("#createNetworkError").removeClass('hide');
+//                            $("#createNetworkError").text(data.error);
+//                    } else if (data.ok) {
+//                            alert(data.ok);
+//                            window.location = baseurl + "federated_settings";
+//                    }
+//		}
+//	});
+//    });
+//}
 
 function register_user() {
         $callAjax = true;
@@ -2732,7 +2732,7 @@ function register_user() {
 		success: function(data) {
                     if (data.error) {
                             $("#signupError").removeClass('hide');
-                            $("#signupError").text(data.error);
+                            $("#signupError").html(data.error);
                     } else if (data.success) {
                         if($callAjax)
                         {$.ajax({url: authurl + '/auth_accounts/register/',
@@ -2763,7 +2763,7 @@ function register_user() {
 $(document).ready(function(){
     $("#loginUser").click(function(e){
         e.preventDefault();
-        $.ajax({url: 'https://auth.cafevariome.org_2/',
+        $.ajax({url: 'https://auth.cafevariome.org/',
 		complete: function(xhr, status) {
                     if (status === "success") {
                         window.location.href = baseurl + "auth_federated/login";
@@ -2785,12 +2785,11 @@ function login_user() {
 		dataType: 'json',
 		delay: 200,
 		type: 'POST',
-                crossDomain: true,
                 async: 'false',
 		success: function(data) {
                     if (data.error) {
                             $("#loginError").removeClass('hide');
-                            $("#loginError").text(data.error);
+                            $("#loginError").html(data.error);
                     } else if (data.success) {
                         if($callAjax)
                         {$.ajax({url: authurl + 'auth_accounts/login/',
@@ -2840,7 +2839,7 @@ function login_forgot_password() {
 		success: function(data) {
                     if (data.error) {
                             $("#forgotPasswordError").removeClass('hide');
-                            $("#forgotPasswordError").text(data.error);
+                            $("#forgotPasswordError").html(data.error);
                     } else if (data.success) {
                             $.ajax({url: authurl + '/auth_accounts/forgot_password/',
                             data: $postData,
@@ -2877,7 +2876,7 @@ function create_user() {
 		success: function(data) {
                     if (data.error) {
                             $("#createUserError").removeClass('hide');
-                            $("#createUserError").text(data.error);
+                            $("#createUserError").html(data.error);
                     } else if (data.success) {
                         if($callAjax)
                         {$.ajax({url: authurl + 'auth_accounts/create_user/',
@@ -2887,6 +2886,7 @@ function create_user() {
                                 type: 'POST',
                                 success: function(result) {
                                     if (result.error) {
+//                                        alert(result.error);
                                             $("#createUserError").removeClass('hide');
                                             $("#createUserError").text(result.error);
                                     } else if (result.success) {
@@ -2915,7 +2915,7 @@ function edit_user() {
 		success: function(data) {
                     if (data.error) {
                             $("#editUserError").removeClass('hide');
-                            $("#editUserError").text(data.error);
+                            $("#editUserError").html(data.error);
                     } else if (data.success) {
                         if($callAjax)
                         {$.ajax({url: authurl + '/auth_accounts/edit_user/',
@@ -2956,7 +2956,7 @@ function deactivate_user() {
                             window.location = baseurl + "auth_federated/users";
                         } else {
                             $("#deactivateUserError").removeClass('hide');
-                            $("#deactivateUserError").text(data.error);
+                            $("#deactivateUserError").html(data.error);
                         }
                     } else if (data.success) {
                         if($callAjax)
@@ -2998,7 +2998,7 @@ function delete_user() {
                             window.location = baseurl + "auth_federated/users";
                         } else {
                             $("#deleteError").removeClass('hide');
-                            $("#deleteError").text(data.error);
+                            $("#deleteError").html(data.error);
                         }
                     } else if (data.success) {
                         if($callAjax)
@@ -3057,7 +3057,7 @@ function edit_user_profile() {
 		success: function(data) {
                     if (data.error) {
                             $("#editUserProfileError").removeClass('hide');
-                            $("#editUserProfileError").text(data.error);
+                            $("#editUserProfileError").html(data.error);
                     } else if (data.success) {
                         if($callAjax)
                         {$.ajax({url: authurl + 'auth_accounts/edit_user/TRUE',
