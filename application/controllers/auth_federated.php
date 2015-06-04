@@ -51,10 +51,8 @@ class Auth_federated extends MY_Controller {
 	}
 
 	//log the user in
-	function login($data = "")
+	function login()
 	{
-                if($data == "error")  echo "<script>alert('login error');</script>";
-                
 		if ($this->session->userdata('email')) {
 			redirect('/', 'refresh');
 		}
@@ -107,7 +105,8 @@ class Auth_federated extends MY_Controller {
                     'last_name'                 => $this->input->post('last_name'),
                     'company'                   => $this->input->post('company'),
                     'orcid'                     => $this->input->post('orcid'),
-                    'is_admin'                  => $this->input->post('is_admin') === "admin" ? TRUE : FALSE
+                    'is_admin'                  => $this->input->post('is_admin') === "admin" ? TRUE : FALSE,
+                    'controller'                => "auth_federated"
                 );
                 
                 $this->session->set_userdata($session_data);
@@ -504,7 +503,6 @@ class Auth_federated extends MY_Controller {
 
 	function users() {
 		$this->title = "Users";
-
 //		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
 //			redirect('auth_federated', 'refresh');
 //		}
@@ -513,7 +511,7 @@ class Auth_federated extends MY_Controller {
 		//list the users
 //		echo $this->config->item('installation_key');
 //		$users = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_users_and_network_groups_for_installation");
-		$users = authPostRequest('', array(), $this->config->item('auth_server') . "/api/auth/get_all_users");
+		$users = authPostRequest('', array(), $this->config->item('auth_server') . "api/auth/get_all_users");
 		$this->data['users'] = json_decode($users);
 //		$this->data['users'] = $this->ion_auth->users()->result();
 		$users_groups_data = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_users_in_installation");
@@ -800,11 +798,12 @@ class Auth_federated extends MY_Controller {
             
         }
         
-        function disp() {
-            echo "<pre>";
-            var_dump($this->session->userdata);
-            echo "</pre>";
-        }
+//        private function _get_server_status() {
+//                if(get_headers("https://auth.cafevariome.org/")[0] === "HTTP/1.1 200 OK")
+//                    return TRUE;
+//                else
+//                    return FALSE;
+//        }
         
 	//edit a user
 	function edit_user($id)

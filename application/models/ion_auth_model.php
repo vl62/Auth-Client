@@ -986,7 +986,8 @@ class Ion_auth_model extends CI_Model
 				    'username'             => $user->username,
 				    'email'                => $user->email,
 				    'user_id'              => $user->id, //everyone likes to overwrite id so we'll use user_id
-				    'old_last_login'       => $user->last_login
+				    'old_last_login'       => $user->last_login,
+                                    'controller'           => "auth"
 				);
 
 				$this->update_last_login($user->id);
