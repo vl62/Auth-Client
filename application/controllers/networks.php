@@ -8,9 +8,9 @@ class Networks extends MY_Controller {
 	}
 	
 	public function index() {
-//		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
-//			redirect('auth', 'refresh');
-//		}
+		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+			redirect('auth', 'refresh');
+		}
 		
 	
 		$this->load->model('federated_model');
@@ -21,9 +21,9 @@ class Networks extends MY_Controller {
 	function create_network() {
 		$this->data['title'] = "Create Network";
 
-//		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
-//			redirect('auth', 'refresh');
-//		}
+		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+			redirect('auth', 'refresh');
+		}
 		// Validate form input
 		$this->form_validation->set_rules('name', 'Network Name', 'required|xss_clean|alpha_dash|callback_uniquename_check');
 		$this->form_validation->set_message("required", "requried");
@@ -51,7 +51,7 @@ class Networks extends MY_Controller {
 			$network = authPostRequest('', array('installation_base_url' => $base_url, 'network_name' => $name, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/create_network");
 //			$data = json_decode(createNetwork(array('installation_base_url' => $base_url, 'network_name' => $name, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server')));
 //			echo "create network:<br />";
-			print_r($network);
+//			print_r($network);
 			$this->session->set_flashdata('message', "Successfully created network $name");
 			redirect("networks/create_network", 'refresh');
 		}		
@@ -119,7 +119,9 @@ class Networks extends MY_Controller {
 		function uniquename_check($network_name) {
 			$this->load->model('network_model');
 			// Make API call to the central auth server to see whether this network name is already existing, if it does then an error will be given in create network form based on the return from this callback
-			$data = json_decode(checkNetworkExists(array('network_name' => $network_name), $this->config->item('auth_server')));
+//			$data = json_decode(checkNetworkExists(array('network_name' => $network_name), $this->config->item('auth_server')));
+			$data = json_decode(authPostRequest('', array('network_name' => $network_name), $this->config->item('auth_server') . "/api/auth/check_network_exists"));
+//			check_network_exists
 //			error_log("data -> " . $data);
             $bool_test = $data === 'true'? true: false; // Need to convert the true/false string returned by the API call to boolean and then test
             if( $bool_test ) {
@@ -145,9 +147,9 @@ class Networks extends MY_Controller {
         function join_network() {
 			$this->data['title'] = "Join Network";
 
-//            if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
-//                    redirect('auth', 'refresh');
-//            }
+            if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+                    redirect('auth', 'refresh');
+            }
             
             if (!isset($_POST['networks'])) {
                 $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
@@ -250,9 +252,9 @@ class Networks extends MY_Controller {
 	}
 	
 	function my_networks() {
-//		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
-//			redirect('auth', 'refresh');
-//		}
+		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+			redirect('auth', 'refresh');
+		}
 		
 		$networks = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of");
 		$data = json_decode($networks, true);
@@ -275,9 +277,9 @@ class Networks extends MY_Controller {
 	}
 	
 	function leave_network($network_key, $installation_count_for_network) {
-//		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
-//			redirect('auth', 'refresh');
-//		}
+		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+			redirect('auth', 'refresh');
+		}
 		
 		$data = leaveNetwork(array('installation_count_for_network' => $installation_count_for_network, 'network_key' => $network_key, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
 

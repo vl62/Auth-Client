@@ -21,12 +21,6 @@
 		<div class="span4 pagination-centered"><a href="<?php echo base_url() . "networks/network_requests_incoming";?>" class="btn btn-info btn-large" rel="popover" data-content="View incoming network requests" data-original-title="Incoming Network Requests"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-network-requests.png" /></a><br />Incoming Network Requests</div>
 		<div class="span4 pagination-centered"><a href="<?php echo base_url() . "networks/network_requests_outgoing";?>" class="btn btn-info btn-large" rel="popover" data-content="View outgoing network requests" data-original-title="Outgoing Network Requests"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-network-requests.png" /></a><br />Outgoing Network Requests</div>
 	</div>
-	<hr>
-	<div class="row">
-		<div class="span4 pagination-centered"><a href="<?php echo base_url() . "auth_federated/users";?>" class="btn btn-info btn-large" rel="popover" data-content="Create/modify/delete users" data-original-title="Users"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-users.png" /></a><br />Users</div>
-		<div class="span4 pagination-centered"><a href="<?php echo base_url() . "groups";?>" class="btn btn-info btn-large" rel="popover" data-content="Create/modify/delete groups" data-original-title="User Groups"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-groups.png" /></a><br />Groups</div>
-	</div>
-
 	<br /><br />
 	<br />
 </div>

@@ -44,21 +44,6 @@ function updateNode($data, $node_uri) {
 	$result = file_get_contents($url, false, $context);
 }
 
-function createNetwork($data, $central_uri) {
-	$url = $central_uri . '/api/auth/create_network/format/json';
-	$opts = array('http' =>
-		array(
-			'method'  => 'POST',
-			'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-			'content' => http_build_query($data)
-		)
-	);
-	$context  = stream_context_create($opts);
-	$result = file_get_contents($url, false, $context);
-	return $result;
-	
-}
-
 function checkNetworkExists($data, $central_uri) {
 	$url = $central_uri . '/api/auth/check_network_exists/format/json';
 	$opts = array('http' =>

@@ -26,7 +26,7 @@
 							<th>Last Name</th>
 							<th>Institute</th>
 							<th>Email</th>
-							<th>Groups</th>
+							<th>Network Groups</th>
 							<th>Status</th>
 							<th>Action</th>
 						</tr>
@@ -42,14 +42,15 @@
 							<td><?php echo $user->company; ?></td>
 							<td><?php echo $user->email; ?></td>
 							<td>
-								<?php if( empty($users_groups)) { echo "-"; }?>
-								<?php foreach ($users_groups as $group): ?>
-									<?php foreach ( $group as $g ): ?>
-										<?php echo $g['group_name']; ?><br />
-									<?php endforeach; ?>
+								<?php if (array_key_exists($user->id, $users_groups)): ?>
+								<?php foreach ($users_groups[$user->id] as $group): ?>
+										<?php echo $group['group_name']; ?><br />
 								<?php endforeach ?>
+								<?php else: ?>
+									-
+								<?php endif; ?>
 							</td>
-							<td><?php if ( $user->id != 1 ) : ?><?php echo ($user->active) ? anchor("auth_federated/deactivate/" . $user->id, 'Active') : anchor("auth_federated/activate/" . $user->id, 'Inactive', array('id' => $user->id, 'class' => 'activateUser')); ?><?php else: ?>Active<?php endif; ?></td>
+							<td><?php echo ($user->active) ? anchor("auth_federated/deactivate/" . $user->id, 'Active') : anchor("auth_federated/activate/" . $user->id, 'Inactive', array('id' => $user->id, 'class' => 'activateUser')); ?></td>
 							<td><a rel="popover" data-content="Create/modify/delete users" data-original-title="Edit User" href="<?php echo base_url('auth_federated/edit_user'). "/" . $user->id; ?>" ><i class="icon-edit"></i></a>&nbsp;&nbsp;&nbsp;<?php if ( $user->id != 1 ) : ?><a rel="popover" data-content="Permanently delete this user" data-original-title="Delete User" href="<?php echo base_url('auth_federated/delete'). "/" . $user->id; ?>" ></i><i class="icon-trash"></i></a><?php endif; ?></td>
 						</tr>
 						<?php endforeach; ?>
