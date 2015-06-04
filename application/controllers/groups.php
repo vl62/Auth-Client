@@ -22,9 +22,9 @@ class Groups extends MY_Controller {
 	function index()
 	{
 
-//		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
-//			redirect('auth_federated', 'refresh');
-//		}
+		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+			redirect('auth_federated', 'refresh');
+		}
 
 		
 		$groups = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
@@ -42,10 +42,10 @@ class Groups extends MY_Controller {
 	function create_network_group() {
 		$this->title = "Create Group";
 
-//		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
-//		{
-//			redirect('auth', 'refresh');
-//		}
+		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
+		{
+			redirect('auth', 'refresh');
+		}
 
 		//validate form input
 		$this->form_validation->set_rules('group_name', 'Group name', 'required|alpha_dash|xss_clean|callback_unique_network_group_name_check['.$this->input->post('network').']');
@@ -75,7 +75,8 @@ class Groups extends MY_Controller {
 		}
 		else {
 			
-			$getNetworks = getNetworksInstallationMemberOf(array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
+			$getNetworks = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of");
+//			$getNetworks = getNetworksInstallationMemberOf(array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
 			$this->data['networks'] = json_decode($getNetworks, TRUE);
 //			print_r($getNetworks);
 
@@ -188,11 +189,6 @@ class Groups extends MY_Controller {
 //		print_r($source_groups);
 		$this->data['source_groups'] = $source_groups;
 		$this->_render('federated/auth/source_groups');
-	}
-	
-	// Allows viewing and controlling source groups
-	function groups() {
-
 	}
 	
 	// create a new group

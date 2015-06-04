@@ -6,7 +6,7 @@
 					<a href="<?php echo base_url() . "admin";?>">Dashboard Home</a> <span class="divider">></span>  
 				</li>
 				<li>
-					<a href="<?php echo base_url() . "auth/users";?>">Users</a> <span class="divider">></span>
+					<a href="<?php echo base_url() . "auth_federated/users";?>">Users</a> <span class="divider">></span>
 				</li>
 				<li class="active">Create User</li>
 			</ul>  

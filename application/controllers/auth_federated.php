@@ -34,19 +34,7 @@ class Auth_federated extends MY_Controller {
 		}
 		else
 		{
-			//set the flash data error message if there is one
-			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-
-			//list the users
-			$this->data['users'] = $this->ion_auth->users()->result();
-			foreach ($this->data['users'] as $k => $user)
-			{
-				$this->data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->id)->result();
-			}
-
-//			$this->_render('auth/index');
-			$this->_render('federated/auth/users');
-//			$this->load->view('auth/index', $this->data);
+			redirect('auth_federated/users', 'refresh');
 		}
 	}
 
@@ -503,10 +491,11 @@ class Auth_federated extends MY_Controller {
 
 	function users() {
 		$this->title = "Users";
-//		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
-//			redirect('auth_federated', 'refresh');
-//		}
-                
+
+		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+			redirect('auth_federated', 'refresh');
+		}
+
 		$this->data['message'] = $this->session->flashdata('activation_email_unsuccessful');
 		//list the users
 //		echo $this->config->item('installation_key');
@@ -515,10 +504,12 @@ class Auth_federated extends MY_Controller {
 		$this->data['users'] = json_decode($users);
 //		$this->data['users'] = $this->ion_auth->users()->result();
 		$users_groups_data = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_users_in_installation");
+		
 		$users_groups = array();
 		foreach ( json_decode($users_groups_data, 1) as $group ) {
 //			print_r($group);
 			$users_groups[$group['user_id']][] = array('group_id' => $group['group_id'], 'group_name' => $group['name']);
+			
 		}
 		$this->data['users_groups'] = $users_groups;
 
@@ -832,7 +823,7 @@ class Auth_federated extends MY_Controller {
 //		print_r($groups);
 		$this->data['groups'] = json_decode($groups, TRUE);
 
-		// Get all the network groups that this source from this installation is currently in so that these can be pre selected in the multiselect list
+		// Get all the network groups that this user from this installation is currently in so that these can be pre selected in the multiselect list
 		$returned_groups = authPostRequest('', array('user_id' => $id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_user_in_installation");
 		$tmp_selected_groups = json_decode($returned_groups, TRUE);
 		$selected_groups = array();
