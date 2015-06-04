@@ -407,8 +407,7 @@ class Ion_auth
 		}
 
 		//Recreate the session
-		$this->session->sess_destroy();
-		$this->session->sess_create();
+		$this->session->destroy();
 
 		$this->set_message('logout_successful');
 		return TRUE;
@@ -422,13 +421,13 @@ class Ion_auth
 	 **/
 	public function logged_in()
 	{
-            return (bool) $this->session->userdata('email');
-            
-//		$this->ion_auth_model->trigger_events('logged_in');
-//
-//		$identity = $this->config->item('identity', 'ion_auth');
-//
-//		return (bool) $this->session->userdata($identity);
+            if($this->session->userdata('controller') === "auth_federated")
+                return (bool) $this->session->userdata('email');
+            else {
+                $this->ion_auth_model->trigger_events('logged_in');
+                $identity = $this->config->item('identity', 'ion_auth');
+                return (bool) $this->session->userdata($identity);
+            } 
 	}
 
 	/**
@@ -439,12 +438,13 @@ class Ion_auth
 	 **/
 	public function is_admin($id=false)
 	{
-//		$this->ion_auth_model->trigger_events('is_admin');
-//
-//		$admin_group = $this->config->item('admin_group', 'ion_auth');
-//
-//		return $this->in_group($admin_group, $id);
-            return (bool) $this->session->userdata('is_admin');
+            if($this->session->userdata('controller') === "auth_federated")
+                return (bool) $this->session->userdata('is_admin');
+            else {
+                $this->ion_auth_model->trigger_events('is_admin');
+		$admin_group = $this->config->item('admin_group', 'ion_auth');
+		return $this->in_group($admin_group, $id);
+            }
 	}
 
 	/**

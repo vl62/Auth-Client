@@ -2759,6 +2759,22 @@ function register_user() {
     });
 }
 
+// activate user
+$(document).ready(function(){
+    $("#loginUser").click(function(e){
+        e.preventDefault();
+        $.ajax({url: 'https://auth.cafevariome.org_2/',
+		complete: function(xhr, status) {
+                    if (status === "success") {
+                        window.location.href = baseurl + "auth_federated/login";
+                    } else {
+                        window.location.href = baseurl + "auth/login";
+                    }
+		}
+	});
+    });
+});
+
 function login_user() {
         $callAjax = true;
 	$('form[name="loginUser"]').submit(function(e) {
@@ -2777,7 +2793,7 @@ function login_user() {
                             $("#loginError").text(data.error);
                     } else if (data.success) {
                         if($callAjax)
-                        {$.ajax({url: authurl + '/auth_accounts/login/',
+                        {$.ajax({url: authurl + 'auth_accounts/login/',
                                 data: $postData,
                                 dataType: 'json',
                                 delay: 200,
@@ -2864,7 +2880,7 @@ function create_user() {
                             $("#createUserError").text(data.error);
                     } else if (data.success) {
                         if($callAjax)
-                        {$.ajax({url: authurl + '/auth_accounts/create_user/',
+                        {$.ajax({url: authurl + 'auth_accounts/create_user/',
                                 data: $postData,
                                 dataType: 'json',
                                 delay: 200,
@@ -3044,7 +3060,7 @@ function edit_user_profile() {
                             $("#editUserProfileError").text(data.error);
                     } else if (data.success) {
                         if($callAjax)
-                        {$.ajax({url: authurl + '/auth_accounts/edit_user/TRUE',
+                        {$.ajax({url: authurl + 'auth_accounts/edit_user/TRUE',
                                 data: $postData,
                                 dataType: 'json',
                                 delay: 200,

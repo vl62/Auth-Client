@@ -1295,6 +1295,10 @@ class Auth extends MY_Controller {
 			return FALSE;
 		}
 	}
+        
+        function no_access() {
+            $this->_render('auth/restricted_access');
+        }
 	
 
 

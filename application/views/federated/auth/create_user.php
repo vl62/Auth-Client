@@ -84,7 +84,12 @@
 					</select>
 					<?php endif; ?>
 				</p>
-					
+                                
+				<p>
+					<label for="isadmin">Is Admin:</label>
+					<?php echo form_checkbox('isadmin', '1', FALSE, 'id="isadmin"'); ?>
+				</p>
+                                
                                 <p><button type="submit" name="submit" onclick="create_user();" class="btn btn-primary"><i class="icon-user icon-white"></i>  Create User</button><?php echo nbs(6); ?><button type="reset" class="btn"><i class="icon-remove-sign"></i> Clear</button><?php echo nbs(6); ?><a href="<?php echo base_url() . "auth_federated/users"; ?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
 			</div>
 		</div>

@@ -23,9 +23,17 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="offset2 span3 pagination-centered"><a href="<?php echo base_url() . "auth_federated/users";?>" class="btn btn-info btn-large" rel="popover" data-content="Create/modify/delete users" data-original-title="Users"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-users.png" /></a><br />Users</div>
-		<div class="span3 pagination-centered"><a href="<?php echo base_url() . "auth_federated/groups";?>" class="btn btn-info btn-large" rel="popover" data-content="Create/modify/delete groups" data-original-title="User Groups"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-groups.png" /></a><br />Groups</div>
-		<div class="span3 pagination-centered"><a href="<?php echo base_url() . "admin/data_requests/";?>" class="btn btn-info btn-large" rel="popover" data-content="Approve or refuse any requests for data from users." data-original-title="Curate data requests"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-data-requests.png" /></a><br />Data Requests</div>
+                <?php if($this->session->userdata('controller') === "auth_federated"): ?>
+                    <div class="offset2 span3 pagination-centered"><a href="<?php echo base_url() . "auth_federated/users";?>" class="btn btn-info btn-large" rel="popover" data-content="Create/modify/delete users" data-original-title="Users"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-users.png" /></a><br />Users</div>
+                    <div class="span3 pagination-centered"><a href="<?php echo base_url() . "auth_federated/groups";?>" class="btn btn-info btn-large" rel="popover" data-content="Create/modify/delete groups" data-original-title="User Groups"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-groups.png" /></a><br />Groups</div>
+                    <div class="span3 pagination-centered"><a href="<?php echo base_url() . "admin/data_requests/";?>" class="btn btn-info btn-large" rel="popover" data-content="Approve or refuse any requests for data from users." data-original-title="Curate data requests"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-data-requests.png" /></a><br />Data Requests</div>
+                <?php else:?>    
+                    <div class="offset2 span3 pagination-centered"><a href="<?php echo base_url() . "auth/no_access";?>" class="btn btn-info btn-large disabled" rel="popover" data-content="Create/modify/delete users" data-original-title="Users"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-users.png" /></a><br />Users</div>
+                    <div class="span3 pagination-centered"><a href="<?php echo base_url() . "auth/no_access";?>" class="btn btn-info btn-large disabled" rel="popover" data-content="Create/modify/delete groups" data-original-title="User Groups"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-groups.png" /></a><br />Groups</div>
+                    <div class="span3 pagination-centered"><a href="<?php echo base_url() . "auth/no_access";?>" class="btn btn-info btn-large disabled" rel="popover" data-content="Approve or refuse any requests for data from users." data-original-title="Curate data requests"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-data-requests.png" /></a><br />Data Requests</div>
+                <?php endif;?>
+		
+		
 	</div>
 	<!--<hr>-->
 	<div class="row">
@@ -36,7 +44,11 @@
 	<div class="row">
 		<div class="offset2 span3 pagination-centered"><a href="<?php echo base_url() . "admin/settings";?>" class="btn btn-info btn-large" rel="popover" data-content="Modify core system settings of your installation including regenerating ontology trees, autocomplete terms and ElasticSearch index; setting the display fields for the discovery interface; generating templates for data import." data-original-title="Settings"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-configuration.png" /></a><br />Settings</div>
 		<div class="span3 pagination-centered"><a href="<?php echo base_url() . "admin/preferences";?>" class="btn btn-info btn-large" rel="popover" data-content="Modify visual appearance of your installation." data-original-title="Preferences"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-preferences.png" /></a><br />Preferences</div>
-		<div class="span3 pagination-centered"><a href="<?php echo base_url() . "federated_settings";?>" class="btn btn-info btn-large" rel="popover" data-content="Configure and manage installation federation." data-original-title="Federated"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-federated.png" /></a><br />Federated</div>
+                <?php if($this->session->userdata('controller') === "auth_federated"): ?>
+                    <div class="span3 pagination-centered"><a href="<?php echo base_url() . "federated_settings";?>" class="btn btn-info btn-large" rel="popover" data-content="Configure and manage installation federation." data-original-title="Federated"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-federated.png" /></a><br />Federated</div>
+                <?php else:?>    
+                    <div class="span3 pagination-centered"><a href="<?php echo base_url() . "auth/no_access";?>" class="btn btn-info btn-large disabled" rel="popover" data-content="Configure and manage installation federation." data-original-title="Federated"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-federated.png" /></a><br />Federated</div>
+                <?php endif;?>
 	</div>
 	<!--<hr>-->
 	<div class="row">
