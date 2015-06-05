@@ -1984,13 +1984,33 @@ class Admin extends MY_Controller {
 		// Get the id of the current user and fetch the groups that they belong
 		$user_id = $this->ion_auth->user()->row()->id;
 		$user_groups = array();
-		foreach ($this->ion_auth->get_users_groups($user_id)->result() as $group) {
-//			echo "groupid -> " . $group->id . " groupname -> " . $group->name . " description -> " . $group->description . "<br />";
-			$user_groups[$group->id] = $group->description;
-		}
 		$this->load->model('sources_model');
-		// Find which sources this user has the required group to access
-		$user_accessible_sources = $this->sources_model->getOnlineSources($user_groups);
+//		$user_groups = array();
+//		// Get all the sources for this installation that this user has network group access to
+		$sources_array = json_decode(authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_sources_assigned_to_network_groups_that_user_can_access"));
+//		print_r($current_groups);
+		$user_accessible_sources = array();
+		foreach ( $sources_array as $s ) {
+//			print $s->source_id . "<br />";
+//			print_r($s);
+			$user_accessible_sources[$s->source_id] = $this->sources_model->getSourceForID($s->source_id) . " (Network: " . $s->network_name . ")";
+		}
+		
+//		print_r($user_accessible_sources);
+//		foreach ($this->ion_auth->get_users_groups($user_id)->result() as $group) {
+////		foreach ($current_groups as $group) {
+////			print_r($group);
+////			echo "groupid -> " . $group->id . " groupname -> " . $group->name . " description -> " . $group->description . "<br />";
+//			$user_groups[$group->group_id] = $group->description;
+//		}
+		
+//		foreach ($this->ion_auth->get_users_groups($user_id)->result() as $group) {
+////			echo "groupid -> " . $group->id . " groupname -> " . $group->name . " description -> " . $group->description . "<br />";
+//			$user_groups[$group->id] = $group->description;
+//		}
+//
+//		// Find which sources this user has the required group to access
+//		$user_accessible_sources = $this->sources_model->getOnlineSources($user_groups);
 		$this->data['user_accessible_sources'] = $user_accessible_sources;
 		$user = $this->ion_auth->user($user_id)->row();
 		

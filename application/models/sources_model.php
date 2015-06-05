@@ -53,6 +53,13 @@ class Sources_model extends CI_Model {
 		return $source_id;
 	}
 	
+	public function getSourceForID($source_id) {
+		$query = $this->db->get_where('sources', array('source_id' => $source_id));
+//		error_log($this->db->last_query());
+		$row = $query->row_array();
+		return $row['description'];
+	}
+	
 	public function getEmailFromSourceName($source) {
 		$query = $this->db->get_where('sources', array('name' => $source));
 //		error_log($this->db->last_query());
