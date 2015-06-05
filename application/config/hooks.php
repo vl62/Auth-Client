@@ -29,13 +29,13 @@
 //                                );
 
 // Hook to get check whether the user is logged in // post_controller_constructor display_override
-//$hook['post_controller_constructor'][] = array(
-//                                'class'    => 'Authcheck',
-//                                'function' => 'is_logged_in',
-//                                'filename' => 'authcheck.php',
-//                                'filepath' => 'hooks',
-//                                'params'   => array()
-//                                );
+$hook['post_controller_constructor'][] = array(
+                                'class'    => 'Authcheck',
+                                'function' => 'is_logged_in',
+                                'filename' => 'authcheck.php',
+                                'filepath' => 'hooks',
+                                'params'   => array()
+                                );
 
 //$hook['post_controller_constructor'][] = array(
 $hook['pre_controller'][] = array(

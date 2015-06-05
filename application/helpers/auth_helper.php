@@ -3,7 +3,7 @@
 // Helper for shared federated auth functions
 
 function authPostRequest($token, $data, $uri) {
-//	error_log("test $token $uri");
+	error_log("test helper token -> $token $uri");
 //	error_log(print_r($data, 1));
 //	$w = stream_get_wrappers();
 //	echo 'openssl: ',  extension_loaded  ('openssl') ? 'yes':'no', "<br />";
@@ -13,7 +13,7 @@ function authPostRequest($token, $data, $uri) {
 
 	
 	$url = $uri . '/format/json';
-	$url = preg_replace('/([^:])(\/{2,})/', '$1/', $url);
+	$url = preg_replace('/([^:])(\/{2,})/', '$1/', $url); // Strip out any double forward slashes from the url
 //	error_log("url -> $url");
 //        echo $url;
         
@@ -26,7 +26,7 @@ function authPostRequest($token, $data, $uri) {
 	));
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_REFERER, $url);
+	curl_setopt($ch, CURLOPT_REFERER, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 	curl_setopt($ch,CURLOPT_POST, true);
 	curl_setopt($ch,CURLOPT_POSTFIELDS, $data);

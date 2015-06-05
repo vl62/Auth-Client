@@ -472,14 +472,16 @@ class Auth_federated extends MY_Controller {
 		}
 
 		$this->data['message'] = $this->session->flashdata('activation_email_unsuccessful');
+		$token = $this->session->userdata('Token');
+		error_log("token -> " . $token);
 		//list the users
 //		echo $this->config->item('installation_key');
 //		$users = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_users_and_network_groups_for_installation");
-		$users = authPostRequest('', array(), $this->config->item('auth_server') . "/api/auth/get_all_users");
+		$users = authPostRequest($token, array(), $this->config->item('auth_server') . "/api/auth/get_all_users");
 
 		$this->data['users'] = json_decode($users);
 //		$this->data['users'] = $this->ion_auth->users()->result();
-		$users_groups_data = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_users_in_installation");
+		$users_groups_data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_users_in_installation");
 		
 		$users_groups = array();
 		foreach ( json_decode($users_groups_data, 1) as $group ) {
