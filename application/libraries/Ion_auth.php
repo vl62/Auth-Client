@@ -443,9 +443,7 @@ class Ion_auth
             if($this->session->userdata('controller') === "auth_federated")
                 return (bool) $this->session->userdata('is_admin');
             else if($this->session->userdata('controller') === "auth") {
-                $this->ion_auth_model->trigger_events('is_admin');
-		$admin_group = $this->config->item('admin_group', 'ion_auth');
-		return $this->in_group($admin_group, $id);
+                return $this->ion_auth_model->is_admin($this->session->userdata('user_id'));
             }
             return false;
 	}
