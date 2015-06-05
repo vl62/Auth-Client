@@ -473,7 +473,7 @@ class Auth_federated extends MY_Controller {
 
 		$this->data['message'] = $this->session->flashdata('activation_email_unsuccessful');
 		$token = $this->session->userdata('Token');
-		error_log("token -> " . $token);
+//		error_log("token -> " . $token);
 		//list the users
 //		echo $this->config->item('installation_key');
 //		$users = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_users_and_network_groups_for_installation");
