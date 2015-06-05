@@ -784,27 +784,27 @@ class Ion_auth_model extends CI_Model
             
             $sql = "INSERT INTO `users`(`id`, `ip_address`, `username`, `password`, `salt`, `email`, `activation_code`, "
                     . "`forgotten_password_code`, `forgotten_password_time`, `remember_code`, `created_on`, `last_login`, "
-                    . "`active`, `first_name`, `last_name`, `company`, `orcid`) "
-                    . "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) "
+                    . "`active`, `first_name`, `last_name`, `company`, `orcid`, `is_admin`) "
+                    . "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) "
                     
                     . "ON DUPLICATE KEY UPDATE "
                     
                     . "`id`=?, `ip_address`=?, `username`=?, `password`=?, `salt`=?, `email`=?, `activation_code`=?, "
                     . "`forgotten_password_code`=?, `forgotten_password_time`=?, `remember_code`=?, `created_on`=?, `last_login`=?, "
-                    . "`active`=?, `first_name`=?, `last_name`=?, `company`=?, `orcid`=?";
+                    . "`active`=?, `first_name`=?, `last_name`=?, `company`=?, `orcid`=?, `is_admin`=?";
             
             $this->db->query($sql, array(
                 $data['user_id'], $data['ip_address'], $data['username'], $data['password'], 
                 $data['salt'], $data['email'], $data['activation_code'], $data['forgotten_password_code'], 
                 $data['forgotten_password_time'], $data['remember_code'], $data['created_on'], 
                 $data['old_last_login'], $data['active'], $data['first_name'], $data['last_name'], 
-                $data['company'], $data['orcid'], 
+                $data['company'], $data['orcid'], $data['is_admin'] ? 1 : 0, 
                 
                 $data['user_id'], $data['ip_address'], $data['username'], $data['password'], 
                 $data['salt'], $data['email'], $data['activation_code'], $data['forgotten_password_code'], 
                 $data['forgotten_password_time'], $data['remember_code'], $data['created_on'], 
                 $data['old_last_login'], $data['active'], $data['first_name'], $data['last_name'], 
-                $data['company'], $data['orcid']));
+                $data['company'], $data['orcid'], $data['is_admin'] ? 1 : 0));
             
             return $this->db->affected_rows();
             
@@ -2186,4 +2186,18 @@ class Ion_auth_model extends CI_Model
 			return $ip_address;
 		}
 	}
+        
+        function is_admin($id) {
+            	$query = $this->db->select('is_admin')
+		                  ->where(array('id' => $id, 'is_admin' => 1))
+		                  ->limit(1)
+		                  ->get($this->tables['users']);
+                
+                if ($query->num_rows() === 1)
+		{
+                        return true;
+                } else {
+                    return false;
+                }
+        }
 }

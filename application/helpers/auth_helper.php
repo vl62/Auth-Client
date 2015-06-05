@@ -15,7 +15,8 @@ function authPostRequest($token, $data, $uri) {
 	$url = $uri . '/format/json';
 	$url = preg_replace('/([^:])(\/{2,})/', '$1/', $url);
 //	error_log("url -> $url");
-	
+//        echo $url;
+        
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($ch, CURLOPT_HEADER, false);
@@ -31,6 +32,7 @@ function authPostRequest($token, $data, $uri) {
 	curl_setopt($ch,CURLOPT_POSTFIELDS, $data);
     $result = curl_exec($ch);
 //	error_log($result);
+    echo curl_error($ch);
     curl_close($ch);
     return $result;
 	

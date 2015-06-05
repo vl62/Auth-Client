@@ -22,7 +22,7 @@ class Auth_federated extends MY_Controller {
 		$this->load->database();
 		$this->form_validation->set_error_delimiters($this->config->item('error_start_delimiter', 'ion_auth'), $this->config->item('error_end_delimiter', 'ion_auth'));
 	}
-
+        
 	//redirect if needed, otherwise display the user list
 	function index()
 	{
@@ -108,6 +108,7 @@ class Auth_federated extends MY_Controller {
                     'company'                   => $this->input->post('company'),
                     'orcid'                     => $this->input->post('orcid'),
                     'is_admin'                  => $this->input->post('is_admin') === "admin" ? TRUE : FALSE,
+                    'Token'                     => $this->input->post('Token'),
                     'controller'                => "auth_federated"
                 );
                 
