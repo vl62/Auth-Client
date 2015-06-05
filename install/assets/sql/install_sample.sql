@@ -18938,6 +18938,7 @@ CREATE TABLE `users` (
   `last_name` varchar(50) CHARACTER SET utf8 DEFAULT NULL,
   `company` varchar(100) CHARACTER SET utf8 DEFAULT NULL,
   `orcid` varchar(25) NOT NULL,
+  `is_admin` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `username` (`username`),
   KEY `orcid` (`orcid`)

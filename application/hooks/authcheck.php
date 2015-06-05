@@ -13,7 +13,7 @@ class Authcheck {
 		
 		$CFG =& load_class('Config', 'core');
 		if ( $CFG->item("site_requires_login") == "on" ) {
-			error_log("site_requires_login -> " . $CFG->item("site_requires_login"));
+//			error_log("site_requires_login -> " . $CFG->item("site_requires_login"));
 //			$segment = $this->CI->uri->segment(2);
 			// TODO: Add check (and add setting in db & schema) to see whether the setting for login check is switched on
 			if ( strtolower($current) != "css" ) { // Ignore it if the css controller is being called
