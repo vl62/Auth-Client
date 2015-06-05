@@ -474,7 +474,8 @@ class Auth_federated extends MY_Controller {
 		//list the users
 //		echo $this->config->item('installation_key');
 //		$users = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_users_and_network_groups_for_installation");
-		$users = authPostRequest('', array(), $this->config->item('auth_server') . "api/auth/get_all_users");
+		$users = authPostRequest('', array(), $this->config->item('auth_server') . "/api/auth/get_all_users");
+
 		$this->data['users'] = json_decode($users);
 //		$this->data['users'] = $this->ion_auth->users()->result();
 		$users_groups_data = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_users_in_installation");
@@ -797,9 +798,13 @@ class Auth_federated extends MY_Controller {
 		{
 			redirect('auth', 'refresh');
 		}
-                
-                $user = $this->ion_auth->user($id)->row();
-                $this->session->set_userdata(array("userId" => $user->id));
+		
+//		Local ion_auth call no longer used, need to fetch the user information for auth server via API call instead
+		$user_json = authPostRequest('', array('user_id' => $id), $this->config->item('auth_server') . "/api/auth/get_user_by_id");
+		$user = json_decode($user_json);
+//		error_log("USER -> " . print_r($user, 1));
+//		$user = $this->ion_auth->user($id)->row();
+		$this->session->set_userdata(array("userId" => $user->id));
                 
 		//display the edit user form
 		$this->data['csrf'] = $this->_get_csrf_nonce();
@@ -987,7 +992,11 @@ class Auth_federated extends MY_Controller {
 		$user = $this->ion_auth->user($id)->row();
 		$this->data['user'] = $user;
 
-		$this->data['current_groups'] = $this->ion_auth->get_users_groups($id)->result();
+		// Get all the network groups that this user from this installation is currently in so that these can be pre selected in the multiselect list
+		$current_groups = json_decode(authPostRequest('', array('user_id' => $id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_user_in_installation"));
+//		print_r($current_groups);
+		$this->data['current_groups'] = $current_groups;
+//		$this->data['current_groups'] = $this->ion_auth->get_users_groups($id)->result();
 
 		$this->_render('federated/auth/user_profile');
 
