@@ -186,6 +186,8 @@ class Networks extends MY_Controller {
             $result['username'] = $user->username;
             $result['email'] = $user->email;
 			
+//			$networks = authPostRequest('', $result, $this->config->item('auth_server') . "/api/auth/get_networks_installation_not_a_member_of");
+			
             $data = json_decode(joinNetwork($result, $this->config->item('auth_server')));
                 
             if(array_key_exists('network_request_id', $data)) {

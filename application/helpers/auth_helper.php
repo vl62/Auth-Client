@@ -5,19 +5,24 @@
 function authPostRequest($token, $data, $uri) {
 //	error_log("test $token $uri");
 //	error_log(print_r($data, 1));
-//$w = stream_get_wrappers();
-//echo 'openssl: ',  extension_loaded  ('openssl') ? 'yes':'no', "<br />";
-//echo 'http wrapper: ', in_array('http', $w) ? 'yes':'no', "<br />";
-//echo 'https wrapper: ', in_array('https', $w) ? 'yes':'no', "<br />";
-//echo 'wrappers: ', var_dump($w);
+//	$w = stream_get_wrappers();
+//	echo 'openssl: ',  extension_loaded  ('openssl') ? 'yes':'no', "<br />";
+//	echo 'http wrapper: ', in_array('http', $w) ? 'yes':'no', "<br />";
+//	echo 'https wrapper: ', in_array('https', $w) ? 'yes':'no', "<br />";
+//	echo 'wrappers: ', var_dump($w);
 
 	
 	$url = $uri . '/format/json';
+	$url = preg_replace('/([^:])(\/{2,})/', '$1/', $url);
 //	error_log("url -> $url");
 	
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($ch, CURLOPT_HEADER, false);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+		"Token: $token",
+		"Access-Control-Allow-Origin: *"
+	));
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_REFERER, $url);
