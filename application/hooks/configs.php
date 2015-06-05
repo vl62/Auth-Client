@@ -18,7 +18,8 @@ class Configs {
 		foreach ($query->result_array() as $row) {
 //			print_r($row);
 			$c++;
-//			error_log("name -> " . $row['name'] . " value -> " . $row['value']);
+			error_log("name -> " . $row['name'] . " value -> " . $row['value']);
+
 			if ( $row['value'] == "off") {
 //				error_log("FALSE name -> " . $row['name'] . " value -> " . $row['value']);
 //				$CI->config->set_item($row['name'], false);
@@ -30,6 +31,7 @@ class Configs {
 			}
 		}
     }
+	
 }
 
 ?>
