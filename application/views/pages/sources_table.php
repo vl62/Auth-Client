@@ -29,6 +29,8 @@ $(function (){
 					<tbody>
 						<?php
 						ksort($counts);
+//						error_log("view counts -> " . print_r($counts, 1));
+//						error_log("sources_full -> " . print_r($sources_full, 1));
 						foreach ( $counts as $source => $count ):
 						?>
 						<tr>
@@ -70,25 +72,18 @@ $(function (){
 							<td><?php if ( array_key_exists('restrictedAccess', $count )) { if ( $count['restrictedAccess'] > $this->config->item('variant_count_cutoff') ) { echo $count['restrictedAccess'];} else { ?> <a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a> <?php }} else { echo "0";}?></td>
 							<td>
 								<?php if ( array_key_exists('restrictedAccess', $count )) : ?>
-									<?php if ( $access_flag[$source] ): ?>
+									<?php if ( $source_types[$source] == "api" ): ?>
+										<?php echo anchor($source_info[$source]['uri'] . "/discover/variants/$term/" . $node_source[$source] . "/restrictedAccess", img(array('src' => base_url('resources/images/cafevariome/cafevariome_node.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to access these records on the remote node. N.B. All access control to these records is controlled by the remote node.", 'data-original-title' => "Access Node Records")); ?>
+									<?php elseif ( $source_types[$source] == "central" ): ?>
+										<?php echo anchor("http://www.cafevariome.org/discover/variants/$term/" . $central_source[$source] . "/restrictedAccess", img(array('src' => base_url('resources/images/cafevariome/cafevariome_node.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to access these records in Cafe Variome Central. N.B. All access control to these records is controlled by Cafe Variome Central.", 'data-original-title' => "Access CV Central Records")); ?>
+									<?php else: ?>
 										<?php if ( $count['restrictedAccess'] > $this->config->item('variant_count_cutoff') ): ?>
-											<a rel="popover" data-content="Click to access these restrictedAccess records." data-original-title="Access Records"> <input type="image" onclick="javascript:variantRestrictedAccessRequest('<?php echo urlencode($term);?>', '<?php echo $source;?>', '<?php echo $sources_full[$source];?>', '<?php echo $count['restrictedAccess'];?>')" src="<?php echo base_url('resources/images/cafevariome/request.png');?>"></a>
+											<?php echo anchor("discover/variants/" . urlencode($term) . "/$source/restrictedAccess", img(array('src' => base_url('resources/images/cafevariome/request-icon.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to request access to these records (requires login).", 'data-original-title' => "Access Records")); ?>
 										<?php else: ?>
 											<a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a>
 										<?php endif; ?>
-									<?php else: ?>
-											<?php if ( $source_types[$source] == "api" ): ?>
-												<?php echo anchor($source_info[$source]['uri'] . "/discover/variants/$term/" . $node_source[$source] . "/restrictedAccess", img(array('src' => base_url('resources/images/cafevariome/cafevariome_node.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to access these records on the remote node. N.B. All access control to these records is controlled by the remote node.", 'data-original-title' => "Access Node Records")); ?>
-											<?php elseif ( $source_types[$source] == "central" ): ?>
-												<?php echo anchor("http://www.cafevariome.org/discover/variants/$term/" . $central_source[$source] . "/restrictedAccess", img(array('src' => base_url('resources/images/cafevariome/cafevariome_node.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to access these records in Cafe Variome Central. N.B. All access control to these records is controlled by Cafe Variome Central.", 'data-original-title' => "Access CV Central Records")); ?>
-											<?php else: ?>
-												<?php if ( $count['restrictedAccess'] > $this->config->item('variant_count_cutoff') ): ?>
-													<?php echo anchor("discover/variants/" . urlencode($term) . "/$source/restrictedAccess", img(array('src' => base_url('resources/images/cafevariome/request-icon.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to request access to these records (requires login).", 'data-original-title' => "Access Records")); ?>
-												<?php else: ?>
-													<a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a>
-												<?php endif; ?>
-											<?php endif; ?>
-									<?php endif; ?>	
+									<?php endif; ?>
+
 								<?php else: ?>
 									<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
 								<?php endif; ?>

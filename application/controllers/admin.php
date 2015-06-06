@@ -3033,6 +3033,7 @@ class Admin extends MY_Controller {
 		$es_index = strtolower($es_index);
 		$this->elasticsearch->set_index($es_index);
 		$this->elasticsearch->set_type("variants");
+		$this->elasticsearch->create();
 		$this->elasticsearch->delete_all();
 		
 		

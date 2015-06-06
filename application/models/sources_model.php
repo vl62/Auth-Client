@@ -32,6 +32,11 @@ class Sources_model extends CI_Model {
 		return $query;
 	}
 	
+	public function getSourcesForFederatedQuery () {
+		$query = $this->db->get_where('sources', array('type !=' => 'federated'))->result_array();
+		return $query;
+	}
+	
 	public function getSourceSingle ($source) {
 		$query = $this->db->get_where('sources', array('name' => $source));
 		$row = $query->row_array();
@@ -359,25 +364,28 @@ class Sources_model extends CI_Model {
 //		error_log($variant_data);
 		$phenotype_query = $this->db->get_where('phenotypes', array('cafevariome_id' => $id))->result_array();
 //		error_log("test -> " . print_r($phenotype_query, 1));
-		$phenotype_array = array();
-		$phenotype_array_query = array();
-		foreach ( $phenotype_query as $phenotype ) {
-			$attribute = str_replace(' ', '_', $phenotype['attribute_termName']); // Remove spaces from the field as ElasticSearch is unable to handle spaces
-//			$attribute = $phenotype['attribute_termName']; 
-			if ( $phenotype['value'] == '' ) { // In theory there should always be a value for a phenotype attribute but just in case default to present if there isn't one -- no longer needed as when indexing null in ElasticSearch the best way is to just not add the value
-//				$phenotype_array[$attribute] = 'present';
-//				$phenotype_array[$attribute] = 'NULL';
+		if ( ! empty($phenotype_query)) {
+			error_log("not empty");
+			$phenotype_array = array();
+			$phenotype_array_query = array();
+			foreach ( $phenotype_query as $phenotype ) {
+				$attribute = str_replace(' ', '_', $phenotype['attribute_termName']); // Remove spaces from the field as ElasticSearch is unable to handle spaces
+//				$attribute = $phenotype['attribute_termName']; 
+				if ( $phenotype['value'] == '' ) { // In theory there should always be a value for a phenotype attribute but just in case default to present if there isn't one -- no longer needed as when indexing null in ElasticSearch the best way is to just not add the value
+//					$phenotype_array[$attribute] = 'present';
+//					$phenotype_array[$attribute] = 'NULL';
+				}
+				else {
+					$phenotype_array_query['term_name'] = $phenotype['attribute_termName']; // Want to index the phenotype term name as it is so that it can be searched in standard google-like query interface		
+					$phenotype_array[$attribute] = strtolower($phenotype['value']);
+				}
 			}
-			else {
-				$phenotype_array_query['term_name'] = $phenotype['attribute_termName']; // Want to index the phenotype term name as it is so that it can be searched in standard google-like query interface		
-				$phenotype_array[$attribute] = strtolower($phenotype['value']);
-			}
+			$index_data['phenotypes'][] = $phenotype_array;
+			$index_data['phenotypes'][] = $phenotype_array_query;
 		}
-		$index_data['phenotypes'][] = $phenotype_array;
-		$index_data['phenotypes'][] = $phenotype_array_query;
 		$index_data = json_encode($index_data);
 		$index_data = str_replace( '\/', '/', $index_data ); // Don't want to escape forward slashes (as might be URLs)
-		
+
 		return $index_data;
 		
 	}
