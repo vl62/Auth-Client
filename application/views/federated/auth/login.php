@@ -7,6 +7,7 @@
 				<p>Please login with your email address below.</p>
 				<strong id="loginError" class="hide" style="color: red;"></strong>
 				<?php echo form_open("auth_federated/signup", array('name' => 'loginUser')); ?>
+				<?php echo form_hidden(array('installation_key' => $this->config->item('installation_key'))); ?>	
 				<p>
 					<label for="identity">Email:</label>
 					<?php echo form_input($identity); ?>
