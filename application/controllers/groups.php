@@ -153,11 +153,15 @@ class Groups extends MY_Controller {
 				}
 
 				// do we have the right userlevel?
-//				if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin()) {
+				if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin()) {
 //					$this->ion_auth->delete_group($id);
-					authPostRequest('', array('group_id' => $id), $this->config->item('auth_server') . "/api/auth/delete_network_group");
-
-//				}
+					$token = $this->session->userdata('Token');
+					$data = authPostRequest($token, array('group_id' => $id), $this->config->item('auth_server') . "/api/auth/delete_network_group");
+					$delete_result = ($data === 'true');
+					if ( ! $delete_result ) {
+						$this->session->set_flashdata('message', "Unable to delete network group as sources from another installation are present in the group.");
+					}
+				}
 			}
 
 			//redirect them back to the auth page

@@ -44,6 +44,7 @@
 	</div><!--/span-->
 	<div class="span10 offset1 pagination-centered"><br /><p>Network groups can be assigned to sources within you installation. Users who belong to those groups in your network are allowed access to restrictedAccess records in sources across the network.</p></div>
 	<!--<div class="span12 pagination-centered"><br /><p>To assign groups, click the edit button in the <a href="<?php // echo base_url() . "auth/users";?>">users</a> or <a href="<?php // echo base_url() . "admin/sources";?>">sources</a> pages</p></div>-->
+	<div class="span10 offset1 pagination-centered"><div id="infoMessage"><strong><h4><?php echo $this->session->flashdata('message'); ?></h4></strong></div></div>
 	<hr>
 </div><!--/.fluid-container-->
 
