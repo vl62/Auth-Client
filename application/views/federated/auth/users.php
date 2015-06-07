@@ -42,10 +42,14 @@
 							<td><?php echo $user->company; ?></td>
 							<td><?php echo $user->email; ?></td>
 							<td>
-								<?php if (array_key_exists($user->id, $users_groups)): ?>
-								<?php foreach ($users_groups[$user->id] as $group): ?>
-										<?php echo $group['group_name']; ?><br />
-								<?php endforeach ?>
+								<?php if ( isset($users_groups)): ?>
+									<?php if (array_key_exists($user->id, $users_groups)): ?>
+									<?php foreach ($users_groups[$user->id] as $group): ?>
+											<?php echo $group['group_name'] . " (Network:" . $group['network_name'] . ")"; ?><br />
+									<?php endforeach ?>
+									<?php else: ?>
+										-
+									<?php endif; ?>
 								<?php else: ?>
 									-
 								<?php endif; ?>

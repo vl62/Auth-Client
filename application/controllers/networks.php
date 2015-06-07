@@ -47,8 +47,9 @@ class Networks extends MY_Controller {
 			$name = strtolower($this->input->post('name')); // Convert the network name to lowercase
 //			print "$name";
 //			$base_url = urlencode(base64_encode(base_url()));
+			$token = $this->session->userdata('Token');
 			$base_url = base_url();
-			$network = authPostRequest('', array('installation_base_url' => $base_url, 'network_name' => $name, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/create_network");
+			$network = authPostRequest($token, array('installation_base_url' => $base_url, 'network_name' => $name, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/create_network");
 //			$data = json_decode(createNetwork(array('installation_base_url' => $base_url, 'network_name' => $name, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server')));
 //			echo "create network:<br />";
 //			print_r($network);
@@ -120,7 +121,8 @@ class Networks extends MY_Controller {
 			$this->load->model('network_model');
 			// Make API call to the central auth server to see whether this network name is already existing, if it does then an error will be given in create network form based on the return from this callback
 //			$data = json_decode(checkNetworkExists(array('network_name' => $network_name), $this->config->item('auth_server')));
-			$data = json_decode(authPostRequest('', array('network_name' => $network_name), $this->config->item('auth_server') . "/api/auth/check_network_exists"));
+			$token = $this->session->userdata('Token');
+			$data = json_decode(authPostRequest($token, array('network_name' => $network_name), $this->config->item('auth_server') . "/api/auth/check_network_exists"));
 //			check_network_exists
 //			error_log("data -> " . $data);
             $bool_test = $data === 'true'? true: false; // Need to convert the true/false string returned by the API call to boolean and then test
@@ -163,8 +165,8 @@ class Networks extends MY_Controller {
                             'style' => 'width:50%',
                             'value' => $this->form_validation->set_value('justification'),
                     );
-                
-				$networks = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_not_a_member_of");
+                $token = $this->session->userdata('Token');
+				$networks = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_not_a_member_of");
 //				$networks = getNetworksInstallationNotMemberOf(array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
 //				error_log("getnetworks -> $getNetworks");
 				$data = json_decode($networks, true);
@@ -178,36 +180,44 @@ class Networks extends MY_Controller {
         
         function process_network_join_request() {
             
-            $result['network_key'] = $this->input->post('networks');
+            $result['network_key'] = $this->input->post('network_key');
             $result['justification'] = $this->input->post('justification');
 			
 			$result['installation_key'] = $this->config->item('installation_key');
             $user = $this->ion_auth->user($this->session->userdata( 'user_id' ))->row();
             $result['username'] = $user->username;
             $result['email'] = $user->email;
-			
+			error_log("post -> " . $this->input->post('networks') . " install -> " . $this->config->item('installation_key'));
 //			$networks = authPostRequest('', $result, $this->config->item('auth_server') . "/api/auth/get_networks_installation_not_a_member_of");
+			$base_url = base_url();
+			$token = $this->session->userdata('Token');
+			$networks = authPostRequest($token, array('network_key' => $this->input->post('networks'), 'installation_key' => $this->config->item('installation_key'), 'installation_base_url' => $base_url), $this->config->item('auth_server') . "/api/auth/join_network");
+			echo $networks;
 			
-            $data = json_decode(joinNetwork($result, $this->config->item('auth_server')));
-                
-            if(array_key_exists('network_request_id', $data)) {
-                echo json_encode(array('success' => 'Network join request has been sent!'));
-            } else {
-                echo json_encode(array('error' => 'Sorry, unable to process request. Retry!'));
-                $result['network_key'] = $this->input->post('networks');
-                $result['justification'] = $this->input->post('justification');
-                
-                echo "<br /><br />join networks:<br />";
-				$data = json_decode(joinNetwork($result, $this->config->item('auth_server')));
-                
-                if(array_key_exists('network_request_id', $data)) {
-//                    print_r($data);
-                    // create a view and display a msg
-                    
-                } else {
-                    
-                }
-            }
+			//TODO: need to send the join request messages to all admins in the network and get them to approve/refuse the request
+//			$networks = authPostRequest($token, $result, $this->config->item('auth_server') . "/api/auth/join_network_request");
+//			$data = json_decode($networks, 1);
+////			$data = json_decode(joinNetwork($result, $this->config->item('auth_server')));
+//                
+//            if (array_key_exists('network_request_id', $data)) {
+//                echo json_encode(array('success' => 'Network join request has been sent!'));
+//            } else {
+//                echo json_encode(array('error' => 'Sorry, unable to process request. Retry!'));
+//                $result['network_key'] = $this->input->post('networks');
+//                $result['justification'] = $this->input->post('justification');
+//                
+//                echo "<br /><br />join networks:<br />";
+//				$networks = authPostRequest($token, $result, $this->config->item('auth_server') . "/api/auth/join_network_request");
+//				$data = json_decode($networks, 1);
+//                
+//                if(array_key_exists('network_request_id', $data)) {
+////                    print_r($data);
+//                    // create a view and display a msg
+//                    
+//                } else {
+//                    
+//                }
+//            }
         }
         
         function jsonp_decode($jsonp, $assoc = false) { // PHP 5.3 adds depth as third parameter to json_decode
@@ -257,8 +267,8 @@ class Networks extends MY_Controller {
 		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
 			redirect('auth', 'refresh');
 		}
-		
-		$networks = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of");
+		$token = $this->session->userdata('Token');
+		$networks = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of");
 		$data = json_decode($networks, true);
 //		print_r($data);
 		$installation_count_for_networks = array();
@@ -266,7 +276,7 @@ class Networks extends MY_Controller {
 		if ( $data ) {
 			foreach ($data as $network) {
 //				error_log(print_r($network,1));
-				$count = json_decode(authPostRequest('', array('network_key' => $network['network_key']), $this->config->item('auth_server') . "/api/auth/count_number_of_installations_for_network"), 1);
+				$count = json_decode(authPostRequest($token, array('network_key' => $network['network_key']), $this->config->item('auth_server') . "/api/auth/count_number_of_installations_for_network"), 1);
 				// the count of installations for this network will be position zero in the returned array and have a key of total
 				$installation_count_for_networks[$network['network_key']] = $count[0]['total'];
 			}
@@ -282,8 +292,10 @@ class Networks extends MY_Controller {
 		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
 			redirect('auth', 'refresh');
 		}
-		
-		$data = leaveNetwork(array('installation_count_for_network' => $installation_count_for_network, 'network_key' => $network_key, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
+		$token = $this->session->userdata('Token');
+		$data = authPostRequest($token, array('installation_count_for_network' => $installation_count_for_network, 'network_key' => $network_key, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/leave_network");
+
+//		$data = leaveNetwork(array(), $this->config->item('auth_server'));
 
 //		print_r($leave_network_success);
 		$leave_network_success = json_decode($data, true);

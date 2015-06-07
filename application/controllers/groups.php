@@ -26,8 +26,8 @@ class Groups extends MY_Controller {
 			redirect('auth_federated', 'refresh');
 		}
 
-		
-		$groups = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
+		$token = $this->session->userdata('Token');
+		$groups = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
 //		print_r($groups);
 		$this->data['groups'] = json_decode($groups, TRUE);
 //		$this->data['groups'] = $this->ion_auth->getGroupsFull();
@@ -57,7 +57,8 @@ class Groups extends MY_Controller {
 			
 //			error_log("desc -> " .  $this->input->post('desc'));
 			// Create the new group
-			$new_group_id = authPostRequest('', array('group_name' => $this->input->post('group_name'), 'group_description' => $this->input->post('desc'), 'network_key' => $this->input->post('network')), $this->config->item('auth_server') . "/api/auth/create_network_group");
+			$token = $this->session->userdata('Token');
+			$new_group_id = authPostRequest($token, array('group_name' => $this->input->post('group_name'), 'group_description' => $this->input->post('desc'), 'network_key' => $this->input->post('network')), $this->config->item('auth_server') . "/api/auth/create_network_group");
 //			error_log("new -> $new_group_id");
 			if($new_group_id) {
 				// check to see if we are creating the group
@@ -74,8 +75,8 @@ class Groups extends MY_Controller {
 			}
 		}
 		else {
-			
-			$getNetworks = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of");
+			$token = $this->session->userdata('Token');
+			$getNetworks = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of");
 //			$getNetworks = getNetworksInstallationMemberOf(array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
 			$this->data['networks'] = json_decode($getNetworks, TRUE);
 //			print_r($getNetworks);

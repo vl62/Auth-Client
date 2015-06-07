@@ -25,10 +25,10 @@ class Discover extends MY_Controller {
 	public function index() {
 
 		$this->title = "Discover";
-//		$token = $this->session->userdata('Token');
-//		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key'), 'network_key' => $this->config->item('network_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
-//		$sources = stripslashes($data);
-//		error_log("sources -> $sources");
+		$token = $this->session->userdata('Token');
+		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key'), 'network_key' => $this->config->item('network_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
+		$sources = stripslashes($data);
+		error_log("sources -> $sources");
 //		$sources_array = json_decode($sources, TRUE);
 		
 		

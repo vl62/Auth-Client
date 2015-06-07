@@ -64,7 +64,7 @@
 					Confirm Password: (if changing password)<br />
 					<?php echo form_input($password_confirm); ?>
 				</p>
-						
+				<?php echo form_hidden(array('installation_key' => $this->config->item('installation_key'))); ?>	
 				<p>
 					Assign user to groups that given them openAccess to restrictedAccess records<br />(control click to select multiple): <br />
 					<?php 
@@ -73,7 +73,7 @@
 					?>
 					<select size="<?php echo $group_count; ?>" name="groups[]"  multiple="multiple">
 						<?php foreach ($groups as $group ): ?>
-							<option value="<?php echo $group['id'] . "," . $group['network_key']; ?>" <?php if (array_key_exists($group['id'], $selected_groups)) { echo 'selected="selected"'; } ?>><?php echo $group['description'] . " (Network:" . $group['network_name'] . ")"; ?></option>
+							<option value="<?php echo $group['id'] . "," . $group['network_key'] . ""; ?>" <?php if (array_key_exists($group['id'], $selected_groups)) { echo 'selected="selected"'; } ?>><?php echo $group['description'] . " (Network:" . $group['network_name'] . ")"; ?></option>
 						<?php endforeach; ?>
 					</select>						   
 				</p>
