@@ -486,7 +486,7 @@ class Auth_federated extends MY_Controller {
 		$users_groups = array();
 		foreach ( json_decode($users_groups_data, 1) as $group ) {
 //			print_r($group);
-			$users_groups[$group['user_id']][] = array('group_id' => $group['group_id'], 'group_name' => $group['name']);
+			$users_groups[$group['user_id']][] = array('network_name' => $group['network_name'], 'group_id' => $group['group_id'], 'group_name' => $group['name']);
 			
 		}
 		$this->data['users_groups'] = $users_groups;
@@ -694,7 +694,8 @@ class Auth_federated extends MY_Controller {
                 
 		$this->title = "Create User";
 				// Get all the available network groups for this installation
-                $groups = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
+				$token = $this->session->userdata('Token');
+                $groups = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
 //                error_log(print_r($groups, 1));
 				$this->data['groups'] = json_decode($groups, TRUE);
 
@@ -771,6 +772,9 @@ class Auth_federated extends MY_Controller {
             $this->form_validation->set_rules('password_confirm', 'Password Confirmation', 'required');
             $this->form_validation->set_rules('orcid', 'ORCID', 'xss_clean');
             
+			
+			
+			
             if ($this->form_validation->run() == true)
             {   echo json_encode(array('success' => "no errors"));
                 return;    
@@ -803,7 +807,8 @@ class Auth_federated extends MY_Controller {
 		}
 		
 //		Local ion_auth call no longer used, need to fetch the user information for auth server via API call instead
-		$user_json = authPostRequest('', array('user_id' => $id), $this->config->item('auth_server') . "/api/auth/get_user_by_id");
+		$token = $this->session->userdata('Token');
+		$user_json = authPostRequest($token, array('user_id' => $id), $this->config->item('auth_server') . "/api/auth/get_user_by_id");
 		$user = json_decode($user_json);
 //		error_log("USER -> " . print_r($user, 1));
 //		$user = $this->ion_auth->user($id)->row();
@@ -819,12 +824,12 @@ class Auth_federated extends MY_Controller {
 		$this->data['user'] = $user;
 
 		// Get all the available network groups for this installation
-		$groups = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
+		$groups = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
 //		print_r($groups);
 		$this->data['groups'] = json_decode($groups, TRUE);
 
 		// Get all the network groups that this user from this installation is currently in so that these can be pre selected in the multiselect list
-		$returned_groups = authPostRequest('', array('user_id' => $id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_user_in_installation");
+		$returned_groups = authPostRequest($token, array('user_id' => $id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_user_in_installation");
 		$tmp_selected_groups = json_decode($returned_groups, TRUE);
 		$selected_groups = array();
 		if (! array_key_exists('error', $tmp_selected_groups)) {
@@ -898,7 +903,7 @@ class Auth_federated extends MY_Controller {
             $this->form_validation->set_rules('email', 'Email Address', 'required|valid_email');
             $this->form_validation->set_rules('company', 'Institute Name', 'required|xss_clean');
             $this->form_validation->set_rules('orcid', 'ORCID', 'xss_clean');
-            
+
             if (isset($_POST) && !empty($_POST))
             {
                     // do we have a valid request?
@@ -909,6 +914,7 @@ class Auth_federated extends MY_Controller {
                     
                     if ($this->form_validation->run() === TRUE)
                     {
+						error_log("true");
                         $this->session->unset_userdata("userId");
                         echo json_encode(array('success' => 'no errors'));
                         return;
@@ -917,6 +923,7 @@ class Auth_federated extends MY_Controller {
 //				$this->session->set_flashdata('message', "User Saved");
 //				redirect("auth_federated", 'refresh');
                     } else {
+						error_log("false");
                         echo json_encode(array('error' => validation_errors()));
                         return;
                     }
@@ -939,39 +946,7 @@ class Auth_federated extends MY_Controller {
 //                            $data['password'] = $this->input->post('password');
 //                    }
 
-                    // Check if there any groups selected
-//			if ($this->input->post('groups')) {
-//
-//				// Get all the groups that this user is currently in
-//				$groups_in = array();
-//				foreach ($this->ion_auth->get_users_groups($id)->result() as $group) {
-////					echo "groupid -> " . $group->id . " groupname -> " . $group->name . " description -> " . $group->description;
-//					$groups_in[] = $group->id;
-//				}
-//
-//				// Find which current groups have been deselected and therefore need to be removed from this user
-//				$diff = array_diff($groups_in, $this->input->post('groups'));
-////				print_r($diff);
-//				if ( ! empty($diff) ) {
-//					foreach ( $diff as $delete_group_id ) {
-//						$this->ion_auth->remove_from_group($delete_group_id, $id);
-//					}
-//				}
-//
-//				// Find which groups need to be added - go through the selected groups to see if they are not in the users currently assigned groups
-//				foreach ($this->input->post('groups') as $group_id) {
-////					error_log("sgid -> $group_id");
-//					if (! in_array($group_id, $groups_in)) {
-//						if (!$this->ion_auth->check_if_in_group($group_id, $id)) {
-////							error_log("NOT IN GROUP SO ADD");
-//							$this->ion_auth->add_to_group($group_id, $id);
-//						}
-//					}
-//				}
-//			} else {
-//				// All groups were de-selected so remove this user from all groups - do this by passing NULL to ion_auth remove_from_group function
-//				$this->ion_auth->remove_from_group(NULL, $id);
-//			}
+
 
             }
         }
@@ -1096,7 +1071,7 @@ class Auth_federated extends MY_Controller {
             if(! $this->input->is_ajax_request()) {
                     redirect('404');
             }
-                
+
             //validate form input
             $this->form_validation->set_rules('username', 'Username', 'xss_clean|alpha_dash');
             $this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');

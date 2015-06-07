@@ -4,7 +4,7 @@
 		<div class="span8 offset3">
 			<h1>Delete Source</h1>
 			<br /><span class="label label-warning">Warning: Are you sure you want to delete the source '<?php echo $source; ?>'</span><br /><br />
-			<?php echo form_open("admin/delete_source/" . $source_id . "/" . $source); ?>
+			<?php echo form_open("sources/delete_source/" . $source_id . "/" . $source); ?>
 			<p>
 				<label for="confirm">Yes:</label>
 				<input type="radio" name="confirm" value="yes" checked="checked" />

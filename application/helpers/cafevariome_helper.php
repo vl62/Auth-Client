@@ -59,21 +59,6 @@ function checkNetworkExists($data, $central_uri) {
 	
 }
 
-function joinNetwork($data, $central_uri) {
-	$url = $central_uri . '/api/auth/join_network/format/json';
-	$opts = array('http' =>
-		array(
-			'method'  => 'POST',
-			'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-			'content' => http_build_query($data)
-		)
-	);
-	$context  = stream_context_create($opts);
-	$result = file_get_contents($url, false, $context);
-	return $result;
-	
-}
-
 function getNetworks($central_uri) {
 	$url = $central_uri . '/api/auth/get_networks/format/json';
 	$opts = array('http' =>
@@ -146,19 +131,6 @@ function viewNetworkRequestsForInstallation($data, $central_uri) {
 	return $result;
 }
 
-function leaveNetwork($data, $central_uri) {
-	$url = $central_uri . '/api/auth/leave_network/format/json';
-	$opts = array('http' =>
-		array(
-			'method'  => 'POST',
-			'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-			'content' => http_build_query($data)
-		)
-	);
-	$context  = stream_context_create($opts);
-	$result = file_get_contents($url, false, $context);
-	return $result;
-}
 
 function getRealIpAddr() {
 	if (!empty($_SERVER['HTTP_CLIENT_IP'])) { //check ip from share internet

@@ -2647,7 +2647,6 @@ function join_network() {
         e.preventDefault();
         
 //        console.log($("#networks option:selected").text());
-        
         $.ajax({url: baseurl + 'networks/process_network_join_request/',
 		data: $(this).serialize(),
 		dataType: 'json',
@@ -2655,11 +2654,11 @@ function join_network() {
 		type: 'POST',
 		success: function(data) {
 			if ( data.error ) {
-				alert(data.error);
+//				alert(data.error);
 				window.location.reload(true);
 			}
 			else if (data.success) {
-				alert(data.success);
+				alert("Successfully joined network");
 				window.location = baseurl + "networks";
 //				window.location.reload(true);
 			}
@@ -2886,11 +2885,11 @@ function create_user() {
                                 type: 'POST',
                                 success: function(result) {
                                     if (result.error) {
-//                                        alert(result.error);
+                                        alert(result.error);
                                             $("#createUserError").removeClass('hide');
                                             $("#createUserError").text(result.error);
                                     } else if (result.success) {
-//                                            alert(result.success);
+                                            alert(result.success);
                                             window.location = baseurl + "auth_federated/users";
                                     }
                                 }
@@ -2918,7 +2917,7 @@ function edit_user() {
                             $("#editUserError").html(data.error);
                     } else if (data.success) {
                         if($callAjax)
-                        {$.ajax({url: authurl + '/auth_accounts/edit_user/',
+                        {$.ajax({url: authurl + 'auth_accounts/edit_user/',
                                 data: $postData,
                                 dataType: 'json',
                                 delay: 200,

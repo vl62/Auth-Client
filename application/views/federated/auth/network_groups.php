@@ -5,10 +5,7 @@
 				<li>  
 					<a href="<?php echo base_url() . "admin";?>">Dashboard Home</a> <span class="divider">></span>  
 				</li>
-				<li>  
-					<a href="<?php echo base_url() . "networks";?>">Networks</a> <span class="divider">></span>  
-				</li>
-				<li class="active">Network Groups</li>
+				<li class="active">Groups</li>
 			</ul>  
 		</div>  
 	</div>
