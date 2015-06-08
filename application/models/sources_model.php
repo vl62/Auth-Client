@@ -33,6 +33,7 @@ class Sources_model extends CI_Model {
 	}
 	
 	public function getSourcesForFederatedQuery () {
+		$this->db->select('name, description');
 		$query = $this->db->get_where('sources', array('type !=' => 'federated'))->result_array();
 		return $query;
 	}

@@ -52,7 +52,7 @@
 
 		<script type="text/javascript">
 			var baseurl = "<?php print base_url(); ?>";
-			var authurl = "<?php print $this->config->item('auth_server'); ?>";
+			var authurl = "<?php print rtrim($this->config->item('auth_server'),"/"); // remove trailing slash from the auth_server config variable ?>";
 		</script>
 	<!-- note: jstree requires the addBack function that wasn't added to jQuery until 1.8, therefore I have changed 1.7.1 to 1.8.1 (tb143) -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>

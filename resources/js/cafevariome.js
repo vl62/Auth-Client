@@ -2791,7 +2791,7 @@ function login_user() {
                             $("#loginError").html(data.error);
                     } else if (data.success) {
                         if($callAjax)
-                        {$.ajax({url: authurl + 'auth_accounts/login/',
+                        {$.ajax({url: authurl + '/auth_accounts/login/',
                                 data: $postData,
                                 dataType: 'json',
                                 delay: 200,
@@ -2878,7 +2878,7 @@ function create_user() {
                             $("#createUserError").html(data.error);
                     } else if (data.success) {
                         if($callAjax)
-                        {$.ajax({url: authurl + 'auth_accounts/create_user/',
+                        {$.ajax({url: authurl + '/auth_accounts/create_user/',
                                 data: $postData,
                                 dataType: 'json',
                                 delay: 200,
@@ -2917,7 +2917,7 @@ function edit_user() {
                             $("#editUserError").html(data.error);
                     } else if (data.success) {
                         if($callAjax)
-                        {$.ajax({url: authurl + 'auth_accounts/edit_user/',
+                        {$.ajax({url: authurl + '/auth_accounts/edit_user/',
                                 data: $postData,
                                 dataType: 'json',
                                 delay: 200,
@@ -3059,7 +3059,7 @@ function edit_user_profile() {
                             $("#editUserProfileError").html(data.error);
                     } else if (data.success) {
                         if($callAjax)
-                        {$.ajax({url: authurl + 'auth_accounts/edit_user/TRUE',
+                        {$.ajax({url: authurl + '/auth_accounts/edit_user/TRUE',
                                 data: $postData,
                                 dataType: 'json',
                                 delay: 200,

@@ -27,9 +27,12 @@ class Discover extends MY_Controller {
 		$this->title = "Discover";
 		$token = $this->session->userdata('Token');
 		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key'), 'network_key' => $this->config->item('network_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
-		$sources = stripslashes($data);
-		error_log("sources -> $sources");
+		$federated_installs = stripslashes($data);
+		error_log("federated_installs -> $federated_installs");
 //		$sources_array = json_decode($sources, TRUE);
+		$this->session->set_userdata(array('federated_installs' => $federated_installs));
+
+		//TODO: set the federated installs in the session so they can be used by variantcount
 		
 		
 		
@@ -178,7 +181,12 @@ class Discover extends MY_Controller {
 				$sources = $this->sources_model->getSourceSingle($source);
 			}
 			$sources_types = $this->sources_model->getSourcesTypes();
-
+			
+			
+			
+			
+			
+			
 			$source_access_levels = array();
 			foreach ($sources as $source => $description ) {
 				// Check whether the user can access restrictedAccess variants in this source
@@ -207,13 +215,6 @@ class Discover extends MY_Controller {
 						);
 						updateStats($search_stats, 'searchstats');
 					}
-					
-					//TODO: today need to work out how to get the groups for this user
-					// I think the source groups need to be local so after the initial call to get user groups need to find
-					// the groups that the federated install that is being searched so probably need to pass the user ID to
-					// the federated search call and then do a local check to see which sources they have that are assigned to that group
-//					get_current_network_groups_for_user_in_installation_post
-					
 					$user_group_ids = array();
 					foreach ($this->ion_auth->get_users_groups($user_id)->result() as $group) {
 //						echo "groupid -> " . $group->id . " groupname -> " . $group->name . " description -> " . $group->description;
@@ -262,7 +263,8 @@ class Discover extends MY_Controller {
 						updateStats($search_stats, 'searchstats');
 					}
 				}
-
+				////
+//				error_log("source -> $source");
 				$type = $sources_types[$source];
 				if ( empty($from_url_query) ) {
 					$data['source_types'][$source] = $type;
@@ -271,268 +273,325 @@ class Discover extends MY_Controller {
 					$this->data['source_types'][$source] = $type;
 				}
 				
-				// This is an federated installation source so need to make the call to the installation to do the search for all sources within that installation
-				if ( $type == "federated" ) {
-					error_log("---> " . $source_uri);
-//					$this->variantcount_federated($term);
-					$all_counts_json = @file_get_contents($source_uri . "/discover/variantcount_federated/$term");
-					error_log("returned counts -> $all_counts_json");
-					$all_counts = json_decode($all_counts_json, 1);
-					error_log("all counts decoded -> " . print_r($all_counts, 1));
-					$c = 0;
-					foreach ( $all_counts as $federated_source => $counts_for_source ) {
-						$c++;
-						$federated_source_name = $federated_source . "_$c";
-						error_log("counts for source -> " . print_r($counts_for_source, 1));
-						error_log("adding to " . $federated_source_name);
-						$sources[$federated_source_name] = "$federated_source from $c ADD INSTALL";
-						error_log("sources_full adding -> " . print_r($sources, 1));
-						$data['counts'][$federated_source_name] = $counts_for_source;
-						
-						if ( empty($from_url_query) ) {
-							$data['source_types'][$federated_source_name] = $type;
-						}
-						else {
-							$this->data['source_types'][$federated_source_name] = $type;
-						}
-
-						
-//						if (isset($counts)) {
-//							if (empty($from_url_query)) {
-//								$data['counts'][$source] = $counts;
-//							} else {
-//								$this->data['counts'][$source] = $counts;
-//							}
-//						} else {
-//							if (empty($from_url_query)) {
-//								$data['counts'][$source] = array();
-//							} else {
-//								$this->data['counts'][$source] = array();
-//							}
-//						}
-						
+				if ( $type == "api" ) {
+					$this->load->model('federated_model');
+					// Get the node name and then remove it from the source name - need to do this since the node name has been appended in order to make it unique for this node - in the node that is to be search it won't have this appended bit
+					$node_name = $this->federated_model->getNodeNameFromNodeURI($source_uri);
+					$node_source = str_replace("_" . $node_name, "", $source);
+//					error_log("NODE SOURCE -> " . $node_source . " SOURCE_URI -> " . $source_uri);
+					$source_info = $this->sources_model->getSource($source);
+					if ( empty($from_url_query) ) {
+						$data['source_info'][$source] = $source_info;
+						$data['node_source'][$source] = $node_source;
 					}
-
-					
+					else {
+						$this->data['source_info'][$source] = $source_info;
+						$this->data['node_source'][$source] = $node_source;						
+					}
 				}
-				else {
-					if ( $type == "api" ) {
-						$this->load->model('federated_model');
-						// Get the node name and then remove it from the source name - need to do this since the node name has been appended in order to make it unique for this node - in the node that is to be search it won't have this appended bit
-						$node_name = $this->federated_model->getNodeNameFromNodeURI($source_uri);
-						$node_source = str_replace("_" . $node_name, "", $source);
-//						error_log("NODE SOURCE -> " . $node_source . " SOURCE_URI -> " . $source_uri);
-						$source_info = $this->sources_model->getSource($source);
-						if ( empty($from_url_query) ) {
-							$data['source_info'][$source] = $source_info;
-							$data['node_source'][$source] = $node_source;
-						} else {
-							$this->data['source_info'][$source] = $source_info;
-							$this->data['node_source'][$source] = $node_source;
+				
+				if ( $type == "central" ) {
+					$central_source = str_replace("_central", "", $source);
+					if ( empty($from_url_query) ) {
+						$data['central_source'][$source] = $central_source;
+					}
+					else {
+						$this->data['central_source'][$source] = $central_source;
+					}
+				}
+				
+				if ( ! $type ) { // If there's no type for this source in the database set it as mysql for the default
+					$type = "mysql";
+				}
+				
+				if ( $this->config->item('use_elasticsearch') ) {
+					if (preg_match('/chr\S+:\d+\-|\.\.\d+/', $term)) { // Match chromosome region regex
+						$locations = $this->_splitRegion($term);
+						if ( $type == "mysql") { // If source type is specified as mysql then use region function for variants 
+							$counts = $this->search_model->countVariantsForRegion($locations, $source, $mutalyzer_check);
 						}
-					}
-
-					if ($type == "central") {
-						$central_source = str_replace("_central", "", $source);
-						if (empty($from_url_query)) {
-							$data['central_source'][$source] = $central_source;
-						} else {
-							$this->data['central_source'][$source] = $central_source;
-						}
-					}
-
-					if (!$type) { // If there's no type for this source in the database set it as mysql for the default
-						$type = "mysql";
-					}
-
-					if ($this->config->item('use_elasticsearch')) {
-						if (preg_match('/chr\S+:\d+\-|\.\.\d+/', $term)) { // Match chromosome region regex
-							$locations = $this->_splitRegion($term);
-							if ($type == "mysql") { // If source type is specified as mysql then use region function for variants 
-								$counts = $this->search_model->countVariantsForRegion($locations, $source, $mutalyzer_check);
-							} else if ($type == "api") {
-								$counts = $this->runAPISearch($source_uri, $source, $term);
+						else if ( $type == "api" ) {
+							$counts = $this->runAPISearch($source_uri, $source, $term);
 //							error_log("uri -> " . $source_uri);
-							} else if ($type == "das") { // It's a DAS source
+						}
+						else if ( $type == "das" ) { // It's a DAS source
 //							features?segment=5:1,169269
-								$source_info = $this->sources_model->getSource($source);
-								$das_location = $this->_splitRegionDAS($term);
-								$uri = $source_info['uri'] . "/features?segment=" . $das_location;
-								$counts = $this->search_model->countDASFeaturesForRegion($uri);
+							$source_info = $this->sources_model->getSource($source);
+							$das_location = $this->_splitRegionDAS($term);
+							$uri = $source_info['uri'] . "/features?segment=" . $das_location;
+							$counts = $this->search_model->countDASFeaturesForRegion($uri);
 //							error_log("das -> " . $term . " source -> " . $source . " uri -> " . $uri);
-							} else if ($type == "central") { // Cafe Variome Central source
+						}
+						else if ( $type == "central" ) { // Cafe Variome Central source
 //							error_log("test -> $source $term");
-								$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
-							}
+							$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
+						}
 //						else { // TODO: Add processing for other types of variant sources e.g. VarioML (AtomServer) - separate out processing into separate count class
 //							print "other type<br />";						
 //						}
-						} elseif (preg_match('/N\S+_\S+\:\S+/', $term)) { // Match RefSeq and HGVS
-							if ($type == "mysql") {
-								$ref_hgvs = $this->_splitRefHGVS($term);
-								$counts = $this->search_model->countVariantsForRefHGVS($ref_hgvs, $source, $mutalyzer_check);
-							} else if ($type == "api") {
-								$counts = $this->runAPISearch($source_uri, $source, $term);
-							} else if ($type == "central") {
-								$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
-							}
-						} else {
-
-							if ($type == "central") { // Cafe Variome Central source
+					}
+					elseif (preg_match('/N\S+_\S+\:\S+/', $term)) { // Match RefSeq and HGVS
+						if ( $type == "mysql") {
+							$ref_hgvs = $this->_splitRefHGVS($term);
+							$counts = $this->search_model->countVariantsForRefHGVS($ref_hgvs, $source, $mutalyzer_check);
+						}
+						else if ( $type == "api" ) {
+							$counts = $this->runAPISearch($source_uri, $source, $term);
+						}
+						else if ( $type == "central" ) {
+							$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
+						}
+					}
+					else {
+						
+					if ( $type == "central" ) { // Cafe Variome Central source
 //						error_log("test -> $source $term");
-								$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
-							} else if ($type == "api") {
-								$counts = $this->runAPISearch($source_uri, $source, $term);
+						$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
+					}
+					else if ( $type == "api" ) {
+						$counts = $this->runAPISearch($source_uri, $source, $term);
 //						error_log("counts API -> " . print_r($counts, 1));
-							} else {
-//							if (! class_exists('Elasticsearch')) {
-								$this->load->library('elasticsearch');
-//								echo "class not loaded<br />";
-		//					}
+					}
+					else {
+//					if (! class_exists('Elasticsearch')) {
+						$this->load->library('elasticsearch');
+//						echo "class not loaded<br />";
+//					}
 //					$check_if_running = $this->elasticsearch->check_if_running();
 //					if ( array_key_exists( 'ok', $check_if_running) ) {						
-								// Create dynamic name for the ES index to try and avoid clashes with multiple instance of CV on the same server
-								$es_index = $this->config->item('site_title');
-								$es_index = preg_replace('/\s+/', '', $es_index);
-								$es_index = strtolower($es_index);
-								$this->elasticsearch->set_index($es_index);
-								$this->elasticsearch->set_type("variants");
-								$query = array();
-								$query['size'] = 0;
-								$term = urldecode($term);
+						// Create dynamic name for the ES index to try and avoid clashes with multiple instance of CV on the same server
+						$es_index = $this->config->item('site_title');
+						$es_index = preg_replace('/\s+/', '', $es_index);
+						$es_index = strtolower($es_index);
+						$this->elasticsearch->set_index($es_index);
+						$this->elasticsearch->set_type("variants");
+						$query = array();
+						$query['size'] = 0;
+						$term = urldecode($term);
 //						error_log("term -> $term");
 //						$sanitize_query = htmlentities(strip_tags( $query ));
 //						error_log("sanitize -> $sanitize_query");
 //						$query['query']['query_string'] = array('query' =>  "$term AND $source", 'fields' => array("source", "gene"));
-
-
-								$this->load->model('settings_model');
-								$search_fields = $this->settings_model->getSearchFields("search_fields");
-
-								if (!empty($search_fields)) { // Specific search fields are specified in admin interface so only search on these
-									$search_fields_elasticsearch = array();
-									foreach ($search_fields as $fields) {
-										$search_fields_elasticsearch[] = $fields['field_name'];
-									}
+						
+						
+						$this->load->model('settings_model');
+						$search_fields = $this->settings_model->getSearchFields("search_fields");
+						
+						if ( ! empty($search_fields) ) { // Specific search fields are specified in admin interface so only search on these
+							$search_fields_elasticsearch = array();
+							foreach ($search_fields as $fields) {
+								$search_fields_elasticsearch[] = $fields['field_name'];
+							}
 //							error_log("search fields -> " . print_r($search_fields, 1));
-									$query['query']['bool']['must'][] = array('query_string' => array("fields" => $search_fields_elasticsearch, "query" => "$term", 'default_operator' => "AND"));
-								} else { // Otherwise search across all fields
-									$query['query']['bool']['must'][] = array('query_string' => array("query" => "$term", 'default_operator' => "AND"));
-								}
-
-								$query['query']['bool']['must'][] = array("term" => array("source" => $source));
-								$query['facets']['sharing_policy']['terms'] = array('field' => "sharing_policy");
-								$query = json_encode($query);
+							$query['query']['bool']['must'][] = array('query_string' => array("fields" => $search_fields_elasticsearch, "query" => "$term", 'default_operator' => "AND"));
+						}
+						else { // Otherwise search across all fields
+							$query['query']['bool']['must'][] = array('query_string' => array("query" => "$term", 'default_operator' => "AND"));
+						}
+						
+						$query['query']['bool']['must'][] = array("term" => array("source" => $source));
+						$query['facets']['sharing_policy']['terms'] = array('field' => "sharing_policy");
+						$query = json_encode($query);
 //						error_log("query ----> $query");
-								$es_data = $this->elasticsearch->query_dsl($query);
-								$counts = array();
+						$es_data = $this->elasticsearch->query_dsl($query);
+						$counts = array();
 //						print "SOURCE -> $source<br />";
-								foreach ($es_data['facets']['sharing_policy']['terms'] as $facet_sharing_policy) {
-									$sp_es = $facet_sharing_policy['term'];
-									if ($sp_es == "openaccess") {
-										$sp_es = "openAccess";
-									} else if ($sp_es == "restrictedaccess") {
-										$sp_es = "restrictedAccess";
-									} else if ($sp_es == "linkedaccess") {
-										$sp_es = "linkedAccess";
-									}
+						foreach ( $es_data['facets']['sharing_policy']['terms'] as $facet_sharing_policy ) {
+							$sp_es = $facet_sharing_policy['term'];
+							if ( $sp_es == "openaccess" ) {
+								$sp_es = "openAccess";
+							}
+							else if ( $sp_es == "restrictedaccess" ) {
+								$sp_es = "restrictedAccess";
+							}
+							else if ( $sp_es == "linkedaccess" ) {
+								$sp_es = "linkedAccess";
+							}
 
-									$counts[$sp_es] = $facet_sharing_policy['count'];
+							$counts[$sp_es] = $facet_sharing_policy['count'];
 //							error_log("es counts -> " . print_r($counts,1));
 //							print "<br />";
-								}
+						}
 //					}
 //					else {
 //						show_error("The search server is not running");
 //					}
-							}
+					}
+					}
+				}
+				else {
+					if (preg_match('/chr\S+:\d+\-|\.\.\d+/', $term)) { // Match chromosome region regex
+						$locations = $this->_splitRegion($term);
+						if ( $type == "mysql") { // If source type is specified as mysql then use region function for variants 
+							$counts = $this->search_model->countVariantsForRegion($locations, $source, $mutalyzer_check);
 						}
-					} else {
-						if (preg_match('/chr\S+:\d+\-|\.\.\d+/', $term)) { // Match chromosome region regex
-							$locations = $this->_splitRegion($term);
-							if ($type == "mysql") { // If source type is specified as mysql then use region function for variants 
-								$counts = $this->search_model->countVariantsForRegion($locations, $source, $mutalyzer_check);
-							} else if ($type == "api") {
-								$counts = $this->runAPISearch($source_uri, $source, $term);
+						else if ( $type == "api" ) {
+							$counts = $this->runAPISearch($source_uri, $source, $term);
 //							error_log("uri -> " . $source_uri);
-							} else if ($type == "das") { // It's a DAS source
+						}
+						else if ( $type == "das" ) { // It's a DAS source
 //							features?segment=5:1,169269
-								$source_info = $this->sources_model->getSource($source);
-								$das_location = $this->_splitRegionDAS($term);
-								$uri = $source_info['uri'] . "/features?segment=" . $das_location;
-								$counts = $this->search_model->countDASFeaturesForRegion($uri);
+							$source_info = $this->sources_model->getSource($source);
+							$das_location = $this->_splitRegionDAS($term);
+							$uri = $source_info['uri'] . "/features?segment=" . $das_location;
+							$counts = $this->search_model->countDASFeaturesForRegion($uri);
 //							error_log("das -> " . $term . " source -> " . $source . " uri -> " . $uri);
-							} else if ($type == "central") { // Cafe Variome Central source
+						}
+						else if ( $type == "central" ) { // Cafe Variome Central source
 //							error_log("test -> $source $term");
-								$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
-							}
+							$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
+						}
 //						else { // TODO: Add processing for other types of variant sources e.g. VarioML (AtomServer) - separate out processing into separate count class
 //							print "other type<br />";						
 //						}
-						} elseif (preg_match('/N\S+_\S+\:\S+/', $term)) { // Match RefSeq and HGVS
-							if ($type == "mysql") {
-								$ref_hgvs = $this->_splitRefHGVS($term);
-								$counts = $this->search_model->countVariantsForRefHGVS($ref_hgvs, $source, $mutalyzer_check);
-							} else if ($type == "api") {
-								$counts = $this->runAPISearch($source_uri, $source, $term);
-							} else if ($type == "central") {
-								$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
-							}
-						} elseif (preg_match('/N\S+_\S+/', $term)) { // Match RefSeq
-							if ($type == "mysql") {
-								$counts = $this->search_model->countVariantsForRef($term, $source, $mutalyzer_check);
-							} else if ($type == "api") {
-								$counts = $this->runAPISearch($source_uri, $source, $term);
-							} else if ($type == "central") {
-								$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
-							}
-						} elseif (preg_match('/LRG_\S+/', $term)) {
-							if ($type == "mysql") {
-								$counts = $this->search_model->countVariantsForLRG($term, $source, $mutalyzer_check);
-							} else if ($type == "api") {
-								$counts = $this->runAPISearch($source_uri, $source, $term);
-							} else if ($type == "central") {
-								$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
-							}
-						} elseif (preg_match('/rs\d+/', $term)) {
-							if ($type == "mysql") {
-								$counts = $this->search_model->countVariantsFordbSNP($term, $source, $mutalyzer_check);
-							} else if ($type == "api") {
-								$counts = $this->runAPISearch($source_uri, $source, $term);
-							} else if ($type == "central") {
-								$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
-							}
-						} elseif (preg_match('/[cp]\.\S+/', $term)) { // Match just hgvs description (c. or p.) - probably don't need this as it's not useful if not in context of reference
-							$counts = $this->search_model->countVariantsForHGVS($term, $source, $mutalyzer_check);
-						} else { // Gene or phenotype term entered
-							if ($type == "mysql") {
-								$counts = $this->search_model->countVariantsForGene($term, $source, $mutalyzer_check);
-//							error_log("returned $source -> " . print_r($counts, 1));
-							} else if ($type == "api") {
-								$counts = $this->runAPISearch($source_uri, $source, $term);
-//							error_log("returned $source -> " . print_r($counts, 1));
-							} else if ($type == "central") {
-								$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
-							}
+					}
+					elseif (preg_match('/N\S+_\S+\:\S+/', $term)) { // Match RefSeq and HGVS
+						if ( $type == "mysql") {
+							$ref_hgvs = $this->_splitRefHGVS($term);
+							$counts = $this->search_model->countVariantsForRefHGVS($ref_hgvs, $source, $mutalyzer_check);
+						}
+						else if ( $type == "api" ) {
+							$counts = $this->runAPISearch($source_uri, $source, $term);
+						}
+						else if ( $type == "central" ) {
+							$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
 						}
 					}
-					if (isset($counts)) {
-						if (empty($from_url_query)) {
-							$data['counts'][$source] = $counts;
-						} else {
-							$this->data['counts'][$source] = $counts;
+					elseif (preg_match('/N\S+_\S+/', $term)) { // Match RefSeq
+						if ( $type == "mysql") {
+							$counts = $this->search_model->countVariantsForRef($term, $source, $mutalyzer_check);
 						}
-					} else {
-						if (empty($from_url_query)) {
-							$data['counts'][$source] = array();
-						} else {
-							$this->data['counts'][$source] = array();
+						else if ( $type == "api" ) {
+							$counts = $this->runAPISearch($source_uri, $source, $term);
+						}
+						else if ( $type == "central" ) {
+							$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
+						}
+					}
+					elseif (preg_match('/LRG_\S+/', $term)) {
+						if ( $type == "mysql") {
+							$counts = $this->search_model->countVariantsForLRG($term, $source, $mutalyzer_check);
+						}
+						else if ( $type == "api" ) {
+							$counts = $this->runAPISearch($source_uri, $source, $term);
+						}
+						else if ( $type == "central" ) {
+							$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
+						}
+					}
+					elseif (preg_match('/rs\d+/', $term)) {
+						if ( $type == "mysql") {
+							$counts = $this->search_model->countVariantsFordbSNP($term, $source, $mutalyzer_check);
+						}
+						else if ( $type == "api" ) {
+							$counts = $this->runAPISearch($source_uri, $source, $term);
+						}
+						else if ( $type == "central" ) {
+							$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
+						}
+					}
+					elseif (preg_match('/[cp]\.\S+/', $term)) { // Match just hgvs description (c. or p.) - probably don't need this as it's not useful if not in context of reference
+						$counts = $this->search_model->countVariantsForHGVS($term, $source, $mutalyzer_check);
+					}
+					else { // Gene or phenotype term entered
+						if ( $type == "mysql") {
+							$counts = $this->search_model->countVariantsForGene($term, $source, $mutalyzer_check);
+//							error_log("returned $source -> " . print_r($counts, 1));
+						}
+						else if ( $type == "api" ) {
+							$counts = $this->runAPISearch($source_uri, $source, $term);
+//							error_log("returned $source -> " . print_r($counts, 1));
+						}
+						else if ( $type == "central" ) {
+							$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
 						}
 					}
 				}
-//			error_log(print_r($data, 1));
+				if ( isset ($counts) ) {
+					if ( empty($from_url_query) ) {
+						$data['counts'][$source] = $counts;
+					}
+					else {
+						$this->data['counts'][$source] = $counts;
+					}
+				}
+				else {
+					if ( empty($from_url_query) ) {
+						$data['counts'][$source] = array();
+					}
+					else {
+						$this->data['counts'][$source] = array();
+					}
+				}
 			}
+//			error_log(print_r($data, 1));
 			
+			
+//			$token = $this->session->userdata('Token');
+//			$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key'), 'network_key' => $this->config->item('network_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
+//			$federated_installs = stripslashes($data);
+//			error_log("sources -> $federated_installs");
+//			$federated_installs_array = json_decode($federated_installs, TRUE);
+			$federated_installs = $this->session->userdata('federated_installs');
+			error_log("f -> $federated_installs");
+			$federated_installs_array = json_decode($federated_installs, 1);
+//			error_log(print_r($this->session->all_userdata(), 1));
+			
+//			$all_counts_json = file_get_contents("http://localhost/cafevariome_client/discover/variantcount_federated/BRCA2");
+			
+			if ( ! empty($federated_installs_array)) {
+				error_log("federated_installs_array -> " . print_r($federated_installs_array, 1));
+				foreach ( $federated_installs_array as $install ) {
+					
+					$install_uri = $install['installation_base_url'];
+					$install_uri = rtrim($install_uri,"/");
+					error_log("$term ---> " . $install_uri . "/discover/variantcount_federated/$term");
+//					$this->variantcount_federated($term);
+//					$contents = curl_get_contents($install_uri . "/discover/variantcount_federated/$term");
+//					error_log("calling -> " . $install_uri . "/discover/variantcount_federated/$term");
+					$all_counts_json = @file_get_contents($install_uri . "/discover/variantcount_federated/$term");
+//					error_log(print_r($http_response_header, 1));
+					error_log("all_counts_json -> $all_counts_json");
+
+					$all_counts = json_decode($all_counts_json, 1);
+					error_log("all counts decoded -> " . print_r($all_counts, 1));
+					if ( ! empty($all_counts) ) {
+						$c = 0;
+						foreach ( $all_counts as $federated_source => $counts_for_source ) {
+							$c++;
+							$federated_source_name = $federated_source . "_$c";
+							error_log("counts for source -> " . print_r($counts_for_source, 1));
+							error_log("adding to " . $federated_source);
+							$sources[$federated_source] = "$federated_source from $c ADD INSTALL";
+							error_log("sources_full adding -> " . print_r($sources, 1));
+							$data['counts'][$federated_source] = $counts_for_source;
+						
+							if ( empty($from_url_query) ) {
+								$data['source_types'][$federated_source] = "api";
+							}
+							else {
+								$this->data['source_types'][$federated_source] = "api";
+							}
+
+						
+//							if (isset($counts)) {
+//								if (empty($from_url_query)) {
+//									$data['counts'][$source] = $counts;
+//								} else {
+//									$this->data['counts'][$source] = $counts;
+//								}
+//							} else {
+//								if (empty($from_url_query)) {
+//									$data['counts'][$source] = array();
+//								} else {
+//									$this->data['counts'][$source] = array();
+//								}
+//							}
+						}
+					}
+				}
+			}
+
 			
 			if ( empty($from_url_query) ) {
 				$data['sources_full'] = $sources;
@@ -541,6 +600,7 @@ class Discover extends MY_Controller {
 				$this->data['sources_full'] = $sources;
 			}
 
+			
 			
 			if ( empty($from_url_query) ) { // The query comes from the form through the website
 				$this->load->view('pages/sources_table', $data); // Don't use _render as headers are already sent, html output from the view is sent back to ajax function and appended to div
@@ -570,12 +630,13 @@ class Discover extends MY_Controller {
 	
 	// Federated variant count function that will get the counts for all local sources for an installation
 	function variantcount_federated($term) {
-//		error_log("variantcount_federated -> $term");
+		error_log("variantcount_federated -> $term");
 		$term = urldecode($term);
 		
 		$this->load->model('sources_model');
 		// Get the sources for this installation which are to be search (any that are not federated i.e. local sources)
 		$sources = $this->sources_model->getSourcesForFederatedQuery();
+		error_log("sources -> " . print_r($sources, 1));
 		$all_source_counts = array();
 		foreach ($sources as $source_array ) {
 			// Check whether the user can access restrictedAccess variants in this source
@@ -629,14 +690,15 @@ class Discover extends MY_Controller {
 				$counts[$sp_es] = $facet_sharing_policy['count'];
 			}
 			if ( ! empty($counts)) { // Only add the sources that have some counts returned
-				$all_source_counts[$source] = $counts;
+				$all_source_counts[$source . "_" . $this->config->item('installation_key')] = $counts;
 //				error_log(print_r($counts, 1));
 			}
 //			
 			
 			
 		}
-		error_log(print_r($all_source_counts, 1));
+
+//		error_log(print_r($all_source_counts, 1));
 //		return $all_source_counts;
 		echo json_encode($all_source_counts);
 	}
