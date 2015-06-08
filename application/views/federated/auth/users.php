@@ -1,3 +1,27 @@
+<script type="text/javascript">
+
+// Ajax post
+//$(document).ready(function() {
+////	var user_name = $("input#name").val();
+////	var password = $("input#pwd").val();
+//	jQuery.ajax({
+//		type: "POST",
+//		url: "<?php // echo rtrim($this->config->item('auth_server'),"/"); ?>" + "/api/auth/get_all_users/format/json",
+//		dataType: 'html',
+//		data: {name: '', pwd: ''},
+//		success: function (res) {
+//			if (res) {
+////				alert("response -> " + JSON.stringify(res));
+//				alert("response -> " + res);
+////				jQuery("div#result").show();
+////				jQuery("div#value").html(res.username);
+////				jQuery("div#value_pwd").html(res.pwd);
+//			}
+//		}
+//	});
+//
+//});
+</script>
 <div class="container">
 	<!--<div class="container-fluid">-->
 	<div class="row">  
