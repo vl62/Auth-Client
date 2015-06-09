@@ -550,7 +550,7 @@ class Discover extends MY_Controller {
 					$c++;
 					$install_uri = $install['installation_base_url'];
 					$install_uri = rtrim($install_uri,"/");
-					error_log("STARTING --> $term ---> " . $install_uri . "/discover/variantcount_federated/$term");
+					error_log("STARTING --> $term ---> " . $install_uri . "/discover/variantcount_federated/$term/$user_id");
 //					$this->variantcount_federated($term);
 //					$contents = curl_get_contents($install_uri . "/discover/variantcount_federated/$term");
 //					error_log("calling -> " . $install_uri . "/discover/variantcount_federated/$term");
@@ -635,8 +635,68 @@ class Discover extends MY_Controller {
 		}
 	}
 	
+	function check_user_network_groups_for_sources($user_id) {
+		
+		$this->load->model('sources_model');
+		// Get the sources for this installation which are to be search (any that are not federated i.e. local sources)
+		$sources = $this->sources_model->getSourcesFull();
+//		foreach ( $sources as $s ) {
+//			echo $s->source_id . "<br />";
+//		}
+		print_r($sources);
+		$token = $this->session->userdata('Token');
+		$returned_sources = authPostRequest($token, array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_sources_for_installation_that_user_id_has_network_group_access_to");
+		print "$returned_sources";
+		
+//		foreach ( $current_source_groups as $source_group ) {
+////			error_log("source group -> " . $source_group['group_id']);
+//			$source_group_ids[] = $source_group['group_id'];
+//		}
+//		if ( $user_id ) { // Check if the user if logged in
+//			// If logged in then get the id of the current user and fetch the groups that they belong to
+//			$user_group_ids = array();
+//			foreach ($this->ion_auth->get_users_groups($user_id)->result() as $group) {
+////				echo "groupid -> " . $group->id . " groupname -> " . $group->name . " description -> " . $group->description;
+////				$groups_in[] = $group->id;
+//				$user_group_ids[] = $group->id;
+////				error_log("user group -> " . $group->id);
+//			}
+//		
+//			// Check whether the user is in a group that this source belongs to
+//			$diff = array_intersect($user_group_ids, $source_group_ids);
+//			if ( empty($diff)) {
+//				$source_access_levels[$source] = FALSE;
+//				if ( empty($from_url_query) ) {
+//					$data['access_flag'][$source] = FALSE;
+//				}
+//				else {
+//					$this->data['access_flag'][$source] = FALSE;
+//				}
+//			}
+//			else {
+////				$source_access_levels[$source] = TRUE;
+//				if ( empty($from_url_query) ) {
+//					$data['access_flag'][$source] = TRUE;
+//				}
+//				else {
+//					$this->data['access_flag'][$source] = TRUE;
+//				}
+//			}
+//		}
+//		else { // User isn't logged in so set the access flag to false for all the sources
+//			if ( empty($from_url_query) ) {
+//				$data['access_flag'][$source] = FALSE;
+//			}
+//			else {
+//				$this->data['access_flag'][$source] = FALSE;
+//			}
+//					
+//
+//		}
+	}
+	
 	// Federated variant count function that will get the counts for all local sources for an installation
-	function variantcount_federated($term) {
+	function variantcount_federated($term, $user_id = NULL) {
 //		error_log("variantcount_federated -> $term");
 		$term = urldecode($term);
 
@@ -659,10 +719,9 @@ class Discover extends MY_Controller {
 			$query['size'] = 0;
 			$term = urldecode($term);
 						
-						
 			$this->load->model('settings_model');
 			$search_fields = $this->settings_model->getSearchFields("search_fields");
-						
+
 			if ( ! empty($search_fields) ) { // Specific search fields are specified in admin interface so only search on these
 				$search_fields_elasticsearch = array();
 				foreach ($search_fields as $fields) {
