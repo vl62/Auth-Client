@@ -121,6 +121,96 @@ function variantOpenAccessRequest (term, source, source_full, count) {
 	)
 }
 
+function variantOpenAccessRequestFederated (term, source, source_full, count, federated_install_uri) {
+	alert(federated_install_uri);
+	var visible_term = urldecode(term);
+	bootbox.dialog("<h4>openAccess records request</h4><hr><p>" + source_full + ": requested " + count + " records</p><p>Search term: " + visible_term + "</p><p>Choose how you would like to access these records:</p>",
+	[
+		{
+			"label" : "Close",
+			"icon"  : "icon-remove icon-black"
+		},
+//		{
+//		"label" : "VCF",
+//		"class" : "btn-primary btn-small",
+//		"callback": function() {
+////			console.log("Primary button");
+//			window.open(baseurl + 'discover/variants/' + term + '/' + source + '/openAccess/vcf');
+//			}
+//		},
+		{
+		"label" : "RSS",
+		"class" : "btn-primary btn-small",
+		"callback": function() {
+//			console.log("Primary button");
+			window.open(baseurl + 'discover/variants_federated/' + term + '/' + source +  '/' + federated_install_uri + '/openAccess/rss');
+			}
+		},
+		{
+		"label" : "VarioML",
+		"class" : "btn-primary btn-small",
+		"callback": function() {
+//			console.log("Primary button");
+			window.open(baseurl + 'discover/variants_federated/' + term + '/' + source +  '/' + federated_install_uri + '/openAccess/varioml');
+			}
+		},
+		{
+		"label" : "JSON",
+		"class" : "btn-primary btn-small",
+		"callback": function() {
+//			console.log("Primary button");
+			window.open(baseurl + 'discover/variants_federated/' + term + '/' + source +  '/' + federated_install_uri + '/openAccess/json');
+			}
+		},
+		{
+		"label" : "LOVD",
+		"class" : "btn-primary btn-small",
+		"callback": function() {
+//			console.log("Primary button");
+			window.open(baseurl + 'discover/variants_federated/' + term + '/' + source +  '/' + federated_install_uri + '/openAccess/lovd');
+			}
+		},
+		{
+		"label" : "Excel",
+		"class" : "btn-primary btn-small",
+		"callback": function() {
+//			console.log("Primary button");
+			window.open(baseurl + 'discover/variants_federated/' + term + '/' + source +  '/' + federated_install_uri + '/openAccess/excel');
+			}
+		},
+		{
+		"label" : "Plain text",
+		"class" : "btn-primary btn-small",
+		"callback": function() {
+//			console.log("Primary button");
+			window.open(baseurl + 'discover/variants_federated/' + term + '/' + source +  '/' + federated_install_uri + '/openAccess/tab');
+			}
+		},
+		{
+		"label" : "Webpage",
+		"class" : "btn-primary btn-small",
+		"callback": function() {
+//			console.log("Primary button");
+			window.open(baseurl + 'discover/variants_federated/' + term + '/' + source +  '/' + federated_install_uri + '/openAccess/html');
+			
+//			$.post("discover/variants", { term: term, source: source, source_full: source_full, count: count },
+//				function(data) {
+////					alert("Data Loaded: " + data);
+//					var win = window.open();
+//					win.document.write(data);
+////					$('#mutationTable').append(data);
+//			});
+			
+
+			}
+		}
+	],
+		{
+			"animate": false
+		}
+	)
+}
+
 // Click listener for resetting the statatistics button in the administrator interface
 $(document).ready(function() {
 	$("#reset_stats").click(function() {

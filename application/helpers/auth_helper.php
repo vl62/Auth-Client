@@ -53,11 +53,10 @@ function authPostRequest($token, $data, $uri) {
 
 function authGetRequest($token, $uri) {
 	$url = $uri . '/format/json';
+	$url = preg_replace('/([^:])(\/{2,})/', '$1/', $url); // Strip out any double forward slashes from the url
 //	error_log("token -> $token");
-//	error_log("url -> $url");
-//$arrContextOptions=array(
-//    ,
-//);  
+	error_log("url -> $url");
+
 	$opts = array('http' =>
 		array(
 			'method'  => 'GET',
