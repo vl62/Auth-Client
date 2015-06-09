@@ -122,7 +122,7 @@ function variantOpenAccessRequest (term, source, source_full, count) {
 }
 
 function variantOpenAccessRequestFederated (term, source, source_full, count, federated_install_uri) {
-	alert(federated_install_uri);
+//	alert(federated_install_uri);
 	var visible_term = urldecode(term);
 	bootbox.dialog("<h4>openAccess records request</h4><hr><p>" + source_full + ": requested " + count + " records</p><p>Search term: " + visible_term + "</p><p>Choose how you would like to access these records:</p>",
 	[
