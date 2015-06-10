@@ -72,6 +72,9 @@
 //					echo form_dropdown('type', $options, 'mysql', 'disabled="disabled"');
 					?>
 				</p>
+				<?php if (array_key_exists('error', $groups)): ?>
+				<p><span class="label label-important">There are no network groups available to this installation. <br /></span></p>
+				<?php else: ?>
 				<p>
 					Select groups that can access restrictedAccess variants in this source (control click to select multiple): <br />
 					<?php
@@ -84,6 +87,7 @@
 						<?php endforeach; ?>
 					</select>						   
 				</p>
+				<?php endif; ?>
 <!--				<p>
 					Edit Curators (control click to select multiple): <br />
 					<select size="<?php // echo $curator_count; ?>" name="curators[]"  multiple="multiple">

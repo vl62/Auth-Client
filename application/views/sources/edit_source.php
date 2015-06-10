@@ -66,6 +66,9 @@
 			</p>
 
 			<p>
+				<?php if (array_key_exists('error', $groups)): ?>
+				<p><span class="label label-important">There are no network groups available to this installation. <br /></span></p>
+				<?php else: ?>
 				Edit Groups Allowed to Access restrictedAccess Variants<br />(control click to select multiple): <br />
 				<?php 
 					$group_count = count($groups) + 1;
@@ -73,11 +76,10 @@
 				?>
 				<select size="<?php echo $group_count; ?>" name="groups[]"  multiple="multiple">
 					<?php foreach ($groups as $group ): ?>
-						<option value="<?php echo $group['id'] . "," . $group['network_key']; ?>" <?php if (array_key_exists($group['id'], $selected_groups)) { echo 'selected="selected"'; } ?>><?php echo $group['description'] . " (Network:" . $group['network_name'] . ")"; ?></option>
+						<option value="<?php echo $group['id'] . "," . $group['network_key']; ?>" <?php if ( isset($selected_groups)) { if (array_key_exists($group['id'], $selected_groups)) { echo 'selected="selected"'; } } ?>><?php echo $group['description'] . " (Network:" . $group['network_name'] . ")"; ?></option>
 					<?php endforeach; ?>
-					
-
-				</select>						   
+				</select>
+				<?php endif; ?>
 			</p>
 			
 <!--			<p>

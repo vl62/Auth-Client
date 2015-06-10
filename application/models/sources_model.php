@@ -23,7 +23,7 @@ class Sources_model extends CI_Model {
 	}
 	
 	public function getSourcesFull () {
-		$query = $this->db->get('sources')->result_array();
+		$query = $this->db->get('sources');
 		return $query;
 	}
 	
