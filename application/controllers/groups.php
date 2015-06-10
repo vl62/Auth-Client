@@ -28,7 +28,7 @@ class Groups extends MY_Controller {
 
 		$token = $this->session->userdata('Token');
 		$groups = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
-//		print_r($groups);
+//		error_log("groups -> $groups");
 		$this->data['groups'] = json_decode($groups, TRUE);
 //		$this->data['groups'] = $this->ion_auth->getGroupsFull();
 //		$this->load->model('sources_model');
@@ -109,9 +109,9 @@ class Groups extends MY_Controller {
 	}
 
 	public function unique_network_group_name_check($group_name, $network_key) {
-		
-		$group_exists = authPostRequest('', array('network_key' => $network_key, 'group_name' => $group_name), $this->config->item('auth_server') . "/api/auth/check_if_group_exists_in_network");
-		error_log("group_exists -> $group_exists");
+		$token = $this->session->userdata('Token');
+		$group_exists = authPostRequest($token, array('network_key' => $network_key, 'group_name' => $group_name), $this->config->item('auth_server') . "/api/auth/check_if_group_exists_in_network");
+//		error_log("group_exists -> $group_exists");
 		$group_exists_bool = $group_exists === 'true'? true: false;
 		if( ! $group_exists_bool) {
 //			error_log("true");

@@ -235,8 +235,13 @@ class Networks extends MY_Controller {
             }
 			$this->title = "Network Requests";
             $this->load->model('network_model');
-			$network_requests = getNetworkRequestsForNetworksThisInstallationBelongsTo(array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
+			
+//			$network_requests = getNetworkRequestsForNetworksThisInstallationBelongsTo(array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
+			$token = $this->session->userdata('Token');
+			$network_requests = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_requests_for_networks_this_installation_belongs_to");
 			$data = json_decode($network_requests, true);
+			
+
 //			print_r($data);
 			$this->data['network_requests'] = $data;
 			$this->_render('federated/networks/network_requests_incoming');
@@ -248,7 +253,10 @@ class Networks extends MY_Controller {
             }
 			$this->title = "Network Requests";
             $this->load->model('network_model');
-			$network_requests = getNetworkRequestsForInstallation(array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
+
+			$token = $this->session->userdata('Token');
+			$network_requests = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_requests_for_installation");
+//			$network_requests = getNetworkRequestsForInstallation(array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
 			$data = json_decode($network_requests, true);
 			$this->data['network_requests'] = $data;
 			$this->_render('federated/networks/network_requests_outgoing');

@@ -72,37 +72,6 @@ function getNetworks($central_uri) {
 	return $result;
 }
 
-function getNetworkRequestsForInstallation($data, $central_uri) {
-	$url = $central_uri . '/api/auth/get_network_requests_for_installation/format/json';
-	
-	$opts = array('http' =>
-		array(
-			'method'  => 'POST',
-			'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-			'content' => http_build_query($data)
-		)
-	);
-	$context  = stream_context_create($opts);
-	$result = file_get_contents($url, false, $context);
-	return $result;
-}
-
-function getNetworkRequestsForNetworksThisInstallationBelongsTo($data, $central_uri) {
-	$url = $central_uri . '/api/auth/get_network_requests_for_networks_this_installation_belongs_to/format/json';
-	$opts = array('http' =>
-		array(
-			'method'  => 'POST',
-			'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-			'content' => http_build_query($data)
-		)
-	);
-	$context  = stream_context_create($opts);
-	$result = file_get_contents($url, false, $context);
-	return $result;
-}
-
-
-
 function isInstallationPartOfNetwork($data, $central_uri) {
 	$url = $central_uri . '/api/auth/is_installation_part_of_network/format/json';
 	$opts = array('http' =>

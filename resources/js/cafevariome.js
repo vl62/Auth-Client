@@ -2053,6 +2053,17 @@ $(document).ready(function() {
 	});
 })
 
+// Initialize the jquery switchButton plugin for included excluded select list switch in the set core fields section of the settings interface
+ $(function() {
+	$(".is_admin_slider input").switchButton({
+		on_label: 'Admin',
+		off_label: 'Not Admin',
+		width: 50,
+		height: 20,
+		button_width: 25
+	});
+})
+
 // Change listener for online offline select list switch in sources table interface
 $(document).ready(function() {
 	$('.online-offline').change(function() {

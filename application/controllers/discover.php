@@ -640,10 +640,10 @@ class Discover extends MY_Controller {
 		$this->load->model('sources_model');
 		// Get the sources for this installation which are to be search (any that are not federated i.e. local sources)
 		$sources = $this->sources_model->getSourcesFull();
-//		foreach ( $sources as $s ) {
-//			echo $s->source_id . "<br />";
-//		}
-		print_r($sources);
+		foreach ($sources->result() as $source) {
+				echo $source->source_id . " -> " . $source->name . "<br />";
+		}
+//		print_r($sources);
 		$token = $this->session->userdata('Token');
 		$returned_sources = authPostRequest($token, array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_sources_for_installation_that_user_id_has_network_group_access_to");
 		print "$returned_sources";
