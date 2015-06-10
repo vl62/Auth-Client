@@ -102,7 +102,7 @@
 		<link rel="stylesheet" type="text/css" href="<?php echo base_url(CSS."token-input-mac.css");?>" />
 		<script type="text/javascript">
 			$(document).ready(function () {
-				$("#messaging-user-input").tokenInput("<?php echo base_url("messages/lookup_users");?>", {
+				$("#messaging-user-input").tokenInput("<?php print rtrim($this->config->item('auth_server'),"/") . '/auth_messages/lookup_users';?>", {
 					hintText: "Type a username",
 					theme: "facebook"
 				});

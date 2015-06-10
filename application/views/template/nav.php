@@ -59,7 +59,7 @@ if ( strtolower($current_page) == "discover" || strtolower($current_page) == "au
 					<a data-placement="bottom" rel="popover" data-content="Curator Dashboard" class="btn btn-small btn-primary" href="<?php echo base_url(); ?>curate" class="navbar-link"><i class="icon-edit icon-white"></i></a> 
 					<?php endif; ?>
 					<?php if ($this->config->item('messaging')): ?>
-					<a data-placement="bottom" rel="popover" data-content="Messaging Dashboard" class="btn btn-small btn-primary" href="<?php echo base_url(); ?>messages" class="navbar-link"><i class="icon-envelope icon-white" ></i><?php if ( $unread_messages ) { echo " <small>($unread_messages)</small>"; } ?></a> 
+					<a data-placement="bottom" rel="popover" data-content="Messaging Dashboard" class="btn btn-small btn-primary" href="<?php echo base_url(); ?>messages" class="navbar-link"><i class="icon-envelope icon-white" ></i><small id="msgUnreadCount"></small></a> 
 					<?php endif; ?>
 					<a data-placement="bottom" rel="popover" data-content="User Profile" class="btn btn-small btn-primary" href="<?php echo base_url() . "auth_federated/user_profile/" . $user_id;?>" class="navbar-link"><i class="icon-user icon-white" ></i></a> <a class="btn btn-small btn-primary" href="<?php if($this->session->userdata('controller') === "auth_federated") echo base_url() . "auth_federated/logout"; else echo base_url() . "auth/logout"; ?>" class="navbar-link">Logout</a>
 				<?php endif; ?>
@@ -128,3 +128,4 @@ if ( strtolower($current_page) == "discover" || strtolower($current_page) == "au
 		<button type="submit" class="btn btn-primary" id="navbar-search"><i class="icon-search"></i> Discover Variants</button>
 	</div>
 </div>
+

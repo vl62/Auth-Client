@@ -40,9 +40,9 @@ $(document).ready(function() {
 		<div class="row">
 			<div class="span10">
 				<h3>Send Message</h3><hr>
-				<div id="infoMessage"><b><?php echo $message; ?></b></div>
+				<div id="sendMessage" class="hide" style="color: red;"></div>
 				<h4>To:</h4><!-- TODO add a modal here and populate with all the users, then when one is clicked (maybe with a switch box then user the selector function from the jquery plugin to add it to the box-->
-				<?php echo form_open("messages/send"); ?>
+				<?php echo form_open("messages/send", array('name' => 'sendMessage')); ?>
 					<div class="input-append">
 						<?php echo form_input($recipients); ?>
 						<!--<input type="text" id="messaging-user-input" name="message-recipients" />-->
@@ -58,9 +58,10 @@ $(document).ready(function() {
 		</div>
 		<div class="row">
 			<div class="span4 offset2">
-				<p><button type="submit" name="submit" class="btn btn-primary"><i class="icon-file icon-white"></i>  Send Message</button></p>
+                            <p><button type="submit" name="submit" onclick="send_message();" class="btn btn-primary"><i class="icon-file icon-white"></i>  Send Message</button></p>
 			</div>
 		</div>
+        <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
 	<!--</div>-->
 	<br />
 	<hr>

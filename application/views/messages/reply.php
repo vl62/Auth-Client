@@ -45,14 +45,14 @@ $(document).ready(function() {
 				?>
 				<h4>To:</h4>
 					<div class="input-append">
-						<input type="text" id="messaging-user-input" name="message-recipients"/>
+                                            <input type="text" id="messaging-user-input" name="message-recipients" required="required"/>
 						<span class="add-on"><a data-toggle="modal" href="#user_list" target="_blank" data-backdrop="false" rel="popover" data-content="Start typing a username above or click to view available users." data-original-title="Add Recipients"><i class="icon-plus"></i></a></span>
 					</div>
 				<h4>Subject:</h4>
-				<input type="text" id="subject" name="message-subject" size="60" value="RE: <?php echo $message['subject']; ?>" />
+				<input type="text" required="required" id="subject" name="message-subject" size="60" value="RE: <?php echo $message['subject']; ?>" />
 				<h4>Message Body:</h4>
 		
-				<textarea name="message-body" id="styled"><?php echo "\n" . "\n" . "\n" . "On " . $message['sent_date'] . ", " . $message['username'] . " wrote:\n---------------------------" . "\n". $message['body']; ?></textarea>
+				<textarea name="message-body" required="required" id="styled"><?php echo "\n" . "\n" . "\n" . "On " . $message['sent_date'] . ", " . $message['username'] . " wrote:\n---------------------------" . "\n". $message['body']; ?></textarea>
 				<br />
 			</div>
 		</div>
