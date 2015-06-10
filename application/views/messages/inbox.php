@@ -87,7 +87,8 @@
 					<br />
 					<?php $number_of_inbox_messages = count($messages); ?>
 					<?php if ( $number_of_inbox_messages > 0 ): ?>
-					<button onclick="markSelectedMessagesAsRead();" class="btn btn-info btn-small" ><i class="icon-question-sign"></i>  Mark Selected As Unread</button><?php echo nbs(3); ?><button onclick="if(confirm('Are you sure you want to delete the selected messages?')) deleteSelectedMessages();return false;" class="btn btn-danger btn-small" ><i class="icon-remove icon-white"></i>  Delete Selected</button>
+					<button onclick="markSelectedMessagesAsRead();" class="btn btn-info btn-small" ><i class="icon-question-sign"></i>  Mark Selected As Unread</button><?php echo nbs(3); ?>
+                                        <button onclick="if(confirm('Are you sure you want to delete the selected messages?')) deleteSelectedMessagesInbox();return false;" class="btn btn-danger btn-small" ><i class="icon-remove icon-white"></i>  Delete Selected</button>
 					<br />
 					<br />
 					<?php endif; ?>
@@ -132,7 +133,7 @@
 					<br />
 					<?php $number_of_sent_messages = count($sent_messages); ?>
 					<?php if ( $number_of_sent_messages > 0 ): ?>
-					<button onclick="if(confirm('Are you sure you want to delete the selected messages?')) deleteSelectedMessages();return false;" class="btn btn-danger btn-small" ><i class="icon-remove icon-white"></i>  Delete Selected</button>
+					<button onclick="if(confirm('Are you sure you want to delete the selected messages?')) deleteSelectedMessagesOutbox();return false;" class="btn btn-danger btn-small" ><i class="icon-remove icon-white"></i>  Delete Selected</button>
 					<?php endif; ?>
 				</div>
 			</div>
@@ -141,5 +142,6 @@
 
 		</div>
 	</div>
+    <input type="hidden" id="user_id" value="<?php echo $user_id; ?>">
 </div>
 <?php echo form_close(); ?>

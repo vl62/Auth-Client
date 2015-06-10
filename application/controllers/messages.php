@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Messages extends MY_Controller {
-
+        
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('messages_model');
@@ -11,15 +11,19 @@ class Messages extends MY_Controller {
 		}
 	}
 	
-	public function index(){	
+	public function index($success = null){	
 		if (!$this->ion_auth->logged_in()) {
 			redirect('auth', 'refresh');
 		}
-
-		$user_id = $this->ion_auth->user()->row()->id;
-		$message_count = $this->messages_model->get_message_count($user_id);
-		$this->data['unread_messages'] = $message_count;
+                
+                if($success) {
+                    $this->data['success_message'] = true;
+                }
+                
+                $user_id = $this->session->userdata("user_id");
+		$this->data['user_id'] = $user_id;
 		$this->_render('messages/dashboard');
+
 	}
 
 	public function inbox() {
@@ -30,12 +34,15 @@ class Messages extends MY_Controller {
 		if (! $this->session->userdata('inbox_tab')) { // Set session inbox_tab to inbox if it's not already set
 			$this->session->set_userdata('inbox_tab', 'inbox');
 		}
-		$user_id = $this->ion_auth->user()->row()->id;
-		$messages = $this->messages_model->get_messages_for_user($user_id);
-		$sent_messages = $this->messages_model->get_sent_messages_for_user($user_id);
-		$this->data['messages'] = $messages;
-		$this->data['sent_messages'] = $sent_messages;
+		$this->data['user_id'] = $user_id = $this->session->userdata("user_id");
+		$this->data['messages'] = json_decode(authPostRequest('', array("user_id" => $user_id), $this->config->item('auth_server') . "/api/auth_general/get_inbox_messages"), 1);
+		$this->data['sent_messages'] = json_decode(authPostRequest('', array("user_id" => $user_id), $this->config->item('auth_server') . "/api/auth_general/get_sent_messages"), 1);
+
 		$this->_render('messages/inbox');	
+//                echo "<pre>";
+//                var_dump($this->data['messages']);
+//                echo "</pre>";
+               
 	}
 	
 	public function send() {
@@ -45,28 +52,28 @@ class Messages extends MY_Controller {
 
 		
 		// Form input validation
-		$this->form_validation->set_rules('message-recipients', 'Message Recipients', 'required');
-		$this->form_validation->set_rules('message-subject', 'Message Subject', 'required');
-		$this->form_validation->set_rules('message-body', 'Message Body', 'required');
-
-		if ($this->form_validation->run() == true) {
-			$sender_id = $this->ion_auth->user()->row()->id;
-			$recipients = $this->input->post('message-recipients');
-			$subject = $this->input->post('message-subject');
-			$body = $this->input->post('message-body');
-//			error_log("sender_id -> $sender_id | recipients -> $recipients | subject -> $subject | body -> $body");
-			if (preg_match('/\,/', $recipients)) {
-				$recipients = explode(',', $recipients);
-			}
-			$this->messages_model->send_new_message($sender_id, $recipients, $subject, $body);
-//			$this->mahana_messaging->send_new_message($sender_id, $recipients, $subject, $body, $priority = PRIORITY_NORMAL);
-			$this->data['success_message'] = true;
-			$this->data['unread_messages'] = "5";
-			$message_count = $this->messages_model->get_message_count($sender_id);
-			$this->data['unread_messages'] = $message_count;
-			$this->_render('messages/dashboard');
-		}
-		else {
+//		$this->form_validation->set_rules('message-recipients', 'Message Recipients', 'required');
+//		$this->form_validation->set_rules('message-subject', 'Message Subject', 'required');
+//		$this->form_validation->set_rules('message-body', 'Message Body', 'required');
+//
+//		if ($this->form_validation->run() == true) {
+//			$sender_id = $this->ion_auth->user()->row()->id;
+//			$recipients = $this->input->post('message-recipients');
+//			$subject = $this->input->post('message-subject');
+//			$body = $this->input->post('message-body');
+////			error_log("sender_id -> $sender_id | recipients -> $recipients | subject -> $subject | body -> $body");
+//			if (preg_match('/\,/', $recipients)) {
+//				$recipients = explode(',', $recipients);
+//			}
+//			$this->messages_model->send_new_message($sender_id, $recipients, $subject, $body);
+////			$this->mahana_messaging->send_new_message($sender_id, $recipients, $subject, $body, $priority = PRIORITY_NORMAL);
+//			$this->data['success_message'] = true;
+//			$this->data['unread_messages'] = "5";
+//			$message_count = $this->messages_model->get_message_count($sender_id);
+//			$this->data['unread_messages'] = $message_count;
+//			$this->_render('messages/dashboard');
+//		}
+//		else {
 			//display the create user form
 			//set the flash data error message if there is one
 			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
@@ -79,28 +86,28 @@ class Messages extends MY_Controller {
 			);
 			
 
-			if ( $this->input->post('message-recipients') ) {
-				$recipients = $this->input->post('message-recipients');
-				$participant_data = array();
-				if (preg_match('/\,/', $recipients)) {
-					$recipients = explode(',', $recipients);
-					foreach ( $recipients as $recipient ) {
-						$user = $this->ion_auth->user($recipient)->row();
-						$p['recipient_id'] = $user->id;
-						$p['username'] = $user->username;
-						$participant_data[] = $p;
-					}
-				}
-				else {
-					$user = $this->ion_auth->user($recipients)->row();
-					$p['recipient_id'] = $user->id;
-					$p['username'] = $user->username;
-					$participant_data[] = $p;
-				}
-//				error_log("----> " . print_r($participant_data, 1));
-				$this->data['participant_data'] = $participant_data;
-				
-			}
+//			if ( $this->input->post('message-recipients') ) {
+//				$recipients = $this->input->post('message-recipients');
+//				$participant_data = array();
+//				if (preg_match('/\,/', $recipients)) {
+//					$recipients = explode(',', $recipients);
+//					foreach ( $recipients as $recipient ) {
+//						$user = $this->ion_auth->user($recipient)->row();
+//						$p['recipient_id'] = $user->id;
+//						$p['username'] = $user->username;
+//						$participant_data[] = $p;
+//					}
+//				}
+//				else {
+//					$user = $this->ion_auth->user($recipients)->row();
+//					$p['recipient_id'] = $user->id;
+//					$p['username'] = $user->username;
+//					$participant_data[] = $p;
+//				}
+////				error_log("----> " . print_r($participant_data, 1));
+//				$this->data['participant_data'] = $participant_data;
+//				
+//			}
 			
 			$this->data['subject'] = array(
 				'name'  => 'message-subject',
@@ -111,11 +118,49 @@ class Messages extends MY_Controller {
 				'value' => $this->form_validation->set_value('message-subject')
 			);
 			
-			// Get all the users in this installation for the curator select list
-			$this->data['users'] = $this->ion_auth->users()->result();
+                        $this->data['user_id'] = $this->session->userdata("user_id");
+                        
+//                        echo "<pre>";
+//                        var_dump($this->users_list);
+//                        echo "</pre>";
+                        
+                        $this->data['users'] = json_decode(authGetRequest('', $this->config->item('auth_server') . "/api/auth_general/get_basic_user_info"));
+                        
 			$this->_render('messages/send');			
-		}
+//		}
 	}
+        
+        function validate_send() {
+            // Form input validation
+		$this->form_validation->set_rules('message-recipients', 'Message Recipients', 'required');
+		$this->form_validation->set_rules('message-subject', 'Message Subject', 'required');
+		$this->form_validation->set_rules('message-body', 'Message Body', 'required');
+
+		if ($this->form_validation->run() == true) {
+                    echo json_encode(array('success' => 'no errors'));
+                    return;
+//			$sender_id = $this->ion_auth->user()->row()->id;
+//			$recipients = $this->input->post('message-recipients');
+//			$subject = $this->input->post('message-subject');
+//			$body = $this->input->post('message-body');
+////			error_log("sender_id -> $sender_id | recipients -> $recipients | subject -> $subject | body -> $body");
+//			if (preg_match('/\,/', $recipients)) {
+//				$recipients = explode(',', $recipients);
+//			}
+//			$this->messages_model->send_new_message($sender_id, $recipients, $subject, $body);
+////			$this->mahana_messaging->send_new_message($sender_id, $recipients, $subject, $body, $priority = PRIORITY_NORMAL);
+//			$this->data['success_message'] = true;
+//			$this->data['unread_messages'] = "5";
+//			$message_count = $this->messages_model->get_message_count($sender_id);
+//			$this->data['unread_messages'] = $message_count;
+//                        $user_id = $this->session->userdata("user_id");
+//                        $this->data['user_id'] = $user_id;
+//			$this->_render('messages/dashboard');
+		} else {
+                    echo json_encode(array('error' => validation_errors()));
+                    return;
+                }
+        }
 	
 	public function send_message() {
 		if (!$this->ion_auth->logged_in()) {
@@ -152,17 +197,17 @@ class Messages extends MY_Controller {
 			show_error("No message ID was specified");
 		}
 		
-		$user_id = $this->ion_auth->user()->row()->id;
-//		echo "user -> $user_id $message_id<br />";
-		$message = $this->messages_model->get_message($message_id, $user_id, $type);
-//		print_r($message);
+		$user_id = $this->session->userdata("user_id");
+                
+                $message = json_decode(authPostRequest('', array("user_id" => $user_id, "message_id" => $message_id, "type" => $type), $this->config->item('auth_server') . "/api/auth_general/get_message"), 1);
+                
 		if ( $message['status'] == 1 ) { // If message is marked as unread then mark it as read
-//			error_log("message status -> " . $message['status']);
-			$this->messages_model->update_message_status("0", $message_id, $user_id);
+                    json_decode(authPostRequest('', array("user_id" => $user_id, "message_id" => $message_id), $this->config->item('auth_server') . "/api/auth_general/update_message_status"), 1);
 		}
-		$participants = $this->messages_model->get_thread_participants($message['thread_id']);
-		$this->data['participants'] = $participants;
+                
+		$this->data['participants'] = json_decode(authPostRequest('', array("thread_id" => $message['thread_id']), $this->config->item('auth_server') . "/api/auth_general/get_thread_participants"), 1);
 		$this->data['message'] = $message;
+                $this->data['type'] = $type;
 		$this->_render('messages/view');
 	}
 	
@@ -171,20 +216,21 @@ class Messages extends MY_Controller {
 			redirect('auth', 'refresh');
 		}
 
-		$user_id = $this->ion_auth->user()->row()->id;
-//		$message = $this->mahana_messaging->get_message($message_id, $user_id);
-		$message = $this->messages_model->get_message($message_id, $user_id);
-		$thread_id = $this->messages_model->get_thread_id_from_message($message_id);
-		$participants = $this->messages_model->get_thread_participants($thread_id);
+		$user_id = $this->session->userdata("user_id");
+                
+                $message = json_decode(authPostRequest('', array("user_id" => $user_id, "message_id" => $message_id), $this->config->item('auth_server') . "/api/auth_general/get_message"), 1);
+                $thread_id = json_decode(authPostRequest('', array("message_id" => $message_id), $this->config->item('auth_server') . "/api/auth_general/get_msg_thread"), 1);
+		$participants = json_decode(authPostRequest('', array("thread_id" => $thread_id), $this->config->item('auth_server') . "/api/auth_general/get_thread_participants"), 1);
 //		print_r($participants);
 //		error_log(print_r($participants, 1));
 		$this->data['user_id'] = $user_id;
 		$this->data['participants'] = $participants;
 		$this->data['message_id'] = $message_id;
 		$this->data['message'] = $message;
+                $this->data['users'] = json_decode(authGetRequest('', $this->config->item('auth_server') . "/api/auth_general/get_basic_user_info"));
 		$this->_render('messages/reply');
 	}
-	
+        
 	public function reply_post() {
 		if (!$this->ion_auth->logged_in()) {
 			redirect('auth', 'refresh');
@@ -195,25 +241,32 @@ class Messages extends MY_Controller {
 			$subject = $this->input->post('message-subject'); // Maybe not allow them to change subject - instead add in RE:
 			$body = $this->input->post('message-body');
 			$recipients = $this->input->post('message-recipients');
-			if (preg_match('/\,/', $recipients)) {
-				$recipients = explode(',', $recipients);
-			}
-//			$this->mahana_messaging->reply_to_message($message_id, $sender_id, $subject, $body, $priority = PRIORITY_NORMAL);
-			$this->messages_model->reply_to_message($message_id, $sender_id, $subject, $body, $recipients);
-			// Need to really redirect to inbox here instead
-			redirect('messages/inbox', 'refresh');
+			
+                        json_decode(authPostRequest('', 
+                                array("message_id" => $message_id, "sender_id" => $sender_id, "subject" => $subject, "body" => $body,
+                                "recipients" => $recipients),
+                                $this->config->item('auth_server') . "/api/auth_general/reply_msg"), 1);
+//			$this->messages_model->reply_to_message($message_id, $sender_id, $subject, $body, $recipients);
+
+                        redirect('messages/inbox', 'refresh');
 //			$threads = $this->mahana_messaging->get_all_threads($user_id);
 //			$this->data['threads'] = $threads;
 //			$this->_render('messages/inbox');
 		}
 	}
-	
-	public function delete($message_id) {
+        
+	public function delete($message_id, $type) {
 		if (!$this->ion_auth->logged_in()) {
 			redirect('auth', 'refresh');
 		}
-		$user_id = $this->ion_auth->user()->row()->id;
-		$is_deleted = $this->messages_model->delete_message($message_id, $user_id);
+		$user_id = $this->session->userdata('user_id');
+                $url = ($type === "inbox") ? "/api/auth_general/update_message_inbox_flag" : "/api/auth_general/update_message_outbox_flag";
+                
+                $is_deleted = json_decode(authPostRequest('', 
+                        array("user_id" => $user_id, "message_id" => $message_id), 
+                        $this->config->item('auth_server') . $url), 1);
+                
+//		$is_deleted = $this->messages_model->delete_message($message_id, $user_id);
 		if ( $is_deleted ) {
 			redirect('messages/inbox', 'refresh');
 		}

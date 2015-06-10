@@ -67,6 +67,9 @@ function authGetRequest($token, $uri) {
 	);
 	$context  = stream_context_create($opts);
 	$result = file_get_contents($url, false, $context);
+//        echo "<pre>";
+//                        var_dump($result);
+//                        echo "</pre>";
 	return $result;
 }
 

@@ -46,7 +46,8 @@
 					<tr><td style="text-align:left;vertical-align:top"><h4>Body:</h4></td><td><?php echo nl2br($message['body']); ?></td></tr>
 				</table>
 				<br /><br /><br />
-				<p><a href="<?php echo base_url() . "messages/reply/" . $message['message_id'];?>" class="btn btn-primary"><i class="icon-repeat icon-white"></i>  Reply</a><?php echo nbs(6); ?><a href="<?php echo base_url() . "messages/delete/" . $message['message_id'];?>" class="btn btn-danger"><i class="icon-remove icon-white"></i>  Delete</a></p>
+				<p><a href="<?php echo base_url() . "messages/reply/" . $message['message_id'];?>" class="btn btn-primary"><i class="icon-repeat icon-white"></i>  Reply</a><?php echo nbs(6); ?>
+                                    <a href="<?php echo base_url() . "messages/delete/" . $message['message_id'] . "/" . $type;?>" class="btn btn-danger"><i class="icon-remove icon-white"></i>  Delete</a></p>
 			</div>
 		</div>
 	</div>

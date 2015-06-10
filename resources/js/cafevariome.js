@@ -2488,10 +2488,72 @@ function deleteSelectedMessages() {
 			}
 		}
 	});
+//        console.log(selected);
+//        return;
 	$.ajax({
-		url: baseurl + 'messages/delete_selected_messages',
+		url: authurl + '/auth_messages/delete_selected_messages',
 //		contentType: 'application/json',
-		data: {messages: JSON.stringify(selected)},
+		data: {messages: JSON.stringify(selected), user_id : $("#user_id").attr("value")},
+		dataType: 'html',
+//		delay: 200,
+		type: 'post',
+		success: function(data) {
+//			alert(data);
+//			window.location.reload(true);
+		},
+		error: function(httpRequest, textStatus, errorThrown) { 
+			alert("Sorry, there was a problem deleting the messages");
+		}
+	});
+}
+
+function deleteSelectedMessagesInbox() {
+	var selected = new Array();
+	$("input:checkbox").each(function(){
+		var $this = $(this);
+		if($this.is(":checked")){
+			if ($this.attr('id')) { // Means that the checkbox in the table header is ignored as it doesn't contain an ID
+				var message_id_str = $this.attr("id");
+				var message_id = message_id_str.split("_").pop();
+				selected.push(message_id);
+			}
+		}
+	});
+	$.ajax({
+		url: authurl + '/auth_messages/delete_selected_messages_inbox',
+//		contentType: 'application/json',
+		data: {messages: JSON.stringify(selected), user_id : $("#user_id").attr("value")},
+		dataType: 'html',
+//		delay: 200,
+		type: 'post',
+		success: function(data) {
+//			alert(data);
+			window.location.reload(true);
+		},
+		error: function(httpRequest, textStatus, errorThrown) { 
+			alert("Sorry, there was a problem deleting the messages");
+		}
+	});
+}
+
+function deleteSelectedMessagesOutbox() {
+	var selected = new Array();
+	$("input:checkbox").each(function(){
+		var $this = $(this);
+		if($this.is(":checked")){
+			if ($this.attr('id')) { // Means that the checkbox in the table header is ignored as it doesn't contain an ID
+				var message_id_str = $this.attr("id");
+				var message_id = message_id_str.split("_").pop();
+				selected.push(message_id);
+			}
+		}
+	});
+//        console.log(selected);
+//        return;
+	$.ajax({
+		url: authurl + '/auth_messages/delete_selected_messages_outbox',
+//		contentType: 'application/json',
+		data: {messages: JSON.stringify(selected), user_id : $("#user_id").attr("value")},
 		dataType: 'html',
 //		delay: 200,
 		type: 'post',
@@ -3170,4 +3232,42 @@ function edit_user_profile() {
 	});
     });
 }
-  
+
+function send_message() {
+    $callAjax = true;
+    $('form[name="sendMessage"]').submit(function(e) {
+        e.preventDefault();
+        $postData = $(this).serialize();
+        $.ajax({url: baseurl + 'messages/validate_send/',
+		data: $postData,
+		dataType: 'json',
+		delay: 200,
+		type: 'POST',
+		success: function(data) {
+                    if (data.error) {
+                            $("#sendMessage").removeClass('hide');
+                            $("#sendMessage").html(data.error);
+                    } else if (data.success) {
+//                        alert(data.success);
+                        if($callAjax)
+                        {$.ajax({url: authurl + '/auth_messages/send_email/',
+                                data: $postData,
+                                dataType: 'json',
+                                delay: 200,
+                                type: 'POST',
+                                success: function(result) {
+                                    if (result.error) {
+                                            $("#sendMessage").removeClass('hide');
+                                            $("#sendMessage").text(result.error);
+                                    } else if (result.success) {
+//                                            alert(result.success);
+                                            window.location = baseurl + "messages/index/" + result.unread_count;
+                                    }
+                                }
+                        }); $callAjax = false;
+                        }
+                    }
+		}
+	});
+    });
+}
