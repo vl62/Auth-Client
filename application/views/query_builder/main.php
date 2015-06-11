@@ -103,7 +103,7 @@
 //			endpoints : [{'name' : 'MOLGENIS105', 'url' : 'http://molgenis105.gcc.rug.nl/api/v1/getAggregate', 'type' : 'molgenis'}, {'name' : 'MOLGENIS106', 'url' : 'http://molgenis106.gcc.rug.nl/api/v1/getAggregate', 'type' : 'molgenis'}],
 //			endpoints : [{'name' : 'MOLGENIS105', 'url' : 'http://molgenis105.gcc.rug.nl/api/v1/getAggregate'}],
 //			endpoints : [{'name' : 'local1', 'url' : 'http://localhost/cafevariome/discover/q1'}, {'name' : 'local2', 'url' : 'http://localhost/cafevariome/discover/q2'}],
-			endpoints : [{'name' : 'local', 'url' : '<?php echo base_url() . 'discover/query'; ?>', 'type' : 'local'}],
+			endpoints : [{'name' : 'local', 'url' : '<?php echo base_url() . 'discover/query'; ?>', 'type' : 'local'}, {'name' : 'local', 'url' : 'http://localhost/cafevariome_client_2/discover/query', 'type' : 'local'}],
 			complete : function() {
 //				alert( 'Done!' );
 			}

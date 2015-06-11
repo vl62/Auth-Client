@@ -1811,6 +1811,8 @@ class Admin extends MY_Controller {
 		echo json_encode($phenotype_attributes_nr_list);
 	}
 	
+	
+	
 	function get_phenotype_attributes_nr_list() {
 		$this->load->model('phenotypes_model');
 		$phenotype_attributes_nr_list = $this->phenotypes_model->getPhenotypeAttributesNRList();

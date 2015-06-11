@@ -19,7 +19,7 @@
 			<?php echo form_hidden($csrf); ?>
 			<?php echo form_hidden(array('id' => $group_id)); ?>
 
-			<p><button type="submit" name="submit" class="btn btn-primary"><i class="icon-remove icon-white"></i>  Delete Group</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "auth/groups";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p></p>
+			<p><button type="submit" name="submit" class="btn btn-primary"><i class="icon-remove icon-white"></i>  Delete Group</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "groups";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p></p>
 			
 		</div>
 	</div>
