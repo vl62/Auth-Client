@@ -1,0 +1,18 @@
+<div class="container">
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="well">
+				<?php if ( $this->config->item('cafevariome_central') ): ?>
+				<h3 style="text-align: center">Cafe Variome "Central" Disclaimer</h3><hr/>
+				<p>Cafe Variome "Central" (located at <a href="http://www.cafevariome.org">http://www.cafevariome.org</a>) uses publicly available web services to gather and make searchable a set of pointers to records of interest, to help users discover the existence of variant data and direct them to the original data sources where the data may be examined in full. It is solely intended as a data detection tool and in no way aims to replace such original data sources, their purpose or function; on the contrary, it aims to facilitate visibility of such data sources and help drive user traffic to them. The employed web services, and the corresponding record pointers and underlying data, are established and maintained by third parties. As such, Cafe Variome makes no warranty with regard to the accuracy, completeness, suitability for any purpose, or accessibility of the primary data. Cafe Variome merely redisplays the output of the web services, and updates it regularly, without any curation or checking. We therefore cannot accept responsibility for any use made of the record pointers or any primary data accessed via Cafe Variome, and we advise the user to always refer back to the original data sources/data owners and/or curators to check for any restrictions and/or limitations of use that may apply. No liability is accepted by Cafe Variome for infringement of any rules and regulations of external data sources pertaining to the use of their original data.</p>
+				<?php else: ?>
+				<h3 style="text-align: center">Cafe Variome Disclaimer</h3><hr/>
+				<p>Cafe Variome enables users to discover the existence (rather than necessarily the substance) of variant records, with subsequent options facilitating appropriate open or controlled access to, or linking to, the actual data. It is therefore not a database per se, but acts as an advertising and search platform to promote the visibility of useful content within or beyond one or more networked data sources who maintain the underlying data. As such, Cafe Variome makes no warranty with regard to the accuracy, completeness, suitability for any purpose, or accessibility of the primary data.</p>
+				<p>Cafe Variome merely references and reflects the underlying data, without curation or checking, and as such does not accept responsibility for any use made of the record pointers or any primary data accessed via Cafe Variome, and users are advised to refer back to the original data sources to check for any restrictions and/or limitations of use that may apply. Consequently, no liability is accepted by Cafe Variome for infringement of any rules and regulations of external data sources pertaining to the use of the original data.</p>
+				<p>As a matter of principle, recognising the intended purpose of Cafe Variome, users should not use this platform to undertake bulk download of mutation names/labels/links, or engage in further sharing or reuse of large sets of records without explicit approval from the relevant data sources. Furthermore, to minimise the risk of inadvertent unique record duplication in the variant data ecosystem, all further processing or sharing of records derived from Cafe Variome should ensure that the data remain accompanied by their respective Cafe Variome IDs in all cases, plus any other relevant IDs to the degree that it is ethically and legally appropriate to do so.</p>
+				<?php endif; ?>
+			</div>
+		</div>
+	</div>
+	<hr>
+</div><!--/.fluid-container-->
