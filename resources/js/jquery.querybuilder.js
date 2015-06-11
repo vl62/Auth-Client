@@ -946,7 +946,7 @@
 //										alert("urls -> " + urls);
 //										Using this method here to make multiple ajax calls to the supplied URLS: http://stackoverflow.com/questions/18590201/getting-multiple-ajax-with-jquery-each-when-jquery-when-all-done-do-something
 										$.when.apply(null, urls.map(function (u,i) {
-//											alert(JSON.stringify(u) + " ---> " + u.url);
+											alert(JSON.stringify(u) + " ---> " + u.url);
 											return $.ajax({ url: u.url, data: final_query, contentType: 'application/json', dataType: 'html', type: 'POST' });
 										})).then(function() {
 //											alert(JSON.stringify(arguments));

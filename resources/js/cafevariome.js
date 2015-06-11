@@ -2921,7 +2921,7 @@ function register_user() {
     });
 }
 
-// activate user
+// login user
 $(document).ready(function(){
     $("#loginUser").click(function(e){
         e.preventDefault();
