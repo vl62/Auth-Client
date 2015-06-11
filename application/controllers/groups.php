@@ -28,7 +28,7 @@ class Groups extends MY_Controller {
 
 		$token = $this->session->userdata('Token');
 		$groups = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
-//		print_r($groups);
+//		error_log("groups -> $groups");
 		$this->data['groups'] = json_decode($groups, TRUE);
 //		$this->data['groups'] = $this->ion_auth->getGroupsFull();
 //		$this->load->model('sources_model');
@@ -46,20 +46,16 @@ class Groups extends MY_Controller {
 		{
 			redirect('auth', 'refresh');
 		}
-
 		//validate form input
 		$this->form_validation->set_rules('group_name', 'Group name', 'required|alpha_dash|xss_clean|callback_unique_network_group_name_check['.$this->input->post('network').']');
 		$this->form_validation->set_rules('desc', 'Description', 'required|xss_clean');
 		$this->form_validation->set_rules('network', 'Network', 'xss_clean');
 
 		if ($this->form_validation->run() == TRUE) {
-			
-			
 //			error_log("desc -> " .  $this->input->post('desc'));
 			// Create the new group
 			$token = $this->session->userdata('Token');
 			$new_group_id = authPostRequest($token, array('group_name' => $this->input->post('group_name'), 'group_description' => $this->input->post('desc'), 'network_key' => $this->input->post('network')), $this->config->item('auth_server') . "/api/auth/create_network_group");
-//			error_log("new -> $new_group_id");
 			if($new_group_id) {
 				// check to see if we are creating the group
 				// redirect them back to the admin page
@@ -109,9 +105,9 @@ class Groups extends MY_Controller {
 	}
 
 	public function unique_network_group_name_check($group_name, $network_key) {
-		
-		$group_exists = authPostRequest('', array('network_key' => $network_key, 'group_name' => $group_name), $this->config->item('auth_server') . "/api/auth/check_if_group_exists_in_network");
-		error_log("group_exists -> $group_exists");
+		$token = $this->session->userdata('Token');
+		$group_exists = authPostRequest($token, array('network_key' => $network_key, 'group_name' => $group_name), $this->config->item('auth_server') . "/api/auth/check_if_group_exists_in_network");
+//		error_log("group_exists -> $group_exists");
 		$group_exists_bool = $group_exists === 'true'? true: false;
 		if( ! $group_exists_bool) {
 //			error_log("true");

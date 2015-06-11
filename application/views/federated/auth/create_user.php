@@ -73,7 +73,6 @@
 					Add to Group (control click to select multiple): <br />
 					<?php if (array_key_exists('error', $groups)): ?>
 				<p><span class="label label-important">There are no network groups available to this installation. <br />A user will not be able to log in until they been assigned to at least one group.</span></p>
-					<br />
 					<?php else: ?>
 					<?php $count = count($groups) + 1; $additional = 'size="' . $count . '"'; ?>
 					<?php // echo form_multiselect('groups[]', $groups, '2', $additional); ?>
@@ -83,14 +82,15 @@
 						<?php endforeach; ?>
 					</select>
 					<?php endif; ?>
-				</p>
-                                
+				</p>          
 				<p>
-					<label for="isadmin">Is Admin:</label>
-					<?php echo form_checkbox('isadmin', '1', FALSE, 'id="isadmin"'); ?>
+					<label for="isadmin">Assign admin rights to user for this installation:</label>
+					<div class="is_admin_slider span5 offset4" >
+						<?php echo form_checkbox('isadmin', '1', FALSE, 'id="isadmin"'); ?>
+					</div>
 				</p>
-                                
-                                <p><button type="submit" name="submit" onclick="create_user();" class="btn btn-primary"><i class="icon-user icon-white"></i>  Create User</button><?php echo nbs(6); ?><button type="reset" class="btn"><i class="icon-remove-sign"></i> Clear</button><?php echo nbs(6); ?><a href="<?php echo base_url() . "auth_federated/users"; ?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
+                <br /><br /><br />               
+				<p><button type="submit" name="submit" onclick="create_user();" class="btn btn-primary"><i class="icon-user icon-white"></i>  Create User</button><?php echo nbs(6); ?><button type="reset" class="btn"><i class="icon-remove-sign"></i> Clear</button><?php echo nbs(6); ?><a href="<?php echo base_url() . "auth_federated/users"; ?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
 			</div>
 		</div>
 	</div>
