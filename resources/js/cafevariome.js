@@ -3079,7 +3079,7 @@ function edit_user() {
                                             $("#editUserError").removeClass('hide');
                                             $("#editUserError").text(result.error);
                                     } else if (result.success) {
-//                                            alert(result.success);
+//                                            console.log(result.success);
                                             window.location = baseurl + "auth_federated/users";
                                     }
                                 }

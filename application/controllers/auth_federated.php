@@ -810,6 +810,7 @@ class Auth_federated extends MY_Controller {
 		$token = $this->session->userdata('Token');
 		$user_json = authPostRequest($token, array('user_id' => $id), $this->config->item('auth_server') . "/api/auth/get_user_by_id");
 		$user = json_decode($user_json);
+                
 //		error_log("USER -> " . print_r($user, 1));
 //		$user = $this->ion_auth->user($id)->row();
 		$this->session->set_userdata(array("userId" => $user->id));
@@ -914,40 +915,15 @@ class Auth_federated extends MY_Controller {
                     
                     if ($this->form_validation->run() === TRUE)
                     {
-						error_log("true");
+                        error_log("true");
                         $this->session->unset_userdata("userId");
                         echo json_encode(array('success' => 'no errors'));
                         return;
-//				$this->ion_auth->update($user->id, $data);
-
-//				$this->session->set_flashdata('message', "User Saved");
-//				redirect("auth_federated", 'refresh');
                     } else {
-						error_log("false");
+                        error_log("false");
                         echo json_encode(array('error' => validation_errors()));
                         return;
                     }
-
-//                    $data = array(
-//                            'username'   => strtolower($this->input->post('username')),
-//                            'first_name' => $this->input->post('first_name'),
-//                            'last_name'  => $this->input->post('last_name'),
-//                            'email'      => $this->input->post('email'),
-//                            'company'    => $this->input->post('company'),
-//                            'orcid'	     => $this->input->post('orcid')
-//                    );
-//
-//                    //update the password if it was posted
-//                    if ($this->input->post('password'))
-//                    {
-//                            $this->form_validation->set_rules('password', 'Password', 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
-//                            $this->form_validation->set_rules('password_confirm', 'Password Confirmation', 'required');
-//
-//                            $data['password'] = $this->input->post('password');
-//                    }
-
-
-
             }
         }
 	

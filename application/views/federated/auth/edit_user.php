@@ -77,6 +77,11 @@
 						<?php endforeach; ?>
 					</select>						   
 				</p>
+                                
+                                <p>
+					<label for="isadmin">Is Admin:</label>
+                                        <input type="checkbox" name="isadmin" value="isadmin" <?php if($user->is_admin)  echo "checked"; else echo "";?>/>
+				</p>
 						
 				<?php echo form_hidden('id', $user->id); ?>
 				<?php echo form_hidden($csrf); ?>
