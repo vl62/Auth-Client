@@ -28,12 +28,11 @@ class Discover extends MY_Controller {
 		$token = $this->session->userdata('Token');
 		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
 		$federated_installs = stripslashes($data);
-//		error_log("federated_installs -> $federated_installs");
+		error_log("federated_installs -> $federated_installs");
 		$this->session->set_userdata(array('federated_installs' => $federated_installs));
 
 		//TODO: set the federated installs in the session so they can be used by variantcount
 		
-
 		
 		$sources_options = $this->sources_model->getSources(); // Get all the available sources from db
 		$this->setSources($sources_options);
@@ -1020,7 +1019,7 @@ class Discover extends MY_Controller {
 //			$federated_installs_array = json_decode($federated_installs, TRUE);
 			// Get the federated installs to search from session (set when the discovery interface first loads)
 			$federated_installs = $this->session->userdata('federated_installs');
-			error_log("f -> $federated_installs");
+//			error_log("f -> $federated_installs");
 			$federated_installs_array = json_decode($federated_installs, 1);
 			
 //			error_log(print_r($this->session->all_userdata(), 1));
@@ -1042,8 +1041,8 @@ class Discover extends MY_Controller {
 //						error_log("STARTING --> $term ---> " . $install_uri . "/discover/variantcount_federated/$term/$user_id");
 //						$this->variantcount_federated($term);
 //						$contents = curl_get_contents($install_uri . "/discover/variantcount_federated/$term");
-//						error_log("calling -> " . $install_uri . "/discover/variantcount_federated/$term");
-						$all_counts_json = @file_get_contents($install_uri . "/discover/variantcount_federated/$term/$user_id");
+						error_log("calling -> " . $install_uri . "/discover/variantcount_federated/$term");
+						$all_counts_json = @file_get_contents($install_uri . "/discover/variantcount_federated/$term/$user_id/$network_key");
 //						error_log(print_r($http_response_header, 1));
 //						error_log("all_counts_json -> $all_counts_json");
 
@@ -1135,7 +1134,7 @@ class Discover extends MY_Controller {
 		}
 //		print_r($sources);
 		$token = $this->session->userdata('Token');
-		$returned_sources = authPostRequest($token, array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_sources_for_installation_that_user_id_has_network_group_access_to");
+		$returned_sources = authPostRequest($token, array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_network_group_access_to");
 		print "$returned_sources";
 		
 //		foreach ( $current_source_groups as $source_group ) {
@@ -1186,24 +1185,37 @@ class Discover extends MY_Controller {
 	}
 	
 	// Federated variant count function that will get the counts for all local sources for an installation
-	function variantcount_federated($term, $user_id = NULL) {
+	function variantcount_federated($term, $user_id, $network_key) {
 //		error_log("variantcount_federated -> $term");
 		$term = urldecode($term);
 
-		$token = $this->session->userdata('Token');
-		error_log("token ---> $token ---> $user_id");
-		$returned_sources = authPostRequest($token, array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_network_group_access_to");
-		error_log("sources ------> $returned_sources");
-		
+//		$token = $this->session->userdata('Token');
+//		error_log("token ---> $token ---> $user_id");
+		$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_network_group_access_to");
+		error_log("sources ------>------> $returned_sources");
+		$accessible_sources_array = json_decode($returned_sources, 1);
+//		$accessible_source_ids = array_values($accessible_sources_array);
+		$accessible_source_ids_array = array();
+		foreach ( $accessible_sources_array as $s ) {
+			$accessible_source_ids_array[$s['source_id']] = $s['source_id'];
+		}
+//		$accessible_source_ids_array = array_flip($accessible_source_ids_array);
+		error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
 		$this->load->model('sources_model');
 		// Get the sources for this installation which are to be search (any that are not federated i.e. local sources)
 		$sources = $this->sources_model->getSourcesForFederatedQuery();
-		error_log("sources -> " . print_r($sources, 1));
+//		error_log("sources -> " . print_r($sources, 1));
 		$all_source_counts = array();
 		foreach ($sources as $source_array ) {
+			$open_access_flag = 0;
 			// Check whether the user can access restrictedAccess variants in this source
 			// Get the ID of the source and fetch the groups that it belongs to
-//			error_log(print_r($source, 1));
+			$source_id = $source_array['source_id'];
+			if (array_key_exists($source_id, $accessible_source_ids_array)) {
+				error_log("SET TO OPENACCESS");
+				$open_access_flag = 1;
+			}
+			error_log('source ---> ' . print_r($source_array, 1));
 			$source = $source_array['name'];
 			$es_index = $this->config->item('site_title');
 			$es_index = preg_replace('/\s+/', '', $es_index);
@@ -1242,7 +1254,12 @@ class Discover extends MY_Controller {
 					$sp_es = "openAccess";
 				}
 				else if ( $sp_es == "restrictedaccess" ) {
-					$sp_es = "restrictedAccess";
+					if ( $open_access_flag ) {
+						$sp_es = "openAccess";
+					}
+					else {
+						$sp_es = "restrictedAccess";
+					}
 				}
 				else if ( $sp_es == "linkedaccess" ) {
 					$sp_es = "linkedAccess";
@@ -1391,52 +1408,23 @@ class Discover extends MY_Controller {
 				updateStats($search_stats, 'searchstats');
 			}
 			
-			if ( $type == "api" ) {
-				$this->load->model('federated_model');
-				// Get the node name and then remove it from the source name - need to do this since the node name has been appended in order to make it unique for this node - in the node that is to be search it won't have this appended bit
-				$node_name = $this->federated_model->getNodeNameFromNodeURI($source_uri);
-				$node_source = str_replace("_" . $node_name, "", $source);
-//				error_log("NODE SOURCE -> " . $node_source . " SOURCE_URI -> " . $source_uri);
-				$source_info = $this->sources_model->getSource($source);
+
+			$query_result = $this->query->run($query_statement, $source);
+//			$final_query_result[$source] = $query_result;
+			if ( isset ($query_result) ) {
 				if ( empty($from_url_query) ) {
-					$data['source_info'][$source] = $source_info;
-					$data['node_source'][$source] = $node_source;
+					$data['counts'][$source] = $query_result;
 				}
 				else {
-					$this->data['source_info'][$source] = $source_info;
-					$this->data['node_source'][$source] = $node_source;						
-				}
-				$counts = $this->runAPISearch($source_uri, $source, $term);
-			}
-			else if ( $type == "central" ) {
-				$central_source = str_replace("_central", "", $source);
-				if ( empty($from_url_query) ) {
-					$data['central_source'][$source] = $central_source;
-				}
-				else {
-					$this->data['central_source'][$source] = $central_source;
-				}
-				$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
-			}
-			else {
-				$query_result = $this->query->run($query_statement, $source);
-//				$final_query_result[$source] = $query_result;
-				if ( isset ($query_result) ) {
-					if ( empty($from_url_query) ) {
-						$data['counts'][$source] = $query_result;
-					}
-					else {
-						$this->data['counts'][$source] = $query_result;
-					}
+					$this->data['counts'][$source] = $query_result;
 				}
 			}
-			
 		}
 		
-
+		echo json_encode($data);
 		
 //		if ( empty($from_url_query) ) { // The query comes from the form through the website
-			$this->load->view('pages/sources_table', $data); // Don't use _render as headers are already sent, html output from the view is sent back to ajax function and appended to div
+//			$this->load->view('pages/sources_table', $data); // Don't use _render as headers are already sent, html output from the view is sent back to ajax function and appended to div
 //		}
 //		else { // Query comes from a URL construction	
 //			if ( strtolower($format) == "html" ) {

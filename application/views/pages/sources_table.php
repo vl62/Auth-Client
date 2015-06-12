@@ -35,7 +35,7 @@ $(function (){
 						?>
 						<tr>
 							<?php if ( $this->config->item('show_sources_in_discover')): ?>
-								<?php $federated_source = preg_replace('/__install.*/', '', $source); error_log("federated new -> $source -> $federated_source"); ?>
+								<?php $federated_source = preg_replace('/__install.*/', '', $source); ?>
 								<?php if ( $source_types[$source] == "federated" ): ?>
 									<td><a rel="popover" data-content="Click for a description of this source (opens in a new window)." data-original-title="Source Information" href="<?php echo base_url('discover/source/' . $source); ?>" target="_blank"><?php echo $sources_full[$source]; ?></a></td>
 								<?php else: ?>

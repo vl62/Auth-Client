@@ -82,12 +82,13 @@
 					<p><span class="label label-important">There are no network groups available to this installation. <br />A user will not be able to log in until they been assigned to at least one group.</span></p>
 					<?php endif; ?>
 				</p>
-                                
-                                <p>
+				<p>
+				<div class="is_admin_slider span5 offset3" >
 					<label for="isadmin">Is Admin:</label>
-                                        <input type="checkbox" name="isadmin" value="isadmin" <?php if($user->is_admin)  echo "checked"; else echo "";?>/>
+					<input type="checkbox" name="isadmin" value="isadmin" <?php if($user->is_admin)  echo "checked"; else echo "";?>/>
+				</div>
 				</p>
-						
+                <br /><br /><br />	
 				<?php echo form_hidden('id', $user->id); ?>
 				<?php echo form_hidden($csrf); ?>
 				<p><button type="submit" onclick="edit_user();" name="submit" class="btn btn-primary"><i class="icon-user"></i>  Save User</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "auth/users"; ?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
