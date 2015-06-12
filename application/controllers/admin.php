@@ -1811,6 +1811,48 @@ class Admin extends MY_Controller {
 		echo json_encode($phenotype_attributes_nr_list);
 	}
 	
+	function get_phenotype_attributes_nr_list_federated() {
+		
+		$token = $this->session->userdata('Token');
+		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
+		$federated_installs = json_decode(stripslashes($data), 1);
+//		error_log("federated_installs -> " . print_r($federated_installs, 1));
+		
+		if ( empty($federated_installs) ) {
+			error_log("empty");
+		}
+		$tmp_unique_phenotypes = array();
+		foreach ( $federated_installs as $install ) {
+			$network_key = $install['network_key'];
+			$install_uri = $install['installation_base_url'];
+			$install_uri = rtrim($install_uri,"/");
+//			error_log("install -> $install_uri");
+//			print "install -> $install_uri<br />";
+			$install_phenotype_attributes_nr_list = @file_get_contents($install_uri . "/admin/get_phenotype_attributes_nr_list/");
+			error_log($install_phenotype_attributes_nr_list);
+//			print $install_phenotype_attributes_nr_list . "<br />";
+			if ( $install_phenotype_attributes_nr_list ) {
+				foreach ( json_decode($install_phenotype_attributes_nr_list, 1) as $phenotype ) {
+//					print_r($phenotype);
+//					$phenotype_attributes_nr_list[] = array('attribute_sourceID' => $phenotype['attribute_sourceID'], 'attribute_termName' => $phenotype['attribute_termName']);
+					$tmp_unique_phenotypes[$phenotype['attribute_termName']] = $phenotype['attribute_sourceID'];
+				}
+//				print "<br /><br />";
+			}
+//			json_encode(array_merge(json_decode($a, true),json_decode($b, true)));
+
+		}
+		
+		$phenotype_attributes_nr_list = array();
+		foreach ( $tmp_unique_phenotypes as $key => $value ) {
+			$phenotype_attributes_nr_list[] = array('attribute_sourceID' => $value, 'attribute_termName' => $key);
+		}
+		
+//		print_r($phenotype_attributes_nr_list);
+//		error_log(print_r($phenotype_attributes_nr_list, 1));
+
+		echo json_encode($phenotype_attributes_nr_list);
+	}
 	
 	
 	function get_phenotype_attributes_nr_list() {
