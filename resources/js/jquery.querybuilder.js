@@ -913,7 +913,7 @@
 //										var final_query = $('#final_query').val();
 //										alert("Final statement -> " + final_query);
 										centerDiv("#ajax-loader");
-										$('#ajax-loader').show(500);
+										$('#ajax-loader').show();
 										
 //										var requestCallback = new MyRequestsCompleted({
 //											numRequest: 3,
@@ -949,20 +949,21 @@
 											alert(JSON.stringify(u) + " ---> " + u.url);
 											return $.ajax({ url: u.url, data: final_query, contentType: 'application/json', dataType: 'html', type: 'POST' });
 										})).then(function() {
-//											alert(JSON.stringify(arguments));
+											alert(JSON.stringify(arguments));
 											var objects = arguments; // Special jquery argument that contains returned data (bit of a hack but unsure how to do it otherwise as then then function needs the same number of parameters as were inputted in the when.apply bit, see here http://stackoverflow.com/questions/5627284/pass-in-an-array-of-deferreds-to-when)
+											alert("here");
 											console.log("Resolved objects:", objects);
 //											if (settings.table_output_type == 'hits') {
 //												var hits = {};
 												var hits = { 'all_results' : [] };
 //											}
+
 											$.each(objects, function(k,v){
-//												alert(k + " -> " + v);
-												
+												alert(k + " -> " + v);
 												if (typeof(v) === 'string') { // Just one results set was returned so the data is a string
 //													alert("string -> " + typeof(v));
 													if (settings.table_output_type == 'hits') {
-//														alert("hits multiple");
+														alert("hits multiple");
 														var result_set = parseQueryResultsString(k,v,settings,uniqid,final_query);
 														var encoded_endpoint = encodeURIComponent(settings.endpoints[k].url);
 														result_set['source_info'] = {name: settings.endpoints[k].name, endpoint: settings.endpoints[k].url, encoded_endpoint: encoded_endpoint, id: uniqid};
@@ -1007,7 +1008,7 @@
 												}
 											});
 //											alert("done");
-											$('#ajax-loader').hide(500);
+//											$('#ajax-loader').hide(500);
 											if (settings.table_output_type == 'hits') {
 //												alert("done -> " + JSON.stringify(hits));
 												var hitsTemplate = '<table class="table table-hover table-bordered table-striped" id="discovertable"><thead><tr><th align="center" class="title">Source</th><th align="center" class="title">openAccess</th><th align="center" class="title">linkedAccess</th><th align="center" class="title">restrictedAccess</th></tr></thead>';
@@ -1649,6 +1650,9 @@ function parseQueryResultsString(k, results, settings, uniqid, final_query) {
 					$('#results_table').dataTable();
 				}
 			}
+//			else if (settings.table_output_type == 'results') {
+				
+//			}
 			else {
 
 			}
