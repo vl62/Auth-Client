@@ -1535,7 +1535,9 @@ function getPhenotypeOntologies() {
 }
 
 function getPhenotypeAttributesNRList() {
-	var url = baseurl + "admin/get_phenotype_attributes_nr_list";
+//	var url = baseurl + "admin/get_phenotype_attributes_nr_list";
+	var url = baseurl + "admin/get_phenotype_attributes_nr_list_federated";
+	
 	return $.ajax({
 		url: url,
 		type: 'GET',
