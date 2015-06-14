@@ -180,7 +180,28 @@ class Discover_federated extends MY_Controller {
 //			$count = $this->input->post('count');
 			$source_info = $this->sources_model->getSource($source);
 			$source_uri = $source_info['uri'];
-
+			$source_id = $source_info['source_id'];
+			// Fetch any sources that the user has group level access to
+			$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_network_group_access_to");
+			error_log("sources ------>------> $returned_sources");
+			$accessible_sources_array = json_decode($returned_sources, 1);
+//			$accessible_source_ids = array_values($accessible_sources_array);
+			$accessible_source_ids_array = array();
+			if ( ! array_key_exists('error', $accessible_sources_array)) {
+				foreach ( $accessible_sources_array as $s ) {
+					$accessible_source_ids_array[$s['source_id']] = $s['source_id'];
+				}
+				error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
+			}
+			
+			$open_access_flag = 0;
+			// Check whether the user can access restrictedAccess variants in this source
+			// Get the ID of the source and fetch the groups that it belongs to
+			if (array_key_exists($source_id, $accessible_source_ids_array)) {
+				error_log("SET TO OPENACCESS");
+				$open_access_flag = 1;
+			}
+			
 			if ( preg_match('/openAccess/i', $sharing_policy)) {
 				
 				if ( $type == "api" ) {
@@ -192,6 +213,16 @@ class Discover_federated extends MY_Controller {
 				else {
 					if ( $this->config->item('use_elasticsearch') ) {
 						$variants = $this->getVariantsElasticSearch($term, $source, "openAccess");
+						
+						// If this user has restrictedAccess to this source then also get all the restrictedAccess variants and combine them with the openAccess ones
+						if ( $open_access_flag ) {
+							$restricted_variants = $this->getVariantsElasticSearch($term, $source, "restrictedAccess");
+							error_log("restricted_variants ----> " . print_r($restricted_variants, 1));
+							$variants = array_merge($variants, $restricted_variants);
+							error_log("variants ----> " . print_r($variants, 1));
+							error_log("merge");
+						}
+						
 					}
 					else {
 						$variants = $this->getVariants($term, $source, "openAccess");
