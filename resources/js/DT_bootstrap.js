@@ -412,6 +412,82 @@ $(document).ready(function() {
 });
 
 
+// Get the dynamic display fields for the table head first, then call the datatable function with these fields as the aoColumn so they are dynamically created
+// The table data is then dynamically retrieved in the variants_datatable php function based on the display fields again and rendered
+$(document).ready(function() {
+//	var sSource = baseurl + 'discover/variants_datatable/';
+	var sharing_policy = $('input#sharing_policy').val();
+	var term = $('input#term').val();
+	var source = $('input#source').val();
+//	alert("sharing_policy -> " + sharing_policy + " term -> " + term + " source -> " + source);
+	$.ajax({
+		dataType: "json",
+		type: "POST",
+		data: {sharing_policy: sharing_policy},
+		url: baseurl + 'discover/get_display_fields_for_datatable_head/',
+		"success": function(data) {
+//			alert("json test -> " + JSON.stringify(data));
+//			var aoColumns = JSON.stringify(data.aoColumns);
+			var aoColumns = data.aoColumns;
+//			var columns = eval( '('+json+')' );
+			jQuery.fn.dataTableExt.oSort['cv-asc']  = function(a,b) {
+				var x = $(a).text().match(/\d+/);
+				var y = $(b).text().match(/\d+/);
+				return x - y;
+			};
+			jQuery.fn.dataTableExt.oSort['cv-desc'] = function(a, b) {
+				var x = $(a).text().match(/\d+/);
+				var y = $(b).text().match(/\d+/);
+				return y - x;
+			};
+//			alert("aoColumns -> " + aoColumns);
+//			console.log("aoColumns -> " + aoColumns);
+//			alert("url -> " + baseurl + 'discover/variants_datatable/');
+			var pathname = window.location.pathname;
+//			alert("pathname -> " + pathname);
+			$('#variantspaginationfederated').dataTable({
+//				"sScrollY": "400px",
+				"sScrollX": "100%",
+//				"sScrollXInner": "110%",
+				"bScrollCollapse": true,
+				"bPaginate": true,
+				"bServerSide": true,
+				"sServerMethod": "POST",
+				"bStateSave": true,
+				"bProcessing": true,
+						"oLanguage": {
+					"sProcessing": "*** Variants are being loaded please wait ***"
+				},
+				"sServerMethod": "GET",
+				"sAjaxSource": baseurl + 'discover_federated/variants_datatable/',
+				"fnServerParams": function(aoData) {
+					aoData.push(
+							{"name": "sharing_policy", "value": sharing_policy},
+							{"name": "term", "value": term},
+							{"name": "source", "value": source},
+							{"name": "path", "value": pathname}
+					);
+				},
+				"iDisplayLength": 10,
+				"aoColumns": aoColumns,
+//				[
+//					{ "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Cafe Variome ID", "sType": "cv" },
+//					{ "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Gene", "sType": "string" },
+//					{ "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Reference", "sType": "string" },
+//					{ "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "HGVS", "sType": "string" },
+//					{ "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Phenotype", "sType": "string" },
+//					{ "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Source", "sType": "string" }
+//				],
+				"aLengthMenu": [[5, 10, 20, 50, 75, 100, 200, 500, 1000], [5, 10, 20, 50, 75, 100, 200, 500, 1000]],
+				"aaSorting": [[0, 'asc']]
+
+			});
+		
+		}
+	});
+});
+
+
 //$(document).ready(function() {
 //	
 //	jQuery.fn.dataTableExt.oSort['cv-asc']  = function(a,b) {
