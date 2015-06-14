@@ -24,7 +24,7 @@ foreach ($variants as $variant) {
 		if ( array_key_exists($display_field['name'], $variant) ) {
 			if ( $c == $total_fields ) {
 				if ( $display_field['name'] == "cafevariome_id" ) {
-					echo $this->config->item('cvid_prefix') . $variant[$display_field['name']] . "\t";
+					echo $variant[$display_field['name']] . "\t";
 				}
 				else {
 					echo $variant[$display_field['name']];
@@ -32,7 +32,7 @@ foreach ($variants as $variant) {
 			}
 			else {
 				if ( $display_field['name'] == "cafevariome_id" ) {
-					echo $this->config->item('cvid_prefix') . $variant[$display_field['name']] . "\t";
+					echo $variant[$display_field['name']] . "\t";
 				}
 				else {
 					echo $variant[$display_field['name']] . "\t";
