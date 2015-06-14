@@ -2007,17 +2007,51 @@ class Discover extends MY_Controller {
 		$federated_install_uri = base64_decode( urldecode( $federated_install_uri ) );
 //		error_log("federated_uri -> $federated_install_uri");
 //		$term = html_entity_decode($term);
+		
+
+		
+		
 		if ( strtolower($sharing_policy) == "linkedaccess" ) {
 			$format = "html";
 		}
 		if ( $term && $source && $sharing_policy ) {
 			$term = urldecode($term);
+			
+			$this->data['term'] = $term;
+			$this->data['source'] = $source;
+			$this->data['sharing_policy'] = $sharing_policy;
+			$s = $this->sources_model->getSourceSingle($source);
+			
+			// Check if this source actually exists
+			if ( ! $s ) {
+				show_error("The specified source does not seem to exist in this instance");
+			}
+			// If no format is provided then default to html table display
+			if ( ! isset($format)) { // If no format specified set it to html as default
+				$format = "html";
+			}
+			
+			$sources_types = $this->sources_model->getSourcesTypes();
+			$type = $sources_types[$source];
+
+			
+			$source_full = $s[$source];
+			$this->data['source_full'] = $source_full;
+			
 			$user_id = $this->ion_auth->user()->row()->id;
 //			echo "sending -> " . $federated_install_uri . "/discover_federated/variants/$term/$source/$sharing_policy/$format";
-			$variants = @file_get_contents($federated_install_uri . "/discover_federated/variants/$term/$source/$sharing_policy/$format/$user_id");
+			$variants = @file_get_contents($federated_install_uri . "/discover_federated/variants_json/$term/$source/$sharing_policy/$format/$user_id");
+//			$variants = @file_get_contents($federated_install_uri . "/discover_federated/variants/$term/$source/$sharing_policy/$format/$user_id");
 //			echo $variants;
-			
+			$variants = json_decode($variants, 1);
+			$display_fields = $variants['display_fields'];
+			error_log("ds -> " . print_r($display_fields, 1));
+			unset($variants['display_fields']);
 			if ( strtolower($format) == "html" ) {
+				//TODO: make this client side
+				$variants = @file_get_contents($federated_install_uri . "/discover_federated/variants/$term/$source/$sharing_policy/$format/$user_id");
+//				$this->data['variants'] = $variants;
+//				$this->_render('pages/variantshtml');
 				echo $variants;
 			}
 			elseif ( strtolower($format) == "bed") {
@@ -2027,7 +2061,8 @@ class Discover extends MY_Controller {
 				$data['source'] = $source;
 				$data['sharing_policy'] = $sharing_policy;
 				$this->output->set_header("Content-Type: text/plain");
-				$this->load->view('pages/variantsbed', $data);				
+				$this->load->view('federated/pages/variantsbed', $data);
+//				echo $variants;
 			}
 			elseif ( strtolower($format) == "gff") {
 				$data = array();
@@ -2036,20 +2071,25 @@ class Discover extends MY_Controller {
 				$data['source'] = $source;
 				$data['sharing_policy'] = $sharing_policy;
 				$this->output->set_header("Content-Type: text/plain");
-				$this->load->view('pages/variantsgff', $data);				
+				$this->load->view('federated/pages/variantsgff', $data);
+//				echo $variants;
 			}
 			elseif ( strtolower($format) == "tab") {
 				$data = array();
 				$data['variants'] = $variants;
 				$data['display_fields'] = $display_fields;
 				$this->output->set_header("Content-Type: text/plain");
-				$this->load->view('pages/variantstab', $data);					
+				$this->load->view('federated/pages/variantstab', $data);
+				$this->output->set_header("Content-Type: text/plain");
+//				echo $variants;
 			}
 			elseif ( strtolower($format) == "excel") {
-				$this->writeExcel($term, $source, $variants, $display_fields);
+//				echo $variants;
+				$this->writeExcelFederated($term, $source, $variants, $display_fields);
 			}
 			elseif ( strtolower($format) == "json") {
-				$this->output->set_content_type('application/json')->set_output(json_encode($variants));
+				echo $variants;
+//				$this->output->set_content_type('application/json')->set_output(json_encode($variants));
 			}
 			else {
 				show_error("Sorry, '$format' is not recognised as a linkedAccess output format for Cafe Variome.");
@@ -3494,6 +3534,61 @@ $("#'.$key.'_tree")
 				if ( isset($variant[$display_field['name']])) {
 					if ( $display_field['name'] == "cafevariome_id" ) {
 						$sheet->SetCellValue($letter_number, $this->config->item('cvid_prefix') . $variant['cafevariome_id']);
+					}
+					else {
+						$sheet->SetCellValue($letter_number, $variant[$display_field['name']]);
+					}
+				}
+				else {
+					$sheet->SetCellValue($letter_number, "-");
+				}
+				$letter++;
+			}
+			$row++; // Increment the row for the next variant
+		}
+
+		$writer = new PHPExcel_Writer_Excel5($this->phpexcel);
+		$site_title_filename = strtolower($this->config->item('site_title'));
+		$site_title_filename = str_replace(' ', '_', $site_title_filename);
+		$excel_file_name = $site_title_filename . "_" . $term . "_" . $source . ".xls";
+		header('Content-type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="' . $excel_file_name . '"');
+		$writer->save('php://output');
+	}	
+	
+	private function writeExcelFederated($term, $source, $variants, $display_fields) {
+//		error_log("variants ---> " . print_r($variants, 1));
+		$this->load->library('phpexcel/PHPExcel');
+		$sheet = $this->phpexcel->getActiveSheet();
+		
+		$styleArray = array( 'font' => array( 'bold' => true ) );
+
+		$total_fields = count($display_fields);
+		
+		// First of all print the header row with currently set display fields
+		$letter = "A";
+		foreach ( $display_fields as $display_field ) {
+			$letter_number = $letter . "1"; // Write header to row 1
+			$sheet->getColumnDimension($letter)->setAutoSize(true);
+			$sheet->setCellValue($letter_number,$display_field['visible_name']);
+			$sheet->getStyle($letter_number)->applyFromArray($styleArray);
+			$letter++;
+		}
+		
+		// Next print the actual variant data
+		$row = 2; // Start outputting data from row 2 (row 1 is the header)
+		foreach ($variants as $variant) {
+//			error_log("v -> " . print_r($variant, 1));
+//			error_log("ROW -> $row");
+			$letter = "A";
+			foreach ( $display_fields as $display_field ) {
+//				error_log("starting -> " . print_r($display_field, 1));
+//				error_log("starting ds -> " . $display_field['name']);
+				$letter_number = $letter . $row;
+//				error_log("row is $row -> $letter $letter_number");
+				if ( isset($variant[$display_field['name']])) {
+					if ( $display_field['name'] == "cafevariome_id" ) {
+						$sheet->SetCellValue($letter_number, $variant['cafevariome_id']);
 					}
 					else {
 						$sheet->SetCellValue($letter_number, $variant[$display_field['name']]);

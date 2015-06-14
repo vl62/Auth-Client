@@ -239,14 +239,14 @@ class Discover_federated extends MY_Controller {
 					$data = array();
 					$data['variants'] = $variants;
 					$this->output->set_header("Content-Type: text/plain");
-					$this->load->view('pages/variantslovd', $data);
+					$this->load->view('federated/pages/variantslovd', $data);
 				}
 				elseif ( strtolower($format) == "tab") {
 					$data = array();
 					$data['variants'] = $variants;
 					$data['display_fields'] = $display_fields;
 					$this->output->set_header("Content-Type: text/plain");
-					$this->load->view('pages/variantstab', $data);					
+					$this->load->view('federated/pages/variantstab', $data);					
 				}
 				elseif ( strtolower($format) == "bed") {
 					$data = array();
@@ -255,7 +255,7 @@ class Discover_federated extends MY_Controller {
 					$data['source'] = $source;
 					$data['sharing_policy'] = $sharing_policy;
 					$this->output->set_header("Content-Type: text/plain");
-					$this->load->view('pages/variantsbed', $data);				
+					$this->load->view('federated/pages/variantsbed', $data);				
 				}
 				elseif ( strtolower($format) == "gff") {
 					$data = array();
@@ -264,7 +264,7 @@ class Discover_federated extends MY_Controller {
 					$data['source'] = $source;
 					$data['sharing_policy'] = $sharing_policy;
 					$this->output->set_header("Content-Type: text/plain");
-					$this->load->view('pages/variantsgff', $data);				
+					$this->load->view('federated/pages/variantsgff', $data);				
 				}
 				elseif ( strtolower($format) == "rss") {
 					$data['encoding'] = 'utf-8';
@@ -276,7 +276,7 @@ class Discover_federated extends MY_Controller {
 					$data['variants'] = $variants;
 
 					header("Content-Type: application/rss+xml");
-					$this->load->view('pages/variantsrss', $data);					
+					$this->load->view('federated/pages/variantsrss', $data);					
 				}
 				elseif ( strtolower($format) == "excel") {
 					$this->writeExcel($term, $source, $variants, $display_fields);
@@ -490,14 +490,14 @@ class Discover_federated extends MY_Controller {
 						$data = array();
 						$data['variants'] = $variants;
 						$this->output->set_header("Content-Type: text/plain");
-						$this->load->view('pages/variantslovd', $data);
+						$this->load->view('federated/pages/variantslovd', $data);
 					}
 					elseif ( strtolower($format) == "tab") {
 						$data = array();
 						$data['variants'] = $variants;
 						$data['display_fields'] = $display_fields;
 						$this->output->set_header("Content-Type: text/plain");
-						$this->load->view('pages/variantstab', $data);					
+						$this->load->view('federated/pages/variantstab', $data);					
 					}
 					elseif ( strtolower($format) == "bed") {
 						$data = array();
@@ -506,7 +506,7 @@ class Discover_federated extends MY_Controller {
 						$data['source'] = $source;
 						$data['sharing_policy'] = $sharing_policy;
 						$this->output->set_header("Content-Type: text/plain");
-						$this->load->view('pages/variantsbed', $data);				
+						$this->load->view('federated/pages/variantsbed', $data);				
 					}
 					elseif ( strtolower($format) == "gff") {
 						$data = array();
@@ -515,7 +515,7 @@ class Discover_federated extends MY_Controller {
 						$data['source'] = $source;
 						$data['sharing_policy'] = $sharing_policy;
 						$this->output->set_header("Content-Type: text/plain");
-						$this->load->view('pages/variantsgff', $data);				
+						$this->load->view('federated/pages/variantsgff', $data);				
 					}
 					elseif ( strtolower($format) == "rss") {
 						$data['encoding'] = 'utf-8';
@@ -526,7 +526,7 @@ class Discover_federated extends MY_Controller {
 						$data['creator_email'] = 'admin@cafevariome.org';
 						$data['variants'] = $variants;
 						header("Content-Type: application/rss+xml");
-						$this->load->view('pages/variantsrss', $data);					
+						$this->load->view('federated/pages/variantsrss', $data);					
 					}
 					elseif ( strtolower($format) == "excel") {
 						$this->writeExcel($term, $source, $variants, $display_fields);
@@ -573,7 +573,7 @@ class Discover_federated extends MY_Controller {
 					$data['source'] = $source;
 					$data['sharing_policy'] = $sharing_policy;
 					$this->output->set_header("Content-Type: text/plain");
-					$this->load->view('pages/variantsbed', $data);				
+					$this->load->view('federated/pages/variantsbed', $data);				
 				}
 				elseif ( strtolower($format) == "gff") {
 					$data = array();
@@ -582,14 +582,14 @@ class Discover_federated extends MY_Controller {
 					$data['source'] = $source;
 					$data['sharing_policy'] = $sharing_policy;
 					$this->output->set_header("Content-Type: text/plain");
-					$this->load->view('pages/variantsgff', $data);				
+					$this->load->view('federated/pages/variantsgff', $data);				
 				}
 				elseif ( strtolower($format) == "tab") {
 					$data = array();
 					$data['variants'] = $variants;
 					$data['display_fields'] = $display_fields;
 					$this->output->set_header("Content-Type: text/plain");
-					$this->load->view('pages/variantstab', $data);					
+					$this->load->view('federated/pages/variantstab', $data);					
 				}
 				elseif ( strtolower($format) == "excel") {
 					$this->writeExcel($term, $source, $variants, $display_fields);
@@ -696,6 +696,107 @@ class Discover_federated extends MY_Controller {
 
 //		return $variants;
 	}
+	
+	function variants_json ($term, $source, $sharing_policy, $format = NULL, $user_id = NULL) {
+//		error_log("term -> " . $term . " -> " . urldecode($term));
+
+		$term = html_entity_decode($term);
+//		$term = urldecode($term);
+		if ( $term && $source && $sharing_policy ) {
+			$s = $this->sources_model->getSourceSingle($source);
+			error_log("s -> " . print_r($s, 1));
+			// Check if this source actually exists
+			if ( ! $s ) {
+				show_error("The specified source does not seem to exist in this instance");
+			}
+			// If no format is provided then default to html table display
+			if ( ! isset($format)) { // If no format specified set it to html as default
+				$format = "html";
+			}
+			
+			$sources_types = $this->sources_model->getSourcesTypes();
+			$type = $sources_types[$source];
+
+			
+			$source_info = $this->sources_model->getSource($source);
+			error_log("source_info -> " . print_r($source_info, 1));
+			$source_uri = $source_info['uri'];
+			$source_id = $source_info['source_id'];
+			error_log("source_id -> $source_id");
+			// Fetch any sources that the user has group level access to
+			$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_network_group_access_to");
+			error_log("sources ------>------> $returned_sources");
+			$accessible_sources_array = json_decode($returned_sources, 1);
+//			$accessible_source_ids = array_values($accessible_sources_array);
+			$accessible_source_ids_array = array();
+			if ( ! array_key_exists('error', $accessible_sources_array)) {
+				foreach ( $accessible_sources_array as $s ) {
+					$accessible_source_ids_array[$s['source_id']] = $s['source_id'];
+				}
+				error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
+			}
+			
+			$open_access_flag = 0;
+			// Check whether the user can access restrictedAccess variants in this source
+			// Get the ID of the source and fetch the groups that it belongs to
+			if (array_key_exists($source_id, $accessible_source_ids_array)) {
+				error_log("SET TO OPENACCESS");
+				$open_access_flag = 1;
+			}
+			
+			
+			if ( preg_match('/openAccess/i', $sharing_policy)) {
+				
+				$variants = $this->getVariantsElasticSearch($term, $source, "openAccess");
+				
+				// If this user has restrictedAccess to this source then also get all the restrictedAccess variants and combine them with the openAccess ones
+				if ( $open_access_flag ) {
+					$restricted_variants = $this->getVariantsElasticSearch($term, $source, "restrictedAccess");
+					$variants = array_merge($variants, $restricted_variants);
+				}
+
+				// Get the dynamic display fields that can be changed by user in settings interface
+				$this->load->model('settings_model');
+				
+				
+				$variants_json = array();
+				$display_fields = $this->settings_model->getDisplayFieldsForSharingPolicy('openAccess');
+//				error_log("DS -> " . print_r($display_fields, 1));
+				$variants_json['display_fields'] = $display_fields;
+				ksort($variants);
+				foreach ( $variants as $variant ) {
+					foreach ( $display_fields as $display_field ) {
+						if ( array_key_exists($display_field['name'], $variant) ) {
+							if ( $display_field['name'] == "cafevariome_id" ) {
+								$variants_json[$this->config->item('cvid_prefix') . $variant['cafevariome_id']][$display_field['name']] = $this->config->item('cvid_prefix') . $variant[$display_field['name']];
+							}
+							else {
+								$variants_json[$this->config->item('cvid_prefix') . $variant['cafevariome_id']][$display_field['name']] = $variant[$display_field['name']];
+							}
+						}
+					}
+				}
+				echo json_encode($variants_json);
+//				$this->output->set_content_type('application/json')->set_output(json_encode($variants_json));
+			}
+			else if ( preg_match('/linkedAccess/i', $sharing_policy)) {
+				$variants = $this->getVariantsElasticSearch($term, $source, "linkedAccess");
+				
+				// Get the dynamic display fields that can be changed by user in settings interface
+				$this->load->model('settings_model');
+				$display_fields = $this->settings_model->getDisplayFieldsForSharingPolicy('linkedAccess');
+				$this->data['display_fields'] = $display_fields;
+				$sources_types = $this->sources_model->getSourcesTypes();
+				$type = $sources_types[$source];
+				$this->output->set_content_type('application/json')->set_output(json_encode($variants));
+			}
+		}
+		else {
+			show_404();
+		}
+	}
+	
+
 	
 	function getVariants($term, $source, $sharing_policy) {
 		$term = urldecode($term);
