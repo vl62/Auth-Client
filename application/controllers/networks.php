@@ -11,11 +11,32 @@ class Networks extends MY_Controller {
 		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
 			redirect('auth', 'refresh');
 		}
-		
 	
-		$this->load->model('federated_model');
-		$this->data['title'] = "Federated Management";
-		$this->_render('federated/networks/dashboard');
+		$this->data['title'] = "Networks";
+		$token = $this->session->userdata('Token');
+		$networks = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of");
+		$data = json_decode($networks, true);
+//		print_r($data);
+		$installation_count_for_networks = array();
+		$installations_for_networks = array();
+		// Loop through each network and get the count of the installations for that network (only if this installation is part of a network
+		if ( $data ) {
+			foreach ($data as $network) {
+				$installations = json_decode(authPostRequest($token, array('network_key' => $network['network_key']), $this->config->item('auth_server') . "/api/auth/get_installations_for_network"), 1);
+				error_log(print_r($installations, 1));
+				$count = count($installations);
+//				$count = json_decode(authPostRequest($token, array('network_key' => $network['network_key']), $this->config->item('auth_server') . "/api/auth/count_number_of_installations_for_network"), 1);
+				$installations_for_networks[$network['network_key']] = $installations;
+				$installation_count_for_networks[$network['network_key']] = $count;
+			}
+			
+			$this->data['installations_for_networks'] = $installations_for_networks;
+			$this->data['installation_count_for_networks'] = $installation_count_for_networks;
+		}
+		
+		$this->data['networks'] = $data;
+		
+		$this->_render('federated/networks/my_networks');
 	}
 	
 	function create_network() {
@@ -54,9 +75,11 @@ class Networks extends MY_Controller {
 //			echo "create network:<br />";
 //			print_r($network);
 			$this->session->set_flashdata('message', "Successfully created network $name");
-			redirect("networks/create_network", 'refresh');
+			redirect("networks", 'refresh');
 		}		
 	}
+	
+
 	
 	
 //	function create_network() {
@@ -271,32 +294,48 @@ class Networks extends MY_Controller {
 		}
 	}
 	
-	function my_networks() {
+
+	//delete the user
+	function leave_network($network_key, $installation_count_for_network, $network_name) {
 		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
 			redirect('auth', 'refresh');
+		}		
+
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('confirm', 'confirmation', 'required');
+
+		if ($this->form_validation->run() == FALSE)
+		{
+			$this->data['network_key'] = $network_key;
+			$this->data['installation_count_for_network'] = $installation_count_for_network;
+			$this->data['network_name'] = $network_name;
+			$this->_render('federated/networks/leave_network');
+//			$this->load->view('auth/deactivate_user', $this->data);
 		}
-		$token = $this->session->userdata('Token');
-		$networks = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of");
-		$data = json_decode($networks, true);
-//		print_r($data);
-		$installation_count_for_networks = array();
-		// Loop through each network and get the count of the installations for that network (only if this installation is part of a network
-		if ( $data ) {
-			foreach ($data as $network) {
-//				error_log(print_r($network,1));
-				$count = json_decode(authPostRequest($token, array('network_key' => $network['network_key']), $this->config->item('auth_server') . "/api/auth/count_number_of_installations_for_network"), 1);
-				// the count of installations for this network will be position zero in the returned array and have a key of total
-				$installation_count_for_networks[$network['network_key']] = $count[0]['total'];
+		else
+		{
+			// do we really want to deactivate?
+			if ($this->input->post('confirm') == 'yes') {
+				$token = $this->session->userdata('Token');
+				$data = authPostRequest($token, array('installation_count_for_network' => $installation_count_for_network, 'network_key' => $network_key, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/leave_network");
+				$leave_network_success = json_decode($data, true);
+				error_log(print_r($leave_network_success,1));
+				if ( $leave_network_success['error'] ) {
+					$this->session->set_flashdata('message', 'Leaving network failed');
+				}
+				else {
+					$this->session->set_flashdata('message', 'Successfully left network');
+				}
+				redirect("networks", 'refresh');
+
 			}
-			$this->data['installation_count_for_networks'] = $installation_count_for_networks;
+
+			//redirect them back to the auth page
+			redirect('networks', 'refresh');
 		}
-		
-		$this->data['networks'] = $data;
-		
-		$this->_render('federated/networks/my_networks');
 	}
 	
-	function leave_network($network_key, $installation_count_for_network) {
+	function sleave_network($network_key, $installation_count_for_network) {
 		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
 			redirect('auth', 'refresh');
 		}
@@ -314,7 +353,7 @@ class Networks extends MY_Controller {
 		else {
 			$this->session->set_flashdata('message', 'Successfully left network');
 		}
-		redirect("networks/my_networks", 'refresh');
+		redirect("networks", 'refresh');
 	}
 	
 	function view_networks_old() {
