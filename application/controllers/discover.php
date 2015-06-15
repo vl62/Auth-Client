@@ -2051,7 +2051,7 @@ class Discover extends MY_Controller {
 				//TODO: make this client side
 				$variants = @file_get_contents($federated_install_uri . "/discover_federated/variants/$term/$source/$sharing_policy/$format/$user_id");
 //				$this->data['variants'] = $variants;
-//				$this->_render('pages/variantshtml');
+//				$this->_render('federated/pages/variantshtml');
 				echo $variants;
 			}
 			elseif ( strtolower($format) == "bed") {

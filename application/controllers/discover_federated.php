@@ -53,7 +53,7 @@ class Discover_federated extends MY_Controller {
 			// Get the ID of the source and fetch the groups that it belongs to
 			$source_id = $source_array['source_id'];
 			if (array_key_exists($source_id, $accessible_source_ids_array)) {
-				error_log("SET TO OPENACCESS");
+				error_log("SET TO OPENACCESS!!");
 				$open_access_flag = 1;
 			}
 			error_log('source ---> ' . print_r($source_array, 1));
@@ -88,25 +88,54 @@ class Discover_federated extends MY_Controller {
 //			error_log("query ----> $query");
 			$es_data = $this->elasticsearch->query_dsl($query);
 			$counts = array();
-//			print "SOURCE -> $source<br />";
+			error_log("SOURCE -> $source");
+			
+//			$counts['openAccess'] = "";
+//			$counts['restrictedAccess'] = "";
+//			$counts['openAccess'] = "";
 			foreach ( $es_data['facets']['sharing_policy']['terms'] as $facet_sharing_policy ) {
 				$sp_es = $facet_sharing_policy['term'];
+				error_log($sp_es . " -----> " . $facet_sharing_policy['count']);
 				if ( $sp_es == "openaccess" ) {
 					$sp_es = "openAccess";
+					// Check if the access policy exists for the source (meaning there are already counts), if it does then add the counts, otherwise set the count
+					if ( array_key_exists($sp_es, $counts)) {
+						$counts[$sp_es] += $facet_sharing_policy['count'];
+					}
+					else {
+						$counts[$sp_es] = $facet_sharing_policy['count'];
+					}
 				}
-				else if ( $sp_es == "restrictedaccess" ) {
+				
+				$openaccess_to_restrictedaccess_count = 0;
+				if ( $sp_es == "restrictedaccess" ) {
 					if ( $open_access_flag ) { // If the user is in a group that has access to this source then set to openAccess
 						$sp_es = "openAccess";
+						// Check if the access policy exists for the source (meaning there are already counts), if it does then add the counts, otherwise set the count
+						if ( array_key_exists($sp_es, $counts)) {
+							$counts[$sp_es] += $facet_sharing_policy['count'];
+						}
+						else {
+							$counts[$sp_es] = $facet_sharing_policy['count'];
+						}
+						error_log("restrictedAccess -> openAccess -> " . $facet_sharing_policy['count']);
 					}
 					else {
 						$sp_es = "restrictedAccess";
+						$counts[$sp_es] = $facet_sharing_policy['count'];
 					}
 				}
-				else if ( $sp_es == "linkedaccess" ) {
+				
+				if ( $sp_es == "linkedaccess" ) {
 					$sp_es = "linkedAccess";
+					$counts[$sp_es] = $facet_sharing_policy['count'];
 				}
-
-				$counts[$sp_es] = $facet_sharing_policy['count'];
+				
+//				$counts[$sp_es] = $facet_sharing_policy['count'];
+//				if ( $open_access_flag ) { 
+//					$counts['openAccess'] += $openaccess_to_restrictedaccess_count;
+//				}
+				
 			}
 			if ( ! empty($counts)) { // Only add the sources that have some counts returned
 //				$all_source_counts[$source . "_" . $this->config->item('installation_key')] = $counts;

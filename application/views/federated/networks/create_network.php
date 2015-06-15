@@ -26,7 +26,7 @@
 					<br />
 					<small>(no spaces allowed but underscores and dashes are accepted, <br />uppercase characters will be converted to lowercase)</small>
 				</p>
-				<p><button type="submit" name="submit" class="btn btn-primary"><i class="icon-file icon-white"></i>  Create Network</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "federated_settings"; ?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
+				<p><button type="submit" name="submit" class="btn btn-primary"><i class="icon-file icon-white"></i>  Create Network</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "networks"; ?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
 				<br />
 				<div id="infoMessage"><strong><h4><?php echo $this->session->flashdata('message'); ?></h4></strong></div>
 			</div>
