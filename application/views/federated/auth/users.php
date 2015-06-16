@@ -83,7 +83,7 @@
 							<td><a rel="popover" data-content="Create/modify/delete users" data-original-title="Edit User" href="<?php echo base_url('auth_federated/edit_user'). "/" . $user->id; ?>" ><i class="icon-edit"></i></a>&nbsp;&nbsp;&nbsp;<a rel="popover" data-content="Permanently delete this user" data-original-title="Delete User" href="<?php echo base_url('auth_federated/delete'). "/" . $user->id; ?>" ></i><i class="icon-trash"></i></a></td>
 							<?php else: ?>
 							<td><?php if ($user->active) { echo 'Active'; } else { echo 'Inactive'; } ?></td>
-							<td><a rel="popover" data-content="Unable to edit the user since you are not an admin for the installation the user was created at" data-original-title="Edit User Disabled" href="#" ><i class="icon-edit icon-grey-link"></i></a>&nbsp;&nbsp;&nbsp;<a rel="popover" data-content="Unable to delete the user since you are not an admin for the installation the user was created at" data-original-title="Delete User Disabled" href="#" ></i><i class="icon-trash icon-grey-link"></i></a></td>
+							<td><i class="icon-edit icon-grey-link" rel="popover" data-content="Unable to edit the user since you are not an admin for the installation the user was created at" data-original-title="Edit User Disabled"></i>&nbsp;&nbsp;&nbsp;<i class="icon-trash icon-grey-link" rel="popover" data-content="Unable to delete the user since you are not an admin for the installation the user was created at" data-original-title="Delete User Disabled"></i></td>
 							<?php endif; ?>
 						</tr>
 						<?php endforeach; ?>
