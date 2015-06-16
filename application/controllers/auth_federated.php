@@ -50,6 +50,11 @@ class Auth_federated extends MY_Controller {
 			redirect('/', 'refresh');
 		}
                 
+                $fp = @fsockopen("auth.cafevariome.org", 80, $errno, $errstr, 30);
+                if (!$fp) {
+                    redirect(base_url("/auth/login"));
+                }
+                
 		$this->title = "Login";
                 $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
 
@@ -478,8 +483,14 @@ class Auth_federated extends MY_Controller {
 //		echo $this->config->item('installation_key');
 //		$users = authPostRequest('', array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_users_and_network_groups_for_installation");
 		$users = authPostRequest($token, array(), $this->config->item('auth_server') . "/api/auth/get_all_users");
-
+                
 		$this->data['users'] = json_decode($users);
+                
+//                for($i = 0; $i<count($this->data['users']); $i++) {
+//                    if($this->config->item('installation_key') != $this->data['users'][$i]->installation_key)
+//                        $this->data['users'][$i]->id = "";
+//                }
+                
 //		$this->data['users'] = $this->ion_auth->users()->result();
 		$users_groups_data = json_decode(authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_users_in_installation"), 1);
 //		error_log("users_groups_data -> $users_groups_data");
