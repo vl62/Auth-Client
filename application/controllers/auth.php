@@ -61,6 +61,12 @@ class Auth extends MY_Controller {
 		if ($this->ion_auth->logged_in()) {
 			redirect('/', 'refresh');
 		}
+                
+                $fp = @fsockopen("auth.cafevariome.org", 80, $errno, $errstr, 30);
+                if ($fp) {
+                    redirect(base_url("/auth_federated/login"));
+                }
+                
 		$this->title = "Login";
 		//validate form input
 		$this->form_validation->set_rules('identity', 'Identity', 'required');
@@ -70,9 +76,9 @@ class Auth extends MY_Controller {
 		{
 			//check to see if the user is logging in
 			//check for "remember me"
-			$remember = (bool) $this->input->post('remember');
+//			$remember = (bool) $this->input->post('remember');
 
-			if ($this->ion_auth->login($this->input->post('identity'), $this->input->post('password'), $remember))
+			if ($this->ion_auth->login($this->input->post('identity'), $this->input->post('password'), 0))
 			{
 				//if the login is successful
 				//redirect them back to the home page
