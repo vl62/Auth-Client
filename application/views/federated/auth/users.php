@@ -35,7 +35,7 @@
 		</div>  
 	</div>
 	<div class="page-header">
-		<h2>Users</h2>
+		<h2>All Cafe Variome Users</h2>
 	</div>
 	<div id="infoMessage"><b><?php echo $message; ?></b></div>
 	<div class="row-fluid">
@@ -77,9 +77,14 @@
 								<?php else: ?>
 									-
 								<?php endif; ?>
-							</td>
-							<td><?php echo ($user->active) ? anchor("auth_federated/deactivate/" . $user->id, 'Active') : anchor("auth_federated/activate/" . $user->id, 'Inactive') ?></td>
-                                                        <td><a rel="popover" data-content="Create/modify/delete users" data-original-title="Edit User" href="<?php echo base_url('auth_federated/edit_user'). "/" . $user->id; ?>" ><i class="icon-edit"></i></a>&nbsp;&nbsp;&nbsp;<?php if ( $user->id != 1 ) : ?><a rel="popover" data-content="Permanently delete this user" data-original-title="Delete User" href="<?php echo base_url('auth_federated/delete'). "/" . $user->id; ?>" ></i><i class="icon-trash"></i></a><?php endif; ?></td>
+							</td>	
+							<?php if ( $user->editable ): ?>
+							<td><?php echo ($user->active) ? anchor("auth_federated/deactivate/" . $user->id, 'Active') : anchor("auth_federated/activate/" . $user->id, 'Inactive', array('id' => $user->id, 'class' => 'activateUser')); ?></td>
+							<td><a rel="popover" data-content="Create/modify/delete users" data-original-title="Edit User" href="<?php echo base_url('auth_federated/edit_user'). "/" . $user->id; ?>" ><i class="icon-edit"></i></a>&nbsp;&nbsp;&nbsp;<a rel="popover" data-content="Permanently delete this user" data-original-title="Delete User" href="<?php echo base_url('auth_federated/delete'). "/" . $user->id; ?>" ></i><i class="icon-trash"></i></a></td>
+							<?php else: ?>
+							<td><?php if ($user->active) { echo 'Active'; } else { echo 'Inactive'; } ?></td>
+							<td><a rel="popover" data-content="Unable to edit the user since you are not an admin for the installation the user was created at" data-original-title="Edit User Disabled" href="#" ><i class="icon-edit icon-grey-link"></i></a>&nbsp;&nbsp;&nbsp;<a rel="popover" data-content="Unable to delete the user since you are not an admin for the installation the user was created at" data-original-title="Delete User Disabled" href="#" ></i><i class="icon-trash icon-grey-link"></i></a></td>
+							<?php endif; ?>
 						</tr>
 						<?php endforeach; ?>
 					</tbody>

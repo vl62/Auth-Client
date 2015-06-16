@@ -13,6 +13,17 @@ DIV#ajax-loader
   font-weight: 400;
   src: local('Muli'), url(<?php echo base_url("resources/fonts/google/" .  strtolower($this->config->item('current_font_link')) . ".woff");?>) format('woff');
 }
+
+
+.icon-grey-link {
+  opacity:0.5;
+  filter:alpha(opacity=50); /* For IE8 and earlier */
+}
+a:hover > i.icon-grey-link {
+  opacity:1;
+  filter:alpha(opacity=100); /* For IE8 and earlier */
+}
+
 /*!
  * Bootstrap v2.1.1
  *

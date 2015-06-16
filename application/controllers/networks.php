@@ -14,27 +14,31 @@ class Networks extends MY_Controller {
 	
 		$this->data['title'] = "Networks";
 		$token = $this->session->userdata('Token');
-		$networks = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of");
-		$data = json_decode($networks, true);
-//		print_r($data);
-		$installation_count_for_networks = array();
-		$installations_for_networks = array();
-		// Loop through each network and get the count of the installations for that network (only if this installation is part of a network
-		if ( $data ) {
-			foreach ($data as $network) {
-				$installations = json_decode(authPostRequest($token, array('network_key' => $network['network_key']), $this->config->item('auth_server') . "/api/auth/get_installations_for_network"), 1);
-				error_log(print_r($installations, 1));
-				$count = count($installations);
-//				$count = json_decode(authPostRequest($token, array('network_key' => $network['network_key']), $this->config->item('auth_server') . "/api/auth/count_number_of_installations_for_network"), 1);
-				$installations_for_networks[$network['network_key']] = $installations;
-				$installation_count_for_networks[$network['network_key']] = $count;
-			}
-			
-			$this->data['installations_for_networks'] = $installations_for_networks;
-			$this->data['installation_count_for_networks'] = $installation_count_for_networks;
-		}
+		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of_with_other_installation_details");
+		$installations_for_networks = json_decode($data, true);
+		$this->data['networks'] = $installations_for_networks;
 		
-		$this->data['networks'] = $data;
+//		$networks = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of");
+//		$data = json_decode($networks, true);
+//		print_r($installations_for_networks);
+//		$installation_count_for_networks = array();
+//		$installations_for_networks = array();
+//		// Loop through each network and get the count of the installations for that network (only if this installation is part of a network
+//		if ( $data ) {
+//			foreach ($data as $network) {
+//				$installations = json_decode(authPostRequest($token, array('network_key' => $network['network_key']), $this->config->item('auth_server') . "/api/auth/get_installations_for_network"), 1);
+//				error_log(print_r($installations, 1));
+//				$count = count($installations);
+////				$count = json_decode(authPostRequest($token, array('network_key' => $network['network_key']), $this->config->item('auth_server') . "/api/auth/count_number_of_installations_for_network"), 1);
+//				$installations_for_networks[$network['network_key']] = $installations;
+//				$installation_count_for_networks[$network['network_key']] = $count;
+//			}
+//			
+//			$this->data['installations_for_networks'] = $installations_for_networks;
+//			$this->data['installation_count_for_networks'] = $installation_count_for_networks;
+//		}
+		
+//		$this->data['networks'] = $data;
 		
 		$this->_render('federated/networks/my_networks');
 	}
@@ -202,45 +206,32 @@ class Networks extends MY_Controller {
         }
         
         function process_network_join_request() {
-            
-            $result['network_key'] = $this->input->post('network_key');
+            $result['network_key'] = $this->input->post('networks');
             $result['justification'] = $this->input->post('justification');
 			
 			$result['installation_key'] = $this->config->item('installation_key');
             $user = $this->ion_auth->user($this->session->userdata( 'user_id' ))->row();
             $result['username'] = $user->username;
             $result['email'] = $user->email;
-			error_log("post -> " . $this->input->post('networks') . " install -> " . $this->config->item('installation_key'));
+			$result['auth_server'] = $this->config->item('auth_server');
+//			error_log("post -> " . $this->input->post('networks') . " install -> " . $this->config->item('installation_key'));
 //			$networks = authPostRequest('', $result, $this->config->item('auth_server') . "/api/auth/get_networks_installation_not_a_member_of");
-			$base_url = base_url();
-			$token = $this->session->userdata('Token');
-			$networks = authPostRequest($token, array('network_key' => $this->input->post('networks'), 'installation_key' => $this->config->item('installation_key'), 'installation_base_url' => $base_url), $this->config->item('auth_server') . "/api/auth/join_network");
-			echo $networks;
+//			$base_url = base_url();
+//			$token = $this->session->userdata('Token');
+//			$networks = authPostRequest($token, array('network_key' => $this->input->post('networks'), 'installation_key' => $this->config->item('installation_key'), 'installation_base_url' => $base_url), $this->config->item('auth_server') . "/api/auth/join_network");
+//			echo $networks;
 			
-			//TODO: need to send the join request messages to all admins in the network and get them to approve/refuse the request
-//			$networks = authPostRequest($token, $result, $this->config->item('auth_server') . "/api/auth/join_network_request");
-//			$data = json_decode($networks, 1);
-////			$data = json_decode(joinNetwork($result, $this->config->item('auth_server')));
-//                
-//            if (array_key_exists('network_request_id', $data)) {
-//                echo json_encode(array('success' => 'Network join request has been sent!'));
-//            } else {
-//                echo json_encode(array('error' => 'Sorry, unable to process request. Retry!'));
-//                $result['network_key'] = $this->input->post('networks');
-//                $result['justification'] = $this->input->post('justification');
-//                
-//                echo "<br /><br />join networks:<br />";
-//				$networks = authPostRequest($token, $result, $this->config->item('auth_server') . "/api/auth/join_network_request");
-//				$data = json_decode($networks, 1);
-//                
-//                if(array_key_exists('network_request_id', $data)) {
-////                    print_r($data);
-//                    // create a view and display a msg
-//                    
-//                } else {
-//                    
-//                }
-//            }
+			$token = $this->session->userdata('Token');
+			$networks = authPostRequest($token, $result, $this->config->item('auth_server') . "/api/auth/join_network_request");
+			error_log("networks -> $networks");
+			$data = json_decode($networks, 1);
+//			$data = json_decode(joinNetwork($result, $this->config->item('auth_server')));
+                
+            if (array_key_exists('network_request_id', $data)) {
+                echo json_encode(array('success' => 'Network join request has been sent!'));
+            } else {
+                echo json_encode(array('error' => 'Sorry, unable to process request. Retry!'));
+            }
         }
         
         function jsonp_decode($jsonp, $assoc = false) { // PHP 5.3 adds depth as third parameter to json_decode
