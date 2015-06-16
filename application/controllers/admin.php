@@ -2149,7 +2149,6 @@ class Admin extends MY_Controller {
 	
 	// Called by javascript ajax function processDataRequest that will process approval/refusal/deletion by curator or administrator
 	function process_data_request($result, $request_id) {
-		error_log("test");
 		if (!$this->ion_auth->is_admin() && !$this->ion_auth->in_group("curator")) { // User must either be administrator or a curator
 			redirect('auth', 'refresh');
 		}
@@ -2228,83 +2227,6 @@ class Admin extends MY_Controller {
 		}
 		
 	}
-	
-	public function auth_test() {
-		$this->session->set_userdata('Token', 'e69316a167a423d1395f484784616f30');
-		$token = $this->session->userdata('Token');
-		if ( $token ) {
-			$data = json_decode(authPOSTRequest($token, "http://143.210.153.155/cafevariome/api/auth/get_users_groups"));
-			echo "auth:<br />";
-			print_r($data);
-		}
-	}
-
-	
-	public function header_token_test() {
-//		$this->session->set_userdata('Token', 'e69316a167a423d1395f484784616f30');
-		
-//		$token = $this->session->userdata('Token');
-//		if ( $token ) {
-//			$this->output->set_header("Access-Control-Allow-Origin: *");
-//			$this->output->set_header("Token: " . $token);
-//		}
-		
-		$session_data = array(
-				    'identity'             => 'email',
-				    'username'             => 'test',
-				    'email'                => 'test@gmail.com',
-					'password'			   => 'password',
-				    'user_id'              => '1', //everyone likes to overwrite id so we'll use user_id
-				    'old_last_login'       => 'test',
-					'is_admin'			   => '1'
-		);
-					
-		//outgoing
-		$post_data = implode(",", $session_data);
-		$token = strtr(base64_encode($post_data), '+/=', '-_~');
-		error_log($token);
-		$get_data = authGetRequest($token, "http://127.0.0.1/cafevariome_server/api/auth/validate_token_test");
-		echo "returned $get_data";
-//		//incoming
-//		$result = base64_decode(strtr($received_post_data, '-_~', '+/='));
-//		$data = explode(",", $result);
-		
-	}
-	
-	public function network_tests() {	
-		$data = json_decode(isInstallationPartOfNetwork(array('installation_key' => "bar", 'network_key' => "a876063be02d43d40b47276143bbc7d1"), "http://143.210.153.155/cafevariome"));
-		echo "is installation part of network:<br />";
-		print_r($data);
-		
-		$data = json_decode(createNetwork(array('network_name' => "foo1", 'installation_key' => "bar"), "http://143.210.153.155/cafevariome"));
-		echo "create network:<br />";
-		print_r($data);
-		
-		echo "<br /><br />get networks:<br />";
-		$data = json_decode(getNetworks("http://143.210.153.155/cafevariome"));
-		print_r($data);
-		
-		echo "<br /><br />get networks this installation not a member of already:<br />";
-		$data = json_decode(getNetworksInstallationNotMemberOf(array("installation_key" => 'dd005c0c5769043664f64fc2ca694a7f'), "http://143.210.153.155/cafevariome"));
-		print_r($data);
-		
-		
-		echo "<br /><br />join networks:<br />";
-		$user = $this->ion_auth->user($this->session->userdata( 'user_id' ))->row();
-		$username = $user->username;
-		$email = $user->email;
-		$data = json_decode(joinNetwork(array('username' => $username, 'email' => $email, 'justification' => 'Justification text here', 'network_key' => 'foo', 'network_name' => 'network name', 'installation_key' => "bar"), "http://143.210.153.155/cafevariome"));
-		print_r($data);
-		
-	}
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	// Control of automated maintenance cron job - called from jquery ajax function when enabled/disabled switch in clicked settings admin interface

@@ -2805,10 +2805,9 @@ function cloneSource() {
 }
 
 function join_network() {
-    
+//    $callAjax = true;
     $('form[name="joinNetwork"]').submit(function(e) {
         e.preventDefault();
-        
 //        console.log($("#networks option:selected").text());
         $.ajax({url: baseurl + 'networks/process_network_join_request/',
 		data: $(this).serialize(),
@@ -2821,7 +2820,8 @@ function join_network() {
 				window.location.reload(true);
 			}
 			else if (data.success) {
-				alert("Successfully joined network");
+//				alert("Successfully joined network");
+				alert("Successfully requested to join network");
 				window.location = baseurl + "networks";
 //				window.location.reload(true);
 			}

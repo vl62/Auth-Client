@@ -31,7 +31,12 @@
 					</tr>
 					<tr>
 						<td><strong>Current Groups</strong></td>
-						<td><?php foreach ($current_groups as $group) { echo $group->description . "<br />"; } ?>
+						<?php if (array_key_exists('error', $current_groups)): ?>
+						<td>-</td>
+						<?php else: ?>
+						<td><?php foreach ($current_groups as $group) { echo $group->name . " (Network: " . $group->network_name . ")" . "<br />"; } ?>
+						
+						<?php endif; ?>
 					</tr>
                                         
                                         <tr>
