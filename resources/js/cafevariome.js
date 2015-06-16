@@ -3102,6 +3102,48 @@ function edit_user() {
     });
 }
 
+function activate_user() {
+    $callAjax = true;
+    $('form[name="activateUser"]').submit(function(e) {
+        e.preventDefault();
+        $postData = $(this).serialize();
+        $.ajax({url: baseurl + 'auth_federated/validate_activate/',
+		data: $postData,
+		dataType: 'json',
+		delay: 200,
+		type: 'POST',
+		success: function(data) {
+                    if (data.error) {
+                        if(data.error === "no") {
+                            window.location = baseurl + "auth_federated/users";
+                        } else {
+                            $("#activateUserError").removeClass('hide');
+                            $("#activateUserError").html(data.error);
+                        }
+                    } else if (data.success) {
+                        if($callAjax)
+                        {$.ajax({url: authurl + '/auth_accounts/activate_user/',
+                                data: $postData,
+                                dataType: 'json',
+                                delay: 200,
+                                type: 'POST',
+                                success: function(result) {
+                                    if (result.error) {
+                                            $("#activateUserError").removeClass('hide');
+                                            $("#activateUserError").text(result.error);
+                                    } else if (result.success) {
+//                                            alert(result.success);
+                                            window.location = baseurl + "auth_federated/users";
+                                    }
+                                }
+                        }); $callAjax = false;
+                        }
+                    }
+		}
+	});
+    });
+}
+
 function deactivate_user() {
     $callAjax = true;
     $('form[name="deactivateUser"]').submit(function(e) {
@@ -3187,24 +3229,24 @@ function delete_user() {
 }
 
 // activate user
-$(document).ready(function(){
-    $(".activateUser").click(function(e){
-        e.preventDefault();
-        $.ajax({url: authurl + '/auth_accounts/activate_user/',
-		data: {'id': $(this).attr('id')},
-		dataType: 'json',
-		delay: 200,
-		type: 'POST',
-		success: function(data) {
-                    if (data.error) {
-                        alert("unable to activate user. Try again.")
-                    } else if (data.success) {
-                        window.location = baseurl + "auth_federated/users";
-                    }
-		},
-	});
-    });
-});
+//$(document).ready(function(){
+//    $(".activateUser").click(function(e){
+//        e.preventDefault();
+//        $.ajax({url: authurl + '/auth_accounts/activate_user/',
+//		data: {'id': $(this).attr('id')},
+//		dataType: 'json',
+//		delay: 200,
+//		type: 'POST',
+//		success: function(data) {
+//                    if (data.error) {
+//                        alert("unable to activate user. Try again.")
+//                    } else if (data.success) {
+//                        window.location = baseurl + "auth_federated/users";
+//                    }
+//		},
+//	});
+//    });
+//});
 
 function edit_user_profile() {
     $callAjax = true;
@@ -3233,7 +3275,7 @@ function edit_user_profile() {
                                             $("#editUserProfileError").text(result.error);
                                     } else if (result.success) {
 //                                            alert(result.success);
-                                            location.reload();
+                                            window.location = baseurl + "auth_federated/user_profile/" + $('input[name=id]').val();
                                     }
                                 }
                         }); $callAjax = false;
@@ -3271,8 +3313,8 @@ function send_message() {
                                             $("#sendMessage").removeClass('hide');
                                             $("#sendMessage").text(result.error);
                                     } else if (result.success) {
-//                                            alert(result.success);
-                                            window.location = baseurl + "messages/index/" + result.unread_count;
+                                            console(result.success);
+//                                            window.location = baseurl + "messages/index/" + result.unread_count;
                                     }
                                 }
                         }); $callAjax = false;

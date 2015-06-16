@@ -120,10 +120,6 @@ class Messages extends MY_Controller {
 			
                         $this->data['user_id'] = $this->session->userdata("user_id");
                         
-//                        echo "<pre>";
-//                        var_dump($this->users_list);
-//                        echo "</pre>";
-                        
                         $this->data['users'] = json_decode(authGetRequest('', $this->config->item('auth_server') . "/api/auth_general/get_basic_user_info"));
                         
 			$this->_render('messages/send');			

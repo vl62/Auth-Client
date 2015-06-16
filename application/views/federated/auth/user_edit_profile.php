@@ -47,8 +47,13 @@
 					Confirm Password: (if changing password)<br />
 					<?php echo form_input($password_confirm); ?>
 				</p>
+                                
+                                <p>
+					<label>Email Notification for Messages:</label>
+                                        <input type="checkbox" name="email_notification" value="ON" <?php if($email_notification) echo "checked";?>>
+				</p>
 			</div>
-			<?php echo form_hidden('id', $user->id); ?>
+			<?php echo form_hidden('id', $user['id']); ?>
 			<?php echo form_hidden($csrf); ?>
                     <p><button type="submit" onclick="edit_user_profile();" name="submit" class="btn btn-primary"><i class="icon-user"></i>  Save Profile</button><?php echo nbs(6); ?><a href="<?php echo base_url() . "auth_federated/users";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
 		</div>

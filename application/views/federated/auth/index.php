@@ -23,16 +23,16 @@
 						<td><?php echo $user->email; ?></td>
 						<td>
 							<?php foreach ($user->groups as $group): ?>
-								<?php echo anchor("auth/edit_group/" . $group->id, $group->name); ?><br />
+								<?php echo anchor("auth_federated/edit_group/" . $group->id, $group->name); ?><br />
 							<?php endforeach ?>
 						</td>
-						<td><?php echo ($user->active) ? anchor("auth/deactivate/" . $user->id, 'Active') : anchor("auth/activate/" . $user->id, 'Inactive'); ?></td>
-						<td><?php echo anchor("auth/edit_user/" . $user->id, 'Edit'); ?></td>
+						<td><?php echo ($user->active) ? anchor("auth_federated/deactivate/" . $user->id, 'Active') : anchor("auth_federated/activate/" . $user->id, 'Inactive'); ?></td>
+						<td><?php echo anchor("auth_federated/edit_user/" . $user->id, 'Edit'); ?></td>
 					</tr>
 				<?php endforeach; ?>
 			</table>
 
-			<p><a href="<?php echo site_url('auth/create_user'); ?>">Create a new user</a> | <a href="<?php echo site_url('auth/create_group'); ?>">Create a new group</a></p>
+			<p><a href="<?php echo site_url('auth_federated/create_user'); ?>">Create a new user</a> | <a href="<?php echo site_url('auth_federated/create_group'); ?>">Create a new group</a></p>
 		</div>
 	</div>
 </div>

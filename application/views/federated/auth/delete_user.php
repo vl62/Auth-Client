@@ -19,7 +19,7 @@
 			<br />
 			<?php echo form_hidden(array('id' => $id)); ?>
 
-			<p><button type="submit" name="submit" onclick="delete_user();" class="btn btn-primary"><i class="icon-remove icon-white"></i>  Delete User</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "auth/users";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p></p>
+			<p><button type="submit" name="submit" onclick="delete_user();" class="btn btn-primary"><i class="icon-remove icon-white"></i>  Delete User</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "auth_federated/users";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p></p>
 		</div>
 	</div>
 </div>
