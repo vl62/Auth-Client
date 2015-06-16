@@ -3112,6 +3112,7 @@ function activate_user() {
 		dataType: 'json',
 		delay: 200,
 		type: 'POST',
+		
 		success: function(data) {
                     if (data.error) {
                         if(data.error === "no") {
@@ -3127,6 +3128,7 @@ function activate_user() {
                                 dataType: 'json',
                                 delay: 200,
                                 type: 'POST',
+//								headers: {"Token": "test-value"},
                                 success: function(result) {
                                     if (result.error) {
                                             $("#activateUserError").removeClass('hide');
