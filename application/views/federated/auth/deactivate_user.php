@@ -18,7 +18,7 @@
 
 			<?php echo form_hidden(array('id' => $id)); ?>
 			<br />
-                        <p><button type="submit" name="submit" onclick="deactivate_user();" class="btn btn-primary"><i class="icon-user icon-white"></i>  Deactivate User</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "auth/users";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p></p>
+                        <p><button type="submit" name="submit" onclick="deactivate_user();" class="btn btn-primary"><i class="icon-user icon-white"></i>  Deactivate User</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "auth_federated/users";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p></p>
 		</div>
 	</div>
 </div>

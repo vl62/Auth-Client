@@ -67,7 +67,7 @@
 				</div><!-- /.tabbable -->
 
 				<br />
-				<p><a href="<?php echo base_url() . "auth/user_profile/" . $user->id; ?>" class="btn btn-primary"><i class="icon-user"></i>  Back to Profile</a></p>
+				<p><a href="<?php echo base_url() . "auth_federated/user_profile/" . $user->id; ?>" class="btn btn-primary"><i class="icon-user"></i>  Back to Profile</a></p>
 
 			</div>
 		</div>

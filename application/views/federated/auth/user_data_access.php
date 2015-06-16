@@ -77,7 +77,7 @@
 				</div><!-- /.tabbable -->
 
 				<br />
-				<p><a href="<?php echo base_url() . "auth/user_profile/" . $user->id; ?>" class="btn btn-primary"><i class="icon-user"></i>  Back to Profile</a></p>
+				<p><a href="<?php echo base_url() . "auth_federated/user_profile/" . $user->id; ?>" class="btn btn-primary"><i class="icon-user"></i>  Back to Profile</a></p>
 
 					<?php foreach ($data_requests as $request_id => $request): ?>
 					<div id="downloadDataRequestModal<?php echo $request['request_id']; ?>" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

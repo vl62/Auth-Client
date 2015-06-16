@@ -50,7 +50,7 @@
 				</p>
 			</div>
 			<?php echo form_hidden('id', $user->id); ?>
-			<p><button type="submit" name="submit" class="btn btn-primary"><i class="icon-user"></i>  Create Account</button><?php echo nbs(6); ?><a href="<?php echo base_url() . "auth/users";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
+			<p><button type="submit" name="submit" class="btn btn-primary"><i class="icon-user"></i>  Create Account</button><?php echo nbs(6); ?><a href="<?php echo base_url() . "auth_federated/users";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
 		</div>
 	</div>
 </div>

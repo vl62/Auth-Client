@@ -6,7 +6,7 @@
 
 			<div id="infoMessage"><?php echo $message; ?></div>
 
-			<?php echo form_open('auth/reset_password/' . $code); ?>
+			<?php echo form_open('auth_federated/reset_password/' . $code); ?>
 
 			<p>
 				New Password (at least <?php echo $min_password_length; ?> characters long): <br />

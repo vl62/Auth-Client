@@ -6,7 +6,7 @@
 					<a href="<?php echo base_url() . "admin";?>">Dashboard Home</a> <span class="divider">></span>  
 				</li>
 				<li>
-					<a href="<?php echo base_url() . "auth/groups";?>">Groups</a> <span class="divider">></span>
+					<a href="<?php echo base_url() . "auth_federated/groups";?>">Groups</a> <span class="divider">></span>
 				</li>
 				<li class="active">Edit Group</li>
 			</ul>  

@@ -114,7 +114,8 @@ class Auth_federated extends MY_Controller {
                     'orcid'                     => $this->input->post('orcid'),
                     'is_admin'                  => $this->input->post('is_admin') === "admin" ? TRUE : FALSE,
                     'Token'                     => $this->input->post('Token'),
-                    'controller'                => "auth_federated"
+                    'controller'                => "auth_federated",
+                    'email_notification'        => $this->input->post('email_notification')
                 );
                 
                 $this->session->set_userdata($session_data);
@@ -316,35 +317,84 @@ class Auth_federated extends MY_Controller {
 	//activate the user
 	function activate($id, $code=false)
 	{
-		if ($code !== false)
-		{
-			$activation = $this->ion_auth->activate($id, $code);
-		}
-		else if ($this->ion_auth->is_admin())
-		{
-			$activation = $this->ion_auth->activate($id);
-		}
+            
+            if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
+            {
+                    //redirect them to the login page
+                    redirect('/', 'refresh');
+            }
+            
+            $this->session->set_userdata(array("userId" => $id));
+            $this->data['id'] = $id;
+            $this->_render('federated/auth/activate_user');
 
-		if ($activation)
-		{
-			$this->session->set_flashdata('message', $this->ion_auth->messages());
-			
-			// If admin then it was a manual activatation from the admin menu so return to the user list
-			if ($this->ion_auth->is_admin()) {
-				redirect('auth_federated/users', 'refresh');
-			}
-			// Activation was done via email by the user - direct them to the success message
-			else {
-				$this->_render('federated/auth/activate-success');
-			}
-		}
-		else
-		{
-			//redirect them to the forgot password page
-			$this->session->set_flashdata('message', $this->ion_auth->errors());
-			redirect("auth_federated/forgot_password", 'refresh');
-		}
+//		if ($code !== false)
+//		{
+//			$activation = $this->ion_auth->activate($id, $code);
+//		}
+//		else if ($this->ion_auth->is_admin())
+//		{
+//			$activation = $this->ion_auth->activate($id);
+//		}
+//
+//		if ($activation)
+//		{
+//			$this->session->set_flashdata('message', $this->ion_auth->messages());
+//			
+//			// If admin then it was a manual activatation from the admin menu so return to the user list
+//			if ($this->ion_auth->is_admin()) {
+//				redirect('auth_federated/users', 'refresh');
+//			}
+//			// Activation was done via email by the user - direct them to the success message
+//			else {
+//				$this->_render('federated/auth/activate-success');
+//			}
+//		}
+//		else
+//		{
+//			//redirect them to the forgot password page
+//			$this->session->set_flashdata('message', $this->ion_auth->errors());
+//			redirect("auth_federated/forgot_password", 'refresh');
+//		}
 	}
+        
+        function validate_activate() {
+            if(! $this->input->is_ajax_request()) {
+                    redirect('404');
+            }
+            
+            $this->load->library('form_validation');
+            $this->form_validation->set_rules('confirm', 'confirmation', 'required');
+            $this->form_validation->set_rules('id', 'user ID', 'required|alpha_numeric');
+            
+            if (($this->input->post('confirm') == 'yes') && $this->form_validation->run() === TRUE)
+            {       
+                    // do we have a valid request?
+                    if ($this->session->userdata("userId") != $this->input->post('id'))
+                    {
+                            echo json_encode(array('error' => "This form post did not pass our security checks."));
+                            return;
+                    }
+
+                    // do we have the right userlevel?
+                    if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin())
+                    {       
+                            $this->session->unset_userdata("userId");
+                            echo json_encode(array('success' => 'no errors'));
+                            return;
+//                            $this->ion_auth->deactivate($id);
+                    }
+            } elseif(($this->input->post('confirm') == 'no') && $this->form_validation->run() === TRUE) {
+                    
+                    $this->session->unset_userdata("userId");
+                    echo json_encode(array('error' => "no"));
+                
+            } else {
+                    $this->session->unset_userdata("userId");
+                    echo json_encode(array('error' => validation_errors()));
+                    return;
+            }
+        }
         
 	//deactivate the user
 	function deactivate($id = NULL)
@@ -951,15 +1001,16 @@ class Auth_federated extends MY_Controller {
 		{
 			redirect('/', 'refresh');
 		}
+                
 		if (!$this->ion_auth->is_admin()) {
-			if ( $this->session->userdata( 'user_id' ) != $id ) {
-				show_error("You do not have the required permissions to view that user profile.");
-			}
+                    if ( $this->session->userdata( 'user_id' ) != $id ) {
+                            show_error("You do not have the required permissions to view that user profile.");
+                    }
 		}
 		
-		$user = $this->ion_auth->user($id)->row();
-		$this->data['user'] = $user;
-
+                $user_id = $this->session->userdata("user_id");
+		$this->data['user'] = json_decode(authPostRequest('', array("user_id" => $user_id), $this->config->item('auth_server') . "/api/auth_general/get_users_info"), 1);
+                
 		// Get all the network groups that this user from this installation is currently in so that these can be pre selected in the multiselect list
 		$current_groups = json_decode(authPostRequest('', array('user_id' => $id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_user_in_installation"));
 //		print_r($current_groups);
@@ -979,8 +1030,16 @@ class Auth_federated extends MY_Controller {
 		{
 			redirect('/', 'refresh');
 		}
-		$user = $this->ion_auth->user($id)->row();
-                $this->session->set_userdata(array("userId" => $user->id));
+                
+                if (!$this->ion_auth->is_admin()) {
+                    if ( $this->session->userdata( 'user_id' ) != $id ) {
+                            show_error("You do not have the required permissions to view that user profile.");
+                    }
+		}
+                
+                $user_id = $this->session->userdata("user_id");
+		$user = json_decode(authPostRequest('', array("user_id" => $user_id), $this->config->item('auth_server') . "/api/auth_general/get_users_info"), 1);
+                $this->session->set_userdata(array("userId" => $user['id']));
                 
 //		$this->data['groups'] = $this->ion_auth->getGroups();
 //
@@ -1008,33 +1067,33 @@ class Auth_federated extends MY_Controller {
 			'name' => 'username',
 			'id' => 'username',
 			'type' => 'text',
-			'value' => $user->username,
+			'value' => $user['username'],
 			'disabled'=>'true'
 		);
 		$this->data['first_name'] = array(
 			'name'  => 'first_name',
 			'id'    => 'first_name',
 			'type'  => 'text',
-			'value' => $this->form_validation->set_value('first_name', $user->first_name),
+			'value' => $this->form_validation->set_value('first_name', $user['first_name']),
 		);
 		$this->data['last_name'] = array(
 			'name'  => 'last_name',
 			'id'    => 'last_name',
 			'type'  => 'text',
-			'value' => $this->form_validation->set_value('last_name', $user->last_name),
+			'value' => $this->form_validation->set_value('last_name', $user['last_name']),
 		);
 		$this->data['email'] = array(
 			'name'  => 'email',
 			'id'    => 'email',
 			'type'  => 'text',
-			'value' => $user->email,
+			'value' => $user['email'],
 			'disabled'=>'true'
 		);
 		$this->data['company'] = array(
 			'name'  => 'company',
 			'id'    => 'company',
 			'type'  => 'text',
-			'value' => $this->form_validation->set_value('company', $user->company),
+			'value' => $this->form_validation->set_value('company', $user['company']),
 		);
 		$this->data['password'] = array(
 			'name' => 'password',
@@ -1050,8 +1109,11 @@ class Auth_federated extends MY_Controller {
 			'name' => 'orcid',
 			'id' => 'orcid',
 			'type' => 'text',
-			'value' => $this->form_validation->set_value('orcid', $user->orcid),
+			'value' => $this->form_validation->set_value('orcid', $user['orcid']),
 		);
+                
+                $this->data['email_notification'] = $user['email_notification'];
+                
 		$this->_render('federated/auth/user_edit_profile');
 //		$this->load->view('auth/edit_user', $this->data);
 	}
