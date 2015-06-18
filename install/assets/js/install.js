@@ -38,7 +38,7 @@ function startInstall() {
 		url: baseurl + "index.php",
 //		dataType: 'html',
 		dataType: 'json',
-		data: {'hostname': $('#hostname').val(), 'username' : $('#username').val(), 'password' : $('#password').val(), 'database' : $('#database').val(), 'adminusername' : $('#adminusername').val(), 'adminpassword' : $('#adminpassword').val(), 'adminemail' : $('#adminemail').val(), 'include_data' : $("#sampledata").val(), 'adminstats' : adminstats, 'bioportalkey' : $('#bioportalkey').val(), 'is_valid' : is_valid, 'sources' : sources, 'prefix': $('#prefix').val(), 'externalurl': $('#externalurl').val(), 'sitetitle': $('#sitetitle').val(), 'sitedescription': $('#sitedescription').val(), 'siteauthor': $('#siteauthor').val(), 'sitekeywords': $('#sitekeywords').val()},
+		data: {'hostname': $('#hostname').val(), 'username' : $('#username').val(), 'password' : $('#password').val(), 'database' : $('#database').val(), 'adminusername' : $('#adminusername').val(), 'adminpassword' : $('#adminpassword').val(), 'adminemail' : $('#adminemail').val(), 'adminfirstname' : $('#adminfirstname').val(), 'adminlastname' : $('#adminlastname').val(), 'include_data' : $("#sampledata").val(), 'adminstats' : adminstats, 'bioportalkey' : $('#bioportalkey').val(), 'is_valid' : is_valid, 'sources' : sources, 'prefix': $('#prefix').val(), 'externalurl': $('#externalurl').val(), 'sitetitle': $('#sitetitle').val(), 'sitedescription': $('#sitedescription').val(), 'siteauthor': $('#siteauthor').val(), 'sitekeywords': $('#sitekeywords').val()},
 		start: $('#dialog').modal('show'),
 //		progress: function(update) {
 //			alert("update");

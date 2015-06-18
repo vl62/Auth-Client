@@ -145,7 +145,12 @@ class Core {
 		
 		if ( ! extension_loaded('soap')) {
 			$error = '<div class="alert alert-error">Soap is not enabled in PHP. See <a href="http://stackoverflow.com/questions/11391442/fatal-error-class-soapclient-not-found" target="_blank" >here</a> for an example of how to enable it.</div><hr>';
-			$check_array['mysql_loaded'] = $error;
+			$check_array['soap_loaded'] = $error;
+		}
+		
+		if  (! extension_loaded('curl') ) {
+			$error = '<div class="alert alert-error">Curl is not enabled in PHP. See <a href="http://stackoverflow.com/questions/8014482/php-curl-enable-linux" target="_blank" >here</a> for an example of how to enable it.</div><hr>';
+			$check_array['curl_loaded'] = $error;
 		}
 		
 		if (version_compare(PHP_VERSION, '5.0.0', '<')) {

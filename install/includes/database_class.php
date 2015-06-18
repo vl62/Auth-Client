@@ -315,18 +315,26 @@ class Database {
 		$adminpassword = $mysqli->real_escape_string(md5($data['adminpassword']));
 		$active = "1";
 		$first_name = empty($data['adminfirstname']) ? $data['adminfirstname'] : 'admin';
+		error_log("first: $first_name -> " . $data['adminfirstname']);
 //		$first_name = "admin";
 		$last_name = empty($data['adminlastname']) ? $data['adminlastname'] : 'admin';
 //		$last_name = "admin";
+		error_log("last: $last_name -> " . $data['adminlastname']);
 		$affiliation = "admin";
 		$is_admin = "1";
 		
-		$create_admin_auth_result = create_admin_user_at_cafevariome_auth_server($adminusername, $adminpassword, $adminemail, $active, $first_name, $last_name, $affiliation, $is_admin, $installation_key);
-		error_log("create_admin_auth_result -> $create_admin_auth_result");
+		// Create the admin user in the central auth server
+		$create_admin_auth_result = $this->create_admin_user_at_cafevariome_auth_server($adminusername, $adminpassword, $adminemail, $active, $first_name, $last_name, $affiliation, $is_admin, $installation_key);
+		
+//		error_log("create_admin_auth_result -> " . print_r($create_admin_auth_result, 1));
+		if ( array_key_exists('error', $create_admin_auth_result) ) {
+			$this->error_message = "There was a problem creating the admin user at the Cafe Variome authentication server. The supplied email address must be unique across all users in the Cafe Variome universe, please re-try installation with another email address. Contact admin@cafevariome.org if the problem persists.";
+			return false;
+		}
 		
 		$query = 'INSERT INTO users (username, password, email, active, first_name, last_name, company, is_admin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'; 
 		if($stmt = $mysqli->prepare($query)) {
-			$stmt->bind_param("sssssss",$adminusername, $adminpassword, $adminemail, $active, $first_name, $last_name, $affiliation, $is_admin);
+			$stmt->bind_param("ssssssss",$adminusername, $adminpassword, $adminemail, $active, $first_name, $last_name, $affiliation, $is_admin);
 			if (!$stmt->execute()) {
 				error_log("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
 				$stmt->close();
@@ -395,7 +403,8 @@ class Database {
 						'last_name'  => $last_name,
 						'company'    => $affiliation,
 						'isadmin' => $is_admin,
-						'installation_key' => $installation_key
+						'installation_key' => $installation_key,
+						'active' => "1"
 			);
 
 		$ch = curl_init();
@@ -415,8 +424,9 @@ class Database {
 		//error_log($result);
 		//error_log(curl_error($ch));
 		curl_close($ch);
+		error_log("result -> $result");
 //		echo json_encode($result);
-		return $result;
+		return json_decode($result, 1);
 	}
 	
 	// Function to create the tables and populate them with the default data
