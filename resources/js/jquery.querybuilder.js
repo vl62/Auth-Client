@@ -947,11 +947,12 @@
 //										Using this method here to make multiple ajax calls to the supplied URLS: http://stackoverflow.com/questions/18590201/getting-multiple-ajax-with-jquery-each-when-jquery-when-all-done-do-something
 										$.when.apply(null, urls.map(function (u,i) {
 											alert(JSON.stringify(u) + " ---> " + u.url);
-											return $.ajax({ url: u.url, data: final_query, contentType: 'application/json', dataType: 'html', type: 'POST' });
+											return $.ajax({ url: u.url, data: final_query, dataType: 'html', type: 'POST' });
+//											return $.ajax({ url: u.url, data: final_query, contentType: 'application/json', dataType: 'html', type: 'POST' });
 										})).then(function() {
 											alert(JSON.stringify(arguments));
 											var objects = arguments; // Special jquery argument that contains returned data (bit of a hack but unsure how to do it otherwise as then then function needs the same number of parameters as were inputted in the when.apply bit, see here http://stackoverflow.com/questions/5627284/pass-in-an-array-of-deferreds-to-when)
-											alert("here");
+//											alert("here");
 											console.log("Resolved objects:", objects);
 //											if (settings.table_output_type == 'hits') {
 //												var hits = {};
@@ -963,7 +964,7 @@
 												if (typeof(v) === 'string') { // Just one results set was returned so the data is a string
 //													alert("string -> " + typeof(v));
 													if (settings.table_output_type == 'hits') {
-														alert("hits multiple");
+//														alert("hits multiple");
 														var result_set = parseQueryResultsString(k,v,settings,uniqid,final_query);
 														var encoded_endpoint = encodeURIComponent(settings.endpoints[k].url);
 														result_set['source_info'] = {name: settings.endpoints[k].name, endpoint: settings.endpoints[k].url, encoded_endpoint: encoded_endpoint, id: uniqid};
@@ -982,7 +983,7 @@
 													$.each(v, function(a,b) { // Iterate through results object
 														if ( a === 0 ) { // First object is the returned query JSON
 															if (settings.table_output_type == 'hits') {
-//																alert("hits multiple");
+																alert("hits -> multiple");
 //																alert("--> " + settings.endpoints[k].name);
 																var result_set = parseQueryResultsString(k,b,settings,uniqid,final_query);
 																var encoded_endpoint = encodeURIComponent(btoa(settings.endpoints[k].url));

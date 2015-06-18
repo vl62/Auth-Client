@@ -687,7 +687,7 @@ class Discover_federated extends MY_Controller {
 			$this->elasticsearch->set_index($es_index);
 			$this->elasticsearch->set_type("variants");
 			$query = array();
-			$query['size'] = 10000000;
+			$query['size'] = 10;
 //			error_log("term -> $term");
 //			$sanitize_query = htmlentities(strip_tags( $query ));
 //			error_log("sanitize -> $sanitize_query");
@@ -759,12 +759,13 @@ class Discover_federated extends MY_Controller {
 	
 	function variants_json ($term, $source, $sharing_policy, $format = NULL, $user_id = NULL) {
 //		error_log("term -> " . $term . " -> " . urldecode($term));
-
+		$variants_json = array();
 		$term = html_entity_decode($term);
 //		$term = urldecode($term);
 		if ( $term && $source && $sharing_policy ) {
 			$s = $this->sources_model->getSourceSingle($source);
-			error_log("s -> " . print_r($s, 1));
+			
+			$variants_json['source'] = $s;
 			// Check if this source actually exists
 			if ( ! $s ) {
 				show_error("The specified source does not seem to exist in this instance");
@@ -819,7 +820,7 @@ class Discover_federated extends MY_Controller {
 				$this->load->model('settings_model');
 				
 				
-				$variants_json = array();
+
 				$display_fields = $this->settings_model->getDisplayFieldsForSharingPolicy('openAccess');
 //				error_log("DS -> " . print_r($display_fields, 1));
 				$variants_json['display_fields'] = $display_fields;
@@ -887,15 +888,22 @@ class Discover_federated extends MY_Controller {
 	}
 	
 
-	function variant ($cafevariome_id, $format = NULL) {
+	function variant_json ($cafevariome_id, $user_id) {
 		$variant = $this->sources_model->getVariant($cafevariome_id);
 		$phenotypes = $this->sources_model->getPhenotypes($cafevariome_id);
 		$source_email = $this->sources_model->getEmailFromSourceName($variant['source']);
 		$this->load->model('settings_model');
 		$individual_record_display_fields = $this->settings_model->getIndividualRecordDisplayFields();
-		$this->data['individual_record_display_fields'] = $individual_record_display_fields;
 		
-		$format = strtolower($format);
+		
+//		print_r($variant);
+		$variant_json['variant'] = $variant;
+		// Add the other needed info to the variant array - this is needed by the requesting client in the discover/variant_federated call and is decoded there
+		$variant_json['individual_record_display_fields'] = $individual_record_display_fields;
+		$variant_json['phenotypes'] = $phenotypes;
+		$variant_json['source_email'] = $source_email;
+		$variant_json['cvid_prefix'] = $this->config->item('cvid_prefix');
+		
 		if ( empty($variant) ) {
 			show_error("Sorry, this variant does not exist (please do not include the id prefix in the url).");
 		}
@@ -910,39 +918,23 @@ class Discover_federated extends MY_Controller {
 		
 		if ( $variant['sharing_policy'] === "openAccess" ) { // Variant is openAccess so can go ahead and display it
 			
-//			if ( $format == "json" ) {
-////				$this->response($counts, 200);
-////				$this->output->set_status_header('200');
-////				$this->output->set_header("HTTP/1.1 200 OK");
-//				$this->output->set_content_type('application/json')->set_output(json_encode($variant));
-//			}
-			
-			if ( strtolower($format) == "json") {
-				$variant_json = array();
-//				ksort($variant);
-				foreach ( $individual_record_display_fields as $individual_record_display_field ) {
-					if ( array_key_exists($individual_record_display_field['name'], $variant) ) {
-//						error_log("key -> " . $individual_record_display_field['name']);
-						if ( $individual_record_display_field['name'] == "cafevariome_id" ) {
-							$variant_json[$this->config->item('cvid_prefix') . $variant['cafevariome_id']][$individual_record_display_field['name']] = $this->config->item('cvid_prefix') . $variant[$individual_record_display_field['name']];
-						}
-						else {
-							$variant_json[$this->config->item('cvid_prefix') . $variant['cafevariome_id']][$individual_record_display_field['name']] = $variant[$individual_record_display_field['name']];
-						}
+
+
+
+			foreach ( $individual_record_display_fields as $individual_record_display_field ) {
+				if ( array_key_exists($individual_record_display_field['name'], $variant) ) {
+//					error_log("key -> " . $individual_record_display_field['name']);
+					if ( $individual_record_display_field['name'] == "cafevariome_id" ) {
+						$variant_json[$this->config->item('cvid_prefix') . $variant['cafevariome_id']][$individual_record_display_field['name']] = $this->config->item('cvid_prefix') . $variant[$individual_record_display_field['name']];
+					}
+					else {
+						$variant_json[$this->config->item('cvid_prefix') . $variant['cafevariome_id']][$individual_record_display_field['name']] = $variant[$individual_record_display_field['name']];
 					}
 				}
-//				error_log("variant json -> " . print_r($variant_json, 1));
-				$this->output->set_content_type('application/json')->set_output(json_encode($variant_json));
 			}
-
-			
-			
-			else {
-				$this->data['variant'] = $variant;
-				$this->data['phenotypes'] = $phenotypes;
-				$this->data['source_email'] = $source_email;
-				$this->_render('pages/variant');
-			}
+//			error_log("variant json -> " . print_r($variant_json, 1));
+//			$this->output->set_content_type('application/json')->set_output(json_encode($variant_json));
+			echo json_encode($variant_json);
 		}
 		elseif ( $variant['sharing_policy'] === "linkedAccess" ) {
 			if ( $variant['source_url'] ) {

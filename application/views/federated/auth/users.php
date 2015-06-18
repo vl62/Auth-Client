@@ -71,12 +71,9 @@
 									<?php foreach ($users_groups[$user->id] as $group): ?>
 											<?php echo $group['group_description'] . " (Network:" . $group['network_name'] . ")"; ?><br />
 									<?php endforeach ?>
-									<?php else: ?>
-										-
 									<?php endif; ?>
-								<?php else: ?>
-									-
 								<?php endif; ?>
+								<a rel="popover" data-content="Edit the network groups for a user" data-original-title="Edit User Network Groups" href="<?php echo base_url('auth_federated/edit_user_network_groups'). "/" . $user->id; ?>" ><i class="icon-edit"></i></a>
 							</td>	
 							<?php if ( $user->editable ): ?>
 							<td><?php echo ($user->active) ? anchor("auth_federated/deactivate/" . $user->id, 'Active') : anchor("auth_federated/activate/" . $user->id, 'Inactive', array('id' => $user->id, 'class' => 'activateUser')); ?></td>

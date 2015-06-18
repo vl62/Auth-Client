@@ -9,6 +9,6 @@ foreach ($variants as $variant) {
 	$start = isset($variant['start']) ? $variant['start'] : '';
 	$end = isset($variant['end']) ? $variant['end'] : '';
 	if ( $location_ref && $start && $end ) {
-		echo $location_ref . "\t" . "cafevariome" . "\t" . "variant" . "\t" . $start . "\t" . $end . "\t" . "." . "\t" . "." . "\t" . "." . "\t" . "ID=" . $this->config->item('cvid_prefix') . $variant['cafevariome_id'] . ";Name=" . $this->config->item('cvid_prefix') . $variant['cafevariome_id'] . "->" . $ref . ":" . $hgvs . "\n";
+		echo $location_ref . "\t" . "cafevariome" . "\t" . "variant" . "\t" . $start . "\t" . $end . "\t" . "." . "\t" . "." . "\t" . "." . "\t" . "ID=" . $variant['cafevariome_id'] . ";Name=" . $variant['cafevariome_id'] . "->" . $ref . ":" . $hgvs . "\n";
 	}
 }

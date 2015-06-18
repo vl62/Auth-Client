@@ -2,15 +2,14 @@
 	<div class="row-fluid">
 		<div class="span12 pagination-centered" id="table_container">
 			<div class="well">
-				<h3>Record <?php echo $this->config->item('cvid_prefix') . $variant['cafevariome_id']; ?></h3>
-				
+				<h3>Record <?php echo $cvid_prefix . $variant['cafevariome_id']; ?></h3>
 				<table class="table table-striped table-bordered table-hover" >
 					<?php $location_flag = 0; ?>
 					<?php foreach ( $individual_record_display_fields as $individual_record ): ?>
 					<?php if ( $individual_record['name'] == "cafevariome_id" ): ?>
 					<tr>
 						<th style="width: 22em;"><?php echo $individual_record['visible_name']; ?></th>
-						<td colspan="2"><?php echo $this->config->item('cvid_prefix') . $variant['cafevariome_id']; ?></td>
+						<td colspan="2"><?php echo $cvid_prefix . $variant['cafevariome_id']; ?></td>
 					</tr>
 					<?php elseif ( $individual_record['name'] == "source_url" ): ?>
 					<tr>
@@ -87,7 +86,7 @@
                                                        }
 							
                                                        else {
-								echo "-"; 
+								echo "<td>-</td>"; 
 							}
 						?>
 											</tr>
