@@ -19,7 +19,7 @@ if ($_POST):
 		
 		// Generate installation key
 		$mdstring = md5(uniqid(rand(), true));
-		error_log("installation_key -> $mdstring");
+//		error_log("installation_key -> $mdstring");
 		
         $errors = array();
         // First create the database, then check strict mode is off, then create tables, then create admin user, then write config file - if anything fails at each stage it will not proceed and report the error message
@@ -124,10 +124,12 @@ if ($_POST):
 				$message = $core->getErrorMessage();
 				$errors['insert_settings'] = $message;
 			}
+			
 			// Send installation_key to Cafe Variome Central
-			$api_url = "https://auth.cafevariome.org/api/auth_general/add_installation/format/json";
-//			$api_url = "http://localhost/cafevariome_server/api/auth_general/add_installation/format/json";
-			$data = array( 'installation_key' => $mdstring, 'installation_name' => $_POST['sitetitle'] );
+//			$api_url = "https://auth.cafevariome.org/api/auth_general/add_installation/format/json";
+			$api_url = "http://localhost/cafevariome_server/api/auth_general/add_installation/format/json";
+			error_log("api_url -> $api_url");
+			$data = array( 'installation_key' => $mdstring, 'installation_name' => $_POST['sitetitle'], 'installation_base_url' => $_POST['externalurl']);
 			$opts = array('http' =>
 				array(
 					'method'  => 'POST',
@@ -238,8 +240,8 @@ if ($_POST):
 														<label for="database">Include sample data and configuration?</label>
 														<div class="input-prepend"><span class="add-on"><i class="icon-question-sign" rel="popover" data-content="Select whether to include sample data in the installation. Sample data includes mock variants, sources and groups." ></i></span>
 															<select id="sampledata">
-																<option value="none">None</option>
-																<option value="sample" selected>General</option>
+																<option value="none" selected>None</option>
+																<option value="sample">General</option>
 																<!--<option value="sample_dmudb">DMuDB</option>-->
 															</select>
 														</div>
