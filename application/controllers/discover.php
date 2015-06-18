@@ -1262,8 +1262,9 @@ class Discover extends MY_Controller {
 				}
 			}
 		}
-		
-		echo json_encode($data);
+		$this->output->set_header("Access-Control-Allow-Headers: Content-Type");
+		$this->output->set_output(json_encode($data));
+//		echo json_encode($data);
 		
 //		if ( empty($from_url_query) ) { // The query comes from the form through the website
 //			$this->load->view('pages/sources_table', $data); // Don't use _render as headers are already sent, html output from the view is sent back to ajax function and appended to div
@@ -1988,31 +1989,17 @@ class Discover extends MY_Controller {
 	}
 	
 	
-		// Fetch any sources that the user has group level access to
-//		$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_network_group_access_to");
-//		error_log("sources ------>------> $returned_sources");
-//		$accessible_sources_array = json_decode($returned_sources, 1);
-////		$accessible_source_ids = array_values($accessible_sources_array);
-//		$accessible_source_ids_array = array();
-//		if ( ! array_key_exists('error', $accessible_sources_array)) {
-//			foreach ( $accessible_sources_array as $s ) {
-//				$accessible_source_ids_array[$s['source_id']] = $s['source_id'];
-//			}
-//			error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
-//		}
-
-	
+	// This is the call that's used to get variants from a federated installs in a network
+	// The URL is used to make the call to the variants_json function in the discover_federated controller in the federated install
+	// Returned data is json which is then rendered according to the display type specified
 	function variants_federated ($term, $source, $federated_install_uri, $sharing_policy, $format = NULL) {
 //		error_log("source -> $source -> term -> " . $term . " -> " . urldecode($term));
 		$federated_install_uri = base64_decode( urldecode( $federated_install_uri ) );
 //		error_log("federated_uri -> $federated_install_uri");
 //		$term = html_entity_decode($term);
 		
-
-		
-		
 		if ( strtolower($sharing_policy) == "linkedaccess" ) {
-			$format = "html";
+			$format = "html"; // Only show linkedAccess as html
 		}
 		if ( $term && $source && $sharing_policy ) {
 			$term = urldecode($term);
@@ -2020,39 +2007,42 @@ class Discover extends MY_Controller {
 			$this->data['term'] = $term;
 			$this->data['source'] = $source;
 			$this->data['sharing_policy'] = $sharing_policy;
-			$s = $this->sources_model->getSourceSingle($source);
-			
-			// Check if this source actually exists
-			if ( ! $s ) {
-				show_error("The specified source does not seem to exist in this instance");
-			}
+
 			// If no format is provided then default to html table display
 			if ( ! isset($format)) { // If no format specified set it to html as default
 				$format = "html";
 			}
 			
-			$sources_types = $this->sources_model->getSourcesTypes();
-			$type = $sources_types[$source];
+//			$sources_types = $this->sources_model->getSourcesTypes();
+//			$type = $sources_types[$source];
 
 			
-			$source_full = $s[$source];
-			$this->data['source_full'] = $source_full;
+//			$source_full = $s[$source];
+//			$this->data['source_full'] = $source_full;
 			
 			$user_id = $this->ion_auth->user()->row()->id;
 //			echo "sending -> " . $federated_install_uri . "/discover_federated/variants/$term/$source/$sharing_policy/$format";
 			$variants = @file_get_contents($federated_install_uri . "/discover_federated/variants_json/$term/$source/$sharing_policy/$format/$user_id");
 //			$variants = @file_get_contents($federated_install_uri . "/discover_federated/variants/$term/$source/$sharing_policy/$format/$user_id");
 //			echo $variants;
-			$variants = json_decode($variants, 1);
-			$display_fields = $variants['display_fields'];
-			error_log("ds -> " . print_r($display_fields, 1));
-			unset($variants['display_fields']);
+			
+
+			
+			
+			$variants = json_decode($variants, 1); // The json of variants for this source and other info returned from federated install
+			$s = $variants['source']; // The remote source name and description from json
+			$display_fields = $variants['display_fields']; // The display fields set for the federated install
+//			error_log("ds -> " . print_r($display_fields, 1));
+			unset($variants['display_fields']); // Remove display_fields from variants array - it's now stored in separate array
+			unset($variants['source']); // Remove source from variants array - it's now stored in separate array
 			if ( strtolower($format) == "html" ) {
 				//TODO: make this client side
-				$variants = @file_get_contents($federated_install_uri . "/discover_federated/variants/$term/$source/$sharing_policy/$format/$user_id");
-//				$this->data['variants'] = $variants;
-//				$this->_render('federated/pages/variantshtml');
-				echo $variants;
+//				$variants = @file_get_contents($federated_install_uri . "/discover_federated/variants/$term/$source/$sharing_policy/$format/$user_id");
+				$this->data['variants'] = $variants;
+				$this->data['display_fields'] = $display_fields;
+				$this->data['federated_install_uri'] = $federated_install_uri;
+				$this->_render('federated/pages/variantshtml');
+//				echo $variants;
 			}
 			elseif ( strtolower($format) == "bed") {
 				$data = array();
@@ -2095,11 +2085,30 @@ class Discover extends MY_Controller {
 				show_error("Sorry, '$format' is not recognised as a linkedAccess output format for Cafe Variome.");
 			}
 			
-			
 		}
 		else {
 			show_404();
 		}
+	}
+	
+	function variant_federated ($cafevariome_id, $federated_install_uri) {
+		$user_id = $this->ion_auth->user()->row()->id;
+		$federated_install_uri = base64_decode( urldecode( $federated_install_uri ) );
+//		echo $federated_install_uri . "/discover_federated/variant_json/$cafevariome_id/$user_id";
+		$data = @file_get_contents($federated_install_uri . "/discover_federated/variant_json/$cafevariome_id/$user_id");
+//		echo $data;
+		$variant_json = json_decode($data, 1);
+//		print_r($variant_json);
+		
+		$this->data['phenotypes'] = $variant_json['phenotypes'];
+		$this->data['source_email'] = $variant_json['source_email'];
+		$this->data['individual_record_display_fields'] = $variant_json['individual_record_display_fields'];
+		$this->data['variant'] = $variant_json['variant'];
+		$this->data['cvid_prefix'] = $variant_json['cvid_prefix'];
+//		
+		$this->_render('federated/pages/variant');
+		
+		
 	}
 	
 	function delete_request($request_id) {
@@ -2507,8 +2516,9 @@ class Discover extends MY_Controller {
 			show_error("This variant ($cafevariome_id) does not have a recognised sharing policy, please contact an administrator.");
 		}
 	}
-        
-        
+
+
+	
         function phenotype($ppl_id = NULL){
             if ( empty($ppl_id)) {
                 show_404();		                        

@@ -301,7 +301,7 @@ class Database {
 		return $insert_flag;
 	}
 	
-	function create_admin_user($data) {
+	function create_admin_user($data, $installation_key) {
 		// Connect to the database
 		$mysqli = new mysqli($data['hostname'],$data['username'],$data['password'],$data['database']);
 		// Check for errors
@@ -314,12 +314,19 @@ class Database {
 		// Convert password to md5
 		$adminpassword = $mysqli->real_escape_string(md5($data['adminpassword']));
 		$active = "1";
-		$first_name = "admin";
-		$last_name = "admin";
+		$first_name = empty($data['adminfirstname']) ? $data['adminfirstname'] : 'admin';
+//		$first_name = "admin";
+		$last_name = empty($data['adminlastname']) ? $data['adminlastname'] : 'admin';
+//		$last_name = "admin";
 		$affiliation = "admin";
-		$query = 'INSERT INTO users (username, password, email, active, first_name, last_name, company) VALUES (?, ?, ?, ?, ?, ?, ?)'; 
+		$is_admin = "1";
+		
+		$create_admin_auth_result = create_admin_user_at_cafevariome_auth_server($adminusername, $adminpassword, $adminemail, $active, $first_name, $last_name, $affiliation, $is_admin, $installation_key);
+		error_log("create_admin_auth_result -> $create_admin_auth_result");
+		
+		$query = 'INSERT INTO users (username, password, email, active, first_name, last_name, company, is_admin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'; 
 		if($stmt = $mysqli->prepare($query)) {
-			$stmt->bind_param("sssssss",$adminusername, $adminpassword, $adminemail, $active, $first_name, $last_name, $affiliation);
+			$stmt->bind_param("sssssss",$adminusername, $adminpassword, $adminemail, $active, $first_name, $last_name, $affiliation, $is_admin);
 			if (!$stmt->execute()) {
 				error_log("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
 				$stmt->close();
@@ -376,6 +383,42 @@ class Database {
 		
 	}
 	
+	function create_admin_user_at_cafevariome_auth_server($adminusername, $adminpassword, $adminemail, $active, $first_name, $last_name, $affiliation, $is_admin, $installation_key) {
+		// Create the admin user in the Cafe Variome auth server
+//		$adminusername, $adminpassword, $adminemail, $active, $first_name, $last_name, $affiliation, $is_admin
+		$api_url = "http://localhost/cafevariome_server/auth_accounts/create_user";
+		//$api_url = "https://auth.cafevariome.org/auth_accounts/create_user";
+		$data = array(	'username' => $adminusername,
+						'email' => $adminemail,
+						'password' => $adminpassword,
+						'first_name' => $first_name,
+						'last_name'  => $last_name,
+						'company'    => $affiliation,
+						'isadmin' => $is_admin,
+						'installation_key' => $installation_key
+			);
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+		curl_setopt($ch, CURLOPT_HEADER, false);
+		//curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+		//	"Token: $token",
+		//	"Access-Control-Allow-Origin: *"
+		//));
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_URL, $api_url);
+		curl_setopt($ch, CURLOPT_REFERER, $api_url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($ch,CURLOPT_POST, true);
+		curl_setopt($ch,CURLOPT_POSTFIELDS, $data);
+		$result = curl_exec($ch);
+		//error_log($result);
+		//error_log(curl_error($ch));
+		curl_close($ch);
+//		echo json_encode($result);
+		return $result;
+	}
+	
 	// Function to create the tables and populate them with the default data
 	function create_tables($data) {
 		ini_set('memory_limit','1024M');
@@ -392,6 +435,7 @@ class Database {
 		}
 		else if ( $_POST['include_data'] == "none" ) {
 			$filename = "assets/sql/install.sql";
+			$filename = "assets/sql/cafevariome_client_install.sql";
 		}
 //		error_log("filename -> $filename");
 		// Connect to MySQL server - having to use standard mysql instead of mysqli here because of the potential size of the sql query - could get very big so need to process it line by line

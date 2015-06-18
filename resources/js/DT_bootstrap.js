@@ -727,6 +727,15 @@ $(document).ready(function() {
 	} );
 } );
 
+/* General Table  */
+$(document).ready(function() {
+	$('.generaltablewithpagination').dataTable( {
+		"sDom": "<'row'<'span5 offset1'l><'span6'f>r>t<'row'<'span5 offset1'i><'span6'p>>",
+		"bPaginate": true, // Disable pagination
+		"bStateSave": true
+	} );
+} );
+
 /* DB Structure Table  */
 $(document).ready(function() {
 	$('#dbstructuretable').dataTable( {

@@ -63,8 +63,8 @@
 //						'validation_url' : "<?php // echo base_url() . "admin/validate_hgvs";?>"
 //					},
 				}
-				,
-				'Phenotype': {
+//				,
+//				'Phenotype': {
 //					'phenotype_term' : {
 //						'field' : 'phenotype_term',
 //						'human_readable_field' : "Term",
@@ -76,18 +76,18 @@
 //						'validation_url' : "<?php // echo base_url() . "admin/validate_phenotype";?>",
 //						'autocomplete_url' : "<?php // echo base_url() . "admin/autocomplete_bioportal/phenotype";?>"
 //					},
-					'phenotype_epad' : {
-						'field' : 'phenotype_epad',
-						'human_readable_field' : "Term",
-						'placeholder' : "Enter a value",
-						'information' : "You should enter either a freetext term or use a phenotype term from an ontology",
-						'conditions' : ["=","&ne;",">","<",">=","<=","---------","IS","IS LIKE","IS NOT","IS NOT LIKE"],
-						'logic' : ['AND', 'OR'],
-						'number_blocks_for_field' : 100,
-						'validation_url' : "<?php // echo base_url() . "admin/validate_phenotype";?>",
-						'autocomplete_url' : "<?php echo base_url() . "admin/autocomplete_epad";?>"
-					}						
-				}
+//					'phenotype_epad' : {
+//						'field' : 'phenotype_epad',
+//						'human_readable_field' : "Term",
+//						'placeholder' : "Enter a value",
+//						'information' : "You should enter either a freetext term or use a phenotype term from an ontology",
+//						'conditions' : ["=","&ne;",">","<",">=","<=","---------","IS","IS LIKE","IS NOT","IS NOT LIKE"],
+//						'logic' : ['AND', 'OR'],
+//						'number_blocks_for_field' : 100,
+//						'validation_url' : "<?php // echo base_url() . "admin/validate_phenotype";?>",
+//						'autocomplete_url' : "<?php // echo base_url() . "admin/autocomplete_epad";?>"
+//					}						
+//				}
 			},
 			logic: ['AND', 'OR'], //'NOT'
 			syntax : ['QueryAPI', 'ElasticSearch', 'mySQL', 'SPARQL'],
@@ -103,6 +103,7 @@
 //			endpoints : [{'name' : 'MOLGENIS105', 'url' : 'http://molgenis105.gcc.rug.nl/api/v1/getAggregate', 'type' : 'molgenis'}, {'name' : 'MOLGENIS106', 'url' : 'http://molgenis106.gcc.rug.nl/api/v1/getAggregate', 'type' : 'molgenis'}],
 //			endpoints : [{'name' : 'MOLGENIS105', 'url' : 'http://molgenis105.gcc.rug.nl/api/v1/getAggregate'}],
 //			endpoints : [{'name' : 'local1', 'url' : 'http://localhost/cafevariome/discover/q1'}, {'name' : 'local2', 'url' : 'http://localhost/cafevariome/discover/q2'}],
+//			endpoints : [{'name' : 'client1', 'url' : '<?php // echo base_url() . 'discover/query'; ?>', 'type' : 'local'},{'name' : 'client2', 'url' : 'http://127.0.0.1/cafevariome_client_2/discover/query', 'type' : 'local'}],
 			endpoints : [{'name' : 'client1', 'url' : '<?php echo base_url() . 'discover/query'; ?>', 'type' : 'local'},{'name' : 'client2', 'url' : 'http://127.0.0.1/cafevariome_client_2/discover/query', 'type' : 'local'}],
 			complete : function() {
 //				alert( 'Done!' );

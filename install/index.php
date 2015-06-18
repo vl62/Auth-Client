@@ -16,6 +16,11 @@ if ($_POST):
 //			error_log("at -> " . $i);
 //			sleep(1);
 //		}
+		
+		// Generate installation key
+		$mdstring = md5(uniqid(rand(), true));
+		error_log("installation_key -> $mdstring");
+		
         $errors = array();
         // First create the database, then check strict mode is off, then create tables, then create admin user, then write config file - if anything fails at each stage it will not proceed and report the error message
         error_log("0%");
@@ -34,7 +39,7 @@ if ($_POST):
                     $errors['create_db_tables'] = $message;
                 } else {
                     error_log("60%");
-                    if ($database->create_admin_user($_POST) == false) {
+                    if ($database->create_admin_user($_POST, $mdstring) == false) {
                         $message = $database->getErrorMessage();
                         $errors['create_admin_user'] = $message;
                     } else {
@@ -113,10 +118,6 @@ if ($_POST):
                 $result = file_get_contents($api_url, false, $context);
             }
 
-			
-            // Generate installation key
-			$mdstring = md5(uniqid(rand(), true));
-			
 			// Insert installation_key into local install settings table
 //			$_POST['installation_key'] = $mdstring;
 			if ($database->insert_installation_key($_POST, $mdstring) == false) {
@@ -124,8 +125,8 @@ if ($_POST):
 				$errors['insert_settings'] = $message;
 			}
 			// Send installation_key to Cafe Variome Central
-			$api_url = "http://auth.cafevariome.org/api/central/add_installation/format/json";
-//			$api_url = "http://localhost/cafevariome/api/central/add_installation/format/json";
+			$api_url = "https://auth.cafevariome.org/api/auth_general/add_installation/format/json";
+//			$api_url = "http://localhost/cafevariome_server/api/auth_general/add_installation/format/json";
 			$data = array( 'installation_key' => $mdstring, 'installation_name' => $_POST['sitetitle'] );
 			$opts = array('http' =>
 				array(
@@ -245,7 +246,9 @@ if ($_POST):
 												</div>
 												<div class="tab-pane" id="admin">
 													<br /><h3>Admin Account</h3><hr>
-														<label for="adminusername">Admin Username</label><div class="input-prepend"><span class="add-on"><i class="icon-question-sign" rel="popover" data-content="Username for the main installation administrator account. Additional administrators can be created through the main site admin interface. N.B. Spaces will be automatically removed from the supplied username."></i></span><input type="text" id="adminusername" value="admin" class="input_text" name="adminusername" /></div>
+														<label for="adminusername">Admin Username</label><div class="input-prepend"><span class="add-on"><i class="icon-question-sign" rel="popover" data-content="Username for the main installation administrator account. Additional administrators can be created through the main site admin interface. N.B. Spaces will be automatically removed from the supplied username."></i></span><input type="text" id="adminusername" value="" class="input_text" name="adminusername" /></div>
+														<label for="adminfirstname">Admin First Name</label><div class="input-prepend"><span class="add-on"><i class="icon-question-sign" rel="popover" data-content="First name for the main installation administrator account. "></i></span><input type="text" id="adminfirstname" value="" class="input_text" name="adminfirstname" /></div>
+														<label for="adminlastname">Admin Last Name</label><div class="input-prepend"><span class="add-on"><i class="icon-question-sign" rel="popover" data-content="Last name for the main installation administrator account. "></i></span><input type="text" id="adminlastname" value="" class="input_text" name="adminlastname" /></div>
 														<label for="adminemail">Admin Email</label><div class="input-prepend"><span class="add-on"><i class="icon-question-sign" rel="popover" data-content="Specify a valid email address e.g. example@gmail.com (syntax will be checked in the finalise stage, invalid emails will not be accepted)."></i></span><input type="text" id="adminemail" class="input_text" name="adminemail" /></div>
 														<label for="adminpassword">Admin Password</label><div class="input-prepend"><span class="add-on"><i class="icon-question-sign" rel="popover" data-content="Password for administrator account."></i></span><input type="password" id="adminpassword" class="input_text" name="adminpassword" /></div>
 														<input type="hidden" id="base_url" name="base_url" value="<?php echo $base_url; ?>">
@@ -257,7 +260,7 @@ if ($_POST):
 																	<div id="externalurlvalidateresult"></div>
 																	<br />
 																	<label for="adminusername">Site Title</label><div class="input-prepend"><span class="add-on"><i class="icon-question-sign" rel="popover" data-content="Main title for the site that will be shown in metadata."></i></span><input type="text" id="sitetitle" value="Cafe Variome" class="input_text" name="sitetitle" /></div>
-																	<label for="adminemail">Site Description</label><div class="input-prepend"><span class="add-on"><i class="icon-question-sign" rel="popover" data-content="Brief description of the site that will be shown in metadata."></i></span><input type="text" id="sitedescription" class="input_text" name="sitedescription" value="Cafe Variome Instance" /></div>
+																	<label for="adminemail">Site Description</label><div class="input-prepend"><span class="add-on"><i class="icon-question-sign" rel="popover" data-content="Brief description of the site that will be shown in metadata."></i></span><input type="text" id="sitedescription" class="input_text" name="sitedescription" value="Cafe Variome Client" /></div>
 																	<label for="adminpassword">Site Author</label><div class="input-prepend"><span class="add-on"><i class="icon-question-sign" rel="popover" data-content="Name of site author that will be shown in metadata."></i></span><input type="text" id="siteauthor" class="input_text" name="siteauthor" value="Administrator" /></div>
 																	<label for="adminpassword">Site Keywords</label><div class="input-prepend"><span class="add-on"><i class="icon-question-sign" rel="popover" data-content="Site keywords metadata to help with search engine optimisation and traffic. Keywords should be separated by a comma."></i></span><input type="text" id="sitekeywords" class="input_text" name="sitekeywords" value="mutation, diagnostics, database"/></div>
 															</div>

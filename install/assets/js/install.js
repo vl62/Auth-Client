@@ -477,7 +477,7 @@ $(document).ready(function() {
 						else if ( is_valid == 'no') {
 							$('#externalurlvalidateresult').empty();
 							$('#externalurlvalidateresult').append('<br /><button class="btn btn-mini btn-danger" disabled="disabled" rel="popover" data-content="This external URL is not contactable by Cafe Variome authentication server." data-original-title="Invalid external URL"><i class="icon-remove-sign icon-white"></i></button>');
-							alert("The external is not contactable from the Cafe Variome authentication server, please enter a valid external url.");
+							alert("The external URL is not contactable from the Cafe Variome authentication server, please enter a valid external url.");
 						}
 						else {
 							$('#externalurlvalidateresult').empty();

@@ -3102,6 +3102,32 @@ function edit_user() {
     });
 }
 
+function edit_user_network_groups() {
+	$callAjax = true;
+    $('form[name="editUser"]').submit(function(e) {
+        e.preventDefault();
+        $postData = $(this).serialize();
+		if($callAjax)
+		$.ajax({
+			url: authurl + '/auth_accounts/edit_user_network_groups/',
+            data: $postData,
+            dataType: 'json',
+            delay: 200,
+            type: 'POST',
+            success: function(result) {
+				if (result.error) {
+					$("#editUserError").removeClass('hide');
+					$("#editUserError").text(result.error);
+                } else if (result.success) {
+//					console.log(result.success);
+                    window.location = baseurl + "auth_federated/users";
+                }
+            }
+        });$callAjax = false;
+	});
+
+}
+
 function activate_user() {
     $callAjax = true;
     $('form[name="activateUser"]').submit(function(e) {

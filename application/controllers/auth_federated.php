@@ -860,15 +860,12 @@ class Auth_federated extends MY_Controller {
 	//edit a user
 	function edit_user($id)
 	{
-                if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
-                {
-                    redirect('/', 'refresh');
-                }
+
 		$this->title = "Edit User";
 
 		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
 		{
-			redirect('auth', 'refresh');
+			redirect('auth_federated', 'refresh');
 		}
 		
 //		Local ion_auth call no longer used, need to fetch the user information for auth server via API call instead
@@ -998,6 +995,50 @@ class Auth_federated extends MY_Controller {
         }
 	
 	
+	function edit_user_network_groups($id) {
+
+		$this->title = "Edit User Network Groups";
+
+		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+			redirect('auth_federated', 'refresh');
+		}
+
+//		if (property_exists($user, 'error')) {
+//			show_error('You do not have permissions to edit this user');
+//		}
+                
+//		error_log("USER -> " . print_r($user, 1));
+//		$user = $this->ion_auth->user($id)->row();
+//		$this->session->set_userdata(array("userId" => $user->id));
+		$this->data['user_id'] = $id;
+		//display the edit user form
+		$this->data['csrf'] = $this->_get_csrf_nonce();
+
+		//set the flash data error message if there is one
+		$this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
+
+
+		// Get all the available network groups for this installation
+		$token = $this->session->userdata('Token');
+		$groups = json_decode(authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation"), TRUE);
+		if (! array_key_exists('error', $groups)) {
+			$this->data['groups'] = $groups;
+		}
+		// Get all the network groups that this user from this installation is currently in so that these can be pre selected in the multiselect list
+		$returned_groups = authPostRequest($token, array('user_id' => $id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_user_in_installation");
+		$tmp_selected_groups = json_decode($returned_groups, TRUE);
+		$selected_groups = array();
+		if (! array_key_exists('error', $tmp_selected_groups)) {
+			foreach ( $tmp_selected_groups as $tmp_group ) {
+				$selected_groups[$tmp_group['group_id']] = "group_description";
+			}
+			$this->data['selected_groups'] = $selected_groups;
+		}
+
+		$this->_render('federated/auth/edit_user_network_groups');
+//		$this->load->view('auth/edit_user', $this->data);
+	}
+		
 	//view user profile (for non-admin user)
 	function user_profile($id)
 	{
