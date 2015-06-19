@@ -68,6 +68,29 @@ if ($_POST):
         }
         error_log("100%");
 
+		
+		// Insert installation_key into local install settings table
+//		$_POST['installation_key'] = $mdstring;
+		if ($database->insert_installation_key($_POST, $mdstring) == false) {
+			$message = $core->getErrorMessage();
+			$errors['insert_settings'] = $message;
+		}
+			
+		// Send installation_key to Cafe Variome Central
+//		$api_url = "https://auth.cafevariome.org/api/auth_general/add_installation/format/json";
+		$api_url = "http://143.210.153.155/cafevariome_server/api/auth_general/add_installation/format/json";
+		error_log("api_url -> $api_url");
+		$data = array( 'installation_key' => $mdstring, 'installation_name' => $_POST['sitetitle'], 'installation_base_url' => $_POST['externalurl']);
+		$opts = array('http' =>
+			array(
+				'method'  => 'POST',
+				'header'  => 'Content-type: application/x-www-form-urlencoded',
+				'content' => http_build_query($data)
+			)
+		);
+		$context  = stream_context_create($opts);
+		$result = file_get_contents($api_url, false, $context);
+		
 //        $file = file_get_contents('http://ip6.me/');
 //        // Trim IP based on HTML formatting
 //        $pos = strpos($file, '+3') + 3;
@@ -118,27 +141,7 @@ if ($_POST):
                 $result = file_get_contents($api_url, false, $context);
             }
 
-			// Insert installation_key into local install settings table
-//			$_POST['installation_key'] = $mdstring;
-			if ($database->insert_installation_key($_POST, $mdstring) == false) {
-				$message = $core->getErrorMessage();
-				$errors['insert_settings'] = $message;
-			}
-			
-			// Send installation_key to Cafe Variome Central
-//			$api_url = "https://auth.cafevariome.org/api/auth_general/add_installation/format/json";
-			$api_url = "http://localhost/cafevariome_server/api/auth_general/add_installation/format/json";
-			error_log("api_url -> $api_url");
-			$data = array( 'installation_key' => $mdstring, 'installation_name' => $_POST['sitetitle'], 'installation_base_url' => $_POST['externalurl']);
-			$opts = array('http' =>
-				array(
-					'method'  => 'POST',
-					'header'  => 'Content-type: application/x-www-form-urlencoded',
-					'content' => http_build_query($data)
-				)
-			);
-			$context  = stream_context_create($opts);
-			$result = file_get_contents($api_url, false, $context);			
+	
         }
 
 
