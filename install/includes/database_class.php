@@ -217,7 +217,7 @@ class Database {
 	}
 
 	function insert_installation_key($data, $installation_key) {
-		error_log("installation_key -> " . $installation_key);
+//		error_log("installation_key -> " . $installation_key);
 		$mysqli = new mysqli($data['hostname'],$data['username'],$data['password'],$data['database']);
 		// Check for errors
 		if(mysqli_connect_errno()) {
@@ -228,7 +228,8 @@ class Database {
 		$update_flag = true;
 		
 		// Update settings with installation_key
-//		error_log("updating prefix -> " . $_POST['prefix']);
+//		error_log("updating installation_key -> " . $installation_key);
+		$validation = "xss_clean";
 		$name = "installation_key";
 		$info = "Unique key for this installation (WARNING: do not change this value unless you know what you are doing)";
 		$installation_key = $mysqli->real_escape_string($installation_key);
@@ -394,7 +395,7 @@ class Database {
 	function create_admin_user_at_cafevariome_auth_server($adminusername, $adminpassword, $adminemail, $active, $first_name, $last_name, $affiliation, $is_admin, $installation_key) {
 		// Create the admin user in the Cafe Variome auth server
 //		$adminusername, $adminpassword, $adminemail, $active, $first_name, $last_name, $affiliation, $is_admin
-		$api_url = "http://localhost/cafevariome_server/auth_accounts/create_user";
+		$api_url = "http://143.210.153.155/cafevariome_server/auth_accounts/create_user";
 		//$api_url = "https://auth.cafevariome.org/auth_accounts/create_user";
 		$data = array(	'username' => $adminusername,
 						'email' => $adminemail,
