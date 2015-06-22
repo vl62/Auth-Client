@@ -395,8 +395,8 @@ class Database {
 	function create_admin_user_at_cafevariome_auth_server($adminusername, $adminpassword, $adminemail, $active, $first_name, $last_name, $affiliation, $is_admin, $installation_key) {
 		// Create the admin user in the Cafe Variome auth server
 //		$adminusername, $adminpassword, $adminemail, $active, $first_name, $last_name, $affiliation, $is_admin
-		$api_url = "http://143.210.153.155/cafevariome_server/auth_accounts/create_user";
-		//$api_url = "https://auth.cafevariome.org/auth_accounts/create_user";
+//		$api_url = "http://143.210.153.155/cafevariome_server/auth_accounts/create_user";
+		$api_url = "https://auth.cafevariome.org/auth_accounts/create_user";
 		$data = array(	'username' => $adminusername,
 						'email' => $adminemail,
 						'password' => $adminpassword,
