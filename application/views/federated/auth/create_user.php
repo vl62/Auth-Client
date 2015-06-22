@@ -60,7 +60,7 @@
 				</p>
 					
 				<p>
-					Password: (*)<br />
+					Password (at least 6 characters): (*)<br />
 					<?php echo form_input($password); ?>
 				</p>
 					
@@ -68,6 +68,11 @@
 					Confirm Password: (*)<br />
 					<?php echo form_input($password_confirm); ?>
 				</p>
+				<p>
+					<button type="button btn" id="generate_random_password">Generate random password</button>
+					<div id="random_password"></div>
+				</p>
+					
 				<?php echo form_hidden(array('installation_key' => $this->config->item('installation_key'))); ?>	
 				<p>
 					Add to Group (control click to select multiple): <br />

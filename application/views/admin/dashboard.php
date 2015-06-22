@@ -7,8 +7,12 @@
 		</div>  
 	</div>  
 	<div class="row">
-		<div class="span4">
-			<h4>Data:</h4>
+		<div class="span10 offset1">
+			<ul class="nav nav-tabs">
+				<li class="active">
+					<a href="#">Data</a>
+				</li>
+			</ul>
 		</div>
 	</div>
 	<div class="row">
@@ -18,8 +22,14 @@
 	</div>
 	<!--<hr>-->
 	<div class="row">
-		<div class="span4">
-			<h4>Access control:</h4>
+		<div class="span10 offset1">
+			<br />
+			<ul class="nav nav-tabs">
+				<li class="active">
+					<!--Access Control-->
+					<a href="#">Access Control</a>
+				</li>
+			</ul>
 		</div>
 	</div>
 	<div class="row">
@@ -35,8 +45,13 @@
 	</div>
 	<!--<hr>-->
 	<div class="row">
-		<div class="span4">
-			<h4>Settings & Preferences:</h4>
+		<div class="span10 offset1">
+			<br />
+			<ul class="nav nav-tabs">
+				<li class="active">
+					<a href="#">Settings and Preferences</a>
+				</li>
+			</ul>
 		</div>
 	</div>
 	<div class="row">
@@ -50,8 +65,13 @@
 	</div>
 	<!--<hr>-->
 	<div class="row">
-		<div class="span4">
-			<h4>Content & Reports:</h4>
+		<div class="span10 offset1">
+			<br />
+			<ul class="nav nav-tabs">
+				<li class="active">
+					<a href="#">Content and Reports</a>
+				</li>
+			</ul>
 		</div>
 	</div>
 	<div class="row">
