@@ -15,8 +15,11 @@ class Authcheck {
 		if ( $CFG->item("site_requires_login") == "on" ) {
 //			error_log("site_requires_login -> " . $CFG->item("site_requires_login"));
 //			$segment = $this->CI->uri->segment(2);
-			// TODO: Add check (and add setting in db & schema) to see whether the setting for login check is switched on
-			if ( strtolower($current) != "css" ) { // Ignore it if the css controller is being called
+			
+			if ( preg_match("/federated/", strtolower($current))) {
+				error_log("FEDERATED -> " . strtolower($current));
+			}
+			elseif ( strtolower($current) != "css" ) { // Ignore it if the css controller is being called
 //				if ( $this->config->item('discovery_requires_login')) {
 					if (!$this->CI->ion_auth->logged_in()) {
 //						echo "current -> $current";
