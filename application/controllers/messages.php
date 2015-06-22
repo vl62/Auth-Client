@@ -16,8 +16,8 @@ class Messages extends MY_Controller {
 			redirect('auth', 'refresh');
 		}
 
-		if (! $this->session->userdata('inbox_tab')) { // Set session inbox_tab to inbox if it's not already set
-			$this->session->set_userdata('inbox_tab', 'inbox');
+		if (! $this->session->userdata('messages_tab')) { // Set session inbox_tab to inbox if it's not already set
+			$this->session->set_userdata('messages_tab', 'inbox');
 		}
 		$this->data['user_id'] = $user_id = $this->session->userdata("user_id");
 		$this->data['messages'] = json_decode(authPostRequest('', array("user_id" => $user_id), $this->config->item('auth_server') . "/api/auth_general/get_inbox_messages"), 1);
