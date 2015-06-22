@@ -5,9 +5,6 @@
 				<li>  
 					<a href="<?php echo base_url() . "messages";?>">Messages Home</a> <span class="divider">></span>  
 				</li>
-				<li>  
-					<a href="<?php echo base_url() . "messages/inbox";?>">View Messages</a> <span class="divider">></span>  
-				</li>
 				<li class="active">View Message</li>
 			</ul>  
 		</div>  

@@ -2612,7 +2612,7 @@ function markSelectedMessagesAsRead() {
 		}
 	});
 	$.ajax({
-		url: baseurl + 'messages/mark_selected_messages_as_read',
+		url: authurl + '/auth_messages/mark_selected_messages_as_read',
 //		contentType: 'application/json',
 		data: {messages: JSON.stringify(selected)},
 		dataType: 'html',
@@ -3359,7 +3359,8 @@ function send_message() {
                                             $("#sendMessage").removeClass('hide');
                                             $("#sendMessage").text(result.error);
                                     } else if (result.success) {
-                                            console(result.success);
+//                                            console(result.success);
+											 window.location = baseurl + "messages";
 //                                            window.location = baseurl + "messages/index/" + result.unread_count;
                                     }
                                 }

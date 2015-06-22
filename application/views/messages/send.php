@@ -65,7 +65,7 @@ $(document).ready(function() {
 	<!--</div>-->
 	<br />
 	<hr>
-	<a href="<?php echo base_url() . "messages/inbox";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a>
+	<a href="<?php echo base_url() . "messages";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a>
 	<div id="user_list" class="modal hide fade in" style="display: none; ">
 		<div class="modal-header">
 			<a class="close" data-dismiss="modal">×</a>

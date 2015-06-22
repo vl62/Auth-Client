@@ -13,35 +13,13 @@
 	
 	<div class="tabbable">
 		<ul class="nav nav-tabs" id="messagetabs">
-			<li <?php if ( $this->session->userdata('inbox_tab') === "inbox" ) { echo "class='active'"; } ?>><a href="#inbox" data-toggle="tab">Inbox</a></li>
-			<li <?php if ( $this->session->userdata('inbox_tab') === "sent" ) { echo "class='active'"; } ?>><a href="#sent" data-toggle="tab">Sent</a></li>
+			<li <?php if ( $this->session->userdata('messages_tab') === "inbox" ) { echo "class='active'"; } ?>><a href="#inbox" data-toggle="tab">Inbox</a></li>
+			<li <?php if ( $this->session->userdata('messages_tab') === "sent" ) { echo "class='active'"; } ?>><a href="#sent" data-toggle="tab">Sent</a></li>
 		</ul>
 		<div class="tab-content">
-			<div class="tab-pane<?php if ( $this->session->userdata('inbox_tab') === "inbox" ) { echo " active"; } ?>" id="inbox">
+			<div class="tab-pane<?php if ( $this->session->userdata('messages_tab') === "inbox" ) { echo " active"; } ?>" id="inbox">
 	
 				<div class="row-fluid">
-					<div id="main">
-<!--					<table id="example-basic-expandable" class="table table-bordered table-striped table-hover">
-							<tr data-tt-id="0">
-								<td>app</td>
-							</tr>
-							<tr data-tt-id="1" data-tt-parent-id="0">
-								<td>controllers</td>
-							</tr>
-							<tr data-tt-id="5" data-tt-parent-id="1">
-								<td>application_controller.rb</td>
-							</tr>
-							<tr data-tt-id="2" data-tt-parent-id="0">
-								<td>helpers</td>
-							</tr>
-							<tr data-tt-id="3" data-tt-parent-id="0">
-								<td>models</td>
-							</tr>
-							<tr data-tt-id="4" data-tt-parent-id="0">
-								<td>views</td>
-							</tr>
-						</table>-->
-					</div>
 					<!--<table id="example-basic-expandable" class="table table-bordered table-striped table-hover example-basic-expandable">-->
 					<table id="inboxtable" class="table table-bordered table-striped table-hover">
 						<thead>
@@ -96,7 +74,7 @@
 				</div>
 			</div>
 
-			<div class="tab-pane<?php if ( $this->session->userdata('inbox_tab') === "sent" ) { echo " active"; } ?>" id="sent">
+			<div class="tab-pane<?php if ( $this->session->userdata('messages_tab') === "sent" ) { echo " active"; } ?>" id="sent">
 				<div class="row-fluid">
 					<!--<table class="table table-bordered table-striped table-hover example-basic-expandable">-->
 					<table id="sentmailtable" class="table table-bordered table-striped table-hover">
@@ -137,9 +115,6 @@
 					<?php endif; ?>
 				</div>
 			</div>
-			<hr>
-			<a href="<?php echo base_url() . "messages";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a>
-
 		</div>
 	</div>
     <input type="hidden" id="user_id" value="<?php echo $user_id; ?>">

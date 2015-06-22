@@ -15,21 +15,6 @@ class Messages extends MY_Controller {
 		if (!$this->ion_auth->logged_in()) {
 			redirect('auth', 'refresh');
 		}
-                
-                if($success) {
-                    $this->data['success_message'] = true;
-                }
-                
-                $user_id = $this->session->userdata("user_id");
-		$this->data['user_id'] = $user_id;
-		$this->_render('messages/dashboard');
-
-	}
-
-	public function inbox() {
-		if (!$this->ion_auth->logged_in()) {
-			redirect('auth', 'refresh');
-		}
 
 		if (! $this->session->userdata('inbox_tab')) { // Set session inbox_tab to inbox if it's not already set
 			$this->session->set_userdata('inbox_tab', 'inbox');
@@ -42,8 +27,24 @@ class Messages extends MY_Controller {
 //                echo "<pre>";
 //                var_dump($this->data['messages']);
 //                echo "</pre>";
-               
+
 	}
+	
+//	public function index($success = null){	
+//		if (!$this->ion_auth->logged_in()) {
+//			redirect('auth', 'refresh');
+//		}
+//                
+//                if($success) {
+//                    $this->data['success_message'] = true;
+//                }
+//                
+//                $user_id = $this->session->userdata("user_id");
+//		$this->data['user_id'] = $user_id;
+//		$this->_render('messages/dashboard');
+//
+//	}
+	
 	
 	public function send() {
 		if (!$this->ion_auth->logged_in()) {
@@ -244,7 +245,7 @@ class Messages extends MY_Controller {
                                 $this->config->item('auth_server') . "/api/auth_general/reply_msg"), 1);
 //			$this->messages_model->reply_to_message($message_id, $sender_id, $subject, $body, $recipients);
 
-                        redirect('messages/inbox', 'refresh');
+                        redirect('messages', 'refresh');
 //			$threads = $this->mahana_messaging->get_all_threads($user_id);
 //			$this->data['threads'] = $threads;
 //			$this->_render('messages/inbox');
@@ -264,64 +265,13 @@ class Messages extends MY_Controller {
                 
 //		$is_deleted = $this->messages_model->delete_message($message_id, $user_id);
 		if ( $is_deleted ) {
-			redirect('messages/inbox', 'refresh');
+			redirect('messages', 'refresh');
 		}
 		else {
 			show_error("Unable to delete message");
 		}
 	}
 
-	function delete_selected_messages() {
-		if (!$this->ion_auth->logged_in()) {
-			redirect('auth', 'refresh');
-		}
-		$user_id = $this->ion_auth->user()->row()->id;
-		$messages = json_decode($this->input->post('messages'));
-//		print_r($variants);
-		$success_flag = 1;
-		foreach ( $messages as $key => $id ) {
-//			error_log("id -> " . $id);
-			$is_deleted = $this->messages_model->delete_message($id, $user_id);
-			if ( ! $is_deleted ) {
-				$success_flag = 0;
-			}
-		}
-		if ( $success_flag ) {
-//			echo "Messages were successfully deleted";
-			error_log("Messages were successfully deleted");
-		}
-		else {
-//			echo "There was a problem deleting one or more variants";
-			error_log("There was a problem deleting one or more messages");
-		}
-	}
-	
-	function mark_selected_messages_as_read() {
-		if (!$this->ion_auth->logged_in()) {
-			redirect('auth', 'refresh');
-		}
-		$user_id = $this->ion_auth->user()->row()->id;
-		$messages = json_decode($this->input->post('messages'));
-//		print_r($variants);
-		$success_flag = 1;
-		foreach ( $messages as $key => $id ) {
-//			error_log("id -> " . $id);
-//			$is_read = $this->messages_model->mark_message_as_read($id, $user_id);
-			$is_read = $this->messages_model->update_message_status("1", $id, $user_id);
-			if ( ! $is_read ) {
-				$success_flag = 0;
-			}
-		}
-		if ( $success_flag ) {
-//			echo "Variants were successfully deleted";
-			error_log("Messages were successfully marked as read");
-		}
-		else {
-//			echo "There was a problem deleting one or more variants";
-			error_log("There was a problem marking one or more message as read");
-		}
-	}
-	
 	// User lookup - function required for the jquery-tokeninput plugin (function defined when initializing the jquery in the header)
 	function lookup_users() {
 		$this->load->model('messages_model');
