@@ -1539,15 +1539,13 @@ class Discover extends MY_Controller {
 //			$variants = @file_get_contents($federated_install_uri . "/discover_federated/variants/$term/$source/$sharing_policy/$format/$user_id");
 //			echo $variants;
 			
-
-			
-			
 			$variants = json_decode($variants, 1); // The json of variants for this source and other info returned from federated install
 			
+			// Print error message if any returned by federated client
+			// Main error currently would be that the federated installation has turned off the allow_record_hits_display setting
 			if ( array_key_exists('error', $variants)) {
-				show_404($variants['error']);
+				show_error($variants['error']);
 			}
-			
 			
 			$s = $variants['source']; // The remote source name and description from json
 			$display_fields = $variants['display_fields']; // The display fields set for the federated install
@@ -1618,6 +1616,12 @@ class Discover extends MY_Controller {
 //		echo $data;
 		$variant_json = json_decode($data, 1);
 //		print_r($variant_json);
+		
+		// Print error message if any returned by federated client
+		// Main error currently would be that the federated installation has turned off the allow_individual_record_display setting
+		if ( array_key_exists('error', $variants)) {
+			show_error($variants['error']);
+		}
 		
 		$this->data['phenotypes'] = $variant_json['phenotypes'];
 		$this->data['source_email'] = $variant_json['source_email'];

@@ -768,13 +768,10 @@ class Discover_federated extends MY_Controller {
 	
 	function variants_json ($term, $source, $sharing_policy, $format = NULL, $user_id = NULL) {
 
+		// Stop 
 		if ( ! $this->config->item('allow_record_hits_display') ) {
 			echo json_encode(array("error" => "The display of record hits has been disabled for the installation you are trying to access"));
 			return 0;
-//			exit();
-//			show_404();
-//			error_log("can't display");
-//			show_404("The display of record hits has been disabled for the installation you are trying to access");
 		}
 
 
@@ -908,6 +905,13 @@ class Discover_federated extends MY_Controller {
 	
 
 	function variant_json ($cafevariome_id, $user_id) {
+		
+		if ( ! $this->config->item('allow_individual_record_display') ) {
+			echo json_encode(array("error" => "The display of individual records has been disabled for the installation you are trying to access"));
+			return 0;
+		}
+
+		
 		$variant = $this->sources_model->getVariant($cafevariome_id);
 		$phenotypes = $this->sources_model->getPhenotypes($cafevariome_id);
 		$source_email = $this->sources_model->getEmailFromSourceName($variant['source']);
