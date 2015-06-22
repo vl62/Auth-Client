@@ -72,7 +72,7 @@
 									?>
 								</td>
 								<td><?php echo  $message['sent_date']; ?></td>
-								<td><a href="<?php echo base_url() . "messages/reply/" . $message['message_id'];?>" rel="popover" data-content="Click to reply to this message" data-original-title="Reply"><i class="icon-repeat"></i></a></td>
+								<td><a href="<?php echo base_url() . "messages/reply/" . $message['message_id'];?>" rel="popover" data-content="Click to reply to this message" data-original-title="Reply"><i class="icon-arrow-left"></i></a></td>
 								<td>
 									<?php if ( $message['status'] == 1 ):?>
 									<?php echo img(array('src'=> base_url('resources/images/cafevariome/icon-unread-mail.png'), 'alt'=> 'Unread', 'title' => 'Unread')); ?>

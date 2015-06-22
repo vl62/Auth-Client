@@ -1929,6 +1929,24 @@ $(document).ready(function() {
 	});
 });
 
+$(document).ready(function() { 
+	$(function() {
+		$("#generate_random_password").click(function(e) {
+			e.preventDefault();
+			var text = "";
+			var min = 6;
+			var max = 8;
+			var ran = Math.floor(Math.random()*(max-min+1)+min);
+			var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+			for( var i=0; i < ran; i++ ) {
+				text += possible.charAt(Math.floor(Math.random() * possible.length));
+			}
+			$('#password').val(text);
+			$('#password_confirm').val(text);
+			$('#random_password').html(text);
+		});
+	});
+});
 
 // Initialize the jquery switchButton plugin for federated source selection 
  $(function() {
