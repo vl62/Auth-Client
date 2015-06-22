@@ -55,7 +55,7 @@ function authGetRequest($token, $uri) {
 	$url = $uri . '/format/json';
 	$url = preg_replace('/([^:])(\/{2,})/', '$1/', $url); // Strip out any double forward slashes from the url
 //	error_log("token -> $token");
-	error_log("url -> $url");
+//	error_log("url -> $url");
 
 	$opts = array('http' =>
 		array(

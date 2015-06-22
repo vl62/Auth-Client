@@ -104,7 +104,8 @@
 			$(document).ready(function () {
 				$("#messaging-user-input").tokenInput("<?php print rtrim($this->config->item('auth_server'),"/") . '/auth_messages/lookup_users';?>", {
 					hintText: "Type a username",
-					theme: "facebook"
+					theme: "facebook",
+					crossDomain: false // Setting to crossDomain to false makes it work with the cross domain CV auth server (not sure why!?)
 				});
 				
 //				var navheight = $('#nav_container').height();
