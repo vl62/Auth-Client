@@ -526,21 +526,11 @@ class Discover extends MY_Controller {
 			
 			
 			
-//			$token = $this->session->userdata('Token');
-//			$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key'), 'network_key' => $this->config->item('network_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
-//			$federated_installs = stripslashes($data);
-//			error_log("sources -> $federated_installs");
-//			$federated_installs_array = json_decode($federated_installs, TRUE);
 			// Get the federated installs to search from session (set when the discovery interface first loads)
 			$federated_installs = $this->session->userdata('federated_installs');
 //			error_log("f -> $federated_installs");
 			$federated_installs_array = json_decode($federated_installs, 1);
-			
-//			error_log(print_r($this->session->all_userdata(), 1));
-			
-//			$all_counts_json = file_get_contents("http://localhost/cafevariome_client/discover/variantcount_federated/BRCA2");
-			
-			
+			// If there's some federated installs to search then go through each one and get the variant counts
 			if ( ! empty($federated_installs_array)) {
 				if ( !array_key_exists('error', $federated_installs_array) ) {
 //					error_log("federated_installs_array -> " . print_r($federated_installs_array, 1));
@@ -1553,6 +1543,12 @@ class Discover extends MY_Controller {
 			
 			
 			$variants = json_decode($variants, 1); // The json of variants for this source and other info returned from federated install
+			
+			if ( array_key_exists('error', $variants)) {
+				show_404($variants['error']);
+			}
+			
+			
 			$s = $variants['source']; // The remote source name and description from json
 			$display_fields = $variants['display_fields']; // The display fields set for the federated install
 //			error_log("ds -> " . print_r($display_fields, 1));

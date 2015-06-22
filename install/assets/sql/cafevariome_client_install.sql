@@ -24252,7 +24252,9 @@ INSERT INTO `settings` (`setting_id`, `name`, `value`, `info`, `validation_rules
 (32, 'auth_server', 'http://143.210.153.155/cafevariome_server/', 'Central Cafe Variome Auth server url (WARNING: do not change)', 'xss_clean'),
 (33, 'installation_key', '098f6bcd4621d373cade4e832627b4f6', 'Unique key for this installation (WARNING: do not change this value unless you know what you are doing)', ''),
 (34, 'all_records_require_an_id', 'on', 'Checks whether all records have a record ID during import (which must be unique)', 'xss_clean'),
-(35, 'site_requires_login', 'off', 'If enabled then users will be required to log in to access any part of the site. If not logged in they will be presented with a login form.', 'xss_clean');
+(35, 'site_requires_login', 'off', 'If enabled then users will be required to log in to access any part of the site. If not logged in they will be presented with a login form.', 'xss_clean'),
+(36, 'allow_record_hits_display', 'on', 'If set to on then record hits will be viewable by users', 'required|xss_clean'),
+(37, 'allow_individual_record_display', 'on', 'If set to on then indiviaul records will be viewable by users', 'required|xss_clean');
 
 DROP TABLE IF EXISTS `sources`;
 CREATE TABLE IF NOT EXISTS `sources` (

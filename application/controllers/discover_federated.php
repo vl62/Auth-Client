@@ -27,10 +27,14 @@ class Discover_federated extends MY_Controller {
 
 //		$token = $this->session->userdata('Token');
 //		error_log("token ---> $token ---> $user_id");
+//		
 		// Check the network key exists and that this installation is a member of the network
 		$network_check = json_decode(authPostRequest('', array('network_key' => $network_key, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/check_installation_is_a_member_of_a_network"), 1);
-		error_log("network_check -> " . print_r($network_check, 1));
-
+		if ( $network_check == 'false' ) {
+			 error_log("network_check failed FALSE  -> " . $network_check);
+			show_404("The network key check failed for discover_federated/variantcount - the requesting installation might not be part of the specified network");
+		}
+		
 		// Fetch any sources that the user has group level access to
 		$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_network_group_access_to");
 		error_log("sources ------>------> $returned_sources");
@@ -172,6 +176,7 @@ class Discover_federated extends MY_Controller {
 	
 	function variants ($term, $source, $sharing_policy, $format = NULL, $user_id = NULL) {
 //		error_log("term -> " . $term . " -> " . urldecode($term));
+		
 		$term = html_entity_decode($term);
 //		$term = urldecode($term);
 		$this->session->set_userdata('return_to', "discover/variants/$term/$source/$sharing_policy/$format"); // Set session return_to value so if variants are restrictedAccess the user will be directed back to the requested page after logging in (hook for this is post_controller so it is not getting called here)
@@ -762,6 +767,17 @@ class Discover_federated extends MY_Controller {
 	}
 	
 	function variants_json ($term, $source, $sharing_policy, $format = NULL, $user_id = NULL) {
+
+		if ( ! $this->config->item('allow_record_hits_display') ) {
+			echo json_encode(array("error" => "The display of record hits has been disabled for the installation you are trying to access"));
+			return 0;
+//			exit();
+//			show_404();
+//			error_log("can't display");
+//			show_404("The display of record hits has been disabled for the installation you are trying to access");
+		}
+
+
 //		error_log("term -> " . $term . " -> " . urldecode($term));
 		$variants_json = array();
 		$term = html_entity_decode($term);
