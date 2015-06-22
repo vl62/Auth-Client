@@ -1619,8 +1619,8 @@ class Discover extends MY_Controller {
 		
 		// Print error message if any returned by federated client
 		// Main error currently would be that the federated installation has turned off the allow_individual_record_display setting
-		if ( array_key_exists('error', $variants)) {
-			show_error($variants['error']);
+		if ( array_key_exists('error', $variant_json)) {
+			show_error($variant_json['error']);
 		}
 		
 		$this->data['phenotypes'] = $variant_json['phenotypes'];
