@@ -16,7 +16,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="offset2 span3 pagination-centered"><a href="<?php echo base_url() . "sources";?>" class="btn btn-info btn-large" rel="popover" data-content="Create/modify/delete variant sources" data-original-title="Variant Sources"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-sources.png" /></a><br />Sources</div>
+		<div class="offset2 span3 pagination-centered"><a href="<?php echo base_url() . "sources";?>" class="btn btn-info btn-large" rel="popover" data-content="Create/modify/delete record sources" data-original-title="Variant Sources"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-sources.png" /></a><br />Sources</div>
 		<div class="span3 pagination-centered"><a href="<?php echo base_url() . "admin/variants";?>" class="btn btn-info btn-large" rel="popover" data-content="Create/modify/delete records" data-original-title="Variants"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-records.png" /></a><br />Records</div>
 		<div class="span3 pagination-centered"><a href="<?php echo base_url() . "admin/phenotypes";?>" class="btn btn-info btn-large" rel="popover" data-content="Phenotype and phenotype ontology settings" data-original-title="Phenotypes"><img width="75" height="75" src="<?php echo base_url();?>resources/images/cafevariome/icon-phenotypes.png" /></a><br />Phenotypes</div>
 	</div>
