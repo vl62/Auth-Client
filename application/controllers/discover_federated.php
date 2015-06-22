@@ -27,6 +27,9 @@ class Discover_federated extends MY_Controller {
 
 //		$token = $this->session->userdata('Token');
 //		error_log("token ---> $token ---> $user_id");
+		// Check the network key exists and that this installation is a member of the network
+		$network_check = json_decode(authPostRequest('', array('network_key' => $network_key, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/check_installation_is_a_member_of_a_network"), 1);
+		error_log("network_check -> " . print_r($network_check, 1));
 
 		// Fetch any sources that the user has group level access to
 		$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_network_group_access_to");
@@ -93,23 +96,11 @@ class Discover_federated extends MY_Controller {
 //			$counts['openAccess'] = "";
 //			$counts['restrictedAccess'] = "";
 //			$counts['openAccess'] = "";
-			foreach ( $es_data['facets']['sharing_policy']['terms'] as $facet_sharing_policy ) {
-				$sp_es = $facet_sharing_policy['term'];
-				error_log($sp_es . " -----> " . $facet_sharing_policy['count']);
-				if ( $sp_es == "openaccess" ) {
-					$sp_es = "openAccess";
-					// Check if the access policy exists for the source (meaning there are already counts), if it does then add the counts, otherwise set the count
-					if ( array_key_exists($sp_es, $counts)) {
-						$counts[$sp_es] += $facet_sharing_policy['count'];
-					}
-					else {
-						$counts[$sp_es] = $facet_sharing_policy['count'];
-					}
-				}
-				
-				$openaccess_to_restrictedaccess_count = 0;
-				if ( $sp_es == "restrictedaccess" ) {
-					if ( $open_access_flag ) { // If the user is in a group that has access to this source then set to openAccess
+			if ( ! empty($es_data)) { // Check there's some data returned from ES
+				foreach ( $es_data['facets']['sharing_policy']['terms'] as $facet_sharing_policy ) {
+					$sp_es = $facet_sharing_policy['term'];
+					error_log($sp_es . " -----> " . $facet_sharing_policy['count']);
+					if ( $sp_es == "openaccess" ) {
 						$sp_es = "openAccess";
 						// Check if the access policy exists for the source (meaning there are already counts), if it does then add the counts, otherwise set the count
 						if ( array_key_exists($sp_es, $counts)) {
@@ -118,19 +109,32 @@ class Discover_federated extends MY_Controller {
 						else {
 							$counts[$sp_es] = $facet_sharing_policy['count'];
 						}
-						error_log("restrictedAccess -> openAccess -> " . $facet_sharing_policy['count']);
 					}
-					else {
-						$sp_es = "restrictedAccess";
+				
+					$openaccess_to_restrictedaccess_count = 0;
+					if ( $sp_es == "restrictedaccess" ) {
+						if ( $open_access_flag ) { // If the user is in a group that has access to this source then set to openAccess
+							$sp_es = "openAccess";
+							// Check if the access policy exists for the source (meaning there are already counts), if it does then add the counts, otherwise set the count
+							if ( array_key_exists($sp_es, $counts)) {
+								$counts[$sp_es] += $facet_sharing_policy['count'];
+							}
+							else {
+								$counts[$sp_es] = $facet_sharing_policy['count'];
+							}
+							error_log("restrictedAccess -> openAccess -> " . $facet_sharing_policy['count']);
+						}
+						else {
+							$sp_es = "restrictedAccess";
+							$counts[$sp_es] = $facet_sharing_policy['count'];
+						}
+					}
+				
+					if ( $sp_es == "linkedaccess" ) {
+						$sp_es = "linkedAccess";
 						$counts[$sp_es] = $facet_sharing_policy['count'];
 					}
 				}
-				
-				if ( $sp_es == "linkedaccess" ) {
-					$sp_es = "linkedAccess";
-					$counts[$sp_es] = $facet_sharing_policy['count'];
-				}
-				
 //				$counts[$sp_es] = $facet_sharing_policy['count'];
 //				if ( $open_access_flag ) { 
 //					$counts['openAccess'] += $openaccess_to_restrictedaccess_count;
@@ -778,9 +782,8 @@ class Discover_federated extends MY_Controller {
 			$sources_types = $this->sources_model->getSourcesTypes();
 			$type = $sources_types[$source];
 
-			
 			$source_info = $this->sources_model->getSource($source);
-			error_log("source_info -> " . print_r($source_info, 1));
+//			error_log("source_info -> " . print_r($source_info, 1));
 			$source_uri = $source_info['uri'];
 			$source_id = $source_info['source_id'];
 			error_log("source_id -> $source_id");
