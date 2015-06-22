@@ -1042,7 +1042,16 @@ class Discover extends MY_Controller {
 //						$this->variantcount_federated($term);
 //						$contents = curl_get_contents($install_uri . "/discover/variantcount_federated/$term");
 						error_log("calling -> " . $install_uri . "/discover/variantcount_federated/$term");
-						$all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key");
+						// Set the timeout for each call to federated installs to 5 seconds
+						$opts = array('http' =>
+							array(
+								'method'  => 'GET',
+								'timeout' => 5 
+							)
+						);
+						$context  = stream_context_create($opts);
+						$all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key", false, $context);
+//						$all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key");
 //						error_log(print_r($http_response_header, 1));
 						error_log("all_counts_json -> $all_counts_json");
 
@@ -1088,7 +1097,7 @@ class Discover extends MY_Controller {
 				}
 			}
 
-			
+			error_log("FINISHING");
 			if ( empty($from_url_query) ) {
 				$data['sources_full'] = $sources;
 			}

@@ -702,8 +702,8 @@ $(document).ready(function() {
 		"aoColumns": [
 						{ "sType": "string" },
 						{ "sType": "string" },
-						{ "sType": "string" },
-						{ "bSortable": false, "bSearchable": false },
+						{ "sType": "numeric" },
+//						{ "bSortable": false, "bSearchable": false },
 						{ "bSortable": false, "bSearchable": false }
 					 ]
 	});

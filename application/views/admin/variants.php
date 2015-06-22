@@ -187,7 +187,7 @@
 			</div>
 		</div>
 		<?php endforeach; ?>
-		<div class="span12 pagination-centered"><a class="btn btn-primary btn-medium" href="<?php echo base_url('admin/sources') ?>"><i class="icon-file icon-white"></i>  Edit sources</a><?php echo nbs(6); ?><?php if ( $this->config->item('atomserver_enabled') ): ?><a class="btn btn-primary btn-medium" href="<?php echo base_url() . "admin/submissions";?>" rel="popover" data-content="Delete or approve records that have been submitted through AtomServer" data-original-title="Variant Submissions"><i class="icon-file icon-white"></i>  Submissions</a><?php echo nbs(6); ?><?php endif; ?><a href="<?php echo base_url() . "admin";?>" class="btn" ><i class="icon-home"></i> Admin Dashboard</a></div>
+		<div class="span12 pagination-centered"><a class="btn btn-primary btn-medium" href="<?php echo base_url('sources') ?>"><i class="icon-file icon-white"></i>  Edit sources</a><?php echo nbs(6); ?><?php if ( $this->config->item('atomserver_enabled') ): ?><a class="btn btn-primary btn-medium" href="<?php echo base_url() . "admin/submissions";?>" rel="popover" data-content="Delete or approve records that have been submitted through AtomServer" data-original-title="Variant Submissions"><i class="icon-file icon-white"></i>  Submissions</a><?php echo nbs(6); ?><?php endif; ?><a href="<?php echo base_url() . "admin";?>" class="btn" ><i class="icon-home"></i> Admin Dashboard</a></div>
 		<br /><br /><br />
 	</div>
 </div>
