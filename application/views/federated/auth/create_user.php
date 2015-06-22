@@ -69,7 +69,7 @@
 					<?php echo form_input($password_confirm); ?>
 				</p>
 				<p>
-					<button type="button btn" id="generate_random_password">Generate random password</button>
+					<button class="btn btn-small" id="generate_random_password">Generate random password</button>
 					<div id="random_password"></div>
 				</p>
 					
