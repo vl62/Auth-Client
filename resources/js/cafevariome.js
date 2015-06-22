@@ -2614,7 +2614,7 @@ function markSelectedMessagesAsRead() {
 	$.ajax({
 		url: authurl + '/auth_messages/mark_selected_messages_as_read',
 //		contentType: 'application/json',
-		data: {messages: JSON.stringify(selected)},
+		data: {messages: JSON.stringify(selected), user_id : $("#user_id").attr("value")},
 		dataType: 'html',
 //		delay: 200,
 		type: 'post',
