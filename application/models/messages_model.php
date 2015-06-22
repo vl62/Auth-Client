@@ -258,7 +258,8 @@ class Messages_model extends CI_Model
 		$data = array( 'status' => $status );
 		$this->db->where('message_id', $message_id);
 		$this->db->where('recipient_id', $user_id);
-		$this->db->update('messages', $data); 
+		$this->db->update('messages', $data);
+		return $this->db->affected_rows();
     }
 
     // ------------------------------------------------------------------------
