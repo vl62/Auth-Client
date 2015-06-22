@@ -768,7 +768,7 @@ class Discover_federated extends MY_Controller {
 	
 	function variants_json ($term, $source, $sharing_policy, $format = NULL, $user_id = NULL) {
 
-		// Stop 
+		// Return error if the installation has turned off allowing record hits to be diplayed
 		if ( ! $this->config->item('allow_record_hits_display') ) {
 			echo json_encode(array("error" => "The display of record hits has been disabled for the installation you are trying to access"));
 			return 0;

@@ -1032,6 +1032,12 @@ class Discover extends MY_Controller {
 	}
 	
 	function variants ($term, $source, $sharing_policy, $format = NULL) {
+		
+		// Return error if the installation has turned off allowing record hits to be diplayed
+		if ( ! $this->config->item('allow_record_hits_display') ) {
+			show_error("The display of record hits has been disabled for the installation you are trying to access");
+		}
+		
 //		error_log("term -> " . $term . " -> " . urldecode($term));
 		$term = html_entity_decode($term);
 //		$term = urldecode($term);
@@ -1886,6 +1892,12 @@ class Discover extends MY_Controller {
 	}
 	
 	function variant ($cafevariome_id, $format = NULL) {
+		
+		// Show error if the install has turned off allowing display of individual records
+		if ( ! $this->config->item('allow_individual_record_display') ) {
+			show_error("The display of individual records has been disabled for the installation you are trying to access");
+		}
+		
 		$variant = $this->sources_model->getVariant($cafevariome_id);
 		$phenotypes = $this->sources_model->getPhenotypes($cafevariome_id);
 		$source_email = $this->sources_model->getEmailFromSourceName($variant['source']);
