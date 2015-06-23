@@ -73,6 +73,7 @@ class Groups extends MY_Controller {
 		else {
 			$token = $this->session->userdata('Token');
 			$getNetworks = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of");
+//			
 //			$getNetworks = getNetworksInstallationMemberOf(array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
 			$this->data['networks'] = json_decode($getNetworks, TRUE);
 //			print_r($getNetworks);
