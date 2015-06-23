@@ -1,14 +1,29 @@
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
+-- MySQL dump 10.13  Distrib 5.6.23, for osx10.8 (x86_64)
+--
+-- Host: localhost    Database: cafevariome_client
+-- ------------------------------------------------------
+-- Server version	5.6.23
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `applications`
+--
 
 DROP TABLE IF EXISTS `applications`;
-CREATE TABLE IF NOT EXISTS `applications` (
-  `id` int(11) unsigned NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `applications` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(64) NOT NULL DEFAULT '',
   `client_id` varchar(32) NOT NULL DEFAULT '',
   `client_secret` varchar(32) NOT NULL DEFAULT '',
@@ -17,72 +32,156 @@ CREATE TABLE IF NOT EXISTS `applications` (
   `autonomous` tinyint(1) NOT NULL DEFAULT '0',
   `status` enum('development','pending','approved','rejected') NOT NULL DEFAULT 'development',
   `suspended` tinyint(1) NOT NULL DEFAULT '0',
-  `notes` tinytext
+  `notes` tinytext,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `client_id` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `applications`
+--
+
+LOCK TABLES `applications` WRITE;
+/*!40000 ALTER TABLE `applications` DISABLE KEYS */;
+/*!40000 ALTER TABLE `applications` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `autocomplete`
+--
 
 DROP TABLE IF EXISTS `autocomplete`;
-CREATE TABLE IF NOT EXISTS `autocomplete` (
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `autocomplete` (
   `term` varchar(1000) NOT NULL,
-  `type` varchar(50) NOT NULL
+  `type` varchar(50) NOT NULL,
+  KEY `term` (`term`),
+  KEY `type` (`type`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `autocomplete`
+--
+
+LOCK TABLES `autocomplete` WRITE;
+/*!40000 ALTER TABLE `autocomplete` DISABLE KEYS */;
+INSERT INTO `autocomplete` VALUES ('CAPN10','gene'),('NM_000088.3','ref');
+/*!40000 ALTER TABLE `autocomplete` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `beacon_sharing_policies`
+--
 
 DROP TABLE IF EXISTS `beacon_sharing_policies`;
-CREATE TABLE IF NOT EXISTS `beacon_sharing_policies` (
-  `setting_id` int(10) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `beacon_sharing_policies` (
+  `setting_id` int(10) NOT NULL AUTO_INCREMENT,
   `sharing_policy` varchar(50) NOT NULL,
   `status` tinyint(1) NOT NULL,
-  `last_changed` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `last_changed` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`setting_id`),
+  UNIQUE KEY `sharing_policy` (`sharing_policy`)
 ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-INSERT INTO `beacon_sharing_policies` (`setting_id`, `sharing_policy`, `status`, `last_changed`) VALUES
-(1, 'openAccess', 0, '2014-11-17 14:05:50'),
-(2, 'linkedAccess', 0, '2014-11-17 14:05:50'),
-(3, 'restrictedAccess', 0, '2014-11-17 14:06:08');
+--
+-- Dumping data for table `beacon_sharing_policies`
+--
+
+LOCK TABLES `beacon_sharing_policies` WRITE;
+/*!40000 ALTER TABLE `beacon_sharing_policies` DISABLE KEYS */;
+INSERT INTO `beacon_sharing_policies` VALUES (1,'openAccess',0,'2014-11-17 14:05:50'),(2,'linkedAccess',0,'2014-11-17 14:05:50'),(3,'restrictedAccess',0,'2014-11-17 14:06:08');
+/*!40000 ALTER TABLE `beacon_sharing_policies` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ci_sessions`
+--
 
 DROP TABLE IF EXISTS `ci_sessions`;
-CREATE TABLE IF NOT EXISTS `ci_sessions` (
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ci_sessions` (
   `session_id` varchar(40) COLLATE utf8_bin NOT NULL DEFAULT '0',
   `ip_address` varchar(16) COLLATE utf8_bin NOT NULL DEFAULT '0',
   `user_agent` varchar(150) COLLATE utf8_bin NOT NULL,
   `last_activity` int(10) unsigned NOT NULL DEFAULT '0',
-  `user_data` text COLLATE utf8_bin NOT NULL
+  `user_data` text COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`session_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ci_sessions`
+--
+
+LOCK TABLES `ci_sessions` WRITE;
+/*!40000 ALTER TABLE `ci_sessions` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ci_sessions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `core_fields`
+--
 
 DROP TABLE IF EXISTS `core_fields`;
-CREATE TABLE IF NOT EXISTS `core_fields` (
-  `core_field_id` int(11) NOT NULL,
-  `core_field_name` varchar(150) NOT NULL
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `core_fields` (
+  `core_field_id` int(11) NOT NULL AUTO_INCREMENT,
+  `core_field_name` varchar(150) NOT NULL,
+  PRIMARY KEY (`core_field_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-INSERT INTO `core_fields` (`core_field_id`, `core_field_name`) VALUES
-(1, 'variant_id'),
-(2, 'gene'),
-(3, 'LRG'),
-(4, 'ref'),
-(5, 'hgvs'),
-(6, 'phenotype'),
-(7, 'individual_id'),
-(8, 'gender'),
-(9, 'ethnicity'),
-(10, 'pathogenicity'),
-(11, 'location_ref'),
-(12, 'start'),
-(13, 'end'),
-(14, 'build'),
-(15, 'source_url'),
-(16, 'comment'),
-(17, 'sharing_policy');
+--
+-- Dumping data for table `core_fields`
+--
+
+LOCK TABLES `core_fields` WRITE;
+/*!40000 ALTER TABLE `core_fields` DISABLE KEYS */;
+INSERT INTO `core_fields` VALUES (1,'variant_id'),(2,'gene'),(3,'LRG'),(4,'ref'),(5,'hgvs'),(6,'phenotype'),(7,'individual_id'),(8,'gender'),(9,'ethnicity'),(10,'pathogenicity'),(11,'location_ref'),(12,'start'),(13,'end'),(14,'build'),(15,'source_url'),(16,'comment'),(17,'sharing_policy');
+/*!40000 ALTER TABLE `core_fields` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `curators`
+--
 
 DROP TABLE IF EXISTS `curators`;
-CREATE TABLE IF NOT EXISTS `curators` (
-  `curator_id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `curators` (
+  `curator_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
-  `source_id` int(11) NOT NULL
+  `source_id` int(11) NOT NULL,
+  PRIMARY KEY (`curator_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `curators`
+--
+
+LOCK TABLES `curators` WRITE;
+/*!40000 ALTER TABLE `curators` DISABLE KEYS */;
+/*!40000 ALTER TABLE `curators` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `data_requests`
+--
 
 DROP TABLE IF EXISTS `data_requests`;
-CREATE TABLE IF NOT EXISTS `data_requests` (
-  `request_id` int(10) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `data_requests` (
+  `request_id` int(10) NOT NULL AUTO_INCREMENT,
   `justification` text NOT NULL,
   `username` varchar(50) NOT NULL,
   `email` varchar(50) NOT NULL,
@@ -92,63 +191,84 @@ CREATE TABLE IF NOT EXISTS `data_requests` (
   `ip` text NOT NULL,
   `string` varchar(35) NOT NULL,
   `resultreason` text NOT NULL,
-  `result` varchar(50) NOT NULL
+  `result` varchar(50) NOT NULL,
+  PRIMARY KEY (`request_id`),
+  KEY `string` (`string`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `data_requests`
+--
+
+LOCK TABLES `data_requests` WRITE;
+/*!40000 ALTER TABLE `data_requests` DISABLE KEYS */;
+/*!40000 ALTER TABLE `data_requests` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `display_fields`
+--
 
 DROP TABLE IF EXISTS `display_fields`;
-CREATE TABLE IF NOT EXISTS `display_fields` (
-  `display_field_id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `display_fields` (
+  `display_field_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `visible_name` text NOT NULL,
   `order` int(11) NOT NULL,
   `sharing_policy` varchar(20) NOT NULL DEFAULT 'openAccess',
-  `type` varchar(20) NOT NULL DEFAULT 'search_result'
+  `type` varchar(20) NOT NULL DEFAULT 'search_result',
+  PRIMARY KEY (`display_field_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-INSERT INTO `display_fields` (`display_field_id`, `name`, `visible_name`, `order`, `sharing_policy`, `type`) VALUES
-(1, 'cafevariome_id', 'Cafe Variome ID', 1, 'openAccess', 'search_result'),
-(2, 'gene', 'Gene', 2, 'openAccess', 'search_result'),
-(3, 'ref', 'Reference', 3, 'openAccess', 'search_result'),
-(4, 'hgvs', 'HGVS', 4, 'openAccess', 'search_result'),
-(5, 'phenotype', 'Phenotype', 5, 'openAccess', 'search_result'),
-(6, 'location_ref', 'Chr', 6, 'openAccess', 'search_result'),
-(7, 'start', 'Start', 7, 'openAccess', 'search_result'),
-(8, 'end', 'End', 8, 'openAccess', 'search_result'),
-(9, 'source_url', 'Source URL', 9, 'openAccess', 'search_result'),
-(10, 'cafevariome_id', 'Cafe Variome ID', 1, 'linkedAccess', 'search_result'),
-(11, 'source_url', 'Source URL', 2, 'linkedAccess', 'search_result'),
-(12, 'cafevariome_id', 'Cafe Variome ID', 1, 'restrictedAccess', 'search_result'),
-(13, 'gene', 'Gene', 2, 'restrictedAccess', 'search_result'),
-(14, 'ref', 'Reference', 3, 'restrictedAccess', 'search_result'),
-(15, 'hgvs', 'HGVS', 4, 'restrictedAccess', 'search_result'),
-(16, 'phenotype', 'Phenotype', 5, 'restrictedAccess', 'search_result'),
-(17, 'pathogenicity', 'Pathogenicity', 6, 'restrictedAccess', 'search_result'),
-(18, 'location_ref', 'Chr', 7, 'restrictedAccess', 'search_result'),
-(19, 'start', 'Start', 8, 'restrictedAccess', 'search_result'),
-(20, 'end', 'End', 9, 'restrictedAccess', 'search_result'),
-(21, 'source_url', 'Source URL', 10, 'restrictedAccess', 'search_result'),
-(22, 'cafevariome_id', 'Cafe Variome ID', 1, '', 'individual_record'),
-(23, 'gene', 'Gene', 2, '', 'individual_record'),
-(24, 'ref', 'Reference', 3, '', 'individual_record'),
-(25, 'hgvs', 'HGVS', 4, '', 'individual_record'),
-(26, 'phenotype', 'Phenotype', 5, '', 'individual_record'),
-(27, 'location_ref', 'Chr', 6, '', 'individual_record'),
-(28, 'start', 'Start', 7, '', 'individual_record'),
-(29, 'end', 'End', 8, '', 'individual_record'),
-(30, 'dbsnp_id', 'dbSNP rsID', 9, '', 'individual_record'),
-(31, 'comment', 'Comment', 10, '', 'individual_record');
+--
+-- Dumping data for table `display_fields`
+--
+
+LOCK TABLES `display_fields` WRITE;
+/*!40000 ALTER TABLE `display_fields` DISABLE KEYS */;
+INSERT INTO `display_fields` VALUES (1,'cafevariome_id','Cafe Variome ID',1,'openAccess','search_result'),(2,'gene','Gene',2,'openAccess','search_result'),(3,'ref','Reference',3,'openAccess','search_result'),(4,'hgvs','HGVS',4,'openAccess','search_result'),(5,'phenotype','Phenotype',5,'openAccess','search_result'),(6,'location_ref','Chr',6,'openAccess','search_result'),(7,'start','Start',7,'openAccess','search_result'),(8,'end','End',8,'openAccess','search_result'),(9,'source_url','Source URL',9,'openAccess','search_result'),(10,'cafevariome_id','Cafe Variome ID',1,'linkedAccess','search_result'),(11,'source_url','Source URL',2,'linkedAccess','search_result'),(12,'cafevariome_id','Cafe Variome ID',1,'restrictedAccess','search_result'),(13,'gene','Gene',2,'restrictedAccess','search_result'),(14,'ref','Reference',3,'restrictedAccess','search_result'),(15,'hgvs','HGVS',4,'restrictedAccess','search_result'),(16,'phenotype','Phenotype',5,'restrictedAccess','search_result'),(17,'pathogenicity','Pathogenicity',6,'restrictedAccess','search_result'),(18,'location_ref','Chr',7,'restrictedAccess','search_result'),(19,'start','Start',8,'restrictedAccess','search_result'),(20,'end','End',9,'restrictedAccess','search_result'),(21,'source_url','Source URL',10,'restrictedAccess','search_result'),(22,'cafevariome_id','Cafe Variome ID',1,'','individual_record'),(23,'gene','Gene',2,'','individual_record'),(24,'ref','Reference',3,'','individual_record'),(25,'hgvs','HGVS',4,'','individual_record'),(26,'phenotype','Phenotype',5,'','individual_record'),(27,'location_ref','Chr',6,'','individual_record'),(28,'start','Start',7,'','individual_record'),(29,'end','End',8,'','individual_record'),(30,'dbsnp_id','dbSNP rsID',9,'','individual_record'),(31,'comment','Comment',10,'','individual_record');
+/*!40000 ALTER TABLE `display_fields` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `federated`
+--
 
 DROP TABLE IF EXISTS `federated`;
-CREATE TABLE IF NOT EXISTS `federated` (
-  `federated_id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `federated` (
+  `federated_id` int(11) NOT NULL AUTO_INCREMENT,
   `federated_name` varchar(50) NOT NULL,
   `federated_uri` varchar(50) NOT NULL,
   `federated_status` varchar(10) NOT NULL,
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`federated_id`),
+  KEY `federated_uri` (`federated_uri`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `federated`
+--
+
+LOCK TABLES `federated` WRITE;
+/*!40000 ALTER TABLE `federated` DISABLE KEYS */;
+/*!40000 ALTER TABLE `federated` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `frequencies`
+--
 
 DROP TABLE IF EXISTS `frequencies`;
-CREATE TABLE IF NOT EXISTS `frequencies` (
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `frequencies` (
   `frequency_id` int(10) NOT NULL,
   `cafevariome_id` int(15) NOT NULL,
   `frequency_type` varchar(50) NOT NULL,
@@ -158,167 +278,459 @@ CREATE TABLE IF NOT EXISTS `frequencies` (
   `population_accession` varchar(10) NOT NULL,
   `frequency` varchar(20) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `frequencies`
+--
+
+LOCK TABLES `frequencies` WRITE;
+/*!40000 ALTER TABLE `frequencies` DISABLE KEYS */;
+/*!40000 ALTER TABLE `frequencies` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `gene2omim`
+--
 
 DROP TABLE IF EXISTS `gene2omim`;
-CREATE TABLE IF NOT EXISTS `gene2omim` (
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `gene2omim` (
   `gene` varchar(25) NOT NULL,
   `disorder` text NOT NULL,
-  `omim_id` varchar(15) NOT NULL
+  `omim_id` varchar(15) NOT NULL,
+  KEY `gene` (`gene`),
+  KEY `omim_id` (`omim_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `gene2omim`
+--
+
+LOCK TABLES `gene2omim` WRITE;
+/*!40000 ALTER TABLE `gene2omim` DISABLE KEYS */;
+/*!40000 ALTER TABLE `gene2omim` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `genes`
+--
 
 DROP TABLE IF EXISTS `genes`;
-CREATE TABLE IF NOT EXISTS `genes` (
-  `gene_symbol` varchar(50) NOT NULL
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `genes` (
+  `gene_symbol` varchar(50) NOT NULL,
+  KEY `gene_symbol` (`gene_symbol`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `genes`
+--
+
+LOCK TABLES `genes` WRITE;
+/*!40000 ALTER TABLE `genes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `genes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `groups`
+--
 
 DROP TABLE IF EXISTS `groups`;
-CREATE TABLE IF NOT EXISTS `groups` (
-  `id` mediumint(8) unsigned NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `groups` (
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
-  `description` varchar(100) NOT NULL
+  `description` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-INSERT INTO `groups` (`id`, `name`, `description`) VALUES
-(1, 'admin', 'Administrator'),
-(2, 'general', 'General User'),
-(3, 'curator', 'Curator');
+--
+-- Dumping data for table `groups`
+--
+
+LOCK TABLES `groups` WRITE;
+/*!40000 ALTER TABLE `groups` DISABLE KEYS */;
+INSERT INTO `groups` VALUES (1,'admin','Administrator'),(2,'general','General User'),(3,'curator','Curator');
+/*!40000 ALTER TABLE `groups` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `inabox_downloads`
+--
 
 DROP TABLE IF EXISTS `inabox_downloads`;
-CREATE TABLE IF NOT EXISTS `inabox_downloads` (
-  `id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `inabox_downloads` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `fullname` text NOT NULL,
   `institute` text NOT NULL,
   `email` text NOT NULL,
   `description` text NOT NULL,
   `ip` text NOT NULL,
-  `date` text NOT NULL
+  `date` text NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `installations`;
-CREATE TABLE IF NOT EXISTS `installations` (
-  `installation_id` int(11) NOT NULL,
-  `installation_key` varchar(100) NOT NULL,
-  `installation_name` text NOT NULL,
-  `installation_base_url` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+--
+-- Dumping data for table `inabox_downloads`
+--
+
+LOCK TABLES `inabox_downloads` WRITE;
+/*!40000 ALTER TABLE `inabox_downloads` DISABLE KEYS */;
+/*!40000 ALTER TABLE `inabox_downloads` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `installation_networks`
+--
 
 DROP TABLE IF EXISTS `installation_networks`;
-CREATE TABLE IF NOT EXISTS `installation_networks` (
-  `installation_networks_id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `installation_networks` (
+  `installation_networks_id` int(11) NOT NULL AUTO_INCREMENT,
   `installation_key` varchar(100) NOT NULL,
   `network_key` varchar(100) NOT NULL,
-  `installation_base_url` varchar(100) NOT NULL
+  `installation_base_url` varchar(100) NOT NULL,
+  PRIMARY KEY (`installation_networks_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `installation_networks`
+--
+
+LOCK TABLES `installation_networks` WRITE;
+/*!40000 ALTER TABLE `installation_networks` DISABLE KEYS */;
+/*!40000 ALTER TABLE `installation_networks` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `installations`
+--
+
+DROP TABLE IF EXISTS `installations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `installations` (
+  `installation_id` int(11) NOT NULL AUTO_INCREMENT,
+  `installation_key` varchar(100) NOT NULL,
+  `installation_name` text NOT NULL,
+  `installation_base_url` varchar(100) NOT NULL,
+  PRIMARY KEY (`installation_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `installations`
+--
+
+LOCK TABLES `installations` WRITE;
+/*!40000 ALTER TABLE `installations` DISABLE KEYS */;
+/*!40000 ALTER TABLE `installations` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `keys`
+--
 
 DROP TABLE IF EXISTS `keys`;
-CREATE TABLE IF NOT EXISTS `keys` (
-  `id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `keys` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `key` varchar(40) NOT NULL,
   `level` int(2) NOT NULL,
   `ignore_limits` tinyint(1) NOT NULL DEFAULT '0',
-  `date_created` int(11) NOT NULL
+  `date_created` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `keys`
+--
+
+LOCK TABLES `keys` WRITE;
+/*!40000 ALTER TABLE `keys` DISABLE KEYS */;
+/*!40000 ALTER TABLE `keys` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `login_attempts`
+--
 
 DROP TABLE IF EXISTS `login_attempts`;
-CREATE TABLE IF NOT EXISTS `login_attempts` (
-  `id` mediumint(8) unsigned NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `login_attempts` (
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `ip_address` varbinary(16) NOT NULL,
   `login` varchar(100) NOT NULL,
-  `time` int(11) unsigned DEFAULT NULL
+  `time` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `login_attempts`
+--
+
+LOCK TABLES `login_attempts` WRITE;
+/*!40000 ALTER TABLE `login_attempts` DISABLE KEYS */;
+/*!40000 ALTER TABLE `login_attempts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `logs`
+--
 
 DROP TABLE IF EXISTS `logs`;
-CREATE TABLE IF NOT EXISTS `logs` (
-  `id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `uri` varchar(255) NOT NULL,
   `method` varchar(6) NOT NULL,
   `params` text,
   `api_key` varchar(40) NOT NULL,
   `ip_address` varchar(45) NOT NULL,
   `time` int(11) NOT NULL,
-  `authorized` tinyint(1) NOT NULL
+  `authorized` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `logs`
+--
+
+LOCK TABLES `logs` WRITE;
+/*!40000 ALTER TABLE `logs` DISABLE KEYS */;
+/*!40000 ALTER TABLE `logs` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `mailing_list`
+--
 
 DROP TABLE IF EXISTS `mailing_list`;
-CREATE TABLE IF NOT EXISTS `mailing_list` (
-  `id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `mailing_list` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `fullname` text NOT NULL,
   `email` text NOT NULL,
   `ip` text NOT NULL,
-  `date` text NOT NULL
+  `date` text NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `mailing_list`
+--
+
+LOCK TABLES `mailing_list` WRITE;
+/*!40000 ALTER TABLE `mailing_list` DISABLE KEYS */;
+/*!40000 ALTER TABLE `mailing_list` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `menus`
+--
 
 DROP TABLE IF EXISTS `menus`;
-CREATE TABLE IF NOT EXISTS `menus` (
-  `menu_id` int(11) NOT NULL,
-  `menu_name` varchar(20) NOT NULL
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `menus` (
+  `menu_id` int(11) NOT NULL AUTO_INCREMENT,
+  `menu_name` varchar(20) NOT NULL,
+  PRIMARY KEY (`menu_id`),
+  UNIQUE KEY `menu_name` (`menu_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-INSERT INTO `menus` (`menu_id`, `menu_name`) VALUES
-(3, 'Contact'),
-(2, 'Discover'),
-(1, 'Home');
+--
+-- Dumping data for table `menus`
+--
+
+LOCK TABLES `menus` WRITE;
+/*!40000 ALTER TABLE `menus` DISABLE KEYS */;
+INSERT INTO `menus` VALUES (3,'Contact'),(2,'Discover'),(1,'Home');
+/*!40000 ALTER TABLE `menus` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `message_threads`
+--
+
+DROP TABLE IF EXISTS `message_threads`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `message_threads` (
+  `thread_id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(10) NOT NULL,
+  `created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`thread_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `message_threads`
+--
+
+LOCK TABLES `message_threads` WRITE;
+/*!40000 ALTER TABLE `message_threads` DISABLE KEYS */;
+/*!40000 ALTER TABLE `message_threads` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `messages`
+--
 
 DROP TABLE IF EXISTS `messages`;
-CREATE TABLE IF NOT EXISTS `messages` (
-  `message_id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `messages` (
+  `message_id` int(11) NOT NULL AUTO_INCREMENT,
   `sender_id` int(11) NOT NULL,
   `recipient_id` int(10) NOT NULL,
   `subject` text NOT NULL,
   `body` text NOT NULL,
   `thread_id` int(11) NOT NULL,
   `sent_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` varchar(100) NOT NULL
+  `status` varchar(100) NOT NULL,
+  PRIMARY KEY (`message_id`),
+  KEY `from_user_id` (`sender_id`,`thread_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `message_threads`;
-CREATE TABLE IF NOT EXISTS `message_threads` (
-  `thread_id` int(11) NOT NULL,
-  `status` int(10) NOT NULL,
-  `created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+--
+-- Dumping data for table `messages`
+--
+
+LOCK TABLES `messages` WRITE;
+/*!40000 ALTER TABLE `messages` DISABLE KEYS */;
+/*!40000 ALTER TABLE `messages` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `msg_messages`
+--
 
 DROP TABLE IF EXISTS `msg_messages`;
-CREATE TABLE IF NOT EXISTS `msg_messages` (
-  `id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `msg_messages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `thread_id` int(11) NOT NULL,
   `body` text NOT NULL,
   `priority` int(2) NOT NULL DEFAULT '0',
   `sender_id` int(11) NOT NULL,
-  `cdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `cdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `msg_messages`
+--
+
+LOCK TABLES `msg_messages` WRITE;
+/*!40000 ALTER TABLE `msg_messages` DISABLE KEYS */;
+/*!40000 ALTER TABLE `msg_messages` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `msg_participants`
+--
 
 DROP TABLE IF EXISTS `msg_participants`;
-CREATE TABLE IF NOT EXISTS `msg_participants` (
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `msg_participants` (
   `user_id` int(11) NOT NULL,
   `thread_id` int(11) NOT NULL,
-  `cdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `cdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_id`,`thread_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `msg_participants`
+--
+
+LOCK TABLES `msg_participants` WRITE;
+/*!40000 ALTER TABLE `msg_participants` DISABLE KEYS */;
+/*!40000 ALTER TABLE `msg_participants` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `msg_status`
+--
 
 DROP TABLE IF EXISTS `msg_status`;
-CREATE TABLE IF NOT EXISTS `msg_status` (
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `msg_status` (
   `message_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `status` int(2) NOT NULL
+  `status` int(2) NOT NULL,
+  PRIMARY KEY (`message_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `msg_status`
+--
+
+LOCK TABLES `msg_status` WRITE;
+/*!40000 ALTER TABLE `msg_status` DISABLE KEYS */;
+/*!40000 ALTER TABLE `msg_status` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `msg_threads`
+--
 
 DROP TABLE IF EXISTS `msg_threads`;
-CREATE TABLE IF NOT EXISTS `msg_threads` (
-  `id` int(11) NOT NULL,
-  `subject` text
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `msg_threads` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `subject` text,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `networks`;
-CREATE TABLE IF NOT EXISTS `networks` (
-  `network_id` int(11) NOT NULL,
-  `network_name` text NOT NULL,
-  `network_key` varchar(100) NOT NULL,
-  `network_type` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+--
+-- Dumping data for table `msg_threads`
+--
+
+LOCK TABLES `msg_threads` WRITE;
+/*!40000 ALTER TABLE `msg_threads` DISABLE KEYS */;
+/*!40000 ALTER TABLE `msg_threads` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `network_requests`
+--
 
 DROP TABLE IF EXISTS `network_requests`;
-CREATE TABLE IF NOT EXISTS `network_requests` (
-  `request_id` int(10) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `network_requests` (
+  `request_id` int(10) NOT NULL AUTO_INCREMENT,
   `network_name` text NOT NULL,
   `network_key` varchar(100) NOT NULL,
   `installation_key` varchar(100) NOT NULL,
@@ -327,21 +739,108 @@ CREATE TABLE IF NOT EXISTS `network_requests` (
   `email` varchar(50) NOT NULL,
   `ip` text NOT NULL,
   `resultreason` text NOT NULL,
-  `result` varchar(50) NOT NULL DEFAULT 'pending'
+  `result` varchar(50) NOT NULL DEFAULT 'pending',
+  PRIMARY KEY (`request_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `network_requests`
+--
+
+LOCK TABLES `network_requests` WRITE;
+/*!40000 ALTER TABLE `network_requests` DISABLE KEYS */;
+/*!40000 ALTER TABLE `network_requests` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `networks`
+--
+
+DROP TABLE IF EXISTS `networks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `networks` (
+  `network_id` int(11) NOT NULL AUTO_INCREMENT,
+  `network_name` text NOT NULL,
+  `network_key` varchar(100) NOT NULL,
+  `network_type` varchar(50) NOT NULL,
+  PRIMARY KEY (`network_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `networks`
+--
+
+LOCK TABLES `networks` WRITE;
+/*!40000 ALTER TABLE `networks` DISABLE KEYS */;
+/*!40000 ALTER TABLE `networks` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `node_list`
+--
 
 DROP TABLE IF EXISTS `node_list`;
-CREATE TABLE IF NOT EXISTS `node_list` (
-  `node_id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `node_list` (
+  `node_id` int(11) NOT NULL AUTO_INCREMENT,
   `node_name` varchar(50) NOT NULL,
   `node_uri` varchar(50) NOT NULL,
   `node_key` varchar(32) NOT NULL,
-  `node_status` varchar(10) NOT NULL
+  `node_status` varchar(10) NOT NULL,
+  PRIMARY KEY (`node_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `node_list`
+--
+
+LOCK TABLES `node_list` WRITE;
+/*!40000 ALTER TABLE `node_list` DISABLE KEYS */;
+/*!40000 ALTER TABLE `node_list` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `oauth_session_scopes`
+--
+
+DROP TABLE IF EXISTS `oauth_session_scopes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `oauth_session_scopes` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `session_id` int(11) unsigned NOT NULL,
+  `access_token` varchar(50) NOT NULL DEFAULT '',
+  `scope` varchar(64) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `session_id` (`session_id`),
+  KEY `scope` (`scope`),
+  KEY `access_token` (`access_token`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `oauth_session_scopes`
+--
+
+LOCK TABLES `oauth_session_scopes` WRITE;
+/*!40000 ALTER TABLE `oauth_session_scopes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `oauth_session_scopes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `oauth_sessions`
+--
 
 DROP TABLE IF EXISTS `oauth_sessions`;
-CREATE TABLE IF NOT EXISTS `oauth_sessions` (
-  `id` int(11) unsigned NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `oauth_sessions` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `client_id` varchar(32) NOT NULL DEFAULT '',
   `redirect_uri` varchar(250) NOT NULL DEFAULT '',
   `type_id` varchar(64) DEFAULT NULL,
@@ -351,121 +850,264 @@ CREATE TABLE IF NOT EXISTS `oauth_sessions` (
   `stage` enum('request','granted') NOT NULL DEFAULT 'request',
   `first_requested` int(10) unsigned NOT NULL,
   `last_updated` int(10) unsigned NOT NULL,
-  `limited_access` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Used for user agent flows'
+  `limited_access` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Used for user agent flows',
+  PRIMARY KEY (`id`),
+  KEY `client_id` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `oauth_session_scopes`;
-CREATE TABLE IF NOT EXISTS `oauth_session_scopes` (
-  `id` int(11) unsigned NOT NULL,
-  `session_id` int(11) unsigned NOT NULL,
-  `access_token` varchar(50) NOT NULL DEFAULT '',
-  `scope` varchar(64) NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+--
+-- Dumping data for table `oauth_sessions`
+--
+
+LOCK TABLES `oauth_sessions` WRITE;
+/*!40000 ALTER TABLE `oauth_sessions` DISABLE KEYS */;
+/*!40000 ALTER TABLE `oauth_sessions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ontology_list`
+--
 
 DROP TABLE IF EXISTS `ontology_list`;
-CREATE TABLE IF NOT EXISTS `ontology_list` (
-  `id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ontology_list` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `virtualid` int(15) NOT NULL,
   `abbreviation` varchar(20) NOT NULL,
   `name` varchar(200) DEFAULT NULL,
-  `ranking` int(11) NOT NULL
+  `ranking` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-INSERT INTO `ontology_list` (`id`, `virtualid`, `abbreviation`, `name`, `ranking`) VALUES
-(1, 0, 'LocalList', 'Local Phenotype Descriptions', 1);
+--
+-- Dumping data for table `ontology_list`
+--
+
+LOCK TABLES `ontology_list` WRITE;
+/*!40000 ALTER TABLE `ontology_list` DISABLE KEYS */;
+INSERT INTO `ontology_list` VALUES (1,0,'LocalList','Local Phenotype Descriptions',1);
+/*!40000 ALTER TABLE `ontology_list` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `orcid_alert`
+--
 
 DROP TABLE IF EXISTS `orcid_alert`;
-CREATE TABLE IF NOT EXISTS `orcid_alert` (
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `orcid_alert` (
   `user_id` int(5) NOT NULL,
-  `alert_shown` tinyint(1) NOT NULL
+  `alert_shown` tinyint(1) NOT NULL,
+  KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `orcid_alert`
+--
+
+LOCK TABLES `orcid_alert` WRITE;
+/*!40000 ALTER TABLE `orcid_alert` DISABLE KEYS */;
+/*!40000 ALTER TABLE `orcid_alert` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pages`
+--
 
 DROP TABLE IF EXISTS `pages`;
-CREATE TABLE IF NOT EXISTS `pages` (
-  `page_id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pages` (
+  `page_id` int(11) NOT NULL AUTO_INCREMENT,
   `page_name` varchar(50) NOT NULL,
   `page_content` text NOT NULL,
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `parent_menu` varchar(20) NOT NULL
+  `parent_menu` varchar(20) NOT NULL,
+  PRIMARY KEY (`page_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-INSERT INTO `pages` (`page_id`, `page_name`, `page_content`, `date_created`, `parent_menu`) VALUES
-(1, 'Home', '<div class="well">\r\n<h3 style="text-align: center;">Welcome</h3>\r\n<hr />\r\n<h1 style="text-align: center;"></h1>\r\n<p style="text-align: center;">This is the default page for a new Cafe Variome installation. The Cafe Variome data discovery platform can be used by diagnostic networks/disease consortia to allow the controlled discovery of patients and variants without revealing detailed information that might compromise the research value of the data.</p>\r\n<p style="text-align: center;">Individual research/clinical groups can deposit data in an installation and control access to their data. The access-control levels range from fully open and immediately available, to fully controlled and only available to authorised users.</p>\r\n<p style="text-align: center;">A user-friendly, intuitive administrator dashboard gives owners complete control over their data and installation. Dashboard configuration options include a content management system for adding/editing custom pages and menus, full control over site appearance (logo, colours, backgrounds, themes). Easy import of source mutation data via templates, control over how search results are displayed (ordering and specifying of fields) and a comprehensive access control system for users and groups.</p><hr />\r\n</div>\r\n<div class="well">\r\n<p style="text-align: center;"><em><strong>This front page welcome message can be modified (and additional pages/menus added) through the content management area of the administrator dashboard.</strong></em></p>\r\n</div>', '2013-11-25 10:17:52', 'Home'),
-(2, 'Contact', '<h2 style="text-align: center;">Contact</h2><hr /><p style="text-align: center;"><em><strong>This contact page can be modified (and additional pages/menus added) through the administrators dashboard. The contact page is required so that the Cafe Variome branding can be included in your installation.</strong></em></p><hr />', '2013-11-25 11:18:40', 'Contact');
+--
+-- Dumping data for table `pages`
+--
+
+LOCK TABLES `pages` WRITE;
+/*!40000 ALTER TABLE `pages` DISABLE KEYS */;
+INSERT INTO `pages` VALUES (1,'Home','<div class=\"well\">\r\n<h3 style=\"text-align: center;\">Welcome</h3>\r\n<hr />\r\n<h1 style=\"text-align: center;\"></h1>\r\n<p style=\"text-align: center;\">This is the default page for a new Cafe Variome installation. The Cafe Variome data discovery platform can be used by diagnostic networks/disease consortia to allow the controlled discovery of patients and variants without revealing detailed information that might compromise the research value of the data.</p>\r\n<p style=\"text-align: center;\">Individual research/clinical groups can deposit data in an installation and control access to their data. The access-control levels range from fully open and immediately available, to fully controlled and only available to authorised users.</p>\r\n<p style=\"text-align: center;\">A user-friendly, intuitive administrator dashboard gives owners complete control over their data and installation. Dashboard configuration options include a content management system for adding/editing custom pages and menus, full control over site appearance (logo, colours, backgrounds, themes). Easy import of source mutation data via templates, control over how search results are displayed (ordering and specifying of fields) and a comprehensive access control system for users and groups.</p><hr />\r\n</div>\r\n<div class=\"well\">\r\n<p style=\"text-align: center;\"><em><strong>This front page welcome message can be modified (and additional pages/menus added) through the content management area of the administrator dashboard.</strong></em></p>\r\n</div>','2013-11-25 10:17:52','Home'),(2,'Contact','<h2 style=\"text-align: center;\">Contact</h2><hr /><p style=\"text-align: center;\"><em><strong>This contact page can be modified (and additional pages/menus added) through the administrators dashboard. The contact page is required so that the Cafe Variome branding can be included in your installation.</strong></em></p><hr />','2013-11-25 11:18:40','Contact');
+/*!40000 ALTER TABLE `pages` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pheno_dag`
+--
+
+DROP TABLE IF EXISTS `pheno_dag`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pheno_dag` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ontology` varchar(100) DEFAULT NULL,
+  `termid` varchar(100) NOT NULL,
+  `parentid` varchar(100) NOT NULL,
+  `termname` varchar(200) NOT NULL,
+  `terminalnode` enum('0','1') NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pheno_dag`
+--
+
+LOCK TABLES `pheno_dag` WRITE;
+/*!40000 ALTER TABLE `pheno_dag` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pheno_dag` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `phenotypes`
+--
 
 DROP TABLE IF EXISTS `phenotypes`;
-CREATE TABLE IF NOT EXISTS `phenotypes` (
-  `id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `phenotypes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `cafevariome_id` int(11) NOT NULL,
   `attribute_sourceID` varchar(15) DEFAULT NULL,
   `attribute_termID` varchar(200) DEFAULT NULL,
   `attribute_termName` varchar(200) DEFAULT NULL,
   `attribute_qualifier` varchar(200) DEFAULT NULL,
   `value` varchar(200) DEFAULT 'present',
-  `type` enum('quality','qualityValue','numeric') NOT NULL DEFAULT 'quality'
+  `type` enum('quality','qualityValue','numeric') NOT NULL DEFAULT 'quality',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `pheno_dag`;
-CREATE TABLE IF NOT EXISTS `pheno_dag` (
-  `id` int(11) NOT NULL,
-  `ontology` varchar(100) DEFAULT NULL,
-  `termid` varchar(100) NOT NULL,
-  `parentid` varchar(100) NOT NULL,
-  `termname` varchar(200) NOT NULL,
-  `terminalnode` enum('0','1') NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+--
+-- Dumping data for table `phenotypes`
+--
+
+LOCK TABLES `phenotypes` WRITE;
+/*!40000 ALTER TABLE `phenotypes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `phenotypes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `posts`
+--
 
 DROP TABLE IF EXISTS `posts`;
-CREATE TABLE IF NOT EXISTS `posts` (
-  `id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `posts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `post_title` varchar(120) NOT NULL,
   `post_body` text NOT NULL,
   `post_date_sort` datetime NOT NULL,
   `post_date` varchar(30) NOT NULL,
-  `post_visible` tinyint(1) NOT NULL
+  `post_visible` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `posts`
+--
+
+LOCK TABLES `posts` WRITE;
+/*!40000 ALTER TABLE `posts` DISABLE KEYS */;
+/*!40000 ALTER TABLE `posts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `preferences`
+--
 
 DROP TABLE IF EXISTS `preferences`;
-CREATE TABLE IF NOT EXISTS `preferences` (
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `preferences` (
   `name` varchar(50) NOT NULL,
   `value` varchar(50) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-INSERT INTO `preferences` (`name`, `value`) VALUES
-('current_font_link', 'Muli'),
-('header_colour_from', '#6c737e'),
-('header_colour_to', '#afb3ba'),
-('background', 'grey.png'),
-('logo', 'cafevariome-logo-full.png'),
-('font_size', '14px'),
-('current_font_name', 'Muli'),
-('id_prefix', 'vx'),
-('id_current', '234333355'),
-('report_usage', '1'),
-('navbar_font_colour', '#eeeeee'),
-('navbar_font_colour_hover', '#ffffff'),
-('navbar_selected_tab_colour', '#6c737e');
+--
+-- Dumping data for table `preferences`
+--
+
+LOCK TABLES `preferences` WRITE;
+/*!40000 ALTER TABLE `preferences` DISABLE KEYS */;
+INSERT INTO `preferences` VALUES ('current_font_link','Muli'),('header_colour_from','#6c737e'),('header_colour_to','#afb3ba'),('background','grey.png'),('logo','cafevariome-logo-full.png'),('font_size','14px'),('current_font_name','Muli'),('id_prefix','vx'),('id_current','234333355'),('report_usage','1'),('navbar_font_colour','#eeeeee'),('navbar_font_colour_hover','#ffffff'),('navbar_selected_tab_colour','#6c737e');
+/*!40000 ALTER TABLE `preferences` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `prefixes`
+--
 
 DROP TABLE IF EXISTS `prefixes`;
-CREATE TABLE IF NOT EXISTS `prefixes` (
-  `prefix_id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `prefixes` (
+  `prefix_id` int(11) NOT NULL AUTO_INCREMENT,
   `prefix` varchar(10) NOT NULL,
   `ip` varchar(20) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`prefix_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `prefixes`
+--
+
+LOCK TABLES `prefixes` WRITE;
+/*!40000 ALTER TABLE `prefixes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `prefixes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `primary_phenotype_lookup`
+--
 
 DROP TABLE IF EXISTS `primary_phenotype_lookup`;
-CREATE TABLE IF NOT EXISTS `primary_phenotype_lookup` (
-  `id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `primary_phenotype_lookup` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `sourceId` varchar(15) NOT NULL,
   `termId` varchar(200) NOT NULL,
   `termName` varchar(200) NOT NULL,
   `termDefinition` varchar(250) DEFAULT NULL,
-  `qualifier` varchar(200) DEFAULT NULL
+  `qualifier` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `primary_phenotype_lookup`
+--
+
+LOCK TABLES `primary_phenotype_lookup` WRITE;
+/*!40000 ALTER TABLE `primary_phenotype_lookup` DISABLE KEYS */;
+/*!40000 ALTER TABLE `primary_phenotype_lookup` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `query_builder_history`
+--
 
 DROP TABLE IF EXISTS `query_builder_history`;
-CREATE TABLE IF NOT EXISTS `query_builder_history` (
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `query_builder_history` (
   `id` int(11) NOT NULL,
   `query_id` varchar(10) NOT NULL,
   `total_results` varchar(10) NOT NULL,
@@ -474,77 +1116,124 @@ CREATE TABLE IF NOT EXISTS `query_builder_history` (
   `query_response` text NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `query_builder_history`
+--
+
+LOCK TABLES `query_builder_history` WRITE;
+/*!40000 ALTER TABLE `query_builder_history` DISABLE KEYS */;
+/*!40000 ALTER TABLE `query_builder_history` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `refseq`
+--
 
 DROP TABLE IF EXISTS `refseq`;
-CREATE TABLE IF NOT EXISTS `refseq` (
-  `accession` varchar(25) NOT NULL
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `refseq` (
+  `accession` varchar(25) NOT NULL,
+  KEY `accession` (`accession`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `refseq`
+--
+
+LOCK TABLES `refseq` WRITE;
+/*!40000 ALTER TABLE `refseq` DISABLE KEYS */;
+/*!40000 ALTER TABLE `refseq` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `scopes`
+--
 
 DROP TABLE IF EXISTS `scopes`;
-CREATE TABLE IF NOT EXISTS `scopes` (
-  `id` int(11) unsigned NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `scopes` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `scope` varchar(64) NOT NULL DEFAULT '',
   `name` varchar(64) NOT NULL DEFAULT '',
-  `description` varchar(100) DEFAULT ''
+  `description` varchar(100) DEFAULT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `scope` (`scope`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `scopes`
+--
+
+LOCK TABLES `scopes` WRITE;
+/*!40000 ALTER TABLE `scopes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `scopes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `search_fields`
+--
 
 DROP TABLE IF EXISTS `search_fields`;
-CREATE TABLE IF NOT EXISTS `search_fields` (
-  `search_field_id` int(11) NOT NULL,
-  `field_name` varchar(50) NOT NULL
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `search_fields` (
+  `search_field_id` int(11) NOT NULL AUTO_INCREMENT,
+  `field_name` varchar(50) NOT NULL,
+  PRIMARY KEY (`search_field_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `search_fields`
+--
+
+LOCK TABLES `search_fields` WRITE;
+/*!40000 ALTER TABLE `search_fields` DISABLE KEYS */;
+/*!40000 ALTER TABLE `search_fields` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `settings`
+--
 
 DROP TABLE IF EXISTS `settings`;
-CREATE TABLE IF NOT EXISTS `settings` (
-  `setting_id` int(10) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `settings` (
+  `setting_id` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `value` varchar(100) NOT NULL,
   `info` text NOT NULL,
-  `validation_rules` varchar(100) NOT NULL DEFAULT 'required|xss_clean'
-) ENGINE=MyISAM AUTO_INCREMENT=36 DEFAULT CHARSET=latin1;
+  `validation_rules` varchar(100) NOT NULL DEFAULT 'required|xss_clean',
+  PRIMARY KEY (`setting_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=38 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-INSERT INTO `settings` (`setting_id`, `name`, `value`, `info`, `validation_rules`) VALUES
-(1, 'site_title', 'Cafe Variome Client', 'Main title for the site that will be shown in metadata.', 'xss_clean'),
-(2, 'site_description', 'Cafe Variome Instance', 'Brief description of the site that will be shown in metadata.', 'xss_clean'),
-(3, 'site_author', 'Administrator', 'Name of site author that will be shown in metadata.', 'xss_clean'),
-(4, 'site_keywords', 'mutation, diagnostics, database', 'Site keywords metadata to help with search engine optimisation and traffic.', 'xss_clean'),
-(5, 'email', 'admin@cafevariome.org', '', 'required|xss_clean'),
-(6, 'twitter', '', 'If Twitter username is here set then Twitter icon link appears in contact page. Leave blank to disable.', 'xss_clean'),
-(7, 'rss', 'local', 'Specify a VALID rss feed or to use the internal Cafe Variome news feed then just enter local (on its own)', 'callback_rss_check|xss_clean'),
-(8, 'google_analytics', '', 'Google Analytics tracking ID', 'xss_clean'),
-(9, 'cvid_prefix', 'one', 'Prefix that is prepended to Cafe Variome IDs', 'xss_clean'),
-(10, 'stats', 'on', '', 'xss_clean'),
-(11, 'max_variants', '30000', '', 'required|xss_clean'),
-(12, 'feature_table_name', 'variants', '', 'required|xss_clean'),
-(13, 'messaging', 'on', 'Enables/disables the internal messaging system for all users', 'xss_clean'),
-(14, 'database_structure', 'off', 'Enables the tab to change database structure in the settings admin interface', 'xss_clean'),
-(15, 'federated', 'off', 'If set to on then the federated API is enables and allows remote discovery queries from other Cafe Variome installs', 'xss_clean'),
-(16, 'federated_head', 'off', 'Sets this installation as the main federated head through which installs can be', 'xss_clean'),
-(17, 'show_orcid_reminder', 'off', 'Shows a one off message to users on the home page reminding them to link their ORCID to their Cafe Variome account', 'xss_clean'),
-(18, 'atomserver_enabled', 'off', '', 'xss_clean'),
-(19, 'atomserver_user', '', '', 'xss_clean'),
-(20, 'atomserver_password', '', '', 'xss_clean'),
-(21, 'atomserver_uri', 'http://www.cafevariome.org/atomserver/v1/cafevariome/variants', '', 'xss_clean'),
-(22, 'cafevariome_central', 'off', 'If set to on then this is a Cafe Variome Central installation - additional menus for describing the system will be enabled', 'xss_clean'),
-(23, 'allow_registrations', 'on', 'If set to on then users can register on the site, otherwise the signup is hidden', 'xss_clean'),
-(24, 'variant_count_cutoff', '0', 'If the number of variants discovered in a source is less than this then the results are hidden and the message in the variant_count_cutoff_message setting is displayed', 'xss_clean'),
-(25, 'variant_count_cutoff_message', 'Unable to display results for this source, please contact admin@cafevariome.org', 'Message that is shown when the number of variants in less than that specified in the variant_count_cutoff setting', 'xss_clean'),
-(26, 'dasigniter', 'on', 'If set to on then DASIgniter is enabled and variants in sources that are openAccess and linkedAccess will be available via DAS', 'xss_clean'),
-(27, 'bioportalkey', '6d7d7db8-698c-4a56-9792-107217b3965c', 'In order to use phenotype ontologies you must sign up for a BioPortal account and supply your API key here. If this is left blank you only be able to use free text for phenotypes. Sign up at http://bioportal.bioontology.org/accounts/new', 'xss_clean'),
-(28, 'template', 'default', 'Specify the name of the css template file (located in views/css/)', 'xss_clean'),
-(29, 'discovery_requires_login', 'off', 'If set to on then discovery searches cannot be done unless a user is logged in.', 'xss_clean'),
-(30, 'show_sources_in_discover', 'on', 'If set to off then only the search box will be shown in the discovery interface (i.e. not the sources to search)', 'xss_clean'),
-(31, 'use_elasticsearch', 'on', 'If set to on then elasticsearch will be used instead of the basic search (elasticsearch needs to be running of course)', 'xss_clean'),
-(32, 'auth_server', 'https://auth.cafevariome.org', 'Central Cafe Variome Auth server url (WARNING: do not change)', 'xss_clean'),
-(33, 'installation_key', '098f6bcd4621d373cade4e832627b4f6', 'Unique key for this installation (WARNING: do not change this value unless you know what you are doing)', ''),
-(34, 'all_records_require_an_id', 'on', 'Checks whether all records have a record ID during import (which must be unique)', 'xss_clean'),
-(35, 'site_requires_login', 'off', 'If enabled then users will be required to log in to access any part of the site. If not logged in they will be presented with a login form.', 'xss_clean'),
-(36, 'allow_record_hits_display', 'on', 'If set to on then record hits will be viewable by users', 'required|xss_clean'),
-(37, 'allow_individual_record_display', 'on', 'If set to on then indiviaul records will be viewable by users', 'required|xss_clean');
+--
+-- Dumping data for table `settings`
+--
+
+LOCK TABLES `settings` WRITE;
+/*!40000 ALTER TABLE `settings` DISABLE KEYS */;
+INSERT INTO `settings` VALUES (1,'site_title','Cafe Variome','Main title for the site that will be shown in metadata.','xss_clean'),(2,'site_description','Cafe Variome Client','Brief description of the site that will be shown in metadata.','xss_clean'),(3,'site_author','Administrator','Name of site author that will be shown in metadata.','xss_clean'),(4,'site_keywords','mutation, diagnostics, database','Site keywords metadata to help with search engine optimisation and traffic.','xss_clean'),(5,'email','admin@cafevariome.org','','required|xss_clean'),(6,'twitter','','If Twitter username is here set then Twitter icon link appears in contact page. Leave blank to disable.','xss_clean'),(7,'rss','local','Specify a VALID rss feed or to use the internal Cafe Variome news feed then just enter local (on its own)','callback_rss_check|xss_clean'),(8,'google_analytics','','Google Analytics tracking ID','xss_clean'),(9,'cvid_prefix','vx','Prefix that is prepended to Cafe Variome IDs','xss_clean'),(10,'stats','on','','xss_clean'),(11,'max_variants','30000','','required|xss_clean'),(12,'feature_table_name','variants','','required|xss_clean'),(13,'messaging','on','Enables/disables the internal messaging system for all users','xss_clean'),(14,'database_structure','off','Enables the tab to change database structure in the settings admin interface','xss_clean'),(15,'federated','off','If set to on then the federated API is enables and allows remote discovery queries from other Cafe Variome installs','xss_clean'),(16,'federated_head','off','Sets this installation as the main federated head through which installs can be','xss_clean'),(17,'show_orcid_reminder','off','Shows a one off message to users on the home page reminding them to link their ORCID to their Cafe Variome account','xss_clean'),(18,'atomserver_enabled','off','','xss_clean'),(19,'atomserver_user','','','xss_clean'),(20,'atomserver_password','','','xss_clean'),(21,'atomserver_uri','http://www.cafevariome.org/atomserver/v1/cafevariome/variants','','xss_clean'),(22,'cafevariome_central','off','If set to on then this is a Cafe Variome Central installation - additional menus for describing the system will be enabled','xss_clean'),(23,'allow_registrations','on','If set to on then users can register on the site, otherwise the signup is hidden','xss_clean'),(24,'variant_count_cutoff','0','If the number of variants discovered in a source is less than this then the results are hidden and the message in the variant_count_cutoff_message setting is displayed','xss_clean'),(25,'variant_count_cutoff_message','Unable to display results for this source, please contact admin@cafevariome.org','Message that is shown when the number of variants in less than that specified in the variant_count_cutoff setting','xss_clean'),(26,'dasigniter','on','If set to on then DASIgniter is enabled and variants in sources that are openAccess and linkedAccess will be available via DAS','xss_clean'),(27,'bioportalkey','6d7d7db8-698c-4a56-9792-107217b3965c','In order to use phenotype ontologies you must sign up for a BioPortal account and supply your API key here. If this is left blank you only be able to use free text for phenotypes. Sign up at http://bioportal.bioontology.org/accounts/new','xss_clean'),(28,'template','default','Specify the name of the css template file (located in views/css/)','xss_clean'),(29,'discovery_requires_login','off','If set to on then discovery searches cannot be done unless a user is logged in.','xss_clean'),(30,'show_sources_in_discover','on','If set to off then only the search box will be shown in the discovery interface (i.e. not the sources to search)','xss_clean'),(31,'use_elasticsearch','on','If set to on then elasticsearch will be used instead of the basic search (elasticsearch needs to be running of course)','xss_clean'),(32,'auth_server','https://auth.cafevariome.org/','Central Cafe Variome Auth server url (WARNING: do not change)','xss_clean'),(33,'installation_key','098f6bcd4621d373cade4e832627b4f6','Unique key for this installation (WARNING: do not change this value unless you know what you are doing)',''),(34,'all_records_require_an_id','on','Checks whether all records have a record ID during import (which must be unique)','xss_clean'),(35,'site_requires_login','off','If enabled then users will be required to log in to access any part of the site. If not logged in they will be presented with a login form.','xss_clean'),(36,'allow_record_hits_display','on','If set to on then record hits will be viewable by users','required|xss_clean'),(37,'allow_individual_record_display','on','If set to on then indiviaul records will be viewable by users','required|xss_clean');
+/*!40000 ALTER TABLE `settings` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sources`
+--
 
 DROP TABLE IF EXISTS `sources`;
-CREATE TABLE IF NOT EXISTS `sources` (
-  `source_id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sources` (
+  `source_id` int(11) NOT NULL AUTO_INCREMENT,
   `owner_name` text NOT NULL,
   `owner_address` text NOT NULL,
   `owner_orcid` varchar(50) NOT NULL,
@@ -563,41 +1252,128 @@ CREATE TABLE IF NOT EXISTS `sources` (
   `producer_name` varchar(50) NOT NULL,
   `producer_address` text NOT NULL,
   `producer_orcid` varchar(50) NOT NULL,
-  `producer_email` varchar(100) NOT NULL
+  `producer_email` varchar(100) NOT NULL,
+  PRIMARY KEY (`source_id`),
+  UNIQUE KEY `name` (`name`),
+  KEY `status` (`status`),
+  KEY `type` (`type`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sources`
+--
+
+LOCK TABLES `sources` WRITE;
+/*!40000 ALTER TABLE `sources` DISABLE KEYS */;
+/*!40000 ALTER TABLE `sources` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sources_groups`
+--
 
 DROP TABLE IF EXISTS `sources_groups`;
-CREATE TABLE IF NOT EXISTS `sources_groups` (
-  `id` mediumint(8) unsigned NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sources_groups` (
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `source_id` mediumint(8) unsigned NOT NULL,
-  `group_id` mediumint(8) unsigned NOT NULL
+  `group_id` mediumint(8) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `source_id` (`source_id`),
+  KEY `group_id` (`group_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sources_groups`
+--
+
+LOCK TABLES `sources_groups` WRITE;
+/*!40000 ALTER TABLE `sources_groups` DISABLE KEYS */;
+/*!40000 ALTER TABLE `sources_groups` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `stats_api`
+--
 
 DROP TABLE IF EXISTS `stats_api`;
-CREATE TABLE IF NOT EXISTS `stats_api` (
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `stats_api` (
   `num` int(11) NOT NULL DEFAULT '0',
   `ip` varchar(25) NOT NULL,
   `uri` text NOT NULL,
   `datetime` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `stats_api`
+--
+
+LOCK TABLES `stats_api` WRITE;
+/*!40000 ALTER TABLE `stats_api` DISABLE KEYS */;
+/*!40000 ALTER TABLE `stats_api` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `stats_logins`
+--
 
 DROP TABLE IF EXISTS `stats_logins`;
-CREATE TABLE IF NOT EXISTS `stats_logins` (
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `stats_logins` (
   `num` int(11) NOT NULL DEFAULT '0',
   `ip` varchar(25) NOT NULL,
   `username` varchar(50) NOT NULL,
   `datetime` varchar(50) NOT NULL,
   `baseurl` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `stats_logins`
+--
+
+LOCK TABLES `stats_logins` WRITE;
+/*!40000 ALTER TABLE `stats_logins` DISABLE KEYS */;
+/*!40000 ALTER TABLE `stats_logins` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `stats_orcid_alert`
+--
 
 DROP TABLE IF EXISTS `stats_orcid_alert`;
-CREATE TABLE IF NOT EXISTS `stats_orcid_alert` (
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `stats_orcid_alert` (
   `user_id` int(5) NOT NULL,
   `alert_shown` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `stats_orcid_alert`
+--
+
+LOCK TABLES `stats_orcid_alert` WRITE;
+/*!40000 ALTER TABLE `stats_orcid_alert` DISABLE KEYS */;
+/*!40000 ALTER TABLE `stats_orcid_alert` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `stats_registrations`
+--
 
 DROP TABLE IF EXISTS `stats_registrations`;
-CREATE TABLE IF NOT EXISTS `stats_registrations` (
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `stats_registrations` (
   `num` int(11) NOT NULL DEFAULT '0',
   `baseurl` varchar(50) NOT NULL,
   `ip` varchar(25) NOT NULL,
@@ -605,37 +1381,104 @@ CREATE TABLE IF NOT EXISTS `stats_registrations` (
   `username` varchar(50) NOT NULL,
   `datetime` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `stats_registrations`
+--
+
+LOCK TABLES `stats_registrations` WRITE;
+/*!40000 ALTER TABLE `stats_registrations` DISABLE KEYS */;
+/*!40000 ALTER TABLE `stats_registrations` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `stats_searches`
+--
 
 DROP TABLE IF EXISTS `stats_searches`;
-CREATE TABLE IF NOT EXISTS `stats_searches` (
-  `num` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `stats_searches` (
+  `num` int(11) NOT NULL AUTO_INCREMENT,
   `ip` varchar(25) NOT NULL,
   `user` varchar(50) NOT NULL,
   `term` varchar(250) NOT NULL,
   `source` varchar(50) NOT NULL,
-  `datetime` varchar(50) NOT NULL
+  `datetime` varchar(50) NOT NULL,
+  PRIMARY KEY (`num`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `stats_searches`
+--
+
+LOCK TABLES `stats_searches` WRITE;
+/*!40000 ALTER TABLE `stats_searches` DISABLE KEYS */;
+/*!40000 ALTER TABLE `stats_searches` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `stats_variant`
+--
 
 DROP TABLE IF EXISTS `stats_variant`;
-CREATE TABLE IF NOT EXISTS `stats_variant` (
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `stats_variant` (
   `cafevariome_id` int(11) NOT NULL,
-  `count` int(11) NOT NULL
+  `count` int(11) NOT NULL,
+  PRIMARY KEY (`cafevariome_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `stats_variant`
+--
+
+LOCK TABLES `stats_variant` WRITE;
+/*!40000 ALTER TABLE `stats_variant` DISABLE KEYS */;
+/*!40000 ALTER TABLE `stats_variant` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `stats_variants`
+--
 
 DROP TABLE IF EXISTS `stats_variants`;
-CREATE TABLE IF NOT EXISTS `stats_variants` (
-  `num` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `stats_variants` (
+  `num` int(11) NOT NULL AUTO_INCREMENT,
   `ip` varchar(25) NOT NULL,
   `term` text NOT NULL,
   `source` varchar(50) NOT NULL,
   `sharing_policy` varchar(20) NOT NULL,
   `format` varchar(20) NOT NULL,
-  `datetime` varchar(50) NOT NULL
+  `datetime` varchar(50) NOT NULL,
+  PRIMARY KEY (`num`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `stats_variants`
+--
+
+LOCK TABLES `stats_variants` WRITE;
+/*!40000 ALTER TABLE `stats_variants` DISABLE KEYS */;
+/*!40000 ALTER TABLE `stats_variants` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `themes`
+--
 
 DROP TABLE IF EXISTS `themes`;
-CREATE TABLE IF NOT EXISTS `themes` (
-  `theme_id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `themes` (
+  `theme_id` int(11) NOT NULL AUTO_INCREMENT,
   `theme_name` varchar(30) NOT NULL,
   `header_colour_from` varchar(20) NOT NULL,
   `header_colour_to` varchar(20) NOT NULL,
@@ -645,15 +1488,30 @@ CREATE TABLE IF NOT EXISTS `themes` (
   `navbar_font_colour_hover` varchar(20) NOT NULL,
   `navbar_selected_tab_colour` varchar(20) NOT NULL,
   `font_name` varchar(50) NOT NULL,
-  `date_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`theme_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-INSERT INTO `themes` (`theme_id`, `theme_name`, `header_colour_from`, `header_colour_to`, `logo`, `background`, `navbar_font_colour`, `navbar_font_colour_hover`, `navbar_selected_tab_colour`, `font_name`, `date_time`) VALUES
-(1, 'cv_default', '#6c737e', '#afb3ba', 'cafevariome-logo-full.png', 'grey.png', '#eeeeee', '#ffffff', '#6c737e', 'Muli', '2013-12-12 10:08:33');
+--
+-- Dumping data for table `themes`
+--
+
+LOCK TABLES `themes` WRITE;
+/*!40000 ALTER TABLE `themes` DISABLE KEYS */;
+INSERT INTO `themes` VALUES (1,'cv_default','#6c737e','#afb3ba','cafevariome-logo-full.png','grey.png','#eeeeee','#ffffff','#6c737e','Muli','2013-12-12 10:08:33');
+/*!40000 ALTER TABLE `themes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
 
 DROP TABLE IF EXISTS `users`;
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` mediumint(8) unsigned NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `ip_address` varbinary(16) NOT NULL,
   `username` varchar(100) CHARACTER SET utf8 NOT NULL,
   `password` varchar(80) NOT NULL,
@@ -670,22 +1528,83 @@ CREATE TABLE IF NOT EXISTS `users` (
   `last_name` varchar(50) CHARACTER SET utf8 DEFAULT NULL,
   `company` varchar(100) CHARACTER SET utf8 DEFAULT NULL,
   `orcid` varchar(25) NOT NULL,
-  `is_admin` tinyint(1) NOT NULL DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  `is_admin` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `username` (`username`),
+  KEY `orcid` (`orcid`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'','admin','e10adc3949ba59abbe56e057f20f883e','','test@gmail.com','','',0,'','','0',1,'admin','admin','admin','',1);
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users_groups`
+--
 
 DROP TABLE IF EXISTS `users_groups`;
-CREATE TABLE IF NOT EXISTS `users_groups` (
-  `id` mediumint(8) unsigned NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users_groups` (
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` mediumint(8) unsigned NOT NULL,
-  `group_id` mediumint(8) unsigned NOT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+  `group_id` mediumint(8) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-INSERT INTO `users_groups` (`id`, `user_id`, `group_id`) VALUES
-(1, 1, 1);
+--
+-- Dumping data for table `users_groups`
+--
+
+LOCK TABLES `users_groups` WRITE;
+/*!40000 ALTER TABLE `users_groups` DISABLE KEYS */;
+INSERT INTO `users_groups` VALUES (1,1,1),(3,1,1);
+/*!40000 ALTER TABLE `users_groups` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `variant_aliases`
+--
+
+DROP TABLE IF EXISTS `variant_aliases`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `variant_aliases` (
+  `alias_id` int(10) NOT NULL AUTO_INCREMENT,
+  `hgvs` varchar(50) NOT NULL,
+  `ref` varchar(50) NOT NULL,
+  `cafevariome_id` int(10) NOT NULL,
+  PRIMARY KEY (`alias_id`),
+  KEY `hgvs` (`hgvs`,`ref`,`cafevariome_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `variant_aliases`
+--
+
+LOCK TABLES `variant_aliases` WRITE;
+/*!40000 ALTER TABLE `variant_aliases` DISABLE KEYS */;
+/*!40000 ALTER TABLE `variant_aliases` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `variants`
+--
 
 DROP TABLE IF EXISTS `variants`;
-CREATE TABLE IF NOT EXISTS `variants` (
-  `cafevariome_id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `variants` (
+  `cafevariome_id` int(11) NOT NULL AUTO_INCREMENT,
   `variant_id` varchar(50) NOT NULL,
   `source` varchar(50) NOT NULL,
   `laboratory` varchar(50) NOT NULL,
@@ -718,278 +1637,59 @@ CREATE TABLE IF NOT EXISTS `variants` (
   `dbsnp_id` varchar(15) NOT NULL,
   `date_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `pmid` varchar(20) NOT NULL,
-  `active` tinyint(4) NOT NULL DEFAULT '1'
+  `active` tinyint(4) NOT NULL DEFAULT '1',
+  KEY `cafevariome_id` (`cafevariome_id`),
+  KEY `source` (`source`),
+  KEY `gene` (`gene`),
+  KEY `location_ref` (`location_ref`,`start`,`end`),
+  KEY `ref` (`ref`),
+  KEY `hgvs` (`hgvs`),
+  KEY `active` (`active`),
+  FULLTEXT KEY `phenotype` (`phenotype`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `variants`
+--
+
+LOCK TABLES `variants` WRITE;
+/*!40000 ALTER TABLE `variants` DISABLE KEYS */;
+/*!40000 ALTER TABLE `variants` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `variants_to_phenotypes`
+--
 
 DROP TABLE IF EXISTS `variants_to_phenotypes`;
-CREATE TABLE IF NOT EXISTS `variants_to_phenotypes` (
-  `variants_to_phenotypes_id` int(11) NOT NULL,
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `variants_to_phenotypes` (
+  `variants_to_phenotypes_id` int(11) NOT NULL AUTO_INCREMENT,
   `cafevariome_id` int(11) NOT NULL,
-  `termName` text NOT NULL
+  `termName` text NOT NULL,
+  PRIMARY KEY (`variants_to_phenotypes_id`),
+  KEY `cafevariome_id` (`cafevariome_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `variant_aliases`;
-CREATE TABLE IF NOT EXISTS `variant_aliases` (
-  `alias_id` int(10) NOT NULL,
-  `hgvs` varchar(50) NOT NULL,
-  `ref` varchar(50) NOT NULL,
-  `cafevariome_id` int(10) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+--
+-- Dumping data for table `variants_to_phenotypes`
+--
 
+LOCK TABLES `variants_to_phenotypes` WRITE;
+/*!40000 ALTER TABLE `variants_to_phenotypes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `variants_to_phenotypes` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
-ALTER TABLE `applications`
-  ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `client_id` (`client_id`);
-
-ALTER TABLE `autocomplete`
-  ADD KEY `term` (`term`), ADD KEY `type` (`type`);
-
-ALTER TABLE `beacon_sharing_policies`
-  ADD PRIMARY KEY (`setting_id`), ADD UNIQUE KEY `sharing_policy` (`sharing_policy`);
-
-ALTER TABLE `ci_sessions`
-  ADD PRIMARY KEY (`session_id`);
-
-ALTER TABLE `core_fields`
-  ADD PRIMARY KEY (`core_field_id`);
-
-ALTER TABLE `curators`
-  ADD PRIMARY KEY (`curator_id`);
-
-ALTER TABLE `data_requests`
-  ADD PRIMARY KEY (`request_id`), ADD KEY `string` (`string`);
-
-ALTER TABLE `display_fields`
-  ADD PRIMARY KEY (`display_field_id`);
-
-ALTER TABLE `federated`
-  ADD PRIMARY KEY (`federated_id`), ADD KEY `federated_uri` (`federated_uri`);
-
-ALTER TABLE `gene2omim`
-  ADD KEY `gene` (`gene`), ADD KEY `omim_id` (`omim_id`);
-
-ALTER TABLE `genes`
-  ADD KEY `gene_symbol` (`gene_symbol`);
-
-ALTER TABLE `groups`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `inabox_downloads`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `installations`
-  ADD PRIMARY KEY (`installation_id`);
-
-ALTER TABLE `installation_networks`
-  ADD PRIMARY KEY (`installation_networks_id`);
-
-ALTER TABLE `keys`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `login_attempts`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `logs`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `mailing_list`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `menus`
-  ADD PRIMARY KEY (`menu_id`), ADD UNIQUE KEY `menu_name` (`menu_name`);
-
-ALTER TABLE `messages`
-  ADD PRIMARY KEY (`message_id`), ADD KEY `from_user_id` (`sender_id`,`thread_id`);
-
-ALTER TABLE `message_threads`
-  ADD PRIMARY KEY (`thread_id`);
-
-ALTER TABLE `msg_messages`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `msg_participants`
-  ADD PRIMARY KEY (`user_id`,`thread_id`);
-
-ALTER TABLE `msg_status`
-  ADD PRIMARY KEY (`message_id`,`user_id`);
-
-ALTER TABLE `msg_threads`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `networks`
-  ADD PRIMARY KEY (`network_id`);
-
-ALTER TABLE `network_requests`
-  ADD PRIMARY KEY (`request_id`);
-
-ALTER TABLE `node_list`
-  ADD PRIMARY KEY (`node_id`);
-
-ALTER TABLE `oauth_sessions`
-  ADD PRIMARY KEY (`id`), ADD KEY `client_id` (`client_id`);
-
-ALTER TABLE `oauth_session_scopes`
-  ADD PRIMARY KEY (`id`), ADD KEY `session_id` (`session_id`), ADD KEY `scope` (`scope`), ADD KEY `access_token` (`access_token`);
-
-ALTER TABLE `ontology_list`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `orcid_alert`
-  ADD KEY `user_id` (`user_id`);
-
-ALTER TABLE `pages`
-  ADD PRIMARY KEY (`page_id`);
-
-ALTER TABLE `phenotypes`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `pheno_dag`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `posts`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `prefixes`
-  ADD PRIMARY KEY (`prefix_id`);
-
-ALTER TABLE `primary_phenotype_lookup`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `refseq`
-  ADD KEY `accession` (`accession`);
-
-ALTER TABLE `scopes`
-  ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `scope` (`scope`);
-
-ALTER TABLE `search_fields`
-  ADD PRIMARY KEY (`search_field_id`);
-
-ALTER TABLE `settings`
-  ADD PRIMARY KEY (`setting_id`);
-
-ALTER TABLE `sources`
-  ADD PRIMARY KEY (`source_id`), ADD UNIQUE KEY `name` (`name`), ADD KEY `status` (`status`), ADD KEY `type` (`type`);
-
-ALTER TABLE `sources_groups`
-  ADD PRIMARY KEY (`id`), ADD KEY `source_id` (`source_id`), ADD KEY `group_id` (`group_id`);
-
-ALTER TABLE `stats_searches`
-  ADD PRIMARY KEY (`num`);
-
-ALTER TABLE `stats_variant`
-  ADD PRIMARY KEY (`cafevariome_id`);
-
-ALTER TABLE `stats_variants`
-  ADD PRIMARY KEY (`num`);
-
-ALTER TABLE `themes`
-  ADD PRIMARY KEY (`theme_id`);
-
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`), ADD KEY `username` (`username`), ADD KEY `orcid` (`orcid`);
-
-ALTER TABLE `users_groups`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `variants`
-  ADD KEY `cafevariome_id` (`cafevariome_id`), ADD KEY `source` (`source`), ADD KEY `gene` (`gene`), ADD KEY `location_ref` (`location_ref`,`start`,`end`), ADD KEY `ref` (`ref`), ADD KEY `hgvs` (`hgvs`), ADD KEY `active` (`active`), ADD FULLTEXT KEY `phenotype` (`phenotype`);
-
-ALTER TABLE `variants_to_phenotypes`
-  ADD PRIMARY KEY (`variants_to_phenotypes_id`), ADD KEY `cafevariome_id` (`cafevariome_id`);
-
-ALTER TABLE `variant_aliases`
-  ADD PRIMARY KEY (`alias_id`), ADD KEY `hgvs` (`hgvs`,`ref`,`cafevariome_id`);
-
-
-ALTER TABLE `applications`
-  MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT;
-ALTER TABLE `beacon_sharing_policies`
-  MODIFY `setting_id` int(10) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
-ALTER TABLE `core_fields`
-  MODIFY `core_field_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=18;
-ALTER TABLE `curators`
-  MODIFY `curator_id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `data_requests`
-  MODIFY `request_id` int(10) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `display_fields`
-  MODIFY `display_field_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=32;
-ALTER TABLE `federated`
-  MODIFY `federated_id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `groups`
-  MODIFY `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
-ALTER TABLE `inabox_downloads`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `installations`
-  MODIFY `installation_id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `installation_networks`
-  MODIFY `installation_networks_id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `keys`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `login_attempts`
-  MODIFY `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT;
-ALTER TABLE `logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `mailing_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `menus`
-  MODIFY `menu_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
-ALTER TABLE `messages`
-  MODIFY `message_id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `message_threads`
-  MODIFY `thread_id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `msg_messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `msg_threads`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `networks`
-  MODIFY `network_id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `network_requests`
-  MODIFY `request_id` int(10) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `node_list`
-  MODIFY `node_id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `oauth_sessions`
-  MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT;
-ALTER TABLE `oauth_session_scopes`
-  MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT;
-ALTER TABLE `ontology_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
-ALTER TABLE `pages`
-  MODIFY `page_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
-ALTER TABLE `phenotypes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `pheno_dag`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `posts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `prefixes`
-  MODIFY `prefix_id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `primary_phenotype_lookup`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `scopes`
-  MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT;
-ALTER TABLE `search_fields`
-  MODIFY `search_field_id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `settings`
-  MODIFY `setting_id` int(10) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=36;
-ALTER TABLE `sources`
-  MODIFY `source_id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `sources_groups`
-  MODIFY `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT;
-ALTER TABLE `stats_searches`
-  MODIFY `num` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `stats_variants`
-  MODIFY `num` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `themes`
-  MODIFY `theme_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
-ALTER TABLE `users`
-  MODIFY `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT;
-ALTER TABLE `users_groups`
-  MODIFY `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
-ALTER TABLE `variants`
-  MODIFY `cafevariome_id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `variants_to_phenotypes`
-  MODIFY `variants_to_phenotypes_id` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `variant_aliases`
-  MODIFY `alias_id` int(10) NOT NULL AUTO_INCREMENT;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2015-06-23 15:53:39

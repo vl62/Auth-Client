@@ -445,7 +445,9 @@ class Database {
 //			$filename = "assets/dmudb_sample_data.sql";
 		}
 		else if ( $_POST['include_data'] == "none" ) {
-			$filename = "assets/sql/install.sql";
+			$filename = "assets/sql/cafevariome_client_install.sql";
+		}
+		else {
 			$filename = "assets/sql/cafevariome_client_install.sql";
 		}
 //		error_log("filename -> $filename");
