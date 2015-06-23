@@ -9,7 +9,7 @@ class Discover_federated extends MY_Controller {
 		$this->load->model('search_model');
 		$this->load->model('settings_model');
 		// If this setting is on then the discovery search cannot be accessed unless the user is logged in. 
-		// Need to use a model to get config setting because of the config hook that loads settings from db (config is only loaded post controller construction)
+		// Need to use a model to get config setting because of the config hook that loads settings from db config is only loaded post controller construction)
 		// TODO: Also add in further authentication to make sure the user belongs to a specific group
 		$discovery_requires_login = $this->settings_model->getDiscoveryRequiresLoginSetting();
 		if ( $discovery_requires_login ) {
@@ -31,8 +31,8 @@ class Discover_federated extends MY_Controller {
 		// Check the network key exists and that this installation is a member of the network
 		$network_check = json_decode(authPostRequest('', array('network_key' => $network_key, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/check_installation_is_a_member_of_a_network"), 1);
 		if ( $network_check == 'false' ) {
-			 error_log("network_check failed FALSE  -> " . $network_check);
-			show_404("The network key check failed for discover_federated/variantcount - the requesting installation might not be part of the specified network");
+			error_log("network_check failed FALSE  -> " . $network_check);
+			show_error("The network key check failed for discover_federated/variantcount - the requesting installation might not be part of the specified network");
 		}
 		
 		// Fetch any sources that the user has group level access to

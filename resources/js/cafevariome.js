@@ -1429,11 +1429,12 @@ $(document).ready(function() {
 });
 
 // Autocomplete lookup function for record input gene box (need to search through all genes that exist, not just those in the DB)
+// NB Now the call is done to the central auth server since move to client/server so the client no longer needs to have all genes in their local database
 $(document).ready(function() {
 	$(function() {
 		$("#gene").autocomplete({
 			source: function(request, response) {
-				$.ajax({url: baseurl + 'variants/genelookup',
+				$.ajax({url: authurl + '/variants/genelookup',
 				data: {term: $("#gene").val()},
 				dataType: 'json',
 				delay: 200,
@@ -1450,11 +1451,12 @@ $(document).ready(function() {
 });
 
 // Autocomplete lookup function for record input refseq box
+// NB Now the call is done to the central auth server since move to client/server so the client no longer needs to have all refseq in their local database
 $(document).ready(function() {
 	$(function() {
 		$("#ref").autocomplete({
 			source: function(request, response) {
-				$.ajax({url: baseurl + 'variants/refseqlookup',
+				$.ajax({url: authurl + '/variants/refseqlookup',
 				data: {term: $("#ref").val()},
 				dataType: 'json',
 				delay: 200,
@@ -2823,7 +2825,7 @@ function cloneSource() {
 }
 
 function join_network() {
-//    $callAjax = true;
+    $callAjax = true;
     $('form[name="joinNetwork"]').submit(function(e) {
         e.preventDefault();
 //        console.log($("#networks option:selected").text());
