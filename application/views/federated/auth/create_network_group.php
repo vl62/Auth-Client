@@ -15,8 +15,13 @@
 	<div class="row-fluid">
 		<div class="span8 offset3">
 			<h1>Create Network Group</h1>
-			<p>Please enter the network group information below.</p>
+			
 			<div id="infoMessage"><b><?php echo $message; ?></b></div>
+			<?php if ( ! isset($networks)): ?>
+			<hr>
+			<p>You do not appear to be part of any networks so cannot create network groups. You should <a href="<?php echo base_url() . "networks";?>" >create or join a network</a>.</p>
+			<?php else: ?>
+			<p>Please enter the network group information below.</p>
 			<?php echo form_open("groups/create_network_group"); ?>
 			<p>
 				Network: <br />
@@ -39,7 +44,8 @@
 				Description: <br />
 				<?php echo form_input($desc); ?>
 			</p>
-			<p><button type="submit" name="submit" class="btn btn-primary"><i class="icon-th icon-white"></i>  Create Group</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "groups";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p></p>
+			<p><button type="submit" name="submit" class="btn btn-primary"><i class="icon-th icon-white"></i>  Create Group</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "groups";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
+			<?php endif; ?>
 		</div>
 	</div>
 </div>
