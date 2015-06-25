@@ -16,6 +16,7 @@
 		<div class="span9 offset2 pagination-centered">
 			<div class="well">
 				<h2>Join Network</h2>
+				<?php if ( isset($networks) ): ?>
 				<?php if (array_key_exists('error', $networks) ): ?>
 				<p>There are no networks available for you to join (or you are already a member of all existing networks).</p>
 				<p>Go to the <a href="<?php echo base_url() . "networks/create_network"; ?>">create networks page</a> if you would like to start a new network.</p>
@@ -36,12 +37,15 @@
 				</p>
                                 
 				<p><button type="submit" onclick="join_network();" class="btn btn-primary"><i class="icon-file icon-white"></i>  Join Network</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "networks"; ?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
+				<?php endif; ?>
+				<?php else: ?>
+				<p>There was a problem finding available networks to join, please contact admin@cafevariome.org if the problem persists</p>
+				<?php endif; ?>
 				<?php 
 				if (isset($result)) {
 					echo "<p>Network request received successfully.</p>";
 				}
 				?>
-				<?php endif; ?>
 			</div>
 		</div>
 	</div>
