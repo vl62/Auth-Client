@@ -195,7 +195,7 @@ class Networks extends MY_Controller {
                 $token = $this->session->userdata('Token');
 				$networks = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_not_a_member_of");
 //				$networks = getNetworksInstallationNotMemberOf(array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server'));
-//				error_log("getnetworks -> $getNetworks");
+//				error_log("$token getnetworks -> $networks -> " . $this->config->item('installation_key'));
 				$data = json_decode($networks, true);
 //				error_log("decoded -> " . print_r($data, 1));
 //				$jsonp_decode = $this->jsonp_decode($data);

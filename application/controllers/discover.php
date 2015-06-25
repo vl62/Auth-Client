@@ -140,9 +140,101 @@ class Discover extends MY_Controller {
 		}
 	}
 
+	function variantcount_curl_multi($federated_installs_array, $term) {
+
+
+		// If there's some federated installs to search then go through each one and get the variant counts
+		if ( ! empty($federated_installs_array)) {
+			if ( !array_key_exists('error', $federated_installs_array) ) {
+//				error_log("federated_installs_array -> " . print_r($federated_installs_array, 1));
+				$curl_array = array();
+				$ch = curl_multi_init();
+				$count = 0;
+				$urls = array();
+				foreach ( $federated_installs_array as $install ) {
+					$count++;
+					$network_key = $install['network_key'];
+					error_log("MULTI NETWORK KEY -> $network_key");
+					$install_uri = $install['installation_base_url'];
+					$install_uri = rtrim($install_uri,"/");
+					$user_id = $this->ion_auth->user()->row()->id;
+					
+					$url = $install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key";
+					$urls[] = $url;
+					error_log("URL $count -----> $url");
+					$curl_array[$count] = curl_init($url);
+					curl_setopt($curl_array[$count], CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($curl_array[$count], CURLOPT_RETURNTRANSFER, 1);
+					curl_multi_add_handle($ch, $curl_array[$count]);
+				}
+				
+				do {
+					curl_multi_exec($ch, $exec);
+
+				} while($exec > 0);
+				
+//				error_log("ERROR -> " . curl_error($ch));
+				foreach($urls as $count => $url) {
+					error_log("returned $curl_array[$count]");
+					$returned = curl_multi_getcontent($curl_array[$count]);
+//					echo "$url - $returned";
+					error_log("url returned: $url - $returned");
+				}
+
+
+				foreach($urls as $count => $url) {
+					curl_multi_remove_handle($ch, $curl_array[$count]);
+				}
+
+				curl_multi_close($ch); 
+
+				foreach($urls as $count => $url) {
+					curl_close($curl_array[$count]);
+				}
+				
+//					$all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key", false, $context);
+////					$all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key");
+////					error_log(print_r($http_response_header, 1));
+//					error_log("all_counts_json -> $all_counts_json");
+//
+//					$all_counts = json_decode($all_counts_json, 1);
+//					$federated_site_title = $all_counts['site_title'];
+//					unset($all_counts['site_title']);
+////					error_log("all counts decoded -> " . print_r($all_counts, 1));
+//					if ( ! empty($all_counts) ) {
+//						foreach ( $all_counts as $federated_source => $counts_for_source ) {
+//							
+//							$federated_source_name = $federated_source . "__install_$c";
+//							error_log("counts for source $federated_source_name -> " . print_r($counts_for_source, 1));
+////							error_log("adding to " . $federated_source);
+//							$sources[$federated_source_name] = "$federated_source ($federated_site_title)";
+////							error_log("sources_full adding -> " . print_r($sources, 1));
+//							$data['counts'][$federated_source_name] = $counts_for_source;
+//							$data['install_uri'][$federated_source_name] = $install_uri;
+////							error_log("-----------> " . print_r($this->data['install_uri'], 1));
+//							if ( empty($from_url_query) ) {
+//								$data['source_types'][$federated_source_name] = "federated";
+//							}
+//							else {
+//								$this->data['source_types'][$federated_source_name] = "federated";
+//							}
+//
+//						}
+//					}
+//				}
+			}
+		}
+		
+		
+		
+
+
+
+	}
+	
 	// 
 	function variantcount($term = "", $source = "", $format = "", $mutalyzer_check = "") {
-		sleep(1);
+//		sleep(1);
 //		error_log("variantcount -> $term $source $format");
 //		$this->output->enable_profiler(TRUE);
 		if ( $this->input->post('term') ) { // The inputs come from the form
@@ -393,6 +485,7 @@ class Discover extends MY_Controller {
 						$counts = array();
 //						print "SOURCE -> $source<br />";
 						foreach ( $es_data['facets']['sharing_policy']['terms'] as $facet_sharing_policy ) {
+//							error_log("----> " . print_r($facet_sharing_policy, 1));
 							$sp_es = $facet_sharing_policy['term'];
 							if ( $sp_es == "openaccess" ) {
 								$sp_es = "openAccess";
@@ -530,11 +623,15 @@ class Discover extends MY_Controller {
 			$federated_installs = $this->session->userdata('federated_installs');
 //			error_log("f -> $federated_installs");
 			$federated_installs_array = json_decode($federated_installs, 1);
+
+			$this->variantcount_curl_multi($federated_installs_array, $term);
+			
 			// If there's some federated installs to search then go through each one and get the variant counts
 			if ( ! empty($federated_installs_array)) {
 				if ( !array_key_exists('error', $federated_installs_array) ) {
 //					error_log("federated_installs_array -> " . print_r($federated_installs_array, 1));
 					$c = 0;
+
 					foreach ( $federated_installs_array as $install ) {
 						$c++;
 						$network_key = $install['network_key'];
@@ -554,6 +651,8 @@ class Discover extends MY_Controller {
 							)
 						);
 						$context  = stream_context_create($opts);
+						
+						
 						$all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key", false, $context);
 //						$all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key");
 //						error_log(print_r($http_response_header, 1));
