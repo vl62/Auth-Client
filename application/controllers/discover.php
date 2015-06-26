@@ -624,10 +624,11 @@ class Discover extends MY_Controller {
 //			error_log("f -> $federated_installs");
 			$federated_installs_array = json_decode($federated_installs, 1);
 
-			$this->variantcount_curl_multi($federated_installs_array, $term);
+
 			
 			// If there's some federated installs to search then go through each one and get the variant counts
 			if ( ! empty($federated_installs_array)) {
+//				$this->variantcount_curl_multi($federated_installs_array, $term);
 				if ( !array_key_exists('error', $federated_installs_array) ) {
 //					error_log("federated_installs_array -> " . print_r($federated_installs_array, 1));
 					$c = 0;
