@@ -1835,7 +1835,7 @@ class Discover extends MY_Controller {
 			$locations = $this->_splitRegion($term);
 			$variants = $this->search_model->getVariantsForRegion($locations, $source, $sharing_policy);
 		}
-		elseif (preg_match('/N\S+_\S+:\S+/', $term)) {
+		elseif (preg_match('/N\S{1}_\S+:\S+/', $term)) {
 			$ref_hgvs = $this->_splitRefHGVS($term);
 			$variants = $this->search_model->getVariantsForRefHGVS($ref_hgvs, $source, $sharing_policy);
 		}
