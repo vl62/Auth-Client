@@ -23,7 +23,7 @@
 				));
 			?>
 
-			<p><button type="submit" name="submit" class="btn btn-primary"><i class="icon-remove icon-white"></i>  Leave Network</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "auth/users";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p></p>
+			<p><button type="submit" name="submit" class="btn btn-primary"><i class="icon-remove icon-white"></i>  Leave Network</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "networks";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p></p>
 		</div>
 	</div>
 </div>
