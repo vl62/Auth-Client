@@ -1134,7 +1134,7 @@ class Discover extends MY_Controller {
 	function variants ($term, $source, $sharing_policy, $format = NULL) {
 		
 		// Return error if the installation has turned off allowing record hits to be diplayed
-		if ( ! $this->config->item('allow_record_hits_display') ) {
+		if ( $this->config->item('disable_record_hits_display') ) {
 			show_error("The display of record hits has been disabled for the installation you are trying to access");
 		}
 		
@@ -1994,7 +1994,7 @@ class Discover extends MY_Controller {
 	function variant ($cafevariome_id, $format = NULL) {
 		
 		// Show error if the install has turned off allowing display of individual records
-		if ( ! $this->config->item('allow_individual_record_display') ) {
+		if ( $this->config->item('disable_individual_record_display') ) {
 			show_error("The display of individual records has been disabled for the installation you are trying to access");
 		}
 		
