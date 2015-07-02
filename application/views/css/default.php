@@ -10,7 +10,7 @@ DIV#ajax-loader
 @font-face {
   font-family: '<?php echo $this->config->item('current_font_link'); ?>';
   font-style: normal;
-  <!--font-weight: 400;-->
+  font-weight: 400;
   src: local('Muli'), url(<?php echo base_url("resources/fonts/google/" .  strtolower($this->config->item('current_font_link')) . ".woff");?>) format('woff');
 }
 
