@@ -749,38 +749,57 @@
                     if(($(this).find('select.condition_ref').val().length > 0)) {
                         $start = parseInt($(this).find('.start').val().trim(), 10);
                         $stop =  parseInt($(this).find('.stop').val().trim(), 10);
-                        if(!isNumber($start)) {
-                            $.growl.error({ message: "Invalid DNA Start value(s)." });
+                        
+                        if(isNaN($start)) {
+                            $.growl.error({ message: "DNA start value(s) were empty." });
                             $error = true;
+                            return false;
+                        } else if(!isNumber($start)) {
+                            console.log($start);
+                            $.growl.error({ message: "DNA start value(s) were not numeric." });
+                            $error = true;
+                            return false;
                         }
-                        if(!isNumber($stop)) {
-                            $.growl.error({ message: "Invalid DNA Stop value(s)." });
+                        
+                        if(isNaN($stop)) {
+                            $.growl.error({ message: "DNA stop value(s) were empty." });
                             $error = true;
-                        } 
+                            return false;
+                        } else if(!isNumber($stop)) {
+                            $.growl.error({ message: "DNA stop value(s) were not numeric." });
+                            $error = true;
+                            return false;
+                        }
+                        
                         if($start > $stop) {
-                            $.growl.error({ message: "DNA Stop value(s) is greater than the Start value(s)." });
+                            $.growl.error({ message: "DNA stop value(s) is greater than the start value(s)." });
                             $error = true;
+                            return false;
                         }
 
                         if($(this).find('select.condition_ref').val() === "[Input your own accession & version]") {
 
                             if($(this).find('.acc_acc input').val().trim().length === 0) {
-                                $.growl.error({ message: "Invalid Accession value(s)." });
+                                $.growl.error({ message: "You have not entered an accession value(s)" });
                                 $error = true;
+                                return false;
                             }
-                            if($(this).find('.acc_ver input').val().trim().length === 0) {
-                                $.growl.error({ message: "Invalid Accession version value(s)." });
-                                $error = true;
-                            }
+//                            if($(this).find('.acc_ver input').val().trim().length === 0) {
+//                                $.growl.error({ message: "You have not entered an accession version value(s)" });
+//                                $error = true;
+//                                return false;
+//                            }
                         } else if($(this).find('select.condition_ref').val() === "[Input your own chromosome & build]") {
 
                             if($(this).find('.chr_chr input').val().trim().length === 0) {
-                                $.growl.error({ message: "Invalid Chromosome value(s)." });
+                                $.growl.error({ message: "You have not entered a chromosome value(s)" });
                                 $error = true;
+                                return false;
                             }
                             if($(this).find('.chr_build').val().trim().length === 0 || $(this).find('.chr_build').val() === "--Select a build--") {
-                                $.growl.error({ message: "Invalid Chromosome build value(s)." });
+                                $.growl.error({ message: "You have not entered an chromosome build value(s)" });
                                 $error = true;
+                                return false;
                             }
                         }
 
@@ -822,7 +841,7 @@
                         condition_value = $(this).find('.conditions').val();
                         field_value = $(this).find('.phenotype_values').val();
                         if(field_value === "--Select a value--") {
-                            $.growl.error({ message: "Phenotype value(s) is not chosen."});
+                            $.growl.error({ message: "You have not entered a phenotype value(s)"});
                         } else if(!phenotype_validation(condition_value, field_value)) {
                             $error = true;
                         }
@@ -867,7 +886,7 @@
                             type: 'POST',
                             success: function(data) {
                                 if(data.status !== "Validated")
-                                    $.growl.warning({ message: "Gene symbol(s) not valid. Query result may not be exact" });
+                                    $.growl.warning({ message: "You have not entered a valid gene symbol value(s). Query result may not be exact" });
                             }
                         });
                     }
@@ -911,7 +930,7 @@
                             type: 'POST',
                             success: function(data) {
                                 if(data.status !== "Validated")
-                                    $.growl.warning({ message: "HGVS Description(s) not valid. Query result may not be exact" });
+                                    $.growl.warning({ message: "You have not entered a valid HGVS description value(s). Query result may not be exact" });
                             }
                         });
                     }
