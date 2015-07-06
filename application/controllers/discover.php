@@ -761,7 +761,7 @@ class Discover extends MY_Controller {
 		if ( ! array_key_exists( 'ok', $check_if_running) ) {
 			show_error("The query builder interface is currently not accessible as Elasticsearch is not running. Please get an administrator to start Elasticsearch and then try again.");
 		}
-		$this->javascript = array('mustache.min.js', 'jquery.querybuilder.js');
+		$this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder.js');
 		$this->css = array('jquery.querybuilder.css');
 		
 		$token = $this->session->userdata('Token');
@@ -770,6 +770,80 @@ class Discover extends MY_Controller {
 		error_log("federated_installs -> " . print_r($federated_installs, 1));
 		
 		$this->_render('query_builder/main');
+	}
+        
+        function get_phenotype_attributes_nr_list() {
+		$this->load->model('phenotypes_model');
+		$phenotype_attributes_nr_list = $this->phenotypes_model->getPhenotypeAttributesNRList();
+//		print_r($phenotype_attributes_nr_list);
+//		error_log(print_r($phenotype_attributes_nr_list, 1));
+		echo json_encode($phenotype_attributes_nr_list);
+	}
+        
+        function autocomplete_query_builder($type, $term = NULL) {
+                
+		$this->load->model('search_model');
+		// process posted form data
+		if ( ! $term ) {
+			$term = $this->input->post('term');
+		}
+//		error_log("lookup -> " . $keyword);
+		$data['response'] = 'false'; //Set default response
+                
+		$query = $this->search_model->lookupAutocomplete($term); //Search DB
+//		error_log("got past query");
+		if (!empty($query)) {
+                        
+			$data['response'] = 'true';
+			$data['message'] = array();
+			$json_array = array();
+
+			foreach ($query->result() as $row) {
+//				error_log(print_r($row, 1));
+				if ( $row->type == $type ) {
+					$auto_val = $row->term;
+					array_push($json_array, $auto_val);
+				}
+			}
+		}
+		echo json_encode($json_array); //echo json string if ajax request
+	}
+        
+        function validate_gene() {
+		$gene = $this->input->post('term');
+		$this->load->model('general_model');
+		$does_gene_exist = $this->general_model->checkGeneExists($gene);
+//		error_log("validating -> $gene -> $does_gene_exist");
+		if ( $does_gene_exist ) {
+			echo json_encode(array('status' => 'Validated', 'message' => "This is a valid gene symbol"));
+		}
+		else {
+			echo json_encode(array('status' => 'Not validated', 'message' => "This is NOT a valid gene symbol, however, you may still use it in your query if you wish"));
+		}
+	}
+        
+        function validate_hgvs() {
+		$hgvs = $this->input->post('term');
+//		error_log("validating -> $hgvs");
+		if (preg_match_all("/^([c|g|p])\.([-|\*]*)(\d+)([+|-]*)(\d*)(.+)/", $hgvs, $matches)) {
+//			echo "validated";
+			echo json_encode(array('status' => 'Validated', 'message' => "The format of your HGVS nomenclature is valid"));
+		}
+		else {
+			echo json_encode(array('status' => 'Not validated', 'message' => "The format of your HGVS nomenclature is NOT valid"));
+		}
+	}
+	
+	function validate_phenotype() {
+		$term = $this->input->post('term');
+//		error_log("validating -> $term");
+		if (preg_match_all("/^([c|g|p])\.([-|\*]*)(\d+)([+|-]*)(\d*)(.+)/", $hgvs, $matches)) {
+//			echo "validated";
+			echo json_encode(array('status' => 'Validated', 'message' => "The format of your HGVS nomenclature is valid"));
+		}
+		else {
+			echo json_encode(array('status' => 'Not validated', 'message' => "The format of your HGVS nomenclature is NOT valid"));
+		}
 	}
 	
 	function query_builder_results_display($id, $encoded_endpoint) {
