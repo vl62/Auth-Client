@@ -1707,8 +1707,8 @@ class Admin extends MY_Controller {
 		}
 	}
 	
-	function validate_gene() {
-		$gene = $this->input->post('term');
+	function validate_gene($gene) {
+//		$gene = $this->input->post('term');
 		$this->load->model('general_model');
 		$does_gene_exist = $this->general_model->checkGeneExists($gene);
 //		error_log("validating -> $gene -> $does_gene_exist");
@@ -1962,6 +1962,7 @@ class Admin extends MY_Controller {
 			$json_array = array();
 			foreach ($query->result() as $row) {
 //				error_log(print_r($row, 1));
+                                if($row->value === null) continue;
 				$auto_val = $row->value;
 				array_push($json_array, $auto_val);
 			}

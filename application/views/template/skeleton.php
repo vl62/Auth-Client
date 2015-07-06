@@ -60,7 +60,7 @@
                              
 		<script>window.jQuery || document.write('<script src="<?php echo base_url(JS."libs/jquery-1.7.1.min.js");?>"><\/script>')</script>           
 		<script src="<?php echo base_url(JS."libs/underscore-1.3.1.min.js");?>"></script>
-               <script src="<?php  echo base_url(JS."plugins.js");?>"></script>
+                <script src="<?php  echo base_url(JS."plugins.js");?>"></script>
 		<script src="<?php echo base_url(JS."script.js");?>"></script>
 		<script src="<?php echo base_url(JS."cafevariome.js");?>"></script>
 		<script src="<?php echo base_url(JS."bootbox.js");?>"></script>
