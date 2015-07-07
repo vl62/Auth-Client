@@ -153,12 +153,17 @@ class Core {
 			$check_array['curl_loaded'] = $error;
 		}
 		
-		if (version_compare(PHP_VERSION, '5.0.0', '<')) {
+		if (version_compare(PHP_VERSION, '5.2.0', '<')) {
 //		if (version_compare(PHP_VERSION, '5.3.13') <= 0) {
 			$error = '<div class="alert alert-error">PHP version is too low (' . PHP_VERSION . '), you must have PHP 5 installed.</div><hr>';
 			$check_array['php_version'] = $error;
 		}
 
+		if (! function_exists('mysqli_connect')) {
+			$error = '<div class="alert alert-error">mysqli is not enabled in PHP. See <a href="http://php.net/manual/en/mysqli.installation.php" target="_blank" >here</a> for an example of how to enable it.</div><hr>';
+			$check_array['mysqli'] = $error;
+		}
+		
 		return $check_array;
 	}
 	
