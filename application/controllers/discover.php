@@ -484,22 +484,24 @@ class Discover extends MY_Controller {
 						$es_data = $this->elasticsearch->query_dsl($query);
 						$counts = array();
 //						print "SOURCE -> $source<br />";
-						foreach ( $es_data['facets']['sharing_policy']['terms'] as $facet_sharing_policy ) {
-//							error_log("----> " . print_r($facet_sharing_policy, 1));
-							$sp_es = $facet_sharing_policy['term'];
-							if ( $sp_es == "openaccess" ) {
-								$sp_es = "openAccess";
-							}
-							else if ( $sp_es == "restrictedaccess" ) {
-								$sp_es = "restrictedAccess";
-							}
-							else if ( $sp_es == "linkedaccess" ) {
-								$sp_es = "linkedAccess";
-							}
+						if ( array_key_exists('facets', $es_data) ) {
+							foreach ( $es_data['facets']['sharing_policy']['terms'] as $facet_sharing_policy ) {
+//								error_log("----> " . print_r($facet_sharing_policy, 1));
+								$sp_es = $facet_sharing_policy['term'];
+								if ( $sp_es == "openaccess" ) {
+									$sp_es = "openAccess";
+								}
+								else if ( $sp_es == "restrictedaccess" ) {
+									$sp_es = "restrictedAccess";
+								}
+								else if ( $sp_es == "linkedaccess" ) {
+									$sp_es = "linkedAccess";
+								}
 
-							$counts[$sp_es] = $facet_sharing_policy['count'];
-//							error_log("es counts -> " . print_r($counts,1));
-//							print "<br />";
+								$counts[$sp_es] = $facet_sharing_policy['count'];
+//								error_log("es counts -> " . print_r($counts,1));
+//								print "<br />";
+							}
 						}
 //					}
 //					else {
@@ -955,156 +957,6 @@ class Discover extends MY_Controller {
 		
 //		if ( empty($from_url_query) ) { // The query comes from the form through the website
 //			$this->load->view('pages/sources_table', $data); // Don't use _render as headers are already sent, html output from the view is sent back to ajax function and appended to div
-//		}
-//		else { // Query comes from a URL construction	
-//			if ( strtolower($format) == "html" ) {
-//				$this->_render('pages/sources_table');
-//			}
-//			else if ( strtolower($format) == "tab" ) {
-//				$this->output->set_header("Content-Type: text/plain");
-//				$this->load->view('pages/sources_table_tab', $this->data);
-//			}
-//			else if ( strtolower($format) == "json" ) {
-//				$this->output->set_content_type('application/json')->set_output(json_encode($this->data['counts']));
-//			}
-//			else {
-//				$this->_render('pages/sources_table');
-//			}
-//		}
-		
-		
-//		$this->variantcount($query_statement, "all", "html", "no");
-
-//		$sources = $this->sources_model->getSources();
-//		$this->data['sources_full'] = $sources;
-//		$this->data['query_results'] = $query_results;
-//		$this->_render('query_builder/results_table');
-	}
-	
-	function query_simple($query = '') {
-		if ( $query == '' ) {
-			$query = json_decode(file_get_contents('php://input')); // Get the POST body which contains the query JSON
-		}
-//		print_r($query);
-		error_log("query -> " . print_r($query, 1));
-		$parameters = array ('syntax' => 'elasticsearch');
-		$this->load->library('CafeVariome/Query', $parameters, 'query');
-		$query_statement = $this->query->parse($query);
-		$term = $query_statement;
-		if ( $term ) {
-//			error_log("POST -> " . print_r($_POST, true));
-			if ( empty($from_url_query) ) {
-				$data['term'] = $term;
-			}
-			else {
-				$term = urlencode($term);
-				$this->data['term'] = $term;
-			}
-		}
-		
-		$source = "all";
-		$this->load->model('sources_model');
-		
-		if ( ! $this->config->item('show_sources_in_discover')) {
-//			error_log("form source -> $source");
-			$source = "all";
-		}
-		
-		if (preg_match('/all/i',$source)) { // All sources specified, get descriptions
-			$sources = $this->sources_model->getSources();
-		}
-		else { // Just one source, get description
-			$sources = $this->sources_model->getSourceSingle($source);
-		}
-		
-		$sources_types = $this->sources_model->getSourcesTypes();
-		if ( empty($from_url_query) ) {
-			$data['sources_full'] = $sources;
-		}
-		else {
-			$this->data['sources_full'] = $sources;
-		}
-		
-		foreach ($sources as $source => $description) {
-			// Check whether the user has the required access level for this source
-			$permission = $this->query->check_user_permission_for_source($source); // Get the user permission for this source (returns TRUE or FALSE)
-
-			// Check what type of source this is (API, central, local etc)
-			$type = $sources_types[$source];
-			if ( ! $type ) { // If there's no type for this source in the database set it as mysql for the default
-				$type = "mysql";
-			}
-
-			// Pass the permission for this source to the view data
-			if ( empty($from_url_query) ) {
-				$data['access_flag'][$source] = $permission;
-				$data['source_types'][$source] = $type;
-				
-			}
-			else {
-				$this->data['access_flag'][$source] = $permission;
-				$this->data['source_types'][$source] = $type;
-			}
-			
-			// Store the query information details in the database if stats are enabled
-			if ($this->config->item('stats')) {
-				$ip = getRealIpAddr();
-				$search_stats = array(
-					'ip' => $ip,
-					'username' => "NULL",
-					'term' => $term,
-					'source' => $source,
-					'datetime' => date('d-m-Y H:i:s')
-				);
-				updateStats($search_stats, 'searchstats');
-			}
-			
-			if ( $type == "api" ) {
-				$this->load->model('federated_model');
-				// Get the node name and then remove it from the source name - need to do this since the node name has been appended in order to make it unique for this node - in the node that is to be search it won't have this appended bit
-				$node_name = $this->federated_model->getNodeNameFromNodeURI($source_uri);
-				$node_source = str_replace("_" . $node_name, "", $source);
-//				error_log("NODE SOURCE -> " . $node_source . " SOURCE_URI -> " . $source_uri);
-				$source_info = $this->sources_model->getSource($source);
-				if ( empty($from_url_query) ) {
-					$data['source_info'][$source] = $source_info;
-					$data['node_source'][$source] = $node_source;
-				}
-				else {
-					$this->data['source_info'][$source] = $source_info;
-					$this->data['node_source'][$source] = $node_source;						
-				}
-				$counts = $this->runAPISearch($source_uri, $source, $term);
-			}
-			else if ( $type == "central" ) {
-				$central_source = str_replace("_central", "", $source);
-				if ( empty($from_url_query) ) {
-					$data['central_source'][$source] = $central_source;
-				}
-				else {
-					$this->data['central_source'][$source] = $central_source;
-				}
-				$counts = $this->runAPISearch("http://www.cafevariome.org", $central_source, $term);
-			}
-			else {
-				$query_result = $this->query->run($query_statement, $source);
-//				$final_query_result[$source] = $query_result;
-				if ( isset ($query_result) ) {
-					if ( empty($from_url_query) ) {
-						$data['counts'][$source] = $query_result;
-					}
-					else {
-						$this->data['counts'][$source] = $query_result;
-					}
-				}
-			}
-			
-		}
-		
-
-		
-//		if ( empty($from_url_query) ) { // The query comes from the form through the website
-			$this->load->view('pages/sources_table', $data); // Don't use _render as headers are already sent, html output from the view is sent back to ajax function and appended to div
 //		}
 //		else { // Query comes from a URL construction	
 //			if ( strtolower($format) == "html" ) {
