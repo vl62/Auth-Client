@@ -36,12 +36,12 @@
 				<p>Specify the file format</p>
 				<?php
 				$options = array(
-//					'epad' => 'EPAD',
 //					'epad_new' => 'EPAD_new',
 //					'excel' => 'Excel Full (.xls)',
 					'excel_core' => 'Excel Template',					
 //					'tab' => 'Tab Delimited Full',
 					'tab_core' => 'Tab Delimited Template',
+					'epad' => 'EPAD',
 //					'dmudb' => 'DMuDB tab delimited (.txt)',
 //					'vcf' => 'VCF',
 //					'lovd2' => 'LOVD2',

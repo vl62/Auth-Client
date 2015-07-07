@@ -11,6 +11,7 @@ $data = array( 'externalurl' => $externalurl);
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 curl_setopt($ch, CURLOPT_HEADER, false);
+curl_setopt($ch, CURLOPT_SSL_CIPHER_LIST, 'TLSv1');
 //curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 //	"Token: $token",
 //	"Access-Control-Allow-Origin: *"

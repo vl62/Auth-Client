@@ -184,7 +184,8 @@ class General_model extends CI_Model {
 		$this->db->query("INSERT INTO autocomplete (term, type) SELECT DISTINCT gene, 'gene' FROM variants WHERE gene != ''");
 		$this->db->query("INSERT INTO autocomplete (term, type) SELECT DISTINCT LRG, 'LRG' FROM variants WHERE LRG != ''");
 		$this->db->query("INSERT INTO autocomplete (term, type) SELECT DISTINCT ref, 'ref' FROM variants WHERE ref != ''");
-		$this->db->query("INSERT INTO autocomplete (term, type) SELECT DISTINCT attribute_termName, 'phenotype' FROM phenotypes WHERE attribute_termName != ''");
+//		$this->db->query("INSERT INTO autocomplete (term, type) SELECT DISTINCT attribute_termName, 'phenotype' FROM phenotypes WHERE attribute_termName != ''");
+		$this->db->query("INSERT INTO autocomplete (term, type) SELECT DISTINCT CONCAT(attribute_termName, ':', value), 'phenotype' FROM phenotypes WHERE attribute_termName != ''");
 //		$this->db->query("INSERT INTO autocomplete (term, type) SELECT DISTINCT termName, 'phenotype' FROM primary_phenotype_lookup WHERE termName != ''");
 	}
         
