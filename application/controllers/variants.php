@@ -2042,6 +2042,169 @@ class Variants extends MY_Controller {
 			}
 			return $return_data;
 		}
+		
+		else if ( $fileformat == 'phenotype_test' ) {
+//			error_log("got epad");
+			ini_set('memory_limit','1024M');
+			$this->load->library('phpexcel/PHPExcel');
+			
+			$excel_type = PHPExcel_IOFactory::identify($file); // Identify the file type, check it's actually an Excel file, throw an error if not
+			if (! preg_match("/Excel/i", $excel_type)) {
+				$return_data['result_flag'] = 0;
+				$return_data['error'] = "The input file doesn't seem to be in Excel format, please check the file and make sure you specify the correct file format.";
+				return $return_data;
+			}
+			
+			$objPHPExcel = PHPExcel_IOFactory::load($file); // Factory should auto guess the Excel type
+			$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+//			error_log(print_r($sheetData, 1));
+			$row_count = 0;
+			$this->load->model('general_model');
+			// Initialize core fields array which is populated later from import template headers
+			$core_fields = array();
+
+			foreach ( $sheetData as $row ) {
+				$row_count++;
+				error_log("row -> " . $row_count);
+				if ( $row_count === 1 ) { // It's the first row of the sheet - validate the headers and store for later
+					foreach ( $row as $column ) {
+						if ( $column ) {
+							$cell_value = (string) $column;
+							$core_fields[] = $cell_value; // Store the header name
+						}
+
+					}
+				}
+				else { // All other lines are actual data
+					$column_count = 0;
+					$insert_data = array();
+					$phenotype_insert_data = array();
+					$primary_phenotype_lookup_data = array();
+					$present_flags = array();
+					foreach ( $row as $column ) {
+						$column_count++;
+						$current_header = (string) $core_fields[$column_count-1]; // Match this column to the correct header name (stored above)
+//						error_log("header -> " . $current_header);
+						$cell_value = (string) $column;
+						$cell_value = trim($cell_value);
+
+						// Ignore any empty cells - for some reason PHPExcel is parsing empty rows so it's possible that empty records could get insert - check this here to prevent that happening
+//						$value = $cell_value == '' ? NULL : $cell_value;
+						if ( $cell_value == '' ) {
+							continue;
+							// error_log("$value NULL for $current_header $row_count:$column_count");
+						}
+						
+						$sourceId = "LocalList";
+						$termName = $current_header;
+//						error_log("cell -> $current_header -> $cell_value");
+						
+						// Match the generic phenotype with attribute then qualifier in square brackets
+						if ( preg_match('/(.*?) \[(.*?)\]/i', $current_header, $match)) {
+//							error_log("match ---> " . print_r($match, 1));
+							$termName = $match[1];
+							$qualifier = $match[2];
+//							error_log("match -> " . $match . " termName -> " . $termName . " qualifier -> " . $qualifier);
+							$sourceId = "LocalList";
+									
+							$full_termName = $termName . " [$qualifier]";
+							$termId = "locallist/" . $termName . " [$qualifier]";
+							$termId = strtolower($termId);
+							$termId = str_replace(' ', '_', $termId);
+							$type = 'quality';
+//							$value = $cell_value;
+							$value = $cell_value == '' ? NULL : $cell_value;
+							$phenotype_insert_data[] = array('attribute_sourceID' => $sourceId, 'attribute_termID' => $termId, 'attribute_termName' => $full_termName, 'attribute_qualifier' => $qualifier, 'value' => $value, 'type' => $type);
+							$primary_phenotype_lookup_data[] = array('sourceId' => $sourceId, 'termId' => $termId, 'termName' => $full_termName, 'termDefinition' => '', 'qualifier' => $qualifier);
+
+						}
+						elseif ( $current_header == "individual_id" ) { // Add the individual_id to the core table insert data
+							$insert_data[$current_header] = $cell_value;
+						}
+						else {
+//							$insert_data[$current_header] = $cell_value;
+							$phenotype_attribute = $current_header;
+							$phenotype_value = $cell_value;
+//							error_log("attribute -> $phenotype_attribute --- value -> $phenotype_value");
+							// TODO: Add this into the EAV table as it's a phenotype
+							$phenotype_data_array = $this->_parse_phenotype_data_eav($phenotype_attribute, $phenotype_value);
+//							error_log(print_r($phenotype_data_array, 1));
+							$phenotype_insert_data[] = $phenotype_data_array['phenotype_insert_data'];
+							$primary_phenotype_lookup_data[] = $phenotype_data_array['primary_phenotype_lookup_data'];
+						}
+					}
+
+					if ( ! empty($insert_data) ) {
+//						error_log(print_r($insert_data, 1));
+						// Override the source with the source based on the import page (hopefully avoids errors of not inputting the right source)
+						$insert_data['source'] = $source;
+						$insert_data['laboratory'] = $source;
+						if ( ! array_key_exists('sharing_policy', $insert_data) ) {
+							$insert_data['sharing_policy'] = $sharing_policy;
+						}
+//						error_log(print_r($insert_data, 1));
+						$insert_id = $this->sources_model->insertVariants($insert_data);
+
+						// If there's phenotype data then insert it
+						if ( ! empty ($phenotype_insert_data) ) {
+//							error_log("INSERT -> " . print_r($phenotype_insert_data, 1));
+							$phenotype_array = array();
+							foreach ($phenotype_insert_data as $phenotype_data) {
+//								error_log("phenotype_data $insert_id -> " . print_r($phenotype_data, 1));
+								$phenotype_data['cafevariome_id'] = $insert_id; // Add the ID of the variant so that the phenotype can be linked to it
+								$phenotype_insert_id = $this->sources_model->insertPhenotypes($phenotype_data);
+								// Get the term name and add it to the insert_data array that is indexed in ElasticSearch
+//								$phenotype_array['term_name'] = $phenotype_data['attribute_termName'];
+//								$insert_data['phenotypes'][] = $phenotype_array;
+
+								
+								
+							}
+							
+							
+						}
+						
+						// Check if there's anything to insert into primary_phenotype_lookup table
+						if ( ! empty ($primary_phenotype_lookup_data) ) {
+							foreach ( $primary_phenotype_lookup_data as $primary_phenotype_lookup ) { // Go through each insert row
+
+								$pl = $this->sources_model->getPrimaryLookup($primary_phenotype_lookup['termId']); // Check if the termId is unique
+								if (!$pl) { // If the termId doesn't exist in the table then insert it
+									$lookup_data = array(
+										"sourceId" => $primary_phenotype_lookup['sourceId'],
+										"termId" => $primary_phenotype_lookup['termId'],
+										"termName" => $primary_phenotype_lookup['termName'],
+										"qualifier" => $primary_phenotype_lookup['qualifier']
+									);
+									$lookup_insert_id = $this->sources_model->insertPrimaryLookup($lookup_data);
+								}
+							}
+						}
+						
+//						error_log("insert id -> " . $insert_id);
+						if (!$insert_id) {
+							$return_data['result_flag'] = 0;
+							$return_data['error'] = "MySQL insert was unsuccessful";
+						}
+						if ( $this->config->item('use_elasticsearch') ) {
+//							error_log("ID -> $insert_id -> " . print_r($insert_data, 1));
+//							$elastic_search_index_result = $this->_indexVariantElasticSearch($insert_id, $insert_data);
+							$this->load->library('elasticsearch');
+							// Create dynamic name for the ES index to try and avoid clashes with multiple instance of CV on the same server
+							$es_index = $this->config->item('site_title');
+							$es_index = preg_replace('/\s+/', '', $es_index);
+							$es_index = strtolower($es_index);
+							$this->elasticsearch->set_index($es_index);
+							$this->elasticsearch->set_type("variants");
+							$index_data = $this->sources_model->getVariantWithPhenotypeJSON($insert_id);
+							$index_result = $this->elasticsearch->add($insert_id, $index_data);	
+						}
+					}
+				}
+			}
+			return $return_data;
+		}	
+		
 		else if ( $fileformat == 'epad' ) {
 //			error_log("got epad");
 			ini_set('memory_limit','1024M');
