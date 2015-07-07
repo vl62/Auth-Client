@@ -453,18 +453,19 @@ class Database {
 		}
 //		error_log("filename -> $filename");
 		// Connect to MySQL server - having to use standard mysql instead of mysqli here because of the potential size of the sql query - could get very big so need to process it line by line
-		$link = mysql_connect($data['hostname'],$data['username'],$data['password']);
+		$link = mysqli_connect($data['hostname'],$data['username'],$data['password'],$data['database']);
+
 		if (!$link) {
-//			die('Could not connect: ' . mysql_error());
-			$this->error_message = "Couldn't connect to MySQL -> " . mysql_error();
+//			die('Could not connect: ' . mysqli_error());
+			$this->error_message = "Couldn't connect to MySQL -> " . mysqli_error();
 			return false;
 		}
 		// Select database
-		$db_selected = mysql_select_db($data['database']);
-		if (!$db_selected) {
-			$this->error_message = "Couldn't select database (" . $data['database'] . ") -> " . mysql_error();
-			return false;
-		}
+//		$db_selected = mysqli_select_db($data['database']);
+//		if (!$db_selected) {
+//			$this->error_message = "Couldn't select database (" . $data['database'] . ") -> " . mysqli_error();
+//			return false;
+//		}
 		// Temporary variable, used to store current query
 		$templine = '';
 		// Read in entire file
@@ -482,7 +483,7 @@ class Database {
 			// If it has a semicolon at the end, it's the end of the query
 			if (substr(trim($line), -1, 1) == ';') {
 				// Perform the query
-				mysql_query($templine, $link) or $error_flag = 1;
+				mysqli_query($link, $templine) or $error_flag = 1;
 				// Reset temp variable to empty
 				$templine = '';
 			}
