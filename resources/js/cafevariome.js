@@ -674,7 +674,6 @@ function validateVariantsInSourceWithMutalyzer(source, id) {
 	});
 }
 
-
 // Regenerate autocomplete terms
 function regenerateAutocomplete() {
 	$('#waiting').show(500);
@@ -684,6 +683,19 @@ function regenerateAutocomplete() {
 		success: function() {
 			$('#waiting').hide(500);
 			alert("Autocomplete terms have been updated");
+		}
+	});
+}
+
+// Regenerate autocomplete terms
+function regenerateFederatedPhenotypeAttributesAndValues() {
+	$('#waiting').show(500);
+    $.ajax({url: baseurl + 'admin/regenerate_federated_phenotype_attributes_and_values_list',
+		delay: 200,
+		type: 'POST',
+		success: function() {
+			$('#waiting').hide(500);
+			alert("Federated phenotype attributes and values list has been updated");
 		}
 	});
 }

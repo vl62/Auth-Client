@@ -111,6 +111,11 @@ class Phenotypes_model extends CI_Model {
 		return $query;
 	}
 
+	function regeneratePhenotypeAttributesAndValues() {
+		$query = $this->db->query("SELECT attribute_termName, value FROM phenotypes GROUP BY attribute_termName, value ORDER BY value+0 LIMIT 50")->result_array();
+//		error_log($this->db->last_query());
+		return $query;
+	}
 	
 	public function checkIfPhenotypeTermExists($term) {
 		$query = $this->db->get_where('primary_phenotype_lookup', array('termName' => $term, 'sourceId' => 'LocalList'));
@@ -157,5 +162,16 @@ class Phenotypes_model extends CI_Model {
 		}
 	}
 
+
+	public function emptyNetworksPhenotypesAttributesValues() {
+		$this->db->truncate('networks_phenotypes_attributes_values');
+	}
+	
+	public function insertNetworksPhenotypesAttributesValues($data) {
+		$this->db->insert('networks_phenotypes_attributes_values', $data);
+		$insert_id = $this->db->insert_id();
+		return $insert_id;
+
+	}
 	
 }
