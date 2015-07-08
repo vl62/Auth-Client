@@ -1824,12 +1824,12 @@ class Admin extends MY_Controller {
 		$tmp_unique_phenotypes = array();
 		foreach ( $federated_installs as $install ) {
 			$network_key = $install['network_key'];
-			error_log("$selected_network ----> $network_key");
-			if ( $selected_network == $network_key ) {
+//			error_log("$selected_network ----> $network_key");
+			if ( $selected_network == $network_key ) { // If the selected network matches the current network from the federated installs list
 				$install_uri = $install['installation_base_url'];
 				$install_uri = rtrim($install_uri,"/");
-				error_log("install -> $install_uri");
-			
+//				error_log("install -> $install_uri");
+
 				$opts = array('http' =>
 					array(
 						'method'  => 'GET',
