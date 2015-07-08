@@ -11,26 +11,37 @@ if (sizeof($ontologiesused) > 0) {
 			<div class="well">
 				<h3>Record Discovery</h3>
 
+				<?php echo form_open('discover', array( 'id' => 'discover')); ?>
+				<p>
+					<label>Select network to search:</label>
+					<div class="input-prepend">
+						<span class="add-on"><a rel="popover" data-content="Select which network you would like to search." ><i class="icon-question-sign"></i></a></span>
+						<select id="networks">
+							<?php foreach ( $networks as $network ): ?>
+							<option value="<?php echo $network['network_key']; ?>"><?php echo $network['network_name']; ?></option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+				</p>
 				<?php
-				echo form_open('discover', array( 'id' => 'discover'));
 				ksort($sources_options);
 				$sources_options = array('all' => 'All') + $sources_options;
 //				print_r($sources_options);
 				?>
-				<br />
-				<?php if ( $this->config->item('show_sources_in_discover')): ?>
-				<p>
-					<label>Select Source:</label>
-					<div class="input-prepend">
-						<span class="add-on"><a rel="popover" data-content="Click to read information about sources." href="#sourcesModal" data-toggle="modal" data-backdrop="false" ><i class="icon-question-sign"></i></a></span>				
+				<!--<br />-->
+				<?php // if ( $this->config->item('show_sources_in_discover')): ?>
+				<!--<p>-->
+					<!--<label>Select (local) source:</label>-->
+					<!--<div class="input-prepend">-->
+						<!--<span class="add-on"><a rel="popover" data-content="Click to read information about sources." href="#sourcesModal" data-toggle="modal" data-backdrop="false" ><i class="icon-question-sign"></i></a></span>-->
 						<?php
-							$js = 'id="sources"';
-							print form_dropdown('sources', $sources_options, 'All', $js);
+//							$js = 'id="sources"';
+//							print form_dropdown('sources', $sources_options, 'All', $js);
 						?>
-					</div>
-				</p>
-				<br />
-				<?php endif; ?>
+					<!--</div>-->
+				<!--</p>-->
+				<!--<br />-->
+				<?php // endif; ?>
 <!--				<p>
 					<label>Laboratory ID:</label>
 					<div class="input-prepend">

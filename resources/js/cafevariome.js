@@ -2176,10 +2176,15 @@ $(document).ready(function() {
 // Main search ajax for discovery interface
 $(function() {
 	$("#search").click(function(e) {
+		
 		e.preventDefault();
 		$('#mutationDisplay').hide();
 		$('#waiting').show(500);
-		var source =  $('#sources :selected').attr('value');
+		var network =  $('#networks :selected').attr('value');
+//		alert("network -> " + network);
+//		var source =  $('#sources :selected').attr('value');
+		var source = "all";
+//		alert("source -> " + source);
 		var lab =  $('#laboratories :selected').text();
 		var term = document.getElementById("term").value;
 		var mutalyzer_check = $("#mutalyzer_check").is(':checked');
@@ -2195,7 +2200,7 @@ $(function() {
 //		alert("query -> " + queryString);
 		$.ajax({
 			type: "POST",
-			data: { term: term, source : source, lab : lab, mutalyzer_check: mutalyzer_check, grouping_type: grouping_type },
+			data: { network: network, term: term, source : source, lab : lab, mutalyzer_check: mutalyzer_check, grouping_type: grouping_type },
 //			data: queryString,
 			url: baseurl + "discover/variantcount",
 			dataType: 'html',
