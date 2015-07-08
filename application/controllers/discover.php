@@ -32,7 +32,9 @@ class Discover extends MY_Controller {
 		// Set the federated installs in the session so they can be used by variantcount
 		$this->session->set_userdata(array('federated_installs' => $federated_installs));
 
-		
+		$networks = json_decode(authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of"), 1);
+		error_log("networks -> " . print_r($networks, 1));
+		$this->data['networks'] = $networks;
 		
 		
 		$sources_options = $this->sources_model->getSources(); // Get all the available sources from db
@@ -224,11 +226,6 @@ class Discover extends MY_Controller {
 //				}
 			}
 		}
-		
-		
-		
-
-
 
 	}
 	
@@ -238,6 +235,8 @@ class Discover extends MY_Controller {
 //		error_log("variantcount -> $term $source $format");
 //		$this->output->enable_profiler(TRUE);
 		if ( $this->input->post('term') ) { // The inputs come from the form
+			$network = $this->input->post('network');
+			error_log("network -> $network");
 			$term = $this->input->post('term');
 			$source = $this->input->post('source');
 			$lab = $this->input->post('lab');

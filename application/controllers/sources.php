@@ -361,7 +361,7 @@ class Sources extends MY_Controller {
 
 		}
 		else {
-			$name = $this->input->post('name'); // Convert the source name to lowercase
+			$name = strtolower(str_replace(' ', '_', $this->input->post('name'))); // Convert the source name to lowercase and replace whitespace with underscore
 			$uri = $this->input->post('uri');
 			$owner_name = $this->input->post('owner_name');
 			$email = $this->input->post('email');
