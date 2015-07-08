@@ -757,6 +757,16 @@ class Discover extends MY_Controller {
 	}
 	
 	function query_builder() {
+            
+                $token = $this->session->userdata('Token');
+                $networks = json_decode(authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of"), 1);
+                
+                $this->data['networks'] = array();
+                
+                foreach ($networks as $key => $value) {
+                    $this->data['networks'] += array($value['network_name'] => $value['network_key']);
+                }
+                
 		$this->load->library('elasticsearch');
 		$check_if_running = $this->elasticsearch->check_if_running();
 		if ( ! array_key_exists( 'ok', $check_if_running) ) {

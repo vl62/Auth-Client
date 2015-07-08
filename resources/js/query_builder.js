@@ -28,19 +28,6 @@
         return !isNaN(parseFloat(n)) && isFinite(n);
     }
     
-    var phenotype_keys = new Array();
-    $.ajax({url: baseurl + 'discover/get_phenotype_attributes_nr_list/',
-      dataType: 'json',
-      delay: 200,
-      type: 'POST',
-      success: function(json) {
-              $.each(json, function(i, value) {
-                  $('select.phenotype_keys1').append($('<option>').text(value.attribute_termName).attr('value', value.attribute_termName));
-                  phenotype_keys.push(value.attribute_termName);
-              });
-          }
-    });
-      
     var gene_keys = new Array(); 
     $.ajax({url: baseurl + 'discover/autocomplete_query_builder/gene',
       dataType: 'json',
@@ -240,10 +227,34 @@
                 break;
         }
     }
+    
+    var phenotype_keys = new Array();
         
     $(document).ready(function() {
         
-        console.clear();
+        $("#selectNetwork").select2({placeholder: "--Select an attribute--"});
+        
+        $(window).load(function(){
+            $('#networkSelectModal').modal('show');
+        });
+        
+        $("#selectNetwork").change(function() {
+            $network_to_search = $("#selectNetwork").val();
+            $('#networkSelectModal').modal('hide');
+            
+            $.ajax({url: baseurl + 'admin/get_phenotype_attributes_nr_list_federated/' + $network_to_search,
+                dataType: 'json',
+                delay: 200,
+                type: 'POST',
+                success: function(json) {
+                        $.each(json, function(i, value) {
+                            $('select.phenotype_keys1').append($('<option>').text(value.attribute_termName).attr('value', value.attribute_termName));
+                            phenotype_keys.push(value.attribute_termName);
+                        });
+                    }
+              });
+        });
+        
         
         // DNA Type
         $(document).on('change', ".condition_ref", function() {
@@ -543,8 +554,18 @@
                     $query = "( " + $genotype.trim() + " ) " + $gen_phen + " (" + $phenotype.trim() + ")";
             }
             
-            $.extend($arr, {"queryStatement": $query});
-            console.log(JSON.stringify($arr, null, '\t'));
+            $.extend($arr, {"queryStatement": $query, "network_to_search" : $network_to_search});
+//            console.log(JSON.stringify($arr, null, '\t'));
+
+            $.ajax({url: baseurl + 'discover/query/' + $network_to_search,
+                dataType: 'json',
+                delay: 200,
+                type: 'GET',
+                data: {'jsonAPI' : $arr},
+                success: function(data) {
+                        
+                    }
+            });
             
         });
         

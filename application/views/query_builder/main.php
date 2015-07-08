@@ -3,7 +3,6 @@
     <div class="row-fluid" id="genotype_phenotype">
         <div class="span12 pagination-centered">
             <h2>Query Builder</h2><hr>
-            
             <div class="boxed" id="genotypeContainer" style="">
                 <div class="row-fluid">
                     <div class="span2 pagination-left"><h3>Genotype</h3></div>
@@ -88,4 +87,28 @@
             
         </div> <!-- end span12 pagination-centered -->
     </div> <!-- end row-fluid -->
+    
+    <!-- Modal -->
+    <div id="networkSelectModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Select which network you would like to search</h4>
+            </div>
+            <div class="modal-body pagination-centered">
+                <select class="input-xlarge" id="selectNetwork" style="margin-bottom:10px">
+                    <option></option>
+                    <?php foreach ($networks as $network_name => $network_key) : ?>
+                        <option value="<?php echo $network_key; ?>"><?php echo $network_name; ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+          </div>
+
+        </div>
+    </div>
+    
 </div> <!-- end container -->
