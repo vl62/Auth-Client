@@ -1,0 +1,1 @@
+<?xml version="1.0" standalone="no"?><!DOCTYPE DASSTYLE SYSTEM "http://www.biodas.org/dtd/dasstyle.dtd"><DASSTYLE><STYLESHEET version="1.0"><CATEGORY id="default"><TYPE id="default"><GLYPH><BOX><FGCOLOR>red</FGCOLOR><FONT>sanserif</FONT><BGCOLOR>black</BGCOLOR></BOX></GLYPH></TYPE></CATEGORY></STYLESHEET></DASSTYLE>

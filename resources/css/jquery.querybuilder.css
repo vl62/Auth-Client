@@ -1,0 +1,67 @@
+input[type=radio] {
+    display: none;
+}
+input[type=radio] + label::before {
+    content: '';
+    display: inline-block;
+    border: 1px solid #000;
+    border-radius: 50%;
+    margin: 0 0.5em;
+}
+input[type=radio]:checked + label::before {
+    background-color: #ffa;
+}
+
+.radio1 + label::before {
+    width: 0.5em;
+    height: 0.5em;
+}
+
+.radio2 + label::before {
+    width: 0.75em;
+    height: 0.75em;
+}
+
+.radio3 + label::before {
+    width: 1em;
+    height: 1em;
+}
+
+.radio4 + label::before {
+    width: 1.5em;
+    height: 1.5em;
+}
+
+.boxed {
+  border: 1px dashed darkgray;
+}
+
+#genotypeContainer .btn[data-collapseStatus] {
+    padding: 14px 24px;
+    border: 0 none;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.container_border {
+    border: 2px solid rgb(148, 178, 73);
+    border-radius: 20px;
+    border-top: none;
+    margin: 0 -1px -1px;
+    padding-bottom: 10px;
+    padding-top: 20px;
+}
+
+#dnaContainer hr {
+    border: none;
+    height: 2px;
+    /* Set the hr color */
+    color: #333; /* old IE */
+    background-color: rgb(0,102,0); /* Modern Browsers */
+}
+
+button:focus, .button:focus {
+    border:none !important;
+    outline:none !important;
+}
