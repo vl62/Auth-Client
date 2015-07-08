@@ -1875,6 +1875,8 @@ class Admin extends MY_Controller {
 //		error_log(print_r($phenotype_attributes_nr_list, 1));
 		echo json_encode($phenotype_attributes_nr_list);
 	}
+
+	
 	
 	function autocomplete_bioportal() {
 		$term = rawurlencode($this->input->post('term')); // Escape the term as it might contain spaces/not allowed characters
@@ -2964,6 +2966,59 @@ class Admin extends MY_Controller {
 
 	}
 
+	function get_phenotype_attributes_and_values_list_federated() {
+		$this->load->model('phenotypes_model');
+		$query = $this->phenotypes_model->regeneratePhenotypeAttributesAndValues();
+		echo json_encode($query);
+		
+	}
+	
+	function regenerate_federated_phenotype_attributes_and_values_list() {
+		$token = $this->session->userdata('Token');
+		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
+		$federated_installs = json_decode(stripslashes($data), 1);
+		error_log("federated_installs -> " . print_r($federated_installs, 1));
+		$this->load->model('phenotypes_model');
+		$this->phenotypes_model->emptyNetworksPhenotypesAttributesValues();
+		foreach ( $federated_installs as $install ) {
+			$network_key = $install['network_key'];
+//			error_log("network ----> $network_key");
+			$install_uri = $install['installation_base_url'];
+			$install_uri = rtrim($install_uri,"/");
+//			error_log("install -> $install_uri");
+
+			$opts = array('http' =>
+				array(
+					'method'  => 'GET',
+					'timeout' => 5 
+				)
+			);
+			$context  = stream_context_create($opts);
+			$install_phenotypes_attributes_and_values_list = @file_get_contents($install_uri . "/admin/get_phenotype_attributes_and_values_list_federated/", false, $context);
+			
+			if ( $install_phenotypes_attributes_and_values_list ) {
+				foreach ( json_decode($install_phenotypes_attributes_and_values_list, 1) as $phenotype ) {
+					error_log(print_r($phenotype, 1));
+					$insert_id = $this->phenotypes_model->insertNetworksPhenotypesAttributesValues(array('network_key' => $network_key,
+																				'attribute' => $phenotype['attribute_termName'],
+																				'value' => $phenotype['value']
+																				));
+				}
+			}
+		}
+	
+
+		// Also get the local attribute list
+		$local_phenotype_attributes_nr_list = @file_get_contents(base_url() . "admin/get_phenotype_attributes_and_values_list_federated");
+		foreach ( json_decode($local_phenotype_attributes_nr_list, 1) as $phenotype ) {
+			$insert_id = $this->phenotypes_model->insertNetworksPhenotypesAttributesValues(array('network_key' => $network_key,
+																		'attribute' => $phenotype['attribute_termName'],
+																		'value' => $phenotype['value']
+																		));
+		}
+	
+	}
+	
 	function regenerate_autocomplete ($md5 = NULL) {
 		if ( $md5 ) {
 			$f = fopen(FCPATH . "resources/cron/cron_md5.txt", 'r');

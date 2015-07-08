@@ -35,12 +35,12 @@
 */
 
 // The following values will probably need to be changed.
-$db['default']['username'] = "root";
-$db['default']['password'] = "root";
+$db['default']['username'] = "owen";
+$db['default']['password'] = "kerplunk";
 $db['default']['database'] = "cafevariome_client";
 
 // The following values can probably stay the same.
-$db['default']['hostname'] = "127.0.0.1:8889";
+$db['default']['hostname'] = "127.0.0.1";
 $db['default']['dbdriver'] = "mysql";
 $db['default']['dbprefix'] = "";
 $db['default']['pconnect'] = FALSE;

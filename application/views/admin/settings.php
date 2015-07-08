@@ -177,6 +177,12 @@ $(document).ready(function() {
 						<br />
 						<br />
 						<br />
+						<div class="span4 pagination-centered">
+							<a onclick="regenerateFederatedPhenotypeAttributesAndValues();" class="btn" rel="popover" data-content="Click to regenerate a non-redundant list of phenotype attributes and top 50 phenotype values from installations in your network which can be used in the query builder interface." data-original-title="Regenerate Federated Phenotype List"><i class="icon-list-alt"></i>  Regenerate Federated Phenotype List</a>
+						</div>
+						<br />
+						<br />
+						<br />
 						<div class="span4 pagination-centered"><a onclick="regenerateOntologyDAG();" class="btn" rel="popover" data-content="Click to regenerate the ontology tree for phenotypes that is used in the phenotype tree search in the main discovery interface. This should be done after importing new data." data-original-title="Regenerate Ontology Tree"><i class="icon-list-alt"></i>  Regenerate Ontology Tree</a></div>
 						<br />
 						<br />
