@@ -2966,6 +2966,37 @@ class Admin extends MY_Controller {
 
 	}
 
+	function get_phenotype_network_values_for_attribute() {
+
+		$network_key = $this->input->post('network_key');
+		$attribute = $this->input->post('attribute');
+		
+//		error_log("attribute -> " . $attribute . " network_key -> " . $network_key);
+
+		$this->load->model('phenotypes_model');
+		$query = $this->phenotypes_model->getPhenotypeNetworkValuesForAttribute($network_key, $attribute); //Search DB
+
+		if (!empty($query)) {
+			$json_array = array();
+			foreach ($query->result() as $row) {
+//				error_log(print_r($row, 1));
+				if($row->value === null) continue;
+				$auto_val = $row->value;
+				array_push($json_array, $auto_val);
+			}
+		}
+//		error_log("----> " . json_encode($json_array));
+		echo json_encode($json_array); //echo json string if ajax request
+	}
+	
+	function get_phenotype_attributes_for_network($network_key) {
+		$this->load->model('phenotypes_model');
+		$phenotype_network_attributes_list = $this->phenotypes_model->getPhenotypeAttributesListForNetwork($network_key);
+//		print_r($phenotype_network_attributes_list);
+//		error_log(print_r($phenotype_network_attributes_list, 1));
+		echo json_encode($phenotype_network_attributes_list);
+	}
+	
 	function get_phenotype_attributes_and_values_list_federated() {
 		$this->load->model('phenotypes_model');
 		$query = $this->phenotypes_model->regeneratePhenotypeAttributesAndValues();
@@ -2977,11 +3008,13 @@ class Admin extends MY_Controller {
 		$token = $this->session->userdata('Token');
 		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
 		$federated_installs = json_decode(stripslashes($data), 1);
-		error_log("federated_installs -> " . print_r($federated_installs, 1));
+//		error_log("federated_installs -> " . print_r($federated_installs, 1));
 		$this->load->model('phenotypes_model');
 		$this->phenotypes_model->emptyNetworksPhenotypesAttributesValues();
+		$unique_networks_for_this_install = array();
 		foreach ( $federated_installs as $install ) {
 			$network_key = $install['network_key'];
+			$unique_networks_for_this_install[] = $network_key;
 //			error_log("network ----> $network_key");
 			$install_uri = $install['installation_base_url'];
 			$install_uri = rtrim($install_uri,"/");
@@ -2998,7 +3031,7 @@ class Admin extends MY_Controller {
 			
 			if ( $install_phenotypes_attributes_and_values_list ) {
 				foreach ( json_decode($install_phenotypes_attributes_and_values_list, 1) as $phenotype ) {
-					error_log(print_r($phenotype, 1));
+//					error_log(print_r($phenotype, 1));
 					$insert_id = $this->phenotypes_model->insertNetworksPhenotypesAttributesValues(array('network_key' => $network_key,
 																				'attribute' => $phenotype['attribute_termName'],
 																				'value' => $phenotype['value']
@@ -3007,14 +3040,18 @@ class Admin extends MY_Controller {
 			}
 		}
 	
-
-		// Also get the local attribute list
+		$unique_networks_for_this_install = array_unique($unique_networks_for_this_install);
+		// Also get the local attribute list and add to each network the install is a member of
 		$local_phenotype_attributes_nr_list = @file_get_contents(base_url() . "admin/get_phenotype_attributes_and_values_list_federated");
-		foreach ( json_decode($local_phenotype_attributes_nr_list, 1) as $phenotype ) {
-			$insert_id = $this->phenotypes_model->insertNetworksPhenotypesAttributesValues(array('network_key' => $network_key,
-																		'attribute' => $phenotype['attribute_termName'],
-																		'value' => $phenotype['value']
-																		));
+		foreach ( $unique_networks_for_this_install as $network_key_unique ) {
+			error_log("network_key_unique -> $network_key_unique");
+			foreach ( json_decode($local_phenotype_attributes_nr_list, 1) as $phenotype ) {
+//				error_log("insert -> " . $phenotype['attribute_termName'] . " -> " . $phenotype['value']);
+				$insert_id = $this->phenotypes_model->insertNetworksPhenotypesAttributesValues(array('network_key' => $network_key_unique,
+																			'attribute' => $phenotype['attribute_termName'],
+																			'value' => $phenotype['value']
+																			));
+			}
 		}
 	
 	}

@@ -168,10 +168,31 @@ class Phenotypes_model extends CI_Model {
 	}
 	
 	public function insertNetworksPhenotypesAttributesValues($data) {
-		$this->db->insert('networks_phenotypes_attributes_values', $data);
+//		$this->db->insert('networks_phenotypes_attributes_values', $data);
+//		error_log($this->db->last_query());
+		// Using the solution here: http://stackoverflow.com/questions/10965792/insert-ignore-using-codeigniter so that duplicate rows get ignored rather than causing an error and the command failing
+		$insert_query = $this->db->insert_string('networks_phenotypes_attributes_values', $data);
+		$insert_query = str_replace('INSERT INTO','INSERT IGNORE INTO',$insert_query);
+		$this->db->query($insert_query);
+		
 		$insert_id = $this->db->insert_id();
 		return $insert_id;
 
+	}
+	
+	function getPhenotypeNetworkValuesForAttribute($network_key, $attribute) {
+		$query = $this->db->query("SELECT DISTINCT(value) FROM networks_phenotypes_attributes_values WHERE network_key = '$network_key' AND attribute = '$attribute' ORDER BY value+0");
+//		error_log($this->db->last_query());
+		return $query;
+	}
+	
+	function getPhenotypeAttributesListForNetwork($network_key) {
+//		$query = $this->db->get_where('networks_phenotypes_attributes_values', array('network_key' => $network_key))->result_array();
+		$this->db->select('attribute');
+		$this->db->distinct();
+		$this->db->where('network_key', $network_key);
+		$query = $this->db->get('networks_phenotypes_attributes_values')->result_array();
+		return $query;
 	}
 	
 }
