@@ -778,6 +778,36 @@ LOCK TABLES `networks` WRITE;
 /*!40000 ALTER TABLE `networks` ENABLE KEYS */;
 UNLOCK TABLES;
 
+
+--
+-- Table structure for table `networks_phenotypes_attributes_values`
+--
+
+DROP TABLE IF EXISTS `networks_phenotypes_attributes_values`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `networks_phenotypes_attributes_values` (
+  `networks_phenotypes_attributes_values_id` int(11) NOT NULL AUTO_INCREMENT,
+  `network_key` varchar(50) NOT NULL,
+  `attribute` varchar(200) NOT NULL,
+  `value` varchar(200) NOT NULL,
+  PRIMARY KEY (`networks_phenotypes_attributes_values_id`),
+  UNIQUE KEY `unique_index` (`network_key`,`attribute`,`value`),
+  KEY `attribute` (`attribute`),
+  KEY `value` (`value`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `networks_phenotypes_attributes_values`
+--
+
+LOCK TABLES `networks_phenotypes_attributes_values` WRITE;
+/*!40000 ALTER TABLE `networks_phenotypes_attributes_values` DISABLE KEYS */;
+/*!40000 ALTER TABLE `networks_phenotypes_attributes_values` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
 --
 -- Table structure for table `node_list`
 --
