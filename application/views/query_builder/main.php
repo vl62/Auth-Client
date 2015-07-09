@@ -87,7 +87,7 @@
             
         </div> <!-- end span12 pagination-centered -->
     </div> <!-- end row-fluid -->
-        
+    <div id="query_result"></div>
     <input type="hidden" value="<?php echo $network_key; ?>" id="network_key"/>
     
 </div> <!-- end container -->

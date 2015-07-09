@@ -31,10 +31,11 @@ class Discover extends MY_Controller {
 		error_log("federated_installs -> $federated_installs");
 		// Set the federated installs in the session so they can be used by variantcount
 		$this->session->set_userdata(array('federated_installs' => $federated_installs));
-
-		$networks = json_decode(authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of"), 1);
-		error_log("networks -> " . print_r($networks, 1));
-		$this->data['networks'] = $networks;
+//		$network_key = $this->post('network_key');
+//		$this->data['network_key'] = $network_key;
+//		$networks = json_decode(authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of"), 1);
+//		error_log("networks -> " . print_r($networks, 1));
+//		$this->data['networks'] = $networks;
 		
 		
 		$sources_options = $this->sources_model->getSources(); // Get all the available sources from db
@@ -876,13 +877,19 @@ class Discover extends MY_Controller {
 	}
 
 	
-	function query($query = '') {
-		if ( $query == '' ) {
-			$query = json_decode(file_get_contents('php://input')); // Get the POST body which contains the query JSON
-		}
-//		print_r($query);
+	function query($network = '') {
+		
+		$query = $this->input->post('jsonAPI');
+		error_log("STARTING QUERY");
+//		if ( $query == '' ) {
+//			$query = json_decode(file_get_contents('php://input')); // Get the POST body which contains the query JSON
+//		}
 //		print_r(json_encode($query));
 //		error_log("query -> " . print_r($query, 1));
+		
+		$network_to_search = $query['network_to_search'];
+		error_log("network_to_search -> " . $network_to_search . " -> " . $network);
+		
 		$parameters = array ('syntax' => 'elasticsearch');
 		$this->load->library('CafeVariome/Query', $parameters, 'query');
 		$query_statement = $this->query->parse($query);
@@ -959,20 +966,21 @@ class Discover extends MY_Controller {
 			$query_result = $this->query->run($query_statement, $source);
 //			$final_query_result[$source] = $query_result;
 			if ( isset ($query_result) ) {
-				if ( empty($from_url_query) ) {
+//				if ( empty($from_url_query) ) {
 					$data['counts'][$source] = $query_result;
-				}
-				else {
+//				}
+//				else {
 					$this->data['counts'][$source] = $query_result;
-				}
+//				}
 			}
 		}
-		$this->output->set_header("Access-Control-Allow-Headers: Content-Type");
-		$this->output->set_output(json_encode($data));
+//		$this->output->set_header("Access-Control-Allow-Headers: Content-Type");
+//		$this->output->set_output(json_encode($data));
 //		echo json_encode($data);
+//		error_log("data -> " . json_encode($data));
 		
 //		if ( empty($from_url_query) ) { // The query comes from the form through the website
-//			$this->load->view('pages/sources_table', $data); // Don't use _render as headers are already sent, html output from the view is sent back to ajax function and appended to div
+			$this->load->view('pages/sources_table', $data); // Don't use _render as headers are already sent, html output from the view is sent back to ajax function and appended to div
 //		}
 //		else { // Query comes from a URL construction	
 //			if ( strtolower($format) == "html" ) {
