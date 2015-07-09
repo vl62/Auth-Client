@@ -547,14 +547,15 @@
             
             $.extend($arr, {"queryStatement": $query, "network_to_search" : $network_key});
 //            console.log(JSON.stringify($arr, null, '\t'));
-
+//			alert("queryString -> " + JSON.stringify($arr));
             $.ajax({url: baseurl + 'discover/query/' + $network_key,
-                dataType: 'json',
+                dataType: 'html',
                 delay: 200,
                 type: 'POST',
                 data: {'jsonAPI' : $arr},
                 success: function(data) {
-                        
+//                        alert('test -> ' + data);
+						$("#query_result").html(data);
                     }
             });
             
