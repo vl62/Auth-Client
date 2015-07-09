@@ -87,28 +87,7 @@
             
         </div> <!-- end span12 pagination-centered -->
     </div> <!-- end row-fluid -->
-    
-    <!-- Modal -->
-    <div id="networkSelectModal" class="modal fade" role="dialog" data-networkCount="<?php echo count($networks)?>">
-        <div class="modal-dialog">
-
-          <!-- Modal content-->
-          <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Select which network you would like to search</h4>
-            </div>
-            <div class="modal-body pagination-centered">
-                <select class="input-xlarge" id="selectNetwork" style="margin-bottom:10px">
-                    <option></option>
-                    <?php foreach ($networks as $network_name => $network_key) : ?>
-                        <option value="<?php echo $network_key; ?>"><?php echo $network_name; ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            
-          </div>
-
-        </div>
-    </div>
+        
+    <input type="hidden" value="<?php echo $network_key; ?>" id="network_key"/>
     
 </div> <!-- end container -->

@@ -232,31 +232,19 @@
         
     $(document).ready(function() {
         
-        $("#selectNetwork").select2({placeholder: "--Select a network--"});
-        
-        $(window).load(function(){
-            if($("#networkSelectModal").attr('data-networkCount') > 0) {
-                $('#networkSelectModal').modal({backdrop: 'static'});
-                $('#networkSelectModal').modal('show');
-            }
-        });
-        
-        $("#selectNetwork").change(function() {
-            $network_key = $("#selectNetwork").val();
-            $('#networkSelectModal').modal('hide');
-            
-            $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
-                dataType: 'json',
-                delay: 200,
-                type: 'POST',
-                success: function(json) {
-                        $.each(json, function(i, value) {
-                            $('select.phenotype_keys1').append($('<option>').text(value.attribute).attr('value', value.attribute));
-                            phenotype_keys.push(value.attribute);
-                        });
-                    }
-              });
-        });
+        $network_key = $("#network_key").val();
+
+        $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
+            dataType: 'json',
+            delay: 200,
+            type: 'POST',
+            success: function(json) {
+                    $.each(json, function(i, value) {
+                        $('select.phenotype_keys1').append($('<option>').text(value.attribute).attr('value', value.attribute));
+                        phenotype_keys.push(value.attribute);
+                    });
+                }
+          });
         
         
         // DNA Type
