@@ -232,24 +232,27 @@
         
     $(document).ready(function() {
         
-        $("#selectNetwork").select2({placeholder: "--Select an attribute--"});
+        $("#selectNetwork").select2({placeholder: "--Select a network--"});
         
         $(window).load(function(){
-            $('#networkSelectModal').modal('show');
+            if($("#networkSelectModal").attr('data-networkCount') > 0) {
+                $('#networkSelectModal').modal({backdrop: 'static'});
+                $('#networkSelectModal').modal('show');
+            }
         });
         
         $("#selectNetwork").change(function() {
-            $network_to_search = $("#selectNetwork").val();
+            $network_key = $("#selectNetwork").val();
             $('#networkSelectModal').modal('hide');
             
-            $.ajax({url: baseurl + 'admin/get_phenotype_attributes_nr_list_federated/' + $network_to_search,
+            $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
                 dataType: 'json',
                 delay: 200,
                 type: 'POST',
                 success: function(json) {
                         $.each(json, function(i, value) {
-                            $('select.phenotype_keys1').append($('<option>').text(value.attribute_termName).attr('value', value.attribute_termName));
-                            phenotype_keys.push(value.attribute_termName);
+                            $('select.phenotype_keys1').append($('<option>').text(value.attribute).attr('value', value.attribute));
+                            phenotype_keys.push(value.attribute);
                         });
                     }
               });
@@ -321,9 +324,9 @@
         // Phenotype
         $(document).on('change', '.keys', function() {
             $current_phenotype_values = $(this).parent().parent().find('.phenotype_values').prop('disabled', '').parent();
-            $.ajax({url: baseurl + 'admin/non_redundant_attribute_list_epad',
+            $.ajax({url: baseurl + 'admin/get_phenotype_network_values_for_attribute',
                     dataType: 'json',
-                    data: {'attribute' : $(this).val()},
+                    data: {'attribute' : $(this).val(), 'network_key' : $network_key},
                     delay: 200,
                     type: 'POST',
                     success: function(data) {
@@ -554,13 +557,13 @@
                     $query = "( " + $genotype.trim() + " ) " + $gen_phen + " (" + $phenotype.trim() + ")";
             }
             
-            $.extend($arr, {"queryStatement": $query, "network_to_search" : $network_to_search});
+            $.extend($arr, {"queryStatement": $query, "network_to_search" : $network_key});
 //            console.log(JSON.stringify($arr, null, '\t'));
 
-            $.ajax({url: baseurl + 'discover/query/' + $network_to_search,
+            $.ajax({url: baseurl + 'discover/query/' + $network_key,
                 dataType: 'json',
                 delay: 200,
-                type: 'GET',
+                type: 'POST',
                 data: {'jsonAPI' : $arr},
                 success: function(data) {
                         

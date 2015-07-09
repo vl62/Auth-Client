@@ -778,7 +778,7 @@ class Discover extends MY_Controller {
 		$token = $this->session->userdata('Token');
 		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
 		$federated_installs = json_decode(stripslashes($data), 1);
-		error_log("federated_installs -> " . print_r($federated_installs, 1));
+//		error_log("federated_installs -> " . print_r($federated_installs, 1));
 		
 		$this->_render('query_builder/main');
 	}
