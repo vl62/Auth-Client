@@ -565,7 +565,7 @@
             } else {
                 $query = "(" + $phenotype.trim() + ")";
             }
-            
+            $query = $query.trim();
             $.extend($arr, {"queryStatement": $query, "network_to_search" : $network_key});
             console.log(JSON.stringify($arr, null, '\t'));
 //			alert("queryString -> " + JSON.stringify($arr));
