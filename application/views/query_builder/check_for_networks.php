@@ -24,7 +24,7 @@
           <!-- Modal content-->
           <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">You are not part of a network</h4>
+                <h4 class="modal-title">This installation is not part of any networks</h4>
             </div>
             <div class="modal-body pagination-centered">
                 <a type="button" class="btn btn-primary" href="<?php echo base_url();?>">Go Back</a>
@@ -47,9 +47,12 @@
         
         $("#selectNetwork").change(function() {
             if($("#type").val() === "query_builder") {
-                $('form').attr('action', baseurl + "discover/query_builder").submit();
+				// Get the selected
+//				alert("val -> " + $("#selectNetwork").val());
+				window.location = baseurl + "discover/query_builder/" + $("#selectNetwork").val();
+//                $('form').attr('action', baseurl + "discover/query_builder").submit();
             } else if($("#type").attr('val') === "standard_search") {
-                
+                window.location = baseurl + "discover/" + $("#selectNetwork").val();
             } else {
                 
                 // error;
