@@ -520,29 +520,45 @@
             if($lastword[0] === "AND" || $lastword[0] === "OR")
                 $phenotype = $phenotype.substring(0, $phenotype.lastIndexOf(" "));
             
-            if($dna.trim() !== "") 
-                $genotype += "(" + $dna.trim() + ") ";
+            if($dna.trim() !== "") {
+                $dna = $dna.trim().indexOf("OR") < 0 ? " " + $dna.trim() + " " : " (" + $dna.trim() + ") ";
+                if($geneSymbol.trim() === "" && $hgvs.trim() === "" && $dna.trim().indexOf('AND') > -1) {
+                    console.log($dna.trim());
+                    $dna = $dna.trim().substring(1, $dna.trim().length-1);
+                    console.log($dna.trim());
+                }
+                    
+                $genotype += $dna;
+            }
             
             if($geneSymbol.trim() !== "") {
+                $geneSymbol = $geneSymbol.trim().indexOf("OR") < 0 ? " " + $geneSymbol.trim() + " " : " (" + $geneSymbol.trim() + ") ";
                 if($genotype === "") {
-                    $genotype += "(" + $geneSymbol.trim() + ") ";
+                    $genotype += $geneSymbol;
                 } else {
-                    $genotype += $dna_gene + " (" + $geneSymbol.trim() + ") ";
+                    $genotype += $dna_gene + $geneSymbol;
                 }
             }
             
             if($hgvs.trim() !== "") {
+                $hgvs = $hgvs.trim().indexOf("OR") < 0 ? " " + $hgvs.trim() + " " : " (" + $hgvs.trim() + ") ";
+                
                 if($genotype === "")
-                    $genotype += "(" + $hgvs.trim() + ") ";
+                    $genotype += $hgvs;
                 else
-                    $genotype += $gene_hgvs + " (" + $hgvs.trim() + ") ";
+                    $genotype += $gene_hgvs + $hgvs;
             }
             
             if($genotype.trim() !== "") {
-                if($phenotype === "")
-                    $query = $genotype.trim();
+                $genotype = ($genotype.trim().indexOf("AND") < 0 && $genotype.trim().indexOf("OR") < 0) ? " " + $genotype.trim() + " " : " (" + $genotype.trim() + ") ";
+                $phenotype = ($phenotype.trim().indexOf("AND") < 0 && $phenotype.trim().indexOf("OR") < 0) ? " " + $phenotype.trim() + " " : " (" + $phenotype.trim() + ") ";
+                
+                if($phenotype.trim() === "")
+                    $query = $genotype;
                 else
-                    $query = "( " + $genotype.trim() + " ) " + $gen_phen + " (" + $phenotype.trim() + ")";
+                    $query = "(" + $genotype + $gen_phen + $phenotype + ")";
+            } else {
+                $query = $phenotype;
             }
             
             $.extend($arr, {"queryStatement": $query, "network_to_search" : $network_key});
@@ -652,7 +668,7 @@
                     $arr.sequence.push($data_sequence);
                 }
                 
-                $dna += " OR";
+                $dna += "OR";
             });
             
             return $arr;
@@ -676,7 +692,7 @@
                             };
                     
                     $arr.push($data);
-                    $phenotype += " " + $idCount + " " + $phen_phen;
+                    $phenotype += " (" + $idCount + ") " + $phen_phen;
                     $idCount++;
                 }
             });
@@ -699,7 +715,7 @@
                     
                     $arr.push($data);
                     
-                    $geneSymbol += " " + $idCount + " OR";
+                    $geneSymbol += " (" + $idCount + ") OR";
                     $idCount++;
                 }
             });
@@ -723,7 +739,7 @@
                     
                     $arr.push($data);
                     
-                    $hgvs += " " + $idCount + " OR";
+                    $hgvs += " (" + $idCount + ") OR";
                     $idCount++;
                 }
                 
