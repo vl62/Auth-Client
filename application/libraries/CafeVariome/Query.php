@@ -80,6 +80,8 @@ class Query extends CafeVariome {
 //							$query_array[$element->id] = $element->{$k}; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
 						}
 					}
+					
+//					coordinate
 					elseif ( strtolower($element['operator']) == "is like" ) {
 						if ( $k == 'phenotype_epad' ) {
 							$attribute = str_replace(' ', '_', $element->attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
