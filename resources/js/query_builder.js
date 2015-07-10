@@ -736,8 +736,8 @@
                 if($(this).find('.textValidate').val().trim().length > 0)  {
                     
                     $data = {
-                                "parameter ID" : $idCount, 
-                                "operator" : "",
+                                "querySectionID" : $idCount, 
+                                "operator" : $(this).find('.conditions').val().toString(),
                                 "hgvsName" : $(this).find('.textValidate').val().toString(),
                                 "reference" : {"id" : "", "source" : ""}
                             };

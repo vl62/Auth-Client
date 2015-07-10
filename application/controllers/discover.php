@@ -22,8 +22,20 @@ class Discover extends MY_Controller {
 
 	public $sources;
 
-	public function index() {
+	public function index($network_key = '') {
 
+		// Check if there's a network key supplied in the URL, if not then check if it's set in the session, if not then redirect back to the select network page
+		if ( $network_key ) {
+			$this->session->set_userdata(array('network_key' => $network_key));
+		}
+		else {
+			$network_key = $this->session->userdata('network_key');
+			if ( ! $network_key ) {
+				redirect('discover/proceed_to_query/standard_search', 'refresh');
+			}
+		}
+		$this->data['network_key'] = $network_key;
+		
 		$this->title = "Discover";
 		$token = $this->session->userdata('Token');
 		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
@@ -227,7 +239,6 @@ class Discover extends MY_Controller {
 //				}
 			}
 		}
-
 	}
 	
 	// 
@@ -757,24 +768,35 @@ class Discover extends MY_Controller {
 		$this->_render('query_builder/query_builder_federated');
 	}
         
-        function proceed_to_query($type) {
-                $token = $this->session->userdata('Token');
-                $networks = json_decode(authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of"), 1);
-                $this->data['networks'] = array();
+	function proceed_to_query($type) {
+		$token = $this->session->userdata('Token');
+		$networks = json_decode(authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of"), 1);
+		$this->data['networks'] = array();
                 
-                foreach ($networks as $key => $value) {
-                    $this->data['networks'] += array($value['network_name'] => $value['network_key']);
-                }
+		foreach ($networks as $key => $value) {
+			$this->data['networks'] += array($value['network_name'] => $value['network_key']);
+		}
                 
-                $this->data['type'] = $type;
-                $this->_render('query_builder/check_for_networks');
+		$this->data['type'] = $type;
+		$this->_render('query_builder/check_for_networks');
                 
-        }
+	}
 	
-	function query_builder() {
+	function query_builder($network_key = "") {
             
-                $this->data['network_key'] = $this->input->post('selectNetwork');
-                
+//      $this->data['network_key'] = $this->input->post('selectNetwork');
+		// Check if there's a network key supplied in the URL, if not then check if it's set in the session, if not then redirect back to the select network page
+		if ( $network_key ) {
+			$this->session->set_userdata(array('network_key' => $network_key));
+		}
+		else {
+			$network_key = $this->session->userdata('network_key');
+			if ( ! $network_key ) {
+				redirect('discover/proceed_to_query/query_builder', 'refresh');
+			}
+		}
+		$this->data['network_key'] = $network_key;
+		
 		$this->load->library('elasticsearch');
 		$check_if_running = $this->elasticsearch->check_if_running();
 		if ( ! array_key_exists( 'ok', $check_if_running) ) {

@@ -10,52 +10,16 @@ if (sizeof($ontologiesused) > 0) {
 		<div class="span12 pagination-centered">
 			<div class="well">
 				<h3>Record Discovery</h3>
-
+				<hr>
 				<?php echo form_open('discover', array( 'id' => 'discover')); ?>
-				<p>
-					<label>Select network to search:</label>
-					<div class="input-prepend">
-						<span class="add-on"><a rel="popover" data-content="Select which network you would like to search." ><i class="icon-question-sign"></i></a></span>
-						<select id="networks">
-							<?php foreach ( $networks as $network ): ?>
-							<option value="<?php echo $network['network_key']; ?>"><?php echo $network['network_name']; ?></option>
-							<?php endforeach; ?>
-						</select>
-					</div>
-				</p>
+
 				<?php
 				ksort($sources_options);
 				$sources_options = array('all' => 'All') + $sources_options;
 //				print_r($sources_options);
 				?>
 				<!--<br />-->
-				<?php // if ( $this->config->item('show_sources_in_discover')): ?>
-				<!--<p>-->
-					<!--<label>Select (local) source:</label>-->
-					<!--<div class="input-prepend">-->
-						<!--<span class="add-on"><a rel="popover" data-content="Click to read information about sources." href="#sourcesModal" data-toggle="modal" data-backdrop="false" ><i class="icon-question-sign"></i></a></span>-->
-						<?php
-//							$js = 'id="sources"';
-//							print form_dropdown('sources', $sources_options, 'All', $js);
-						?>
-					<!--</div>-->
-				<!--</p>-->
-				<!--<br />-->
-				<?php // endif; ?>
-<!--				<p>
-					<label>Laboratory ID:</label>
-					<div class="input-prepend">
-						<span class="add-on"><a href="#" rel="popover" data-content="This source represents variants that are submitted to Cafe Variome from diagnostic laboratories using Cafe Variome enabled mutation interpretation software.<br /><br />Please note: in order to search by a specific laboratory name you must first select <b>Diagnostic Laboratories</b> for the data source, otherwise ALL laboratories will searched." data-original-title="Diagnostic Laboratories"><i class="icon-question-sign"></i></a></span>-->
-						<?php //
-//							$laboratory_options[] = "All";
-//							sort($laboratory_options);
-//							$js = 'id="laboratories"';
-//							print form_dropdown('laboratories', $laboratory_options, 'All', $js);
-						?>
-<!--					</div>
-					<br />
-				</p>
-				-->
+
 				<p>
 					<h4>Search term:</h4></label><a href="<?php echo base_url('discover/stats'); ?>" target="_blank" rel="popover" data-content="Enter a search term - HGNC gene symbol, RefSeq Accession/HGVS nomenclature or chromosomal region." data-original-title="Search Information"><i class="icon-question-sign"></i></a>
 					<!--<h4>Search term:</h4></label><a href="#searchHelpModal" data-toggle="modal" data-backdrop="false" rel="popover" data-content="Enter a search term - HGNC gene symbol, RefSeq Accession/HGVS nomenclature or chromosomal region.<br /><br /> Click to open a page in a new window with further information about data content and search queries." data-original-title="Search Information"><i class="icon-question-sign"></i></a>-->
@@ -77,7 +41,7 @@ if (sizeof($ontologiesused) > 0) {
 				<button type="submit" class="btn" id="search"><i class="icon-search"></i> Discover Records</button>
 				<p>
 					<br />
-					<a href="<?php echo base_url('discover/query_builder'); ?>" >Use the query builder to perform an advanced search</a>
+					<a href="<?php echo base_url('discover/proceed_to_query/query_builder'); ?>" >Use the query builder to perform an advanced search</a>
 				</p>
 				<?php echo form_close(); ?>
               </div>                                      
