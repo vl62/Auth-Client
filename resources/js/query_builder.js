@@ -533,6 +533,9 @@
             
             if($geneSymbol.trim() !== "") {
                 $geneSymbol = $geneSymbol.trim().indexOf("OR") < 0 ? " " + $geneSymbol.trim() + " " : " (" + $geneSymbol.trim() + ") ";
+                if($dna.trim() === "" && $hgvs.trim() === "" && $geneSymbol.trim().indexOf('OR') > -1) {
+                    $geneSymbol = $geneSymbol.trim().substring(1, $geneSymbol.trim().length-1);
+                }
                 if($genotype === "") {
                     $genotype += $geneSymbol;
                 } else {
@@ -542,7 +545,9 @@
             
             if($hgvs.trim() !== "") {
                 $hgvs = $hgvs.trim().indexOf("OR") < 0 ? " " + $hgvs.trim() + " " : " (" + $hgvs.trim() + ") ";
-                
+                if($geneSymbol.trim() === "" && $dna.trim() === "" && $hgvs.trim().indexOf('OR') > -1) {
+                    $hgvs = $hgvs.trim().substring(1, $hgvs.trim().length-1);
+                }
                 if($genotype === "")
                     $genotype += $hgvs;
                 else
@@ -558,11 +563,11 @@
                 else
                     $query = "(" + $genotype + $gen_phen + $phenotype + ")";
             } else {
-                $query = $phenotype;
+                $query = "(" + $phenotype.trim() + ")";
             }
             
             $.extend($arr, {"queryStatement": $query, "network_to_search" : $network_key});
-//            console.log(JSON.stringify($arr, null, '\t'));
+            console.log(JSON.stringify($arr, null, '\t'));
 //			alert("queryString -> " + JSON.stringify($arr));
             $.ajax({url: baseurl + 'discover/query/' + $network_key,
                 dataType: 'html',
