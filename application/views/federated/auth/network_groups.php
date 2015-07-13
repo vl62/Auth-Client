@@ -23,6 +23,7 @@
 						<th>Group Name</th>
 						<th>Group Description</th>
 						<th>Network Name</th>
+						<th>Group Type</th>
 						<th>Action</th>
 					</tr>
 				</thead>
@@ -33,6 +34,7 @@
 						<td><?php echo $group['name']; ?></td>
 						<td><?php echo $group['description']; ?></td>
 						<td><?php echo $group['network_name']; ?></td>
+						<td><?php echo $group['group_type']; ?></td>
 						<td><?php if ( $group['number_of_sources'] == 0 ): ?>
 							<a href="<?php echo base_url('groups/delete_network_group'). "/" . $group['id']; ?>" ></i><i class="icon-trash"></i></a></td>
 							<?php else: ?>

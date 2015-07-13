@@ -50,12 +50,13 @@ class Groups extends MY_Controller {
 		$this->form_validation->set_rules('group_name', 'Group name', 'required|alpha_dash|xss_clean|callback_unique_network_group_name_check['.$this->input->post('network').']');
 		$this->form_validation->set_rules('desc', 'Description', 'required|xss_clean');
 		$this->form_validation->set_rules('network', 'Network', 'xss_clean');
+		$this->form_validation->set_rules('group_type', 'Group type', 'xss_clean');
 
 		if ($this->form_validation->run() == TRUE) {
 //			error_log("desc -> " .  $this->input->post('desc'));
 			// Create the new group
 			$token = $this->session->userdata('Token');
-			$new_group_id = authPostRequest($token, array('group_name' => $this->input->post('group_name'), 'group_description' => $this->input->post('desc'), 'network_key' => $this->input->post('network')), $this->config->item('auth_server') . "/api/auth/create_network_group");
+			$new_group_id = authPostRequest($token, array('group_name' => $this->input->post('group_name'), 'group_description' => $this->input->post('desc'), 'group_type' => $this->input->post('group_type'), 'network_key' => $this->input->post('network')), $this->config->item('auth_server') . "/api/auth/create_network_group");
 			if($new_group_id) {
 				// check to see if we are creating the group
 				// redirect them back to the admin page
@@ -99,6 +100,13 @@ class Groups extends MY_Controller {
 				'type'  => 'dropdown',
 				'value' => $this->form_validation->set_value('network'),
 			);
+			$this->data['group_type'] = array(
+				'name'  => 'group_type',
+				'id'    => 'group_type',
+				'type'  => 'group_type',
+				'value' => $this->form_validation->set_value('group_type'),
+			);
+
 			
 			$this->_render('federated/auth/create_network_group');
 //			$this->load->view('auth/create_group', $this->data);

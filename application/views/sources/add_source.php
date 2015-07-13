@@ -83,6 +83,12 @@
 					?>
 					<select size="<?php echo $group_count; ?>" name="groups[]"  multiple="multiple">
 						<?php foreach ($groups as $group ): ?>
+							<?php
+								// Skip if it's a master group as we don't want users assigning master groups to sources (only users)
+								if ($group['group_type'] == 'master') {
+									continue;
+								}
+							?>
 							<option value="<?php echo $group['id'] . "," . $group['network_key']; ?>"><?php echo $group['description'] . " (Network:" . $group['network_name'] . ")"; ?></option>
 						<?php endforeach; ?>
 					</select>						   
