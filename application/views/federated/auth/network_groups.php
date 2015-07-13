@@ -35,10 +35,13 @@
 						<td><?php echo $group['description']; ?></td>
 						<td><?php echo $group['network_name']; ?></td>
 						<td><?php echo $group['group_type']; ?></td>
-						<td><?php if ( $group['number_of_sources'] == 0 ): ?>
-							<a href="<?php echo base_url('groups/delete_network_group'). "/" . $group['id']; ?>" ></i><i class="icon-trash"></i></a></td>
+						<td>
+							<?php if ( $group['group_type'] == "master" ): ?>
+								Unable to delete master network group
+							<?php elseif ( $group['number_of_sources'] > 0 ): ?>
+								Unable to delete group with sources assigned
 							<?php else: ?>
-							Unable to delete group with sources assigned
+								<a href="<?php echo base_url('groups/delete_network_group'). "/" . $group['id']; ?>" ></i><i class="icon-trash"></i></a></td>
 							<?php endif; ?>
 					</tr>
 				<?php endforeach; ?>
