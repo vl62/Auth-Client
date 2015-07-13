@@ -1668,7 +1668,7 @@ CREATE TABLE `variants` (
   `date_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `pmid` varchar(20) NOT NULL,
   `active` tinyint(4) NOT NULL DEFAULT '1',
-  KEY `cafevariome_id` (`cafevariome_id`),
+  PRIMARY KEY (`cafevariome_id`),
   KEY `source` (`source`),
   KEY `gene` (`gene`),
   KEY `location_ref` (`location_ref`,`start`,`end`),
