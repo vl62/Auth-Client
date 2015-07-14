@@ -3379,7 +3379,7 @@ function send_message() {
                                             $("#sendMessage").text(result.error);
                                     } else if (result.success) {
 //                                            console(result.success);
-											 window.location = baseurl + "messages";
+                                            window.location = baseurl + "messages";
 //                                            window.location = baseurl + "messages/index/" + result.unread_count;
                                     }
                                 }
@@ -3390,3 +3390,26 @@ function send_message() {
 	});
     });
 }
+
+$(document).ready(function() {
+    $("input[value='>>']").click(function() {
+        $nextTag = $(this).parent().next().find("select");
+        $(this).parent().prev().find(":selected").each(function() {
+            $nextTag.append($("<option></option>")
+            .attr("value",$(this).val())
+            .text($(this).html())); 
+            $(this).remove();
+        });        
+    });
+    
+    $("input[value='<<']").click(function() {
+        $prevTag = $(this).parent().prev().find("select");
+        $(this).parent().next().find(":selected").each(function() {
+            $prevTag.append($("<option></option>")
+            .attr("value",$(this).val())
+            .text($(this).html())); 
+            $(this).remove();
+        });
+    });
+});
+
