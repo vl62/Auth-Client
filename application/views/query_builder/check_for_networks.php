@@ -52,7 +52,7 @@
 				window.location = baseurl + "discover/query_builder/" + $("#selectNetwork").val();
 //                $('form').attr('action', baseurl + "discover/query_builder").submit();
             } else if($("#type").val() === "standard_search") {
-                window.location = baseurl + "discover/" + $("#selectNetwork").val();
+                window.location = baseurl + "discover/index/" + $("#selectNetwork").val();
             } else {
                 
                 // error;
