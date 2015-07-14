@@ -576,7 +576,7 @@
                 data: {'jsonAPI' : $arr},
                 success: function(data) {
 //                        alert('test -> ' + data);
-						$("#query_result").html(data);
+                        $("#query_result").html(data);
                     }
             });
             

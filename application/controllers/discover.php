@@ -943,6 +943,7 @@ class Discover extends MY_Controller {
 		}
 		
 		$sources_types = $this->sources_model->getSourcesTypes();
+                
 		if ( empty($from_url_query) ) {
 			$data['sources_full'] = $sources;
 		}
