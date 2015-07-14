@@ -51,7 +51,7 @@
 //				alert("val -> " + $("#selectNetwork").val());
 				window.location = baseurl + "discover/query_builder/" + $("#selectNetwork").val();
 //                $('form').attr('action', baseurl + "discover/query_builder").submit();
-            } else if($("#type").attr('val') === "standard_search") {
+            } else if($("#type").val() === "standard_search") {
                 window.location = baseurl + "discover/" + $("#selectNetwork").val();
             } else {
                 
