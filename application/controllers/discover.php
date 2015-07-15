@@ -611,9 +611,8 @@ class Discover extends MY_Controller {
 						)
 					);
 					$context  = stream_context_create($opts);
-					$install_endpoint = $install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key";
-
-					$all_counts_json = @file_get_contents($install_endpoint, false, $context);
+						
+					$all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key", false, $context);
 //					$all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key");
 //					error_log(print_r($http_response_header, 1));
 					error_log("all_counts_json -> $all_counts_json");
