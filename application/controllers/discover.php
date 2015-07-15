@@ -38,7 +38,7 @@ class Discover extends MY_Controller {
 		
 		$this->title = "Discover";
 		$token = $this->session->userdata('Token');
-		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
+		$data = authPostRequest($token, array('network_key' => $network_key), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_network");
 		$federated_installs = stripslashes($data);
 		error_log("federated_installs -> $federated_installs");
 		// Set the federated installs in the session so they can be used by variantcount
