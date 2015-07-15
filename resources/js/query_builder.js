@@ -432,7 +432,8 @@
         });
         
 //        $idCount = 1;
-        $("#buildQuery").click(function() { 
+        $("#buildQuery").click(function() {
+			$('#waiting').show(500);
             $idCount = 1;
             
             d = validate_DNA("buildQueryEvent");
@@ -576,6 +577,7 @@
                 data: {'jsonAPI' : $arr},
                 success: function(data) {
 //                        alert('test -> ' + data);
+						$('#waiting').hide(500);
                         $("#query_result").html(data);
                     }
             });
