@@ -296,9 +296,7 @@ class Discover extends MY_Controller {
 			$federated_installs = $this->session->userdata('federated_installs');
 //			error_log("f -> $federated_installs");
 			$federated_installs_array = json_decode($federated_installs, 1);
-
-
-			
+	
 			// If there's some federated installs to search then go through each one and get the variant counts
 			if ( ! empty($federated_installs_array)) {
 //				$this->variantcount_curl_multi($federated_installs_array, $term);
@@ -353,21 +351,6 @@ class Discover extends MY_Controller {
 								else {
 									$this->data['source_types'][$federated_source_name] = "federated";
 								}
-
-						
-//								if (isset($counts)) {
-//									if (empty($from_url_query)) {
-//										$data['counts'][$source] = $counts;
-//									} else {
-//										$this->data['counts'][$source] = $counts;
-//									}
-//								} else {
-//									if (empty($from_url_query)) {
-//										$data['counts'][$source] = array();
-//									} else {
-//										$this->data['counts'][$source] = array();
-//									}
-//								}
 							}
 						}
 					}
@@ -561,133 +544,101 @@ class Discover extends MY_Controller {
 	
 	function query($network = '') {
 		
+		// Check if there's a network key supplied in the URL, if not then check if it's set in the session, if not then redirect back to the select network page
+//		if ( $network_key ) {
+//			$this->session->set_userdata(array('network_key' => $network_key));
+//		}
+//		else {
+//			$network_key = $this->session->userdata('network_key');
+//			if ( ! $network_key ) {
+//				redirect('discover/proceed_to_query/standard_search', 'refresh');
+//			}
+//		}
+//		$this->data['network_key'] = $network_key;
+		
 		$query = $this->input->post('jsonAPI');
 		error_log("STARTING QUERY");
-//		if ( $query == '' ) {
-//			$query = json_decode(file_get_contents('php://input')); // Get the POST body which contains the query JSON
-//		}
-//		print_r(json_encode($query));
-//		error_log("query -> " . print_r($query, 1));
 		
 		$network_to_search = $query['network_to_search'];
+		$this->data['network_key'] = $network_to_search;
 		error_log("network_to_search -> " . $network_to_search . " -> " . $network);
+	
 		
 		$parameters = array ('syntax' => 'elasticsearch');
 		$this->load->library('CafeVariome/Query', $parameters, 'query');
 		$query_statement = $this->query->parse($query);
 		$term = $query_statement;
+
 		if ( $term ) {
 //			error_log("POST -> " . print_r($_POST, true));
-			if ( empty($from_url_query) ) {
-				$data['term'] = $term;
-			}
-			else {
-				$term = urlencode($term);
-				$this->data['term'] = $term;
-			}
-		}
-		
-		$source = "all";
-		$this->load->model('sources_model');
-		
-		if ( ! $this->config->item('show_sources_in_discover')) {
-//			error_log("form source -> $source");
-			$source = "all";
-		}
-		
-		if (preg_match('/all/i',$source)) { // All sources specified, get descriptions
-			$sources = $this->sources_model->getSources();
-		}
-		else { // Just one source, get description
-			$sources = $this->sources_model->getSourceSingle($source);
-		}
-		
-		$sources_types = $this->sources_model->getSourcesTypes();
-                
-		if ( empty($from_url_query) ) {
-			$data['sources_full'] = $sources;
+			$data['term'] = $term;
 		}
 		else {
-			$this->data['sources_full'] = $sources;
+			show_error("You must specify a search term");
 		}
 		
-		foreach ($sources as $source => $description) {
-			// Check whether the user has the required access level for this source
-			$permission = $this->query->check_user_permission_for_source($source); // Get the user permission for this source (returns TRUE or FALSE)
+		// Get the federated installs to search from session (set when the discovery interface first loads)
+		$federated_installs = $this->session->userdata('federated_installs');
+//		error_log("f -> $federated_installs");
+		$federated_installs_array = json_decode($federated_installs, 1);
+	
+		// If there's some federated installs to search then go through each one and get the variant counts
+		if ( ! empty($federated_installs_array)) {
+//			$this->variantcount_curl_multi($federated_installs_array, $term);
+			if ( !array_key_exists('error', $federated_installs_array) ) {
+//				error_log("federated_installs_array -> " . print_r($federated_installs_array, 1));
+				$c = 0;
 
-			// Check what type of source this is (API, central, local etc)
-			$type = $sources_types[$source];
-			if ( ! $type ) { // If there's no type for this source in the database set it as mysql for the default
-				$type = "mysql";
-			}
+				foreach ( $federated_installs_array as $install ) {
+					$c++;
+					$network_key = $install['network_key'];
+					error_log("NETWORK KEY -> $network_key");
+					$install_uri = $install['installation_base_url'];
+					$install_uri = rtrim($install_uri,"/");
+					$user_id = $this->ion_auth->user()->row()->id;
+//					error_log("STARTING --> $term ---> " . $install_uri . "/discover/variantcount_federated/$term/$user_id");
+//					$this->variantcount_federated($term);
+//					$contents = curl_get_contents($install_uri . "/discover/variantcount_federated/$term");
+					error_log("calling -> " . $install_uri . "/discover/query_federated/$term");
+					// Set the timeout for each call to federated installs to 5 seconds
+					$opts = array('http' =>
+						array(
+							'method'  => 'GET',
+							'timeout' => 5 
+						)
+					);
+					$context  = stream_context_create($opts);
+						
+						
+					$all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key", false, $context);
+//					$all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key");
+//					error_log(print_r($http_response_header, 1));
+					error_log("all_counts_json -> $all_counts_json");
 
-			// Pass the permission for this source to the view data
-			if ( empty($from_url_query) ) {
-				$data['access_flag'][$source] = $permission;
-				$data['source_types'][$source] = $type;
-				
-			}
-			else {
-				$this->data['access_flag'][$source] = $permission;
-				$this->data['source_types'][$source] = $type;
-			}
-			
-			// Store the query information details in the database if stats are enabled
-			if ($this->config->item('stats')) {
-				$ip = getRealIpAddr();
-				$search_stats = array(
-					'ip' => $ip,
-					'username' => "NULL",
-					'term' => $term,
-					'source' => $source,
-					'datetime' => date('d-m-Y H:i:s')
-				);
-				updateStats($search_stats, 'searchstats');
-			}
-			
+					$all_counts = json_decode($all_counts_json, 1);
+					$federated_site_title = $all_counts['site_title'];
+					unset($all_counts['site_title']);
+//					error_log("all counts decoded -> " . print_r($all_counts, 1));
+					if ( ! empty($all_counts) ) {
+						foreach ( $all_counts as $federated_source => $counts_for_source ) {
+							
+							$federated_source_name = $federated_source . "__install_$c";
+							error_log("counts for source $federated_source_name -> " . print_r($counts_for_source, 1));
+//							error_log("adding to " . $federated_source);
+							$sources[$federated_source_name] = "$federated_source ($federated_site_title)";
+//							error_log("sources_full adding -> " . print_r($sources, 1));
+							$data['counts'][$federated_source_name] = $counts_for_source;
+							$data['install_uri'][$federated_source_name] = $install_uri;
+//							error_log("-----------> " . print_r($this->data['install_uri'], 1));
 
-			$query_result = $this->query->run($query_statement, $source);
-//			$final_query_result[$source] = $query_result;
-			if ( isset ($query_result) ) {
-//				if ( empty($from_url_query) ) {
-					$data['counts'][$source] = $query_result;
-//				}
-//				else {
-					$this->data['counts'][$source] = $query_result;
-//				}
+							$data['source_types'][$federated_source_name] = "federated";
+						}
+					}
+				}
 			}
 		}
-//		$this->output->set_header("Access-Control-Allow-Headers: Content-Type");
-//		$this->output->set_output(json_encode($data));
-//		echo json_encode($data);
-//		error_log("data -> " . json_encode($data));
 		
-//		if ( empty($from_url_query) ) { // The query comes from the form through the website
-			$this->load->view('pages/sources_table', $data); // Don't use _render as headers are already sent, html output from the view is sent back to ajax function and appended to div
-//		}
-//		else { // Query comes from a URL construction	
-//			if ( strtolower($format) == "html" ) {
-//				$this->_render('pages/sources_table');
-//			}
-//			else if ( strtolower($format) == "tab" ) {
-//				$this->output->set_header("Content-Type: text/plain");
-//				$this->load->view('pages/sources_table_tab', $this->data);
-//			}
-//			else if ( strtolower($format) == "json" ) {
-//				$this->output->set_content_type('application/json')->set_output(json_encode($this->data['counts']));
-//			}
-//			else {
-//				$this->_render('pages/sources_table');
-//			}
-//		}
-		
-		
-//		$this->variantcount($query_statement, "all", "html", "no");
-
-//		$sources = $this->sources_model->getSources();
-//		$this->data['sources_full'] = $sources;
-//		$this->data['query_results'] = $query_results;
-//		$this->_render('query_builder/results_table');
+		$this->load->view('pages/sources_table', $data); // Don't use _render as headers are already sent, html output from the view is sent back to ajax function and appended to div
 	}
 	
 	function view_variants_in_ucsc ($term, $source, $sharing_policy) {
