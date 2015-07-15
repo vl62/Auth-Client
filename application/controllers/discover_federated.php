@@ -24,7 +24,7 @@ class Discover_federated extends MY_Controller {
 	function variantcount($term, $user_id, $network_key) {
 //		error_log("variantcount_federated -> $term");
 		$term = urldecode($term);
-
+		$term = html_entity_decode($term);
 //		$token = $this->session->userdata('Token');
 //		error_log("token ---> $token ---> $user_id");
 //		
