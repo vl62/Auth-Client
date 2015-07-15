@@ -298,6 +298,7 @@ function prettyPrintJSON( $json ) {
 }
 
 function url_exists($url) {
+	error_log("checking URL -> $url");
 	if (!$fp = curl_init($url)) return false;
 	return true;
 }

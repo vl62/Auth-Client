@@ -433,6 +433,7 @@
         
 //        $idCount = 1;
         $("#buildQuery").click(function() {
+			$("#query_result").empty();
 			$('#waiting').show(500);
             $idCount = 1;
             
