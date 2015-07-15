@@ -36,6 +36,11 @@ class Discover extends MY_Controller {
 		}
 		$this->data['network_key'] = $network_key;
 		
+		// Check if the user is in the master network group for this network
+		$user_id = $this->ion_auth->user()->row()->id;
+		$is_user_member_of_master_network_group_for_network = authPostRequest('', array('user_id' => $user_id, 'network_key' => $network_key), $this->config->item('auth_server') . "/api/auth_general/is_user_member_of_master_network_group_for_network");
+		error_log("is_user_member_of_master_network_group_for_network -> " . $is_user_member_of_master_network_group_for_network);
+		
 		$this->title = "Discover";
 		$token = $this->session->userdata('Token');
 		$data = authPostRequest($token, array('network_key' => $network_key), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_network");
