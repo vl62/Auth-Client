@@ -1212,7 +1212,7 @@ class Discover extends MY_Controller {
 		}
 		if ( $term && $source && $sharing_policy ) {
 			$term = urldecode($term);
-			
+			$term = html_entity_decode($term);
 			$this->data['term'] = $term;
 			$this->data['source'] = $source;
 			$this->data['sharing_policy'] = $sharing_policy;
