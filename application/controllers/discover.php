@@ -912,7 +912,7 @@ class Discover extends MY_Controller {
 				// Get the ID of the source and fetch the groups that it belongs to
 				
 //				$token = $this->session->userdata('Token');
-//				$returned_sources = authPostRequest($token, array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_sources_for_installation_that_user_id_has_network_group_access_to");
+//				$returned_sources = authPostRequest($token, array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_sources_for_installation_that_user_id_has_count_display_group_access_to");
 //				print "$returned_sources";
 
 				$source_id = $this->sources_model->getSourceIDFromName($source);
