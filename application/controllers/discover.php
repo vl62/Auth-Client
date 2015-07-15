@@ -607,7 +607,7 @@ class Discover extends MY_Controller {
 					$opts = array('http' =>
 						array(
 							'method'  => 'GET',
-							'timeout' => 2
+							'timeout' => 5
 						)
 					);
 					$context  = stream_context_create($opts);
