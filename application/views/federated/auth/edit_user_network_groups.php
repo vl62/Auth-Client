@@ -25,18 +25,15 @@
 	
 				<?php echo form_hidden(array('installation_key' => $this->config->item('installation_key'))); ?>	
 					<?php if (isset($groups)): ?>
-					<?php error_log(print_r($groups, 1)); ?>
-					Assign user to groups that given them openAccess to restrictedAccess records<br />(control click to select multiple): <br />
+					<?php // error_log(print_r($groups, 1)); ?>
+					<!--Assign user to groups that given them openAccess to restrictedAccess records<br />(control click to select multiple): <br />-->
                                         
-                                <?php 
-                                        $group_count = count($groups) + 1;
-//                                        $curator_count = count($users) + 1;
-                                ?>
-                                <select size="<?php echo $group_count; ?>" name="groupsaa[]"  multiple="multiple">
-                                        <?php foreach ($groups as $group ): ?>
-                                                <option value="<?php echo $group['id'] . "," . $group['network_key'] . ""; ?>" <?php if (isset($selected_groups)) { if (array_key_exists($group['id'], $selected_groups)) { echo 'selected="selected"'; }} ?>><?php echo $group['description'] . " (Network:" . $group['network_name'] . ")"; ?></option>
-                                        <?php endforeach; ?>
-                                </select>
+                                <?php // $group_count = count($groups) + 1; ?>
+                                <!--<select size="<?php // echo $group_count; ?>" name="groupsaa[]"  multiple="multiple">-->
+                                        <?php // foreach ($groups as $group ): ?>
+                                                <!--<option value="<?php // echo $group['id'] . "," . $group['network_key'] . ""; ?>" <?php if (isset($selected_groups)) { if (array_key_exists($group['id'], $selected_groups)) { echo 'selected="selected"'; }} ?>><?php echo $group['description'] . " (Network:" . $group['network_name'] . ")"; ?></option>-->
+                                        <?php // endforeach; ?>
+                                <!--</select>-->
                                 
                                 <h3>Master Network Groups</h3>
                                 <div class="row-fluid">
