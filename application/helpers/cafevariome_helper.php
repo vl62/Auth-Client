@@ -297,12 +297,6 @@ function prettyPrintJSON( $json ) {
     return $result;
 }
 
-function url_exists($url) {
-	error_log("checking URL -> $url");
-	if (!$fp = curl_init($url)) return false;
-	return true;
-}
-
 function json_format($json) {
   if (!is_string($json)) {
     if (phpversion() && phpversion() >= 5.4) {

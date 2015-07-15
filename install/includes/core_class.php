@@ -164,6 +164,11 @@ class Core {
 			$check_array['mysqli'] = $error;
 		}
 		
+		if (! extension_loaded('openssl')) {
+			$error = '<div class="alert alert-error">The openssl extention is not enabled in PHP. See <a href="http://stackoverflow.com/questions/14291151/you-must-enable-the-openssl-extension-to-download-files-via-https" target="_blank" >here</a> for an example of how to enable it.</div><hr>';
+			$check_array['openssl'] = $error;
+		}
+		
 		return $check_array;
 	}
 	
