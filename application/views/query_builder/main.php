@@ -87,6 +87,10 @@
             
         </div> <!-- end span12 pagination-centered -->
     </div> <!-- end row-fluid -->
+	<div id="waiting" style="display: none; text-align: center;">
+		Please wait...<br />
+		<img src="<?php echo base_url("resources/images/cafevariome/ajax-loader.gif");?>" title="Loader" alt="Loader" />
+	</div>
     <div id="query_result"></div>
     <input type="hidden" value="<?php echo $network_key; ?>" id="network_key"/>
     
