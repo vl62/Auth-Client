@@ -612,7 +612,7 @@ class Discover extends MY_Controller {
 					);
 					$context  = stream_context_create($opts);
 					
-if(get_http_response_code('http://somenotrealurl.com/notrealpage') != "200"){
+if(get_http_response_code($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key") != "200"){
     continue;
 }else{
     error_log("exists so okay");
