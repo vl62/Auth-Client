@@ -39,12 +39,12 @@ class Discover extends MY_Controller {
 		// Check if the user is in the master network group for this network
 		$user_id = $this->ion_auth->user()->row()->id;
 		$is_user_member_of_master_network_group_for_network = json_decode(authPostRequest('', array('user_id' => $user_id, 'network_key' => $network_key), $this->config->item('auth_server') . "/api/auth_general/is_user_member_of_master_network_group_for_network"), 1);
-		error_log("is_user_member_of_master_network_group_for_network -> " . print_r($is_user_member_of_master_network_group_for_network,1));
+//		error_log("is_user_member_of_master_network_group_for_network -> " . print_r($is_user_member_of_master_network_group_for_network,1));
 		$network_master_group_test = $is_user_member_of_master_network_group_for_network['is_user_member_of_master_network_group_for_network'] == '1' ? true: false;
-		error_log("test -> " . $network_master_group_test);
+//		error_log("network_master_group_test -> " . $network_master_group_test);
 		// Check if user is a member of the master network group, if not then don't allow to proceed further and show error message
 		if ( ! $network_master_group_test ) {
-			show_error("You are not a member of the master group for this network so cannot access the discover interface. In order to search the network you need to get an administrator to add you to the master network group.");
+			show_error("You are not a member of the master group for this network so cannot access any discovery interfaces. In order to search any networks you need to get an administrator to add you to the master network group for each network.");
 		}
 		
 		$this->title = "Discover";
