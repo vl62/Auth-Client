@@ -285,8 +285,6 @@ class Discover extends MY_Controller {
 			}
 			$sources_types = $this->sources_model->getSourcesTypes();
 			
-			// Do counts of local sources (federated search counts are done after this)
-			$source_access_levels = array();
 
 			
 			
@@ -577,6 +575,11 @@ class Discover extends MY_Controller {
 			show_error("You must specify a search term");
 		}
 		
+		$sources = array();
+		$sources = $this->sources_model->getSources();
+
+
+		
 		// Get the federated installs to search from session (set when the discovery interface first loads)
 		$federated_installs = $this->session->userdata('federated_installs');
 //		error_log("f -> $federated_installs");
@@ -637,6 +640,9 @@ class Discover extends MY_Controller {
 				}
 			}
 		}
+
+		$data['sources_full'] = $sources;
+
 		
 		$this->load->view('pages/sources_table', $data); // Don't use _render as headers are already sent, html output from the view is sent back to ajax function and appended to div
 	}
