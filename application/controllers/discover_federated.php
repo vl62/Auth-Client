@@ -68,6 +68,10 @@ class Discover_federated extends MY_Controller {
 //		error_log("sources -> " . print_r($sources, 1));
 		$all_source_counts = array();
 		foreach ($sources as $source_array ) {
+			
+			error_log('source ---> ' . print_r($source_array, 1));
+			$source = $source_array['name'];
+			
 			$open_access_flag = 0;
 			// Check whether the user can access restrictedAccess variants in this source
 			// Get the ID of the source and fetch the groups that it belongs to
@@ -79,10 +83,11 @@ class Discover_federated extends MY_Controller {
 			
 			if ( ! array_key_exists($source_id, $accessible_source_display_ids_array)) {
 				error_log("Do not return this source!!!");
+				$all_source_counts[$source] = array("openAccess" => "1000", "linkedAccess" => "1000", "restrictedAccess" => "1000");
+				continue;
 			}
 			
-			error_log('source ---> ' . print_r($source_array, 1));
-			$source = $source_array['name'];
+
 			$es_index = $this->config->item('site_title');
 			$es_index = preg_replace('/\s+/', '', $es_index);
 			$es_index = strtolower($es_index);
