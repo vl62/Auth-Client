@@ -138,7 +138,7 @@
 			</p>
 			
 			
-                        <p><button type="submit" onclick="edit_source_assign_groups()" name="submit" class="btn btn-primary"><i class="icon-file"></i>  Save Source</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "sources/sources";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
+                        <p><button type="submit" onclick="select_groups()" name="submit" class="btn btn-primary"><i class="icon-file"></i>  Save Source</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "sources/sources";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
 		
 			</div>
 		</div>
