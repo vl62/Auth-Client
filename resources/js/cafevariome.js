@@ -3143,8 +3143,8 @@ function edit_user_network_groups() {
     $callAjax = true;
     
     $(".groupsSelected").find('option').each(function()
-        {   $(this).attr('selected', 'selected');
-        });
+    {   $(this).attr('selected', 'selected');
+    });
     
     $('form[name="editUser"]').submit(function(e) {
         e.preventDefault();
@@ -3169,6 +3169,12 @@ function edit_user_network_groups() {
             });$callAjax = false;
     });
 
+}
+
+function edit_source_assign_groups() {
+    $(".groupsSelected").find('option').each(function()
+    {   $(this).attr('selected', 'selected');
+    });
 }
 
 function activate_user() {
