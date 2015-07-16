@@ -72,7 +72,6 @@ class Discover_federated extends MY_Controller {
 			$this->elasticsearch->set_type("variants");
 			$query = array();
 			$query['size'] = 0;
-			$term = urldecode($term);
 						
 			$this->load->model('settings_model');
 			$search_fields = $this->settings_model->getSearchFields("search_fields");
@@ -151,7 +150,10 @@ class Discover_federated extends MY_Controller {
 				$all_source_counts[$source] = $counts;
 //				error_log(print_r($counts, 1));
 			}
-//			
+			else {
+				$all_source_counts[$source] = array("openAccess" => 0, "linkedAccess" => 0, "restrictedAccess" => 0);
+//				error_log("empty counts");
+			}
 			
 			
 		}
