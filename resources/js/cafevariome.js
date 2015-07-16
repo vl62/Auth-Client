@@ -3171,7 +3171,7 @@ function edit_user_network_groups() {
 
 }
 
-function edit_source_assign_groups() {
+function select_groups() {
     $(".groupsSelected").find('option').each(function()
     {   $(this).attr('selected', 'selected');
     });
