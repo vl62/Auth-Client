@@ -39,20 +39,12 @@ class Query extends CafeVariome {
 			foreach ( $v as $element ) {
 				error_log("2 -> " . print_r($element,1));
 				if ( $this->syntax == "elasticsearch" ) {
-//					$element->{$k} = str_replace('-', '\-', $element->{$k}); // Escape
-//					$element->{$k} = str_replace('+', '\+', $element->{$k}); // Escape
-//					print "operator -> " . htmlentities($element->operator) . "<br />";
-//					error_log("operator -> " . htmlentities($element['operator']) . " -> " . $element['operator']);
-//					$element[$k] = strtolower($element[$k]);
-
 					if ( strtolower($element['operator']) == "is" ) {
 						if ( $k == 'phenotypeFeature' ) {
 							error_log("phenofeature -> " . print_r($element, 1));
 							$attribute = $element['attribute']['cursiveAttribute']['term'];
 							$value = strtolower($element['phenotypeFeature']['value']);
 							error_log("----> $attribute -> $value");
-//							print $element->parameterID . " -> " . $element->{$k} . "<br />";
-//							print_r($element);
 							$attribute = str_replace(' ', '_', $attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
 							$attribute = str_replace('[', '\[', $attribute); // Escape square brackets as these are reserved in ElasticSearch
 							$attribute = str_replace(']', '\]', $attribute); // Escape square brackets as these are reserved in ElasticSearch
@@ -60,8 +52,6 @@ class Query extends CafeVariome {
 								$query_array[$element['querySectionID']] =  "_missing_:" . $attribute;
 							}
 							else {
-//								$element->{$k} = str_replace('-', '\-', $element->{$k}); // Escape
-//								$element->{$k} = str_replace('+', '\+', $element->{$k}); // Escape
 								$value = addcslashes($value,'-+=&&||><!\(\)\{\}\[\]^"~*?:\\');
 								$query_array[$element['querySectionID']] = $attribute . "_raw:" . $value;
 							}
@@ -77,165 +67,126 @@ class Query extends CafeVariome {
 						}
 						else {
 							$query_array[$element['querySectionID']] = $element[$k]; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
-//							$query_array[$element->id] = $element->{$k}; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
 						}
 					}
 					
 //					coordinate
 					elseif ( strtolower($element['operator']) == "is like" ) {
-						if ( $k == 'phenotype_epad' ) {
-							$attribute = str_replace(' ', '_', $element->attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
+						if ( $k == 'phenotypeFeature' ) {
+//							error_log("phenofeature -> " . print_r($element, 1));
+							$attribute = $element['attribute']['cursiveAttribute']['term'];
+							$value = strtolower($element['phenotypeFeature']['value']);
+//							error_log("----> $attribute -> $value");
+							$attribute = str_replace(' ', '_', $attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
 							$attribute = str_replace('[', '\[', $attribute); // Escape square brackets as these are reserved in ElasticSearch
 							$attribute = str_replace(']', '\]', $attribute); // Escape square brackets as these are reserved in ElasticSearch
-//							$element->{$k} = str_replace('-', '\-', $element->{$k}); // Escape
-//							$element->{$k} = str_replace('+', '\+', $element->{$k}); // Escape
-							$element->{$k} = addcslashes($element->{$k},'-+=&&||><!\(\)\{\}\[\]^"~*?:\\');
-							$query_array[$element->querySectionID] = $attribute . "_raw:" . "*" . $element->{$k} . "*";
+							$value = addcslashes($value,'-+=&&||><!\(\)\{\}\[\]^"~*?:\\');
+							$query_array[$element['querySectionID']] = $attribute . "_raw:" . "*" . $value . "*";
 						}
-						else {
-//							$element->{$k} = str_replace('-', '\-', $element->{$k}); // Escape
-//							$element->{$k} = str_replace('+', '\+', $element->{$k}); // Escape
-							$element->{$k} = addcslashes($element->{$k},'-+=&&||><!\(\)\{\}\[\]^"~*?:\\');
-							$query_array[$element->querySectionID] = "*" . $element->{$k} . "*"; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
-//							$query_array[$element->id] = "*" . $element->{$k} . "*"; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
+						elseif ( $k == "geneSymbol" ) {
+//							error_log("geneSymbol ---> " . print_r($element['geneSymbol'],1));
+							$query_array[$element['querySectionID']] = "gene:" . "*" . $element['geneSymbol']['symbol'] . "*";
+//							error_log("geneSymbol -> " . $element['geneSymbol']['symbol']);
 						}
 					}
-					elseif ( strtolower($element->operator) == "is not" ) {
-						if ( $k == 'phenotype_epad' ) {
-							$attribute = str_replace(' ', '_', $element->attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
-							$attribute = str_replace('[', '\[', $attribute); // Escape square brackets as these are reserved in ElasticSearch
-							$attribute = str_replace(']', '\]', $attribute); // Escape square brackets as these are reserved in ElasticSearch
-							
-
-							if ( strtolower($element->{$k}) == "null" ) {
-								$query_array[$element->parameterID] =  "_exists_:" . $attribute;
-							}
-							else {
-//								error_log("TYPE -------------> " . $element->{$k});
-//								if ( is_numeric($element->{$k}) ) { // Hack for NOT problem
-//									$element->{$k} = str_replace('-', '\-', $element->{$k}); // Escape
-//									$element->{$k} = str_replace('+', '\+', $element->{$k}); // Escape
-//									$query_array[$element->parameterID] = $attribute . ":(" . "<" . $element->{$k} . " OR >" . $element->{$k} . ")";
-//
-//								}
-//								else {
-//									$element->{$k} = str_replace('-', '\-', $element->{$k}); // Escape
-//									$element->{$k} = str_replace('+', '\+', $element->{$k}); // Escape
-									$element->{$k} = addcslashes($element->{$k},'-+=&&||><!\(\)\{\}\[\]^"~*?:\\');
-//									$query_array[$element->parameterID] = $attribute . ":" . "! " . $element->{$k};
-//									$query_array[$element->parameterID] = "<not>" . $attribute . "_raw:* !" . $element->{$k} . "</not>";
-//									$query_array[$element->parameterID] = $attribute . "_raw:* !" . $element->{$k};
-									$query_array[$element->parameterID] = $attribute . "_raw:" . "(-" . $element->{$k} . ")";
-//									$not_filter = $attribute . "_raw:" . $element->{$k};
-//									$this->notFilter = $attribute . "_raw:" . $element->{$k};
-//									$query_array[$element->parameterID] = $attribute . ":" . $element->{$k};
-//								}
-							}
-						}
-						else {
-							$query_array[$element->parameterID] = "*" . $element->{$k} . "*"; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
-//							$query_array[$element->id] = "*" . $element->{$k} . "*"; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
-						}
-					}
-					elseif ( strtolower($element->operator) == "is not like" ) {
-						if ( $k == 'phenotype_epad' ) {
-							$attribute = str_replace(' ', '_', $element->attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
+					elseif ( strtolower($element['operator']) == "is not" ) {
+						if ( $k == 'phenotypeFeature' ) {
+							$attribute = $element['attribute']['cursiveAttribute']['term'];
+							$value = strtolower($element['phenotypeFeature']['value']);
+							$attribute = str_replace(' ', '_', $attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
 							$attribute = str_replace('[', '\[', $attribute); // Escape square brackets as these are reserved in ElasticSearch
 							$attribute = str_replace(']', '\]', $attribute); // Escape square brackets as these are reserved in ElasticSearch
 							
 
-							if ( strtolower($element->{$k}) == "null" ) {
-								$query_array[$element->parameterID] =  "_exists_:" . $attribute;
+							if ( strtolower($value) == "null" ) {
+								$query_array[$element['querySectionID']] =  "_exists_:" . $attribute;
 							}
 							else {
-//								$element->{$k} = str_replace('-', '\-', $element->{$k}); // Escape
-//								$element->{$k} = str_replace('+', '\+', $element->{$k}); // Escape
-//								$element->{$k} = preg_replace('/-|/','-',$element->{$k});
-//								$element->{$k} = preg_replace('%([+\-&|!(){}[\]^"~*?:/]+)%', '\\\\$1', $element->{$k});
-//								$element->{$k} = preg_replace('%([+-=]+)%', '\\\\$1', $element->{$k});
-//								$elasticsearch_escaped_characters = array (+ - = && || > < ! ( ) { } [ ] ^ " ~ * ? : \ /);
-								$element->{$k} = addcslashes($element->{$k},'-+=&&||><!\(\)\{\}\[\]^"~*?:\\');
-								$query_array[$element->parameterID] = $attribute . "_raw:" . "(-*" . $element->{$k} . "*)";
+								$value = addcslashes($value,'-+=&&||><!\(\)\{\}\[\]^"~*?:\\');
+								$query_array[$element['querySectionID']] = $attribute . "_raw:" . "(-" . $value . ")";
 							}
 						}
-						else {
-							$query_array[$element->parameterID] = "*" . $element->{$k} . "*"; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
-//							$query_array[$element->id] = "*" . $element->{$k} . "*"; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
+					}
+					elseif ( strtolower($element['operator']) == "is not like" ) {
+						if ( $k == 'phenotypeFeature' ) {
+							$attribute = $element['attribute']['cursiveAttribute']['term'];
+							$value = strtolower($element['phenotypeFeature']['value']);
+
+							$attribute = str_replace(' ', '_', $attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
+							$attribute = str_replace('[', '\[', $attribute); // Escape square brackets as these are reserved in ElasticSearch
+							$attribute = str_replace(']', '\]', $attribute); // Escape square brackets as these are reserved in ElasticSearch
+							
+
+							if ( strtolower($value) == "null" ) {
+								$query_array[$element['querySectionID']] =  "_exists_:" . $attribute;
+							}
+							else {
+								$value = addcslashes($value,'-+=&&||><!\(\)\{\}\[\]^"~*?:\\');
+								$query_array[$element['querySectionID']] = $attribute . "_raw:" . "(-*" . $value . "*)";
+							}
 						}
 					}
-					elseif ( strtolower($element->operator) == "=" ) {
-						if ( $k == 'phenotype_epad' ) {
-//							print $element->parameterID . " -> " . $element->{$k} . "<br />";
-//							print_r($element);
-							$attribute = str_replace(' ', '_', $element->attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
+					elseif ( strtolower($element['operator']) == "=" ) {
+						if ( $k == 'phenotypeFeature' ) {
+							$attribute = $element['attribute']['cursiveAttribute']['term'];
+							$value = strtolower($element['phenotypeFeature']['value']);
+
+							$attribute = str_replace(' ', '_', $attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
 							$attribute = str_replace('[', '\[', $attribute); // Escape square brackets as these are reserved in ElasticSearch
 							$attribute = str_replace(']', '\]', $attribute); // Escape square brackets as these are reserved in ElasticSearch
 //							$subject = '+ - = && || > < ! ( ) { } [ ] ^ " ~ * ? : \ /';
 //							$result = preg_replace('%([+\-&|!(){}[\]^"~*?:/]+)%', '\\\\$1', $subject);
-							if ( strtolower($element->{$k}) == "null" ) {
-								$query_array[$element->parameterID] =  "_missing_:" . $attribute;
+							if ( strtolower($value) == "null" ) {
+								$query_array[$element['querySectionID']] =  "_missing_:" . $attribute;
 							}
 							else {
-								if ( is_numeric($element->{$k}) ) {
-									$element->{$k} = str_replace('-', '\-', $element->{$k}); // Escape
-									$element->{$k} = str_replace('+', '\+', $element->{$k}); // Escape
-									$query_array[$element->parameterID] = $attribute . "_d:" . $element->{$k};
-								}
-								else { // A string value with numeric comparison shouldn't be possible as it's blocked in the query builder
-									$query_array[$element->parameterID] = $attribute . ":" . $element->{$k};
+								if ( is_numeric($value) ) {
+									$value = str_replace('-', '\-', $value); // Escape
+									$value = str_replace('+', '\+', $value); // Escape
+									$query_array[$element['querySectionID']] = $attribute . "_d:" . $value;
 								}
 							}
 						}
-						else {
-//							$element->{$k} = addcslashes($element->{$k},'-+=&&||><!\(\)\{\}\[\]^"~*?:\\');
-							$query_array[$element->parameterID] = $element->{$k}; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
-//							$query_array[$element->id] = $element->{$k}; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
-						}
 					}
-					elseif ( strtolower($element->operator) == "!=" ) {
+					elseif ( strtolower($element['operator']) == "!=" ) {
 //					elseif ( htmlentities($element->operator) == "&ne;" ) {
-						if ( $k == 'phenotype_epad' ) {
-							$attribute = str_replace(' ', '_', $element->attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
+						if ( $k == 'phenotypeFeature' ) {
+							$attribute = $element['attribute']['cursiveAttribute']['term'];
+							$value = strtolower($element['phenotypeFeature']['value']);
+
+							$attribute = str_replace(' ', '_', $attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
 							$attribute = str_replace('[', '\[', $attribute); // Escape square brackets as these are reserved in ElasticSearch
 							$attribute = str_replace(']', '\]', $attribute); // Escape square brackets as these are reserved in ElasticSearch
 							
-							if ( strtolower($element->{$k}) == "null" ) {
-								$query_array[$element->parameterID] =  "_exists_:" . $attribute;
+							if ( strtolower($value) == "null" ) {
+								$query_array[$element['querySectionID']] =  "_exists_:" . $attribute;
 							}
 							else {
-//								error_log("TYPE -------------> " . $element->{$k});
-								if ( is_numeric($element->{$k}) ) {
-									$element->{$k} = str_replace('-', '\-', $element->{$k}); // Escape
-									$element->{$k} = str_replace('+', '\+', $element->{$k}); // Escape
-									$query_array[$element->parameterID] = $attribute . "_d:(" . "<" . $element->{$k} . " OR >" . $element->{$k} . ")";
+								if ( is_numeric($value) ) {
+									$value = str_replace('-', '\-', $value); // Escape
+									$value = str_replace('+', '\+', $value); // Escape
+									$query_array[$element['querySectionID']] = $attribute . "_d:(" . "<" . $value . " OR >" . $value . ")";
 								}
 							}
 						}
-						else {
-							$query_array[$element->parameterID] = "*" . $element->{$k} . "*"; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
-//							$query_array[$element->id] = "*" . $element->{$k} . "*"; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
-						}	
 					}
 					else { // Else it must be a numeric comparison >,<,>=,<=
-						if ( $k == 'phenotype_epad' ) {
-							$attribute = str_replace(' ', '_', $element->attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
+						if ( $k == 'phenotypeFeature' ) {
+							$attribute = $element['attribute']['cursiveAttribute']['term'];
+							$value = strtolower($element['phenotypeFeature']['value']);
+
+							$attribute = str_replace(' ', '_', $attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
 							$attribute = str_replace('[', '\[', $attribute); // Escape square brackets as these are reserved in ElasticSearch
 							$attribute = str_replace(']', '\]', $attribute); // Escape square brackets as these are reserved in ElasticSearch
-							if ( is_numeric($element->{$k}) ) {
-								$element->{$k} = str_replace('-', '\-', $element->{$k}); // Escape
-								$element->{$k} = str_replace('+', '\+', $element->{$k}); // Escape
-								$query_array[$element->parameterID] = $attribute . "_d:" . "" . $element->operator . "" . $element->{$k};
+							if ( is_numeric($value) ) {
+								$value = str_replace('-', '\-', $value); // Escape
+								$value = str_replace('+', '\+', $value); // Escape
+								$query_array[$element['querySectionID']] = $attribute . "_d:" . "" . $element['operator'] . "" . $value;
 							}
 							else { // A string value with numeric comparison shouldn't be possible as it's blocked in the query builder
-//								$query_array[$element->parameterID] = $attribute . ":" . "" . $element->operator . "" . $element->{$k};
-								$query_array[$element->parameterID] = $attribute . ":" . " " . $element->operator . "" . $element->{$k};
+								$query_array[$element['querySectionID']] = $attribute . ":" . " " . $element['operator'] . "" . $value;
 							}
 						}
-						else {
-							$query_array[$element->parameterID] = $element->{$k};
-//							$query_array[$element->parameterID] = "*" . $element->{$k} . "*"; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
-//							$query_array[$element->id] = "*" . $element->{$k} . "*"; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
-						}	
 					}
 				}
 			}
