@@ -35,9 +35,9 @@ class Discover_federated extends MY_Controller {
 			show_error("The network key check failed for discover_federated/variantcount - the requesting installation might not be part of the specified network");
 		}
 		
-		// Fetch any sources that the user has group level access to
+		// Fetch any sources that the user has count display group level access to
 		$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_count_display_group_access_to");
-		error_log("sources ------>------> $returned_sources");
+		error_log("sources count_display ------>------> $returned_sources");
 		$accessible_sources_array = json_decode($returned_sources, 1);
 //		$accessible_source_ids = array_values($accessible_sources_array);
 		$accessible_source_ids_array = array();
@@ -48,6 +48,19 @@ class Discover_federated extends MY_Controller {
 			error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
 		}
 //		$accessible_source_ids_array = array_flip($accessible_source_ids_array);
+		
+		// Fetch any sources that the user has source display group level access to
+		$source_display_sources_returned = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_source_display_group_access_to");
+		error_log("sources source_display ------>------> $source_display_sources_returned");
+		$accessible_source_display_array = json_decode($source_display_sources_returned, 1);
+//		$accessible_source_ids = array_values($accessible_sources_array);
+		$accessible_source_display_ids_array = array();
+		if ( ! array_key_exists('error', $accessible_source_display_array)) {
+			foreach ( $accessible_source_display_array as $s ) {
+				$accessible_source_display_ids_array[$s['source_id']] = $s['source_id'];
+			}
+			error_log("accessible_source_display_ids_array -> " . print_r($accessible_source_display_ids_array, 1));
+		}
 		
 		$this->load->model('sources_model');
 		// Get the sources for this installation which are to be search (any that are not federated i.e. local sources)
@@ -63,6 +76,11 @@ class Discover_federated extends MY_Controller {
 				error_log("SET TO OPENACCESS!!");
 				$open_access_flag = 1;
 			}
+			
+			if ( ! array_key_exists($source_id, $accessible_source_display_ids_array)) {
+				error_log("Do not return this source!!!");
+			}
+			
 			error_log('source ---> ' . print_r($source_array, 1));
 			$source = $source_array['name'];
 			$es_index = $this->config->item('site_title');
