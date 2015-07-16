@@ -42,7 +42,7 @@ $(function (){
 									<td><a rel="popover" data-content="Click for a description of this source (opens in a new window)." data-original-title="Source Information" href="<?php echo base_url('discover/source/' . $federated_source); ?>" target="_blank"><?php echo $sources_full[$source]; ?></a></td>
 								<?php endif; ?>
 							<?php endif; ?>
-							<td><?php if ( array_key_exists('openAccess', $count )) { if ( $count['openAccess'] > $this->config->item('variant_count_cutoff') ) { echo $count['openAccess']; } else { ?> <a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a> <?php }} else { echo "0";}?></td>
+							<td><?php if ( array_key_exists('openAccess', $count )) { if ( $count['openAccess'] == 0 ) { echo "0"; } elseif ( $count['openAccess'] > $this->config->item('variant_count_cutoff') ) { echo $count['openAccess']; } else { ?> <a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a> <?php }} else { echo "0";}?></td>
 							<td> 
 								<?php if ( array_key_exists('openAccess', $count )): ?>
 									<?php if ( $source_types[$source] == "api" ): ?>
@@ -50,7 +50,9 @@ $(function (){
 									<?php elseif ( $source_types[$source] == "central" ): ?>
 										<?php echo anchor("http://www.cafevariome.org/discover/variants/$term/" . $central_source[$source] . "/openAccess", img(array('src' => base_url('resources/images/cafevariome/cafevariome_node.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to access these records in Cafe Variome Central. N.B. All access control to these records is controlled by Cafe Variome Central.", 'data-original-title' => "Access CV Central Records")); ?>
 									<?php elseif ( $source_types[$source] == "federated" ): ?>
-										<?php if ( $count['openAccess'] > $this->config->item('variant_count_cutoff') ): ?>
+										<?php if ( $count['openAccess'] == 0 ): ?>
+											<?php echo "0"; ?>
+										<?php elseif ( $count['openAccess'] > $this->config->item('variant_count_cutoff') ): ?>
 											<a rel="popover" data-content="Click to access these records." data-original-title="Access Records"> <input type="image" onclick="javascript:variantOpenAccessRequestFederated('<?php echo urlencode($term);?>', '<?php echo $federated_source;?>', '<?php echo $sources_full[$source];?>', '<?php echo $count['openAccess'];?>', '<?php echo urlencode(base64_encode($install_uri[$source])); ?>')" src="<?php echo base_url('resources/images/cafevariome/request.png');?>"></a>
 										<?php else: ?>
 											<a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a>
@@ -69,12 +71,14 @@ $(function (){
 							<td><?php if ( array_key_exists('linkedAccess', $count )) { echo $count['linkedAccess'];} else { echo "0";}?></td>
 							<td>
 								<?php if ( array_key_exists('linkedAccess', $count )): ?>
-									<?php if ( $source_types[$source] == "api" ): ?>
-										<?php echo anchor($source_info[$source]['uri'] . "/discover/variants/$term/" . $node_source[$source] . "/linkedAccess", img(array('src' => base_url('resources/images/cafevariome/cafevariome_node.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to access these records on the remote node. N.B. All access control to these records is controlled by the remote node.", 'data-original-title' => "Access Node Records")); ?>
-									<?php elseif ( $source_types[$source] == "central" ): ?>
+									<?php if ( $source_types[$source] == "central" ): ?>
 										<?php echo anchor("http://www.cafevariome.org/discover/variants/$term/" . $central_source[$source] . "/linkedAccess", img(array('src' => base_url('resources/images/cafevariome/cafevariome_node.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to access these records in Cafe Variome Central. N.B. All access control to these records is controlled by Cafe Variome Central.", 'data-original-title' => "Access CV Central Records")); ?>
 									<?php elseif ( $source_types[$source] == "federated" ): ?>
-										<a href="<?php echo base_url(); ?>discover/variants_federated/<?php echo urlencode($term); ?>/<?php echo $federated_source;?>/<?php echo urlencode(base64_encode($install_uri[$source])); ?>/linkedAccess" target="_blank" rel="popover" data-content="Click to access these records." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
+										<?php if ( $count['linkedAccess'] == 0 ): ?>
+											<?php echo "0"; ?>
+										<?php else: ?>
+											<a href="<?php echo base_url(); ?>discover/variants_federated/<?php echo urlencode($term); ?>/<?php echo $federated_source;?>/<?php echo urlencode(base64_encode($install_uri[$source])); ?>/linkedAccess" target="_blank" rel="popover" data-content="Click to access these records." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
+										<?php endif; ?>
 									<?php else: ?>
 										<a href="<?php echo base_url(); ?>discover/variants/<?php echo urlencode($term); ?>/<?php echo $source;?>/linkedAccess" target="_blank" rel="popover" data-content="Click to access these records." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
 									<?php endif; ?>
@@ -82,15 +86,15 @@ $(function (){
 									<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
 								<?php endif; ?>
 							</td>
-							<td><?php if ( array_key_exists('restrictedAccess', $count )) { if ( $count['restrictedAccess'] > $this->config->item('variant_count_cutoff') ) { echo $count['restrictedAccess'];} else { ?> <a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a> <?php }} else { echo "0";}?></td>
+							<td><?php if ( array_key_exists('restrictedAccess', $count )) { if ( $count['openAccess'] == 0 ) { echo "0"; } elseif ( $count['restrictedAccess'] > $this->config->item('variant_count_cutoff') ) { echo $count['restrictedAccess'];} else { ?> <a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a> <?php }} else { echo "0";}?></td>
 							<td>
 								<?php if ( array_key_exists('restrictedAccess', $count )) : ?>
-									<?php if ( $source_types[$source] == "api" ): ?>
-										<?php echo anchor($source_info[$source]['uri'] . "/discover/variants/$term/" . $node_source[$source] . "/restrictedAccess", img(array('src' => base_url('resources/images/cafevariome/cafevariome_node.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to access these records on the remote node. N.B. All access control to these records is controlled by the remote node.", 'data-original-title' => "Access Node Records")); ?>
-									<?php elseif ( $source_types[$source] == "central" ): ?>
+									<?php if ( $source_types[$source] == "central" ): ?>
 										<?php echo anchor("http://www.cafevariome.org/discover/variants/$term/" . $central_source[$source] . "/restrictedAccess", img(array('src' => base_url('resources/images/cafevariome/cafevariome_node.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to access these records in Cafe Variome Central. N.B. All access control to these records is controlled by Cafe Variome Central.", 'data-original-title' => "Access CV Central Records")); ?>
 									<?php elseif ( $source_types[$source] == "federated" ): ?>
-										<?php if ( $count['restrictedAccess'] > $this->config->item('variant_count_cutoff') ): ?>
+										<?php if ( $count['restrictedAccess'] == 0 ): ?>
+											<?php echo "0"; ?>
+										<?php elseif ( $count['restrictedAccess'] > $this->config->item('variant_count_cutoff') ): ?>
 											<?php echo anchor("discover/variants/" . urlencode($term) . "/$source/restrictedAccess", img(array('src' => base_url('resources/images/cafevariome/request-icon.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to request access to these records (requires login).", 'data-original-title' => "Access Records")); ?>
 										<?php else: ?>
 											<a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a>

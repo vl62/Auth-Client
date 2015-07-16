@@ -600,7 +600,7 @@ class Discover extends MY_Controller {
 		$sources = array();
 		$sources = $this->sources_model->getSources();
 
-
+		$term = urlencode($term);
 		
 		// Get the federated installs to search from session (set when the discovery interface first loads)
 		$federated_installs = $this->session->userdata('federated_installs');
