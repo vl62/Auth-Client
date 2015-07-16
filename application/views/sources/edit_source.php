@@ -69,7 +69,7 @@
 				<?php if (array_key_exists('error', $groups)): ?>
 				<p><span class="label label-important">There are no network groups available to this installation. <br /></span></p>
 				<?php else: ?>
-				Edit Groups Allowed to Access restrictedAccess Variants<br />(control click to select multiple): <br />
+				Assign network groups to source:<br />
                                 
                                 <h3>Source Display Groups</h3>
                                 <div class="row-fluid">
