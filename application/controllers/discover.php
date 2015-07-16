@@ -1250,7 +1250,7 @@ class Discover extends MY_Controller {
 			
 //			$source_full = $s[$source];
 //			$this->data['source_full'] = $source_full;
-			
+			$term = rawurlencode($term);
 			$user_id = $this->ion_auth->user()->row()->id;
 //			echo "sending -> " . $federated_install_uri . "/discover_federated/variants/$term/$source/$sharing_policy/$format";
 			$variants = @file_get_contents($federated_install_uri . "/discover_federated/variants_json/$term/$source/$sharing_policy/$format/$user_id");
