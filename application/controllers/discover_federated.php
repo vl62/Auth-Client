@@ -825,9 +825,11 @@ class Discover_federated extends MY_Controller {
 			$source_uri = $source_info['uri'];
 			$source_id = $source_info['source_id'];
 			error_log("source_id -> $source_id");
-			// Fetch any sources that the user has group level access to
+			
+			
+			// Fetch any sources that the user has count display group level access to
 			$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_count_display_group_access_to");
-			error_log("sources ------>------> $returned_sources");
+//			error_log("sources ------>------> $returned_sources");
 			$accessible_sources_array = json_decode($returned_sources, 1);
 //			$accessible_source_ids = array_values($accessible_sources_array);
 			$accessible_source_ids_array = array();
@@ -837,10 +839,8 @@ class Discover_federated extends MY_Controller {
 				}
 				error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
 			}
-			
 			$open_access_flag = 0;
-			// Check whether the user can access restrictedAccess variants in this source
-			// Get the ID of the source and fetch the groups that it belongs to
+			// Check whether the user has count display level access to this source and hence we will set restrictedAccess records to openAccess records for source
 			if (array_key_exists($source_id, $accessible_source_ids_array)) {
 				error_log("SET TO OPENACCESS");
 				$open_access_flag = 1;
