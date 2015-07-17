@@ -45,13 +45,13 @@ $(function (){
 							<td><?php if ( array_key_exists('openAccess', $count )) { if ( $count['openAccess'] == 0 ) { echo "0"; } elseif ( $count['openAccess'] > $this->config->item('variant_count_cutoff') ) { echo $count['openAccess']; } else { ?> <a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a> <?php }} else { echo "0";}?></td>
 							<td> 
 								<?php if ( array_key_exists('openAccess', $count )): ?>
-									<?php if ( $source_types[$source] == "api" ): ?>
-										<?php echo anchor($source_info[$source]['uri'] . "/discover/variants/$term/" . $node_source[$source] . "/openAccess", img(array('src' => base_url('resources/images/cafevariome/cafevariome_node.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to access these records on the remote node. N.B. All access control to these records is controlled by the remote node.", 'data-original-title' => "Access Node Records")); ?>
-									<?php elseif ( $source_types[$source] == "central" ): ?>
+									<?php if ( $source_types[$source] == "central" ): ?>
 										<?php echo anchor("http://www.cafevariome.org/discover/variants/$term/" . $central_source[$source] . "/openAccess", img(array('src' => base_url('resources/images/cafevariome/cafevariome_node.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to access these records in Cafe Variome Central. N.B. All access control to these records is controlled by Cafe Variome Central.", 'data-original-title' => "Access CV Central Records")); ?>
 									<?php elseif ( $source_types[$source] == "federated" ): ?>
 										<?php if ( $count['openAccess'] == 0 ): ?>
 											<?php echo "0"; ?>
+										<?php elseif ( $count['openAccess'] == "BLOCKED" ): ?>
+											<a href="#" rel="popover" data-content="The display of record counts has been limited to specific users for this source." data-original-title="Unable to view counts"><i class="fa fa-ban fa-2x"></i></a>
 										<?php elseif ( $count['openAccess'] > $this->config->item('variant_count_cutoff') ): ?>
 											<a rel="popover" data-content="Click to access these records." data-original-title="Access Records"> <input type="image" onclick="javascript:variantOpenAccessRequestFederated('<?php echo urlencode($term);?>', '<?php echo $federated_source;?>', '<?php echo $sources_full[$source];?>', '<?php echo $count['openAccess'];?>', '<?php echo urlencode(base64_encode($install_uri[$source])); ?>')" src="<?php echo base_url('resources/images/cafevariome/request.png');?>"></a>
 										<?php else: ?>
