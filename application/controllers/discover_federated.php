@@ -846,6 +846,25 @@ class Discover_federated extends MY_Controller {
 				$open_access_flag = 1;
 			}
 			
+			// Fetch any sources that the user has source display group level access to
+			$source_display_sources_returned = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_source_display_group_access_to");
+			error_log("sources source_display ------>------> $source_display_sources_returned");
+			$accessible_source_display_array = json_decode($source_display_sources_returned, 1);
+//			$accessible_source_ids = array_values($accessible_sources_array);
+			$accessible_source_display_ids_array = array();
+			if ( ! array_key_exists('error', $accessible_source_display_array)) {
+				foreach ( $accessible_source_display_array as $s ) {
+					$accessible_source_display_ids_array[$s['source_id']] = $s['source_id'];
+				}
+				error_log("accessible_source_display_ids_array -> " . print_r($accessible_source_display_ids_array, 1));
+			}
+			
+			// Return error if the user isn't a member of the source display group for this source
+			if ( ! array_key_exists($source_id, $accessible_source_display_ids_array)) {
+				// error_log("Do not return this source!!!");
+				echo json_encode(array('error' => 'Unable to display source records because you user account is not a member of a source display group for this source'));
+				return;
+			}
 			
 			if ( preg_match('/openAccess/i', $sharing_policy)) {
 				
