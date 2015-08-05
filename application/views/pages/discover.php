@@ -3,7 +3,9 @@ if (sizeof($ontologiesused) > 0) {
 	// jstree javascript generation in discover controller function _generate_jstree
 	echo $jstree;
 }
+
 ?>
+
 
 <div class="container">
 	<div class="row-fluid">
