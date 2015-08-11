@@ -239,6 +239,8 @@
             delay: 200,
             type: 'POST',
             success: function(json) {
+                    console.log($network_key);
+                    console.log(json);
                     $.each(json, function(i, value) {
                         $('select.phenotype_keys1').append($('<option>').text(value.attribute).attr('value', value.attribute));
                         phenotype_keys.push(value.attribute);
