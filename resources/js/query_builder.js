@@ -50,8 +50,9 @@
                  </div></div>';
 
     $option = '<div class="pagination-centered {0}">\n\
-                <select class="{1}" data-type="operator"></select>\n\
-               </div>';
+                <select class="{1}" data-type="operator" {2}></select>\n\
+               {3}\n\
+                </div>';
     
     $option_select2 = '<div class="pagination-centered {0}">\n\
                             <select class="input-xlarge {1}" style="margin-bottom:10px">\n\
@@ -62,7 +63,7 @@
     $textbox = '<div class="span5 pagination-centered">\n\
                     <div class="input-append">\n\
                         <input class="input_field input-xlarge textValidate" data-type="{0}" type="text" placeholder="{1}">\n\
-                        <span class="add-on"><i class="icon-remove-circle"></i></span>\n\
+                        <button class="btn btn-danger" type="button"><i class="icon-remove-circle icon-white"></i></button>\n\
                     </div>\n\
                 </div>';
     
@@ -95,10 +96,12 @@
     $dna_textbox_stop = ["span6", "Stop", "stop\" disabled ", "2000002"];
     $dna_textbox_sequence = ["span12", "DNA", "sequence", "A,T,G,C"];
         
-    $accession.unshift(["[Input your own accession & version]"]);
-    $chromosome.unshift("[Input your own chromosome & build]");
+    $build.unshift("[Input your own value]");
+    $build.unshift("--Select a build--");
     
-    $reference = {  accession :  $accession, 
+    $reference = {  
+                    custom_input: ["[Input your own accession & version]", "[Input your own chromosome & build]"],
+                    accession :  $accession, 
                     chromosome : $chromosome,
                  };
                  
@@ -130,7 +133,7 @@
 
                 $("#dnaContainer").append($($type_sample.format(["dna" + $dna_count, ""])).css({"margin-top" : "10px", "margin-bottom" : "10px"}));
 
-                $options = add_options($option.format(["span3", "input-medium conditions"]), $dna_option);
+                $options = add_options($option.format(["span3", "input-medium conditions", '', "<br/><button class='btn btn-info condition-info'>Info</button>"]), $dna_option);
                 $("#dna" + $dna_count).append($options);
                 
                 $options_ref = add_options_group($option_select2.format(["span12", "input-medium condition_ref ref" + $dna_count]), $reference);
@@ -160,7 +163,7 @@
                 
                 $("#geneSymbolContainer").append($type_sample.format(["geneSymbol" + $geneSymbol_count, ""]));
                 
-                $options = add_options($option.format(["span3", "input-medium conditions"]), $geneSymbol_option);
+                $options = add_options($option.format(["span3", "input-medium conditions", "", ""]), $geneSymbol_option);
                 $("#geneSymbol" + $geneSymbol_count).append($options);
 
                 $("#geneSymbol" + $geneSymbol_count).append($textbox.format($geneSymbol_textbox));
@@ -180,7 +183,7 @@
                 
                 $("#hgvsContainer").append($type_sample.format(["hgvs" + $hgvs_count, ""]));
                 
-                $options = add_options($option.format(["span3", "input-medium conditions"]), $hgvs_option);
+                $options = add_options($option.format(["span3", "input-medium conditions", "", ""]), $hgvs_option);
                 $("#hgvs" + $hgvs_count).append($options);
 
                 $("#hgvs" + $hgvs_count).append($textbox.format($hgvs_textbox));
@@ -215,10 +218,10 @@
 //                    allowClear: true
                 });
                 
-                $options_1 = add_options($option.format(["span2", "input-medium conditions"]), $phenotype_option_1);
+                $options_1 = add_options($option.format(["span2", "input-medium conditions", "", ""]), $phenotype_option_1);
                 $("#phenotype" + $phenotype_count).append($options_1);
                 
-                $options_2 = add_options($option.format(["span2", "input-medium phenotype_values\" disabled "]), $phenotype_option_2);
+                $options_2 = add_options($option.format(["span2", "input-medium phenotype_values\" disabled ", "", ""]), $phenotype_option_2);
                 $("#phenotype" + $phenotype_count).append($options_2);
                 
                 $("#phenotype" + $phenotype_count).append($add_remove_btn.format(["offset2"]));
@@ -239,8 +242,6 @@
             delay: 200,
             type: 'POST',
             success: function(json) {
-                    console.log($network_key);
-                    console.log(json);
                     $.each(json, function(i, value) {
                         $('select.phenotype_keys1').append($('<option>').text(value.attribute).attr('value', value.attribute));
                         phenotype_keys.push(value.attribute);
@@ -248,54 +249,68 @@
                 }
           });
         
-        
         // DNA Type
         $(document).on('change', ".condition_ref", function() {
             
                 $(this).closest('[id^=dna]').find('.start').prop('disabled', "");
                 $(this).closest('[id^=dna]').find('.stop').prop('disabled', "");
                 
-                check_exact_match($(this).closest('[id^=dna]').attr('id'));
+//                check_exact_match($(this).closest('[id^=dna]').attr('id'));
                 
                 if($(this).val() === "[Input your own accession & version]") {
                     $(this).parent().append($textbox_with_label.format(["acc_acc", 'Accession', "", 'Enter a value',]));
                     $(this).parent().append($textbox_with_label.format(["acc_ver", 'Version', "", 'Enter a value',]));
                     $(this).siblings('.chr_chr').remove();
-                    $(this).siblings('.chr_build').remove();
+                    $(this).siblings('.chr_build_parent').remove();
                 } else if($(this).val() === "[Input your own chromosome & build]") {
                     $(this).parent().append($textbox_with_label.format(['chr_chr', 'Chromosome', "", 'Enter a value']));
-                    
-                    $build.unshift("[Input your own value]");
-                    $build.unshift("--Select a build--");
-                    $(this).parent().append(add_options($option.format(["", "chr_build input-medium"]), $build));
+                    $(this).parent().append(add_options($option.format(["chr_build_parent", "chr_build input-medium", "", ""]), $build));
                     
                     $(this).siblings('.acc_acc').remove();
                     $(this).siblings('.acc_ver').remove();
                 } else {
                     $(this).siblings('.chr_chr').remove();
-                    $(this).siblings('.chr_build').remove();
+                    $(this).siblings('.chr_build_parent').remove();
                     $(this).siblings('.acc_acc').remove();
                     $(this).siblings('.acc_ver').remove();
                 }
         });
         
-        $(document).on('keyup', '#dnaContainer [id^=dna] input', function() {
-            check_exact_match($(this).closest('[id^=dna]').attr('id'));
+        var typingTimer;
+        $(document).on('keyup', '#dnaContainer [id^=dna] input.sequence', function() {
+            parentId = $(this).closest('[id^=dna]').attr('id');
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(function() {
+                    check_exact_match(parentId);
+                }, 2000);
+        });
+        
+        $(document).on('keydown', '#dnaContainer [id^=dna] input.sequence', function() {
+            clearTimeout(typingTimer);
         });
         
         function check_exact_match(parentId) {
-            start = $("#" + parentId).find('.start').val();
-            stop = $("#" + parentId).find('.stop').val();
             seq = $("#" + parentId).find('.sequence').val();
-            ref = $("#" + parentId).find('.select2-chosen').html();
-
-            if(start === "" || stop === "" || seq === "" || ref === "--Select a reference--") {
-                $("#" + parentId).find('.conditions').prop('disabled', '');
-                return;
+            
+            if(seq !== "") {
+                if($("#" + parentId).find('.conditions').val() !== "EXACT") {
+                    if(confirm("If searching for a DNA sequence the operator must be 'EXACT'")) 
+                        $("#" + parentId).find('.conditions').find('option:first').attr('selected', 'selected');
+                    else {
+                        $.growl.warning({ message: "You have not set a DNA type validation to \"EXACT\" match. Cannot proceed to query." });
+                        return false;
+                    }
+                }
             }
-
-            $("#" + parentId).find('.conditions').attr('disabled', 'disabled').find('option:first').attr('selected', 'selected');
         }
+        
+        $(document).on('click', "#dnaContainer .condition-info", function() {
+           $("#modalInfo").show();
+           $(".closeModal").click(function(e) {
+                e.preventDefault();
+                $("#modalInfo").hide();
+            });
+        });
         
         $(document).on('change', "select.chr_build", function() {
                 if($(this).val() === "[Input your own value]") {
@@ -320,7 +335,7 @@
                     delay: 200,
                     type: 'POST',
                     success: function(data) {
-                        $new_phenotype_values = add_options($option.format(["span2", "input-medium phenotype_values"]), $phenotype_option_2.concat(data));
+                        $new_phenotype_values = add_options($option.format(["span2", "input-medium phenotype_values", "", ""]), $phenotype_option_2.concat(data));
                         $current_phenotype_values.replaceWith($new_phenotype_values);
                     }
                 });
@@ -470,21 +485,21 @@
                             "queryStart" : "<Date, Time>",
                             "queryStop" : "<Date, Time>",
                             "queryLabel" : "<identifier>",
-                            "queryResultLevel" : "IsPresent, IsPresentCount, Summary, Records",   
+                            "queryResultLevel" : "Exists|Counts|Records",   
                             
-                            "submitted" : {
-                                "id" : "leicester_lab",
-                                "name" : "first_name last_name",
+                            "submitter" : {
+                                "id" : "SubmitterPersonID",
+                                "name" : "First [Middle] Last",
                                 "email" : "email@domain.com",
-                                "institution" : "some hospital",
-                                "urls" : ["http://www.le.ac.uk/genetics", "http://www.le.ac.uk/biology"]
+                                "institution" : "AffiliationOfSubmitterPerson",
+                                "urls" : ["SubmitterPersonalURL", "..."]
                             },
                             "contact" : {
-                                "id" : "leicester_lab",
-                                "name" : "first_name last_name",
+                                "id" : "ContactPersonID",
+                                "name" : "First [Middle] Last",
                                 "email" : "email@domain.com",
-                                "institution" : "some hospital",
-                                "urls" : ["http://www.le.ac.uk/genetics", "http://www.le.ac.uk/biology"]
+                                "institution" : "AffiliationOfContactPerson",
+                                "urls" : ["ContactPersonURL", "..."]
                             }
                         },
                         
@@ -600,37 +615,39 @@
                 if(($(this).find('select.condition_ref').val().length > 0) && ($(this).find('.sequence').val().trim().length > 0))  {
                     
                     $reference = "";
-                    
                     if($(this).find('select.condition_ref').val() === "[Input your own accession & version]") {
                         $acc = $(this).find(".acc_acc").children('input').val();
                         $version = $(this).find(".acc_ver").children('input').val();
-                        $reference = $acc + $version;
+                        $reference = $acc + "." + $version;
                     } else if($(this).find('select.condition_ref').val().toString() === "[Input your own chromosome & build]") {
                         $chr = $(this).find(".chr_chr").children('input').val();
                         $build = $(this).find(".chr_build").val();
-                        $reference = $chr + $build;
+                        $reference = $chr + "." + $build;
                     } else {
-                        $reference = $(this).find('select.condition_ref').val();
+                        if($(this).find('select.condition_ref').val().substring(0, "chr".length) == "chr")
+                            $reference = $(this).find('select.condition_ref').val() + "." + "hg38";
+                        else
+                            $reference = $(this).find('select.condition_ref').val();
                     }
                     
                     $data_coordinate = {
-                        "querySectionID" : $idCount, 
+                        "querySegmentID" : $idCount, 
                         "operator" : $(this).find('.conditions').val().toString(),
                         "reference" : {"id" : $reference, "source" : ""},
                         "start" : $(this).find('.start').val().toString(),
                         "stop" : $(this).find('.stop').val().toString(),
                     };
                      
-                    $dna += " ((" + $idCount + ") AND ";
+                    $dna += " (" + $idCount + " AND ";
                     $idCount++;
                     
                     $data_sequence = {
-                        "querySectionID" : $idCount, 
+                        "querySegmentID" : $idCount, 
                         "operator" : $(this).find('.conditions').val().toString(),
                         "sequence" : $(this).find('.sequence').val().toString()
                     };
                             
-                    $dna += "(" + $idCount + ")) ";
+                    $dna += "" + $idCount + ") ";
                     $idCount++;
                     
                     $arr.coordinate.push($data_coordinate);
@@ -642,24 +659,27 @@
                     if($(this).find('select.condition_ref').val() === "[Input your own accession & version]") {
                         $acc = $(this).find(".acc_acc").children('input').val();
                         $version = $(this).find(".acc_ver").children('input').val();
-                        $reference = $acc + $version;
+                        $reference = $acc + "." + $version;
                     } else if($(this).find('select.condition_ref').val().toString() === "[Input your own chromosome & build]") {
                         $chr = $(this).find(".chr_chr").children('input').val();
                         $build = $(this).find(".chr_build").val();
-                        $reference = $chr + $build;
+                        $reference = $chr + "." + $build;
                     } else {
-                        $reference = $(this).find('select.condition_ref').val();
+                        if($(this).find('select.condition_ref').val().substring(0, "chr".length) == "chr")
+                            $reference = $(this).find('select.condition_ref').val() + "." + "hg38";
+                        else
+                            $reference = $(this).find('select.condition_ref').val();
                     }
                     
                     $data_coordinate = {
-                        "querySectionID" : $idCount, 
+                        "querySegmentID" : $idCount, 
                         "operator" : $(this).find('.conditions').val().toString(),
                         "reference" : {"id" : $reference, "source" : ""},
                         "start" : $(this).find('.start').val().toString(),
                         "stop" : $(this).find('.stop').val().toString(),
                      };
                             
-                    $dna += " (" + $idCount + ") ";
+                    $dna += " " + $idCount + " ";
                     $idCount++;
                             
                     $arr.coordinate.push($data_coordinate);
@@ -667,12 +687,12 @@
                 } else if($(this).find('.sequence').val().trim().length > 0) {
                     
                     $data_sequence = {
-                        "querySectionID" : $idCount, 
+                        "querySegmentID" : $idCount, 
                         "operator" : $(this).find('.conditions').val().toString(),
                         "sequence" : $(this).find('.sequence').val().toString()
                      };
                             
-                    $dna += " (" + $idCount + ") ";
+                    $dna += " " + $idCount + " ";
                     $idCount++;
                     
                     $arr.sequence.push($data_sequence);
@@ -693,16 +713,16 @@
                 if($(this).find('select.keys').val().trim().length > 0)  {
                     
                     $data = {
-                                "querySectionID" : $idCount,
-                                "attribute" : {
-                                    "cursiveAttribute" : {"term" : $(this).find('select.keys').val().toString(), "source" : ""}
-                                },
+                                "querySegmentID" : $idCount,
                                 "operator" : $(this).find('.conditions').val().toString(),
+                                "phenotypeConcept" : {
+                                    "cursivePhenotypeConcept" : {"term" : $(this).find('select.keys').val().toString(), "source" : ""}
+                                },
                                 "phenotypeFeature" : {"value" : $(this).find('.phenotype_values').val().toString(), "units" : "", "source" : ""} 
                             };
                     
                     $arr.push($data);
-                    $phenotype += " (" + $idCount + ") " + $phen_phen;
+                    $phenotype += " " + $idCount + " " + $phen_phen;
                     $idCount++;
                 }
             });
@@ -718,14 +738,14 @@
                 if($(this).find('.textValidate').val().trim().length > 0)  {
                     
                     $data = {
-                                "querySectionID" : $idCount, 
+                                "querySegmentID" : $idCount, 
                                 "operator" : $(this).find('.conditions').val().toString(),
                                 "geneSymbol" : {"symbol" : $(this).find('.textValidate').val().toString(), "source" : ""}
                             };
                     
                     $arr.push($data);
                     
-                    $geneSymbol += " (" + $idCount + ") OR";
+                    $geneSymbol += " " + $idCount + " OR";
                     $idCount++;
                 }
             });
@@ -741,15 +761,15 @@
                 if($(this).find('.textValidate').val().trim().length > 0)  {
                     
                     $data = {
-                                "querySectionID" : $idCount, 
+                                "parameter ID" : $idCount, 
                                 "operator" : $(this).find('.conditions').val().toString(),
-                                "hgvsName" : $(this).find('.textValidate').val().toString(),
-                                "reference" : {"id" : "", "source" : ""}
+                                "reference" : {"id" : "", "source" : ""},
+                                "hgvsName" : $(this).find('.textValidate').val().toString()
                             };
                     
                     $arr.push($data);
                     
-                    $hgvs += " (" + $idCount + ") OR";
+                    $hgvs += " " + $idCount + " OR";
                     $idCount++;
                 }
                 
@@ -788,6 +808,19 @@
                     if(($(this).find('select.condition_ref').val().length > 0)) {
                         $start = parseInt($(this).find('.start').val().trim(), 10);
                         $stop =  parseInt($(this).find('.stop').val().trim(), 10);
+                        
+                        start = $(this).find('.start').val();
+                        stop = $(this).find('.stop').val();
+                        seq = $(this).find('.sequence').val();
+                        ref = $(this).find('.select2-chosen').html();
+
+                        if(start !== "" && stop !== "" && seq !== "" && ref !== "--Select a reference--") {
+                            if($(this).find('.conditions').val() !== "EXACT") {
+                                $.growl.error({ message: "You have not set a DNA type validation to \"EXACT\" match. Cannot proceed to query." });
+                                $error = true;
+                                return false;
+                            }
+                        }
                         
                         if(isNaN($start)) {
                             $.growl.error({ message: "DNA start value(s) were empty." });
