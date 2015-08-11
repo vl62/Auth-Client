@@ -193,6 +193,10 @@ class Phenotypes_model extends CI_Model {
 		$this->db->where('network_key', $network_key);
 		$query = $this->db->get('networks_phenotypes_attributes_values')->result_array();
 		return $query;
+                
+//                $sql = "select attribute from networks_phenotypes_attributes_values where network_key='93eea0d840980f8356ea20ea612dd28c'"
 	}
+        
+        
 	
 }

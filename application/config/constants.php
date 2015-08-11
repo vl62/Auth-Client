@@ -62,6 +62,9 @@ if(isset($_SERVER['HTTP_HOST'])) {
 	$base_uri = parse_url($base_url, PHP_URL_PATH);
 	if(substr($base_uri, 0, 1) != '/') $base_uri = '/'.$base_uri;
 	if(substr($base_uri, -1, 1) != '/') $base_uri .= '/';
+        
+        $base_url = str_replace("localhost", gethostbyname(gethostname()), $base_url);
+        
 }
 // Define these values to be used later on
 define('BASE_URL', $base_url);

@@ -16,6 +16,7 @@ class Sources extends MY_Controller {
 		$this->load->model('sources_model');
 		$this->data['variant_counts'] = $this->sources_model->countSourceEntries();
 		$sources = $this->sources_model->getSourcesFull();
+                error_log(print_r($sources, 1));
 		$this->data['sources'] = $sources;
 //		print_r($sources, 1);
 		$source_groups = array();
@@ -71,6 +72,7 @@ class Sources extends MY_Controller {
 				if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin()) {
 					$this->sources_model->deleteSource($source_id);
 					if ( $this->input->post('variants') == 'yes' ) { // also delete variants for the source
+//                                                $is_deleted = $this->sources_model->delete_variants_and_phenotypes($source);
 						$is_deleted = $this->sources_model->deleteVariants($source);
 					}
 				}

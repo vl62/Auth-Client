@@ -575,6 +575,12 @@ class Sources_model extends CI_Model {
 		$this->db->delete('variants', array('source' => $source));
 //		error_log($this->db->last_query());
 	}
+        
+        public function delete_variants_and_phenotypes($source) {
+                $this->db->query("delete from phenotypes where cafevariome_id in (select cafevariome_id from variants where source='$source')");
+                $this->db->query("delete from variants where source='$source'");
+                return true;
+        }
 
 	public function deleteVariantByVariantID($id) {
 		$this->db->delete('variants', array('variant_id' => $id));
@@ -589,6 +595,17 @@ class Sources_model extends CI_Model {
 	
 	public function deleteVariant($id) {
 		$this->db->delete('variants', array('cafevariome_id' => $id));
+		if ( $this->db->affected_rows() ) {
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
+	}
+        
+        public function deleteVariantPenotype($id) {
+		$this->db->delete('variants', array('cafevariome_id' => $id));
+                $this->db->delete('phenotypes', array('cafevariome_id' => $id));
 		if ( $this->db->affected_rows() ) {
 			return TRUE;
 		}

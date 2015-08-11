@@ -59,7 +59,8 @@ class Variants extends MY_Controller {
 				// do we have the right userlevel?
 				do {
 					if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin()) {
-						$is_deleted = $this->sources_model->deleteVariants($source);
+//                                            $is_deleted = $this->sources_model->delete_variants_and_phenotypes($source);
+                                                $is_deleted = $this->sources_model->deleteVariants($source);
 						
 						// ElasticSearch delete by query (if ElasticSearch is enabled and running)
 						// http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-delete-by-query.html
@@ -92,6 +93,7 @@ class Variants extends MY_Controller {
 						if ( ! $can_curate_source ) {
 							show_error("Sorry, you are not listed as a curator for that particular source.");
 						}
+//                                                $is_deleted = $this->sources_model->delete_variants_and_phenotypes($source);
 						$is_deleted = $this->sources_model->deleteVariants($source);
 						
 						// ElasticSearch delete by query (if ElasticSearch is enabled and running)
@@ -176,6 +178,7 @@ class Variants extends MY_Controller {
 		$success_flag = 1;
 		foreach ( $variants as $key => $id ) {
 //			error_log("id -> " . $id);
+//                        $is_deleted = $this->sources_model->deleteVariantPenotype($id);
 			$is_deleted = $this->sources_model->deleteVariant($id);
 			
 			// ElasticSearch update (if ElasticSearch is enabled and running)
@@ -1236,6 +1239,7 @@ class Variants extends MY_Controller {
 				// do we have the right userlevel?
 				do {
 					if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin()) {
+//                                                $is_deleted = $this->sources_model->deleteVariantPenotype($id);
 						$is_deleted = $this->sources_model->deleteVariant($id);
 						
 						// ElasticSearch update (if ElasticSearch is enabled and running)
@@ -1264,6 +1268,7 @@ class Variants extends MY_Controller {
 						if ( ! $can_curate_source ) {
 							show_error("Sorry, you are not listed as a curator for that particular source.");
 						}
+//                                                $is_deleted = $this->sources_model->deleteVariantPenotype($id);
 						$is_deleted = $this->sources_model->deleteVariant($id);
 						
 						// ElasticSearch update (if ElasticSearch is enabled and running)
