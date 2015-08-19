@@ -51,7 +51,10 @@
         });
         
         $("#network_select").click(function() {
-            window.location = baseurl + "discover/query_builder/" + $("#selectNetwork").val();
+            if($("#selectNetwork").val()) 
+                window.location = baseurl + "discover/query_builder/" + $("#selectNetwork").val();
+            else 
+                alert("Select a network to search");
         });
         
     });

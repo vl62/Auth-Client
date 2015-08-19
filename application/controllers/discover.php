@@ -428,7 +428,7 @@ class Discover extends MY_Controller {
 		foreach ($networks as $key => $value) {
 			$this->data['networks'] += array($value['network_name'] => $value['network_key']);
 		}
-                
+
 		$this->data['type'] = $type;
 		$this->_render('query_builder/check_for_networks');
                 
