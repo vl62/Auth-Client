@@ -77,7 +77,7 @@ if ( strtolower($current_page) == "discover" || strtolower($current_page) == "au
 							<?php endforeach; ?>
 						<?php else: ?>
 							<?php if ( strtolower($menu_item['menu_name']) == "discover" ): ?>
-								<li <?php if ( strtolower($current_page) == "discover" ) { print 'class="active"'; } ?>><a href="<?php echo base_url() . "discover/"; ?>"><?php echo ucwords($menu_item['menu_name']); ?></a></li>
+								<li <?php if ( strtolower($current_page) == "discover" ) { print 'class="active"'; } ?>><a href="<?php echo base_url() . "discover/proceed_to_query/query_builder"; ?>"><?php echo ucwords($menu_item['menu_name']); ?></a></li>
 							<?php else: ?>
 								<li <?php if (strtolower($current_cms_view) == strtolower($menu_item['menu_name'])) { print 'class="active"'; } ?>><a href="<?php echo base_url() . "pages/" . strtolower($menu_item['menu_name']); ?>"><?php echo ucwords($menu_item['menu_name']); ?></a></li>
 							<?php endif; ?>

@@ -23,67 +23,67 @@ class Discover extends MY_Controller {
 	public $sources;
 
 	public function index($network_key = '') {
-
+            redirect("discover/proceed_to_query/query_builder");
 		// Check if there's a network key supplied in the URL, if not then check if it's set in the session, if not then redirect back to the select network page
-		if ( $network_key ) {
-			$this->session->set_userdata(array('network_key' => $network_key));
-		}
-		else {
-			$network_key = $this->session->userdata('network_key');
-			if ( ! $network_key ) {
-				redirect('discover/proceed_to_query/standard_search', 'refresh');
-			}
-		}
-		$this->data['network_key'] = $network_key;
-		
-		// Check if the user is in the master network group for this network
-		$user_id = $this->ion_auth->user()->row()->id;
-		$is_user_member_of_master_network_group_for_network = json_decode(authPostRequest('', array('user_id' => $user_id, 'network_key' => $network_key), $this->config->item('auth_server') . "/api/auth_general/is_user_member_of_master_network_group_for_network"), 1);
-//		error_log("is_user_member_of_master_network_group_for_network -> " . print_r($is_user_member_of_master_network_group_for_network,1));
-		$network_master_group_test = $is_user_member_of_master_network_group_for_network['is_user_member_of_master_network_group_for_network'] == '1' ? true: false;
-//		error_log("network_master_group_test -> " . $network_master_group_test);
-		// Check if user is a member of the master network group, if not then don't allow to proceed further and show error message
-		if ( ! $network_master_group_test ) {
-			show_error("You are not a member of the master group for this network so cannot access any discovery interfaces. In order to search any networks you need to get an administrator to add you to the master network group for each network.");
-		}
-		
-		$this->title = "Discover";
-		$token = $this->session->userdata('Token');
-		$data = authPostRequest($token, array('network_key' => $network_key), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_network");
-		$federated_installs = stripslashes($data);
-		error_log("federated_installs -> $federated_installs");
-		// Set the federated installs in the session so they can be used by variantcount
-		$this->session->set_userdata(array('federated_installs' => $federated_installs));
-//		$network_key = $this->post('network_key');
+//		if ( $network_key ) {
+//			$this->session->set_userdata(array('network_key' => $network_key));
+//		}
+//		else {
+//			$network_key = $this->session->userdata('network_key');
+//			if ( ! $network_key ) {
+//				redirect('discover/proceed_to_query/standard_search', 'refresh');
+//			}
+//		}
 //		$this->data['network_key'] = $network_key;
-//		$networks = json_decode(authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of"), 1);
-//		error_log("networks -> " . print_r($networks, 1));
-//		$this->data['networks'] = $networks;
-		
-		
-		$sources_options = $this->sources_model->getSources(); // Get all the available sources from db
-		$this->setSources($sources_options);
-//		$this->benchmark->mark('search_end');
-//		echo $this->benchmark->elapsed_time('search_start', 'search_end');
-		$this->data['sources_options'] = $sources_options;
-		$laboratory_options = $this->sources_model->getLaboratoryCategories(); // Get all available diagnostic labs
-		$source_counts = $this->sources_model->countOnlineSourceEntries(); // Get counts of variants for info box in discovery interface
-		$this->data['source_counts'] = $source_counts;
-		$this->data['laboratory_options'] = $laboratory_options;
-		$ontologiesused = $this->sources_model->getOntologiesUsedAndRoots();
-		$this->data['ontologiesused'] = $ontologiesused;
-		$jstree = $this->_generate_jstree($ontologiesused);
-		$this->data['jstree'] = $jstree;
-		
-//		$this->data['gene_counts'] = $this->sources_model->countFeature('gene');
-//		$this->data['ref_counts'] = $this->sources_model->countFeature('ref');
-		
-		$this->load->library('elasticsearch');
-		$check_if_running = $this->elasticsearch->check_if_running();
-		if ( ! array_key_exists( 'ok', $check_if_running) ) {
-			show_error("The discovery interface is currently not accessible as Elasticsearch is not running. Please get an administrator to start Elasticsearch and then try again.");
-		}
-		$this->_render('pages/discover');
+//		
+//		// Check if the user is in the master network group for this network
+//		$user_id = $this->ion_auth->user()->row()->id;
+//		$is_user_member_of_master_network_group_for_network = json_decode(authPostRequest('', array('user_id' => $user_id, 'network_key' => $network_key), $this->config->item('auth_server') . "/api/auth_general/is_user_member_of_master_network_group_for_network"), 1);
+////		error_log("is_user_member_of_master_network_group_for_network -> " . print_r($is_user_member_of_master_network_group_for_network,1));
+//		$network_master_group_test = $is_user_member_of_master_network_group_for_network['is_user_member_of_master_network_group_for_network'] == '1' ? true: false;
+////		error_log("network_master_group_test -> " . $network_master_group_test);
+//		// Check if user is a member of the master network group, if not then don't allow to proceed further and show error message
+//		if ( ! $network_master_group_test ) {
+//			show_error("You are not a member of the master group for this network so cannot access any discovery interfaces. In order to search any networks you need to get an administrator to add you to the master network group for each network.");
+//		}
+//		
+//		$this->title = "Discover";
+//		$token = $this->session->userdata('Token');
+//		$data = authPostRequest($token, array('network_key' => $network_key), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_network");
+//		$federated_installs = stripslashes($data);
+//		error_log("federated_installs -> $federated_installs");
+//		// Set the federated installs in the session so they can be used by variantcount
+//		$this->session->set_userdata(array('federated_installs' => $federated_installs));
+////		$network_key = $this->post('network_key');
+////		$this->data['network_key'] = $network_key;
+////		$networks = json_decode(authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of"), 1);
+////		error_log("networks -> " . print_r($networks, 1));
+////		$this->data['networks'] = $networks;
+//		
+//		
+//		$sources_options = $this->sources_model->getSources(); // Get all the available sources from db
+//		$this->setSources($sources_options);
+////		$this->benchmark->mark('search_end');
+////		echo $this->benchmark->elapsed_time('search_start', 'search_end');
+//		$this->data['sources_options'] = $sources_options;
+//		$laboratory_options = $this->sources_model->getLaboratoryCategories(); // Get all available diagnostic labs
+//		$source_counts = $this->sources_model->countOnlineSourceEntries(); // Get counts of variants for info box in discovery interface
+//		$this->data['source_counts'] = $source_counts;
+//		$this->data['laboratory_options'] = $laboratory_options;
+//		$ontologiesused = $this->sources_model->getOntologiesUsedAndRoots();
+//		$this->data['ontologiesused'] = $ontologiesused;
+//		$jstree = $this->_generate_jstree($ontologiesused);
+//		$this->data['jstree'] = $jstree;
+//		
+////		$this->data['gene_counts'] = $this->sources_model->countFeature('gene');
+////		$this->data['ref_counts'] = $this->sources_model->countFeature('ref');
+//		
+//		$this->load->library('elasticsearch');
+//		$check_if_running = $this->elasticsearch->check_if_running();
+//		if ( ! array_key_exists( 'ok', $check_if_running) ) {
+//			show_error("The discovery interface is currently not accessible as Elasticsearch is not running. Please get an administrator to start Elasticsearch and then try again.");
+//		}
+//		$this->_render('pages/discover');
 	}
 	
 	function count($term = "", $source = "", $format = "", $mutalyzer_check = "") {
@@ -468,9 +468,9 @@ class Discover extends MY_Controller {
 		$this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder.js');
 		$this->css = array('jquery.querybuilder.css');
 		
-		$token = $this->session->userdata('Token');
-		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
-		$federated_installs = json_decode(stripslashes($data), 1);
+//		$token = $this->session->userdata('Token');
+//		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
+//		$federated_installs = json_decode(stripslashes($data), 1);
 //		error_log("federated_installs -> " . print_r($federated_installs, 1));
 		
 		$this->_render('query_builder/main');

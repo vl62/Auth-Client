@@ -10,6 +10,8 @@
                             <option value="<?php echo $network_key; ?>"><?php echo $network_name; ?></option>
                         <?php endforeach; ?>
                     </select>
+                    <br/>
+                    <button class="btn btn-primary" id="network_select" type="button">Submit</button>
                 </div>
                 <input type="hidden" value="<?php echo $type;?>" id="type" />
             </form>
@@ -46,17 +48,11 @@
         }
         
         $("#selectNetwork").change(function() {
-            if($("#type").val() === "query_builder") {
-				// Get the selected
-//				alert("val -> " + $("#selectNetwork").val());
-				window.location = baseurl + "discover/query_builder/" + $("#selectNetwork").val();
-//                $('form').attr('action', baseurl + "discover/query_builder").submit();
-            } else if($("#type").val() === "standard_search") {
-                window.location = baseurl + "discover/index/" + $("#selectNetwork").val();
-            } else {
-                
-                // error;
-            }
         });
+        
+        $("#network_select").click(function() {
+            window.location = baseurl + "discover/query_builder/" + $("#selectNetwork").val();
+        });
+        
     });
 </script>
