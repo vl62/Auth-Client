@@ -2999,10 +2999,11 @@ class Admin extends MY_Controller {
 	
 	function get_phenotype_attributes_and_values_list_federated() {
 		$this->load->model('phenotypes_model');
-                $sources = $this->input->post('sources');
-                array_shift($sources);
+//                $sources = $this->input->post('sources');
+//                array_shift($sources);
 //                error_log(implode(",", $sources));
-		$query = $this->phenotypes_model->regeneratePhenotypeAttributesAndValues(implode(",", $sources));
+//		$query = $this->phenotypes_model->regeneratePhenotypeAttributesAndValues(implode(",", $sources));
+                $query = $this->phenotypes_model->regeneratePhenotypeAttributesAndValues();
 		echo json_encode($query);
 		
 	}
@@ -3012,7 +3013,7 @@ class Admin extends MY_Controller {
 		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
 		$federated_installs = json_decode(stripslashes($data), 1);
 //                error_log("installation key ----> " . $this->config->item('installation_key'));
-		error_log("federated_installs -> " . print_r($federated_installs, 1));
+//		error_log("federated_installs -> " . print_r($federated_installs, 1));
 		$this->load->model('phenotypes_model');
 		$this->phenotypes_model->emptyNetworksPhenotypesAttributesValues();
 		$unique_networks_for_this_install = array();
@@ -3032,17 +3033,25 @@ class Admin extends MY_Controller {
                             )
                         );
 
-			$opts = array('http' =>
+//			$opts = array('http' =>
+//				array(
+//					'method'  => 'POST',
+//                                        'header'  => 'Content-type: application/x-www-form-urlencoded',
+//                                        'content' => $postdata,
+//					'timeout' => 5 
+//				)
+//			);
+                        
+                        $opts = array('http' =>
 				array(
-					'method'  => 'POST',
-                                        'header'  => 'Content-type: application/x-www-form-urlencoded',
-                                        'content' => $postdata,
+					'method'  => 'GET',
 					'timeout' => 5 
 				)
 			);
+                        
 			$context  = stream_context_create($opts);
 			$install_phenotypes_attributes_and_values_list = @file_get_contents($install_uri . "/admin/get_phenotype_attributes_and_values_list_federated/", false, $context);
-//			error_log(print_r($install_phenotypes_attributes_and_values_list, 1));
+			error_log(print_r($install_phenotypes_attributes_and_values_list, 1));
                         
 			if ( $install_phenotypes_attributes_and_values_list ) {
 				foreach ( json_decode($install_phenotypes_attributes_and_values_list, 1) as $phenotype ) {
