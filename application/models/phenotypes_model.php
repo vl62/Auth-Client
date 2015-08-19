@@ -110,9 +110,15 @@ class Phenotypes_model extends CI_Model {
 //		error_log($this->db->last_query());
 		return $query;
 	}
+        
+//        function regeneratePhenotypeAttributesAndValues($sources) {
+//		$query = $this->db->query("SELECT attribute_termName, value FROM phenotypes where cafevariome_id in (select cafevariome_id from variants where source in (select name from sources where source_id in ($sources))) GROUP BY attribute_termName, value ORDER BY value+0 LIMIT 50")->result_array();
+////		error_log($this->db->last_query());
+//		return $query;
+//	}
 
-	function regeneratePhenotypeAttributesAndValues($sources) {
-		$query = $this->db->query("SELECT attribute_termName, value FROM phenotypes where cafevariome_id in (select cafevariome_id from variants where source in (select name from sources where source_id in ($sources))) GROUP BY attribute_termName, value ORDER BY value+0 LIMIT 50")->result_array();
+	function regeneratePhenotypeAttributesAndValues() {
+		$query = $this->db->query("SELECT attribute_termName, value FROM phenotypes GROUP BY attribute_termName, value ORDER BY value+0 LIMIT 50")->result_array();
 //		error_log($this->db->last_query());
 		return $query;
 	}
