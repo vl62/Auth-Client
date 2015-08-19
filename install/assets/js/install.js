@@ -464,7 +464,7 @@ $(document).ready(function() {
 				type: 'POST',
 				success: function(data) {
 					if (data) {
-//						JSON.stringify(data);
+//						console.log(JSON.stringify(data));
 //						alert("test -> " + data);
 						var data_json = jQuery.parseJSON( data );
 						var is_valid = data_json.is_valid;

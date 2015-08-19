@@ -35,12 +35,12 @@
 */
 
 // The following values will probably need to be changed.
-$db['default']['username'] = "owen";
-$db['default']['password'] = "kerplunk";
+$db['default']['username'] = "root";
+$db['default']['password'] = "root";
 $db['default']['database'] = "cafevariome_client";
 
 // The following values can probably stay the same.
-$db['default']['hostname'] = "127.0.0.1";
+$db['default']['hostname'] = "127.0.0.1:8889";
 $db['default']['dbdriver'] = "mysql";
 $db['default']['dbprefix'] = "";
 $db['default']['pconnect'] = FALSE;
@@ -54,10 +54,10 @@ $active_group = "default";
 $active_record = TRUE;
 
 // Only used if statistics are enabled in application/config/cafevariome.php config file (N.B. statistics database structure must be present in mysql)
-//$db['stats']['username'] = "owen"; // Add your mysql username
-//$db['stats']['password'] = "kerplunk"; // Add your mysql password
+//$db['stats']['username'] = "root"; // Add your mysql username
+//$db['stats']['password'] = "root"; // Add your mysql password
 //$db['stats']['database'] = "%STATSDATABASE%";
-//$db['stats']['hostname'] = "127.0.0.1";
+//$db['stats']['hostname'] = "127.0.0.1:8889";
 //$db['stats']['dbdriver'] = "mysql";
 //$db['stats']['dbprefix'] = "";
 //$db['stats']['pconnect'] = FALSE;

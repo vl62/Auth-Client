@@ -622,6 +622,7 @@ class Sources_model extends CI_Model {
 		$query = $this->db->query('SELECT COUNT( * ) as total, source FROM `variants` GROUP BY source');
 		$source_counts = array();
 		foreach ($query->result() as $r) {
+//                    error_log(print_r($r, 1));
 			$source_counts[$r->source] = $r->total;
 		}
 		return $source_counts;
