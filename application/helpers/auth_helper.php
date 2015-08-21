@@ -11,15 +11,15 @@ function authPostRequest($token, $data, $uri) {
 //	echo 'wrappers: ', var_dump($w);
 
 	
-	$url = $uri . '/format/json';
-	$url = preg_replace('/([^:])(\/{2,})/', '$1/', $url); // Strip out any double forward slashes from the url
+    $url = $uri . '/format/json';
+    $url = preg_replace('/([^:])(\/{2,})/', '$1/', $url); // Strip out any double forward slashes from the url
 //	error_log("url -> $url");
         
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($ch, CURLOPT_SSL_CIPHER_LIST, 'TLSv1');
     curl_setopt($ch, CURLOPT_HEADER, false);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 		"Token: $token",
 		"Access-Control-Allow-Origin: *"
 	));

@@ -13,7 +13,7 @@ $(document).ready(function() {
 <script>
 $(document).ready(function() {
     $('.visiblenamevalue').editable();
-	$("#openAccess").show();
+    $("#openAccess").show();
 });	
 </script>
 <?php endif; ?>

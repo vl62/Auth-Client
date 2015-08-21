@@ -366,7 +366,7 @@ class Sources_model extends CI_Model {
 		$phenotype_query = $this->db->get_where('phenotypes', array('cafevariome_id' => $id))->result_array();
 //		error_log("test -> " . print_r($phenotype_query, 1));
 		if ( ! empty($phenotype_query)) {
-			error_log("not empty");
+//			error_log("not empty");
 			$phenotype_array = array();
 			$phenotype_array_query = array();
 			foreach ( $phenotype_query as $phenotype ) {
