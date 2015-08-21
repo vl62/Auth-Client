@@ -431,7 +431,6 @@ class Discover extends MY_Controller {
 
 		$this->data['type'] = $type;
 		$this->_render('query_builder/check_for_networks');
-                
 	}
 	
 	function query_builder($network_key = "") {

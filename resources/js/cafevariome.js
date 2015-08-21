@@ -3423,5 +3423,20 @@ $(document).ready(function() {
             $(this).remove();
         });
     });
+    
+    $.growl.warning({ 
+        message: "Changes made to variants and/or phenotypes records. <a id='growl_elastic' href='#'>Click here</a> to re-build elastic search engine.",
+        duration: 100000});
+    
+    $("#growl_elastic").click(function(e) {
+        e.preventDefault();
+        console.log($("#growls").remove());
+        window.location = baseurl + "admin/redirect_to_elastic_search";
+    });
 });
+
+function growl_elastic_search() {
+    console.log($.growl.error({ message: "Changes made to variants and/or phenotypes. Click here to re-build elastic search engine.",
+                    duration: 10000}));
+}
 
