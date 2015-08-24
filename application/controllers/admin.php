@@ -3048,11 +3048,11 @@ class Admin extends MY_Controller {
         $token = $this->session->userdata('Token');
         $result = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_and_their_sources_for_this_installation");
 //        error_log(print_r(json_decode($result, 1), 1));
-        
+
         $this->load->model('phenotypes_model');
         $this->phenotypes_model->emptyLocalPhenotypesLookup();
         delete_files("resources/phenotype_lookup_data/");
-        
+
         foreach (json_decode($result, 1) as $row) {
 //            error_log($row['network_key'] . " | " . $row['source_id']);
             $data = $this->phenotypes_model->localPhenotypesLookupValues($row['source_id'], $row['network_key']);
@@ -3060,15 +3060,20 @@ class Admin extends MY_Controller {
             foreach ($data as $d) {
                 $json_data[] = array($d['phenotype_attribute'] => rtrim($d['phenotype_values'], "|"));
             }
+            if (!file_exists('resources/phenotype_lookup_data/')) {
+                mkdir('resources/phenotype_lookup_data/', 0777, true);
+            }
             file_put_contents("resources/phenotype_lookup_data/" . $row['network_key'] . ".json", json_encode($json_data));
-            
         }
-        
+
         return;
     }
-    
+
     function get_json_for_phenotype_lookup($network_key = "2a4442db7f48bc55210fc8c0b6a8c17c") {
-        echo(file_get_contents("resources/phenotype_lookup_data/" . $network_key . ".json")); 
+        if (file_exists('resources/phenotype_lookup_data/')) {
+            echo(file_get_contents("resources/phenotype_lookup_data/" . $network_key . ".json"));
+        }
+        
     }
 
 //    function temp() {
