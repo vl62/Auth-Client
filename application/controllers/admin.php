@@ -3068,14 +3068,7 @@ class Admin extends MY_Controller {
     }
     
     function get_json_for_phenotype_lookup($network_key = "2a4442db7f48bc55210fc8c0b6a8c17c") {
-        echo "<pre>";
-        var_dump(file_get_contents("resources/phenotype_lookup_data/" . $network_key . ".json")); 
-        echo "</pre>";
-        echo "<hr>";
-        echo "<pre>";
-        var_dump(json_decode(file_get_contents("resources/phenotype_lookup_data/" . $network_key . ".json"))); 
-        echo "</pre>";
-        
+        echo(file_get_contents("resources/phenotype_lookup_data/" . $network_key . ".json")); 
     }
 
 //    function temp() {
