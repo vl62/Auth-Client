@@ -204,6 +204,35 @@ class Phenotypes_model extends CI_Model {
 //                $sql = "select attribute from networks_phenotypes_attributes_values where network_key='93eea0d840980f8356ea20ea612dd28c'"
 	}
         
-        
+        function emptyLocalPhenotypesLookup() {
+            $sql = "delete from local_phenotypes_lookup";
+            $this->db->query($sql);
+        }
 	
+        function localPhenotypesLookupValues($source_id, $network_key) {
+            $sql = "select attribute_termName, value from phenotypes where cafevariome_id in (select cafevariome_id from variants where source=(select name from sources where source_id='$source_id'))";
+            $data = $this->db->query($sql)->result_array();
+            foreach ($data as $d) {
+                $attr = $d['attribute_termName'];
+                $value = $d['value'];
+                $sql = "select * from local_phenotypes_lookup where network_key='$network_key' AND phenotype_attribute='$attr'";
+                $data2 = $this->db->query($sql)->result_array();
+                if(count($data2) > 0) {
+                    if(in_array($value, explode("|" , $data2[0]['phenotype_values']))) continue;
+                    else {
+                        $val = $data2[0]['phenotype_values'].$value."|";
+                        $sql = "UPDATE `local_phenotypes_lookup` SET `phenotype_values`='$val' WHERE lookup_id=" . $data2[0]['lookup_id'];
+                        $this->db->query($sql);
+                    }
+                } else {
+                    $value = $value."|";
+                    $sql = "INSERT INTO `local_phenotypes_lookup`(`network_key`, `phenotype_attribute`, `phenotype_values`) VALUES ('$network_key', '$attr', '$value')";
+                    $this->db->query($sql);
+                }
+            }
+            
+            $sql = "select phenotype_attribute, phenotype_values from local_phenotypes_lookup where network_key='$network_key'";
+            return $this->db->query($sql)->result_array();
+        }
+        
 }
