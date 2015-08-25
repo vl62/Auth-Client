@@ -236,12 +236,18 @@
     $(document).ready(function() {
         
         $network_key = $("#network_key").val();
-
+        $("h1").html("Processing started");
         $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
             dataType: 'json',
             delay: 200,
             type: 'POST',
             success: function(json) {
+                    console.log(json);
+                    $.each(json, function(i, value) {
+                        console.log(value);
+                    });
+                    $("h1").html("Processing Completed");
+                    return;
                     $.each(json, function(i, value) {
                         $('select.phenotype_keys1').append($('<option>').text(value.attribute).attr('value', value.attribute));
                         phenotype_keys.push(value.attribute);

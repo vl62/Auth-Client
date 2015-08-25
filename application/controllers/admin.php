@@ -2876,14 +2876,6 @@ class Admin extends MY_Controller {
         echo json_encode($json_array); //echo json string if ajax request
     }
 
-    function get_phenotype_attributes_for_network($network_key) {
-        $this->load->model('phenotypes_model');
-        $phenotype_network_attributes_list = $this->phenotypes_model->getPhenotypeAttributesListForNetwork($network_key);
-//		print_r($phenotype_network_attributes_list);
-//		error_log(print_r($phenotype_network_attributes_list, 1));
-        echo json_encode($phenotype_network_attributes_list);
-    }
-
     function get_phenotype_attributes_and_values_list_federated() {
         $this->load->model('phenotypes_model');
         $sources = $this->input->post('sources');
@@ -2894,155 +2886,33 @@ class Admin extends MY_Controller {
         echo json_encode($query);
     }
 
-//        function temp() {
-//            $token = $this->session->userdata('Token');
-//		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
-//		$federated_installs = json_decode(stripslashes($data), 1);
-////		error_log("federated_installs -> " . print_r($federated_installs, 1));
-//		$unique_networks_for_this_install = array();
-//		foreach ( $federated_installs as $install ) {
-//                        if(!$install['sources'])    continue;
-//			$network_key = $install['network_key'];
-//			$unique_networks_for_this_install[] = $network_key;
-////			error_log("network ----> $network_key");
-//			$install_uri = $install['installation_base_url'];
-//			$install_uri = rtrim($install_uri,"/");
-//			error_log("install -> $install_uri");
-//                        
-//                        $postdata = http_build_query(
-//                            array(
-//                                'sources' => array_unique(explode("|", $install['sources']))
-//                            )
-//                        );
-//
-//			$opts = array('http' =>
-//				array(
-//					'method'  => 'POST',
-//                                        'header'  => 'Content-type: application/x-www-form-urlencoded',
-//                                        'content' => $postdata,
-//					'timeout' => 5 
-//				)
-//			);
-//                        
-//			$context  = stream_context_create($opts);
-//			$install_phenotypes_attributes_and_values_list = @file_get_contents($install_uri . "/admin/get_phenotype_attributes_and_values_list_federated/", false, $context);
-//			error_log(print_r($install_phenotypes_attributes_and_values_list, 1));
-//                        error_log("-------------------------------------------------------------------------------------");
-//		}
-//        }
-//        
-//        function temp2() {
-//                $token = $this->session->userdata('Token');
-//		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
-//		$federated_installs = json_decode(stripslashes($data), 1);
-////		error_log("federated_installs -> " . print_r($federated_installs, 1));
-//                
-//                $urls = array();
-//                foreach ($federated_installs as $install) {
-//                    if(!$install['sources'])    continue;
-//                    $install_uri = $install['installation_base_url'];
-//                    $install_uri = rtrim($install_uri,"/");
-//                    $urls[] = ["url" => $install_uri . "/admin/get_phenotype_attributes_and_values_list_federated/", "sources" => $install['sources']];
-//                }
-//                
-//                foreach($urls as $url) {
-//                    error_log("install -> " .$url['url']);
-//                    
-//                    $ch = curl_init();
-//                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-//                    curl_setopt($ch, CURLOPT_SSL_CIPHER_LIST, 'TLSv1');
-//                    curl_setopt($ch, CURLOPT_HEADER, false);
-//                    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-//                                "Token: " . $this->session->userdata('Token'),
-//                                "Access-Control-Allow-Origin: *"
-//                        ));
-//                    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-//                    curl_setopt($ch, CURLOPT_URL, $url['url']);
-//                    curl_setopt($ch, CURLOPT_REFERER, $url['url']);
-//                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-//                    curl_setopt($ch,CURLOPT_POST, true);
-//                    curl_setopt($ch,CURLOPT_POSTFIELDS, http_build_query(array("sources" => array_unique(explode("|", $url['sources'])))));
-////                        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,0); 
-//                    curl_setopt($ch, CURLOPT_TIMEOUT, 2); //timeout in seconds
-//                    $install_phenotypes_attributes_and_values_list = curl_exec($ch);
-//                    error_log(print_r($install_phenotypes_attributes_and_values_list, 1));
-//                    error_log("-------------------------------------------------------------------------------------");
-//                    curl_close($ch);
-//                }
-//        }
-//        
-//        function temp3() {
-//            $token = $this->session->userdata('Token');
-//		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
-//		$federated_installs = json_decode(stripslashes($data), 1);
-////		error_log("federated_installs -> " . print_r($federated_installs, 1));
-//                
-//                $urls = array();
-//                foreach ($federated_installs as $install) {
-//                    if(!$install['sources'])    continue;
-//                    $install_uri = $install['installation_base_url'];
-//                    $install_uri = rtrim($install_uri,"/");
-//                    $urls[] = ["url" => $install_uri . "/admin/get_phenotype_attributes_and_values_list_federated/", "sources" => $install['sources']];
-//                }
-//                
-//                
-//                $multi = curl_multi_init();
-//                $channels = array();
-//                
-//                foreach($urls as $url) {
-//                    error_log("install -> " .$url['url']);
-//                    
-//                    $ch = curl_init();
-//                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-//                    curl_setopt($ch, CURLOPT_SSL_CIPHER_LIST, 'TLSv1');
-//                    curl_setopt($ch, CURLOPT_HEADER, false);
-//                    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-//                                "Token: " . $this->session->userdata('Token'),
-//                                "Access-Control-Allow-Origin: *"
-//                        ));
-//                    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-//                    curl_setopt($ch, CURLOPT_URL, $url['url']);
-//                    curl_setopt($ch, CURLOPT_REFERER, $url['url']);
-//                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-//                    curl_setopt($ch,CURLOPT_POST, true);
-//                    curl_setopt($ch,CURLOPT_POSTFIELDS, http_build_query(array("sources" => array_unique(explode("|", $url['sources'])))));
-////                        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,0); 
-//                    curl_setopt($ch, CURLOPT_TIMEOUT, 2); //timeout in seconds
-//                    
-//                    curl_multi_add_handle($multi, $ch);
-//                    $channels[$url['url']] = $ch;
-//                }
-//                
-//                // While we're still active, execute curl
-//                $active = null;
-//                do {
-//                    $mrc = curl_multi_exec($multi, $active);
-//                } while ($mrc == CURLM_CALL_MULTI_PERFORM);
-//
-//                while ($active && $mrc == CURLM_OK) {
-//                    // Wait for activity on any curl-connection
-//                    if (curl_multi_select($multi) == -1) {
-//                        continue;
-//                    }
-//
-//                    // Continue to exec until curl is ready to
-//                    // give us more data
-//                    do {
-//                        $mrc = curl_multi_exec($multi, $active);
-//                    } while ($mrc == CURLM_CALL_MULTI_PERFORM);
-//                }
-//
-//                // Loop through the channels and retrieve the received
-//                // content, then remove the handle from the multi-handle
-////                foreach ($channels as $channel) {
-////                    error_log(print_r($channel, 1));
-////                    error_log(print_r(curl_multi_getcontent($channel), 1));
-////                    curl_multi_remove_handle($multi, $channel);
-////                }
-//
-//                // Close the multi-handle and return our results
-//                curl_multi_close($multi);
-//        }
+    function get_phenotype_attributes_for_network_old($network_key) {
+        $this->load->model('phenotypes_model');
+        $phenotype_network_attributes_list = $this->phenotypes_model->getPhenotypeAttributesListForNetwork($network_key);
+//		print_r($phenotype_network_attributes_list);
+//		error_log(print_r($phenotype_network_attributes_list, 1));
+        echo json_encode($phenotype_network_attributes_list);
+    }
+
+    function get_phenotype_attributes_for_network($network_key = "2a4442db7f48bc55210fc8c0b6a8c17c") {
+        $token = $this->session->userdata('Token');
+        $installation_urls = json_decode(authPostRequest($token, array('network_key' => $network_key), $this->config->item('auth_server') . "/api/auth/get_all_installation_ips_for_network"), true);
+        
+        $opts = array('http' => array('timeout' => 1));
+        $context = stream_context_create($opts);
+        
+        $data = array();
+        foreach ($installation_urls as $url) {
+            $url = rtrim($url['installation_base_url'], "/") . "/resources/phenotype_lookup_data/" . $network_key . ".json";
+            $result = @file_get_contents($url, 1, $context);
+            if($result !== false) {
+                foreach(json_decode($result, 1) as $res) {
+                    array_push($data, $res);
+                }
+            }
+        }
+        echo json_encode($data);
+    }
 
     function regenerate_federated_phenotype_attributes_and_values_list() {
         $token = $this->session->userdata('Token');
@@ -3058,7 +2928,7 @@ class Admin extends MY_Controller {
             $data = $this->phenotypes_model->localPhenotypesLookupValues($row['source_id'], $row['network_key']);
             $json_data = array();
             foreach ($data as $d) {
-                $json_data[] = array($d['phenotype_attribute'] => rtrim($d['phenotype_values'], "|"));
+                $json_data[] = array("attribute" => $d['phenotype_attribute'], "value" => rtrim($d['phenotype_values'], "|"));
             }
             if (!file_exists('resources/phenotype_lookup_data/')) {
                 mkdir('resources/phenotype_lookup_data/', 0777, true);
@@ -3069,35 +2939,15 @@ class Admin extends MY_Controller {
         return;
     }
 
-    function get_json_for_phenotype_lookup($network_key = "2a4442db7f48bc55210fc8c0b6a8c17c") {
-        if (file_exists('resources/phenotype_lookup_data/')) {
-            echo(file_get_contents("resources/phenotype_lookup_data/" . $network_key . ".json"));
-        }
-        
-    }
-
-//    function temp() {
-//
-//        $this->load->model('phenotypes_model');
-//        $this->phenotypes_model->emptyLocalPhenotypesLookup();
-//        delete_files("resources/phenotype_lookup_data/");
-//        
-//        $arr = array(
-//            array('network_key' => '5b7a1ae7ac7fa0a4a4c7cedac1982dba', 'source_id' => 7),
-//            array('network_key' => '2a4442db7f48bc55210fc8c0b6a8c17c', 'source_id' => 7),
-//            array('network_key' => '5b7a1ae7ac7fa0a4a4c7cedac1982dba', 'source_id' => 6),
-//            array('network_key' => '2a4442db7f48bc55210fc8c0b6a8c17c', 'source_id' => 6)
-//        );
-//
-//        foreach ($arr as $a) {
-//            $data = $this->phenotypes_model->localPhenotypesLookupValues($a['source_id'], $a['network_key']);
-//            $json_data = array();
-//            foreach ($data as $d) {
-//                $json_data[] = array($d['phenotype_attribute'] => rtrim($d['phenotype_values'], "|"));
-//            }
-//            file_put_contents("resources/phenotype_lookup_data/" . $a['network_key'] . ".json", json_encode($json_data));
+    function get_json_for_phenotype_lookup() {
+        echo json_encode(array("one" => 1));
+//        $network_key = $this->input->post('network_key');
+//        if (file_exists('resources/phenotype_lookup_data/' . $network_key . ".json")) {
+//            echo json_encode((file_get_contents("resources/phenotype_lookup_data/" . $network_key . ".json")));
+//        } else {
+//            echo json_encode("error");
 //        }
-//    }
+    }
 
     function regenerate_federated_phenotype_attributes_and_values_list_old() {
         $token = $this->session->userdata('Token');
@@ -3143,8 +2993,9 @@ class Admin extends MY_Controller {
 
             $context = stream_context_create($opts);
             $install_phenotypes_attributes_and_values_list = @file_get_contents($install_uri . "/admin/get_phenotype_attributes_and_values_list_federated/", false, $context);
+            var_dump($install_phenotypes_attributes_and_values_list);
             error_log(print_r($install_phenotypes_attributes_and_values_list, 1));
-
+            return;
             if ($install_phenotypes_attributes_and_values_list) {
                 foreach (json_decode($install_phenotypes_attributes_and_values_list, 1) as $phenotype) {
 //					error_log(print_r($phenotype, 1));

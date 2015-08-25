@@ -1,5 +1,5 @@
 <div class="container" style="margin-bottom: 200px;">
-    
+    <h1>Hello world</h1>
     <div class="row-fluid" id="genotype_phenotype">
         <div class="span12 pagination-centered">
             <h2>Query Builder</h2><hr>
