@@ -232,26 +232,22 @@
     }
     
     var phenotype_keys = new Array();
-        
+    var phenotype_values = new Array();
+    
     $(document).ready(function() {
         
         $network_key = $("#network_key").val();
-        $("h1").html("Processing started");
         $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
             dataType: 'json',
             delay: 200,
             type: 'POST',
             success: function(json) {
-                    console.log(json);
-                    $.each(json, function(i, value) {
-                        console.log(value);
-                    });
-                    $("h1").html("Processing Completed");
-                    return;
                     $.each(json, function(i, value) {
                         $('select.phenotype_keys1').append($('<option>').text(value.attribute).attr('value', value.attribute));
                         phenotype_keys.push(value.attribute);
+                        phenotype_values[value.attribute] = value.value.split("|");
                     });
+                    $("#loader").addClass('hide');
                 }
           });
         
@@ -335,16 +331,8 @@
         // Phenotype
         $(document).on('change', '.keys', function() {
             $current_phenotype_values = $(this).parent().parent().find('.phenotype_values').prop('disabled', '').parent();
-            $.ajax({url: baseurl + 'admin/get_phenotype_network_values_for_attribute',
-                    dataType: 'json',
-                    data: {'attribute' : $(this).val(), 'network_key' : $network_key},
-                    delay: 200,
-                    type: 'POST',
-                    success: function(data) {
-                        $new_phenotype_values = add_options($option.format(["span2", "input-medium phenotype_values", "", ""]), $phenotype_option_2.concat(data));
-                        $current_phenotype_values.replaceWith($new_phenotype_values);
-                    }
-                });
+            $new_phenotype_values = add_options($option.format(["span2", "input-medium phenotype_values", "", ""]), $phenotype_option_2.concat(phenotype_values[$(this).val()]));
+            $current_phenotype_values.replaceWith($new_phenotype_values);
         });
         
         $(document).on('change', "select.phenotype_values", function() {
