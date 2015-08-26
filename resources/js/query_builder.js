@@ -241,11 +241,10 @@
             delay: 200,
             type: 'POST',
             success: function(json) {
-                    console.log(json);
-                    $.each(json, function(i, value) {
-                        $('select.phenotype_keys1').append($('<option>').text(value.attribute).attr('value', value.attribute));
-                        phenotype_keys.push(value.attribute);
-                        phenotype_values[value.attribute] = value.value.split("|");
+                    $.each(json, function(attribute, value) {
+                        $('select.phenotype_keys1').append($('<option>').text(attribute).attr('value', attribute));
+                        phenotype_keys.push(attribute);
+                        phenotype_values[attribute] = value;
                     });
                     $("#loader").addClass('hide');
                 }

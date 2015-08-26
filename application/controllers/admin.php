@@ -2897,6 +2897,13 @@ class Admin extends MY_Controller {
     }
 
     function get_phenotype_attributes_for_network($network_key = "2a4442db7f48bc55210fc8c0b6a8c17c") {
+
+//        $data = json_decode(file_get_contents("resources/phenotype_lookup_data/" . "local_" . $network_key . ".json"), 1);
+//        echo "<pre>";
+//        var_dump($data);
+//        echo "</pre>";
+//        return;
+
         $token = $this->session->userdata('Token');
         $installation_urls = json_decode(authPostRequest($token, array('network_key' => $network_key), $this->config->item('auth_server') . "/api/auth/get_all_installation_ips_for_network"), true);
 //        echo "<pre>";
@@ -2915,7 +2922,7 @@ class Admin extends MY_Controller {
                 'method' => 'POST',
                 'header' => 'Content-type: application/x-www-form-urlencoded',
                 'content' => $postdata,
-                'timeout' => 5
+                'timeout' => 1
             )
         );
         $context = stream_context_create($opts);
@@ -2925,13 +2932,26 @@ class Admin extends MY_Controller {
             $url = rtrim($url['installation_base_url'], "/") . "/admin/get_json_for_phenotype_lookup/";
             $result = @file_get_contents($url, 1, $context);
 //            echo $url . ": " . $result . "<hr>";
-            if($result) {
-                foreach(json_decode($result, 1) as $res) {
-                    array_push($data, $res);
+            if ($result) {
+                foreach (json_decode($result, 1) as $res) {
+                    if (array_key_exists($res['attribute'], $data)) {
+                        foreach (explode("|", strtolower($res['value'])) as $val) {
+                            if (!in_array($val, $data[$res['attribute']])) array_push($data[$res['attribute']], $val);
+                        }
+                    } else {
+                        $data[$res['attribute']] = explode("|", strtolower($res['value']));
+                    }
                 }
             }
         }
-        if($data) {
+
+//        echo "<pre>";
+//        var_dump($data);
+//        echo "</pre>";
+//        return;
+//        return;
+
+        if ($data) {
             file_put_contents("resources/phenotype_lookup_data/" . "local_" . $network_key . ".json", json_encode($data));
         }
         echo file_get_contents("resources/phenotype_lookup_data/" . "local_" . $network_key . ".json");
