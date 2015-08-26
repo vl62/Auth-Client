@@ -2906,7 +2906,7 @@ class Admin extends MY_Controller {
         $postdata = http_build_query(
                 array(
                     'network_key' => $network_key,
-                    'modification_time' => filemtime("resources/phenotype_lookup_data/" . "local_" . $network_key . ".json")
+                    'modification_time' => @filemtime("resources/phenotype_lookup_data/" . "local_" . $network_key . ".json")
                 )
         );
 
@@ -2965,8 +2965,8 @@ class Admin extends MY_Controller {
     function get_json_for_phenotype_lookup() {
         $modification_time = $this->input->post('modification_time');
         $network_key = $this->input->post('network_key');
-        error_log($modification_time . " " . filemtime("resources/phenotype_lookup_data/" . $network_key . ".json"));
-        if (file_exists('resources/phenotype_lookup_data/' . $network_key . ".json") && (filemtime("resources/phenotype_lookup_data/" . $network_key . ".json")) > $modification_time) {
+//        error_log($modification_time . " " . filemtime("resources/phenotype_lookup_data/" . $network_key . ".json"));
+        if (file_exists('resources/phenotype_lookup_data/' . $network_key . ".json") && (filemtime("resources/phenotype_lookup_data/" . $network_key . ".json") > $modification_time)) {
             echo (file_get_contents("resources/phenotype_lookup_data/" . $network_key . ".json"));
         } else {
             echo false;
