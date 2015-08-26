@@ -21,6 +21,9 @@ class Authcheck {
 			elseif ( preg_match("/get_phenotype_attributes_nr_list/", strtolower($current))) {
 				error_log("Authcheck hook allowing get_phenotype_attributes_nr_list -> " . strtolower($current));
 			}
+                        elseif ( preg_match("/get_json_for_phenotype_lookup/", strtolower($current))) {
+				error_log("Authcheck hook allowing get_json_for_phenotype_lookup -> " . strtolower($current));
+			}
 			elseif ( strtolower($current) != "css" ) { // Ignore it if the css controller is being called
 //				if ( $this->config->item('discovery_requires_login')) {
 					if (!$this->CI->ion_auth->logged_in()) {
