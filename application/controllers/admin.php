@@ -2877,6 +2877,8 @@ class Admin extends MY_Controller {
     }
 
     function get_phenotype_attributes_and_values_list_federated() {
+        echo "hello world";
+        return;
         $this->load->model('phenotypes_model');
         $sources = $this->input->post('sources');
         array_shift($sources);
@@ -2897,21 +2899,42 @@ class Admin extends MY_Controller {
     function get_phenotype_attributes_for_network($network_key = "2a4442db7f48bc55210fc8c0b6a8c17c") {
         $token = $this->session->userdata('Token');
         $installation_urls = json_decode(authPostRequest($token, array('network_key' => $network_key), $this->config->item('auth_server') . "/api/auth/get_all_installation_ips_for_network"), true);
-        
-        $opts = array('http' => array('timeout' => 1));
+//        echo "<pre>";
+//        var_dump($installation_urls);
+//        echo "</pre>";
+//        echo "<hr>";
+        $postdata = http_build_query(
+                array(
+                    'network_key' => $network_key,
+                    'modification_time' => filemtime("resources/phenotype_lookup_data/" . "local_" . $network_key . ".json")
+                )
+        );
+
+        $opts = array('http' =>
+            array(
+                'method' => 'POST',
+                'header' => 'Content-type: application/x-www-form-urlencoded',
+                'content' => $postdata,
+                'timeout' => 5
+            )
+        );
         $context = stream_context_create($opts);
-        
+
         $data = array();
         foreach ($installation_urls as $url) {
-            $url = rtrim($url['installation_base_url'], "/") . "/resources/phenotype_lookup_data/" . $network_key . ".json";
+            $url = rtrim($url['installation_base_url'], "/") . "/admin/get_json_for_phenotype_lookup/";
             $result = @file_get_contents($url, 1, $context);
-            if($result !== false) {
+//            echo $url . ": " . $result . "<hr>";
+            if($result) {
                 foreach(json_decode($result, 1) as $res) {
                     array_push($data, $res);
                 }
             }
         }
-        echo json_encode($data);
+        if($data) {
+            file_put_contents("resources/phenotype_lookup_data/" . "local_" . $network_key . ".json", json_encode($data));
+        }
+        echo file_get_contents("resources/phenotype_lookup_data/" . "local_" . $network_key . ".json");
     }
 
     function regenerate_federated_phenotype_attributes_and_values_list() {
@@ -2940,13 +2963,14 @@ class Admin extends MY_Controller {
     }
 
     function get_json_for_phenotype_lookup() {
-        echo json_encode(array("one" => 1));
-//        $network_key = $this->input->post('network_key');
-//        if (file_exists('resources/phenotype_lookup_data/' . $network_key . ".json")) {
-//            echo json_encode((file_get_contents("resources/phenotype_lookup_data/" . $network_key . ".json")));
-//        } else {
-//            echo json_encode("error");
-//        }
+        $modification_time = $this->input->post('modification_time');
+        $network_key = $this->input->post('network_key');
+        error_log($modification_time . " " . filemtime("resources/phenotype_lookup_data/" . $network_key . ".json"));
+        if (file_exists('resources/phenotype_lookup_data/' . $network_key . ".json") && (filemtime("resources/phenotype_lookup_data/" . $network_key . ".json")) > $modification_time) {
+            echo (file_get_contents("resources/phenotype_lookup_data/" . $network_key . ".json"));
+        } else {
+            echo false;
+        }
     }
 
     function regenerate_federated_phenotype_attributes_and_values_list_old() {
@@ -2995,7 +3019,7 @@ class Admin extends MY_Controller {
             $install_phenotypes_attributes_and_values_list = @file_get_contents($install_uri . "/admin/get_phenotype_attributes_and_values_list_federated/", false, $context);
             var_dump($install_phenotypes_attributes_and_values_list);
             error_log(print_r($install_phenotypes_attributes_and_values_list, 1));
-            return;
+
             if ($install_phenotypes_attributes_and_values_list) {
                 foreach (json_decode($install_phenotypes_attributes_and_values_list, 1) as $phenotype) {
 //					error_log(print_r($phenotype, 1));

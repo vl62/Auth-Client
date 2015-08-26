@@ -235,13 +235,13 @@
     var phenotype_values = new Array();
     
     $(document).ready(function() {
-        
         $network_key = $("#network_key").val();
         $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
             dataType: 'json',
             delay: 200,
             type: 'POST',
             success: function(json) {
+                    console.log(json);
                     $.each(json, function(i, value) {
                         $('select.phenotype_keys1').append($('<option>').text(value.attribute).attr('value', value.attribute));
                         phenotype_keys.push(value.attribute);
