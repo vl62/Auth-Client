@@ -41,32 +41,32 @@ class Query extends CafeVariome {
 				if ( $this->syntax == "elasticsearch" ) {
 					if ( strtolower($element['operator']) == "is" ) {
 						if ( $k == 'phenotypeFeature' ) {
-							error_log("phenofeature -> " . print_r($element, 1));
-							$attribute = $element['attribute']['cursiveAttribute']['term'];
+//							error_log("phenofeature -> " . print_r($element, 1));
+							$attribute = $element['phenotypeConcept']['cursivePhenotypeConcept']['term'];
 							$value = strtolower($element['phenotypeFeature']['value']);
-							error_log("----> $attribute -> $value");
+//							error_log("----> $attribute -> $value");
 							$attribute = str_replace(' ', '_', $attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
 							$attribute = str_replace('[', '\[', $attribute); // Escape square brackets as these are reserved in ElasticSearch
 							$attribute = str_replace(']', '\]', $attribute); // Escape square brackets as these are reserved in ElasticSearch
 							if ( strtolower($value) == "null" ) {
-								$query_array[$element['querySectionID']] =  "_missing_:" . $attribute;
+								$query_array[$element['querySegmentID']] =  "_missing_:" . $attribute;
 							}
 							else {
 								$value = addcslashes($value,'-+=&&||><!\(\)\{\}\[\]^"~*?:\\');
-								$query_array[$element['querySectionID']] = $attribute . "_raw:" . $value;
+								$query_array[$element['querySegmentID']] = $attribute . "_raw:" . $value;
 							}
 						}
 						elseif ( $k == "geneSymbol" ) {
 //							error_log("geneSymbol ---> " . print_r($element['geneSymbol'],1));
-							$query_array[$element['querySectionID']] = "gene:" . $element['geneSymbol']['symbol']; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
+							$query_array[$element['querySegmentID']] = "gene:" . $element['geneSymbol']['symbol']; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
 //							error_log("geneSymbol -> " . $element['geneSymbol']['symbol']);
 						}
 						elseif ( $k == "hgvsName" ) {
-							$query_array[$element['querySectionID']] = "hgvs:" . $element['hgvsName']; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
+							$query_array[$element['querySegmentID']] = "hgvs:" . $element['hgvsName']; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
 //							error_log("hgvsName ---> " . $element['hgvsName']);
 						}
 						else {
-							$query_array[$element['querySectionID']] = $element[$k]; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
+							$query_array[$element['querySegmentID']] = $element[$k]; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
 						}
 					}
 					
@@ -74,24 +74,24 @@ class Query extends CafeVariome {
 					elseif ( strtolower($element['operator']) == "is like" ) {
 						if ( $k == 'phenotypeFeature' ) {
 //							error_log("phenofeature -> " . print_r($element, 1));
-							$attribute = $element['attribute']['cursiveAttribute']['term'];
+							$attribute = $element['phenotypeConcept']['cursivePhenotypeConcept']['term'];
 							$value = strtolower($element['phenotypeFeature']['value']);
 //							error_log("----> $attribute -> $value");
 							$attribute = str_replace(' ', '_', $attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
 							$attribute = str_replace('[', '\[', $attribute); // Escape square brackets as these are reserved in ElasticSearch
 							$attribute = str_replace(']', '\]', $attribute); // Escape square brackets as these are reserved in ElasticSearch
 							$value = addcslashes($value,'-+=&&||><!\(\)\{\}\[\]^"~*?:\\');
-							$query_array[$element['querySectionID']] = $attribute . "_raw:" . "*" . $value . "*";
+							$query_array[$element['querySegmentID']] = $attribute . "_raw:" . "*" . $value . "*";
 						}
 						elseif ( $k == "geneSymbol" ) {
 //							error_log("geneSymbol ---> " . print_r($element['geneSymbol'],1));
-							$query_array[$element['querySectionID']] = "gene:" . "*" . $element['geneSymbol']['symbol'] . "*";
+							$query_array[$element['querySegmentID']] = "gene:" . "*" . $element['geneSymbol']['symbol'] . "*";
 //							error_log("geneSymbol -> " . $element['geneSymbol']['symbol']);
 						}
 					}
 					elseif ( strtolower($element['operator']) == "is not" ) {
 						if ( $k == 'phenotypeFeature' ) {
-							$attribute = $element['attribute']['cursiveAttribute']['term'];
+							$attribute = $element['phenotypeConcept']['cursivePhenotypeConcept']['term'];
 							$value = strtolower($element['phenotypeFeature']['value']);
 							$attribute = str_replace(' ', '_', $attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
 							$attribute = str_replace('[', '\[', $attribute); // Escape square brackets as these are reserved in ElasticSearch
@@ -99,17 +99,17 @@ class Query extends CafeVariome {
 							
 
 							if ( strtolower($value) == "null" ) {
-								$query_array[$element['querySectionID']] =  "_exists_:" . $attribute;
+								$query_array[$element['querySegmentID']] =  "_exists_:" . $attribute;
 							}
 							else {
 								$value = addcslashes($value,'-+=&&||><!\(\)\{\}\[\]^"~*?:\\');
-								$query_array[$element['querySectionID']] = $attribute . "_raw:" . "(-" . $value . ")";
+								$query_array[$element['querySegmentID']] = $attribute . "_raw:" . "(-" . $value . ")";
 							}
 						}
 					}
 					elseif ( strtolower($element['operator']) == "is not like" ) {
 						if ( $k == 'phenotypeFeature' ) {
-							$attribute = $element['attribute']['cursiveAttribute']['term'];
+							$attribute = $element['phenotypeConcept']['cursivePhenotypeConcept']['term'];
 							$value = strtolower($element['phenotypeFeature']['value']);
 
 							$attribute = str_replace(' ', '_', $attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
@@ -118,17 +118,17 @@ class Query extends CafeVariome {
 							
 
 							if ( strtolower($value) == "null" ) {
-								$query_array[$element['querySectionID']] =  "_exists_:" . $attribute;
+								$query_array[$element['querySegmentID']] =  "_exists_:" . $attribute;
 							}
 							else {
 								$value = addcslashes($value,'-+=&&||><!\(\)\{\}\[\]^"~*?:\\');
-								$query_array[$element['querySectionID']] = $attribute . "_raw:" . "(-*" . $value . "*)";
+								$query_array[$element['querySegmentID']] = $attribute . "_raw:" . "(-*" . $value . "*)";
 							}
 						}
 					}
 					elseif ( strtolower($element['operator']) == "=" ) {
 						if ( $k == 'phenotypeFeature' ) {
-							$attribute = $element['attribute']['cursiveAttribute']['term'];
+							$attribute = $element['phenotypeConcept']['cursivePhenotypeConcept']['term'];
 							$value = strtolower($element['phenotypeFeature']['value']);
 
 							$attribute = str_replace(' ', '_', $attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
@@ -137,13 +137,13 @@ class Query extends CafeVariome {
 //							$subject = '+ - = && || > < ! ( ) { } [ ] ^ " ~ * ? : \ /';
 //							$result = preg_replace('%([+\-&|!(){}[\]^"~*?:/]+)%', '\\\\$1', $subject);
 							if ( strtolower($value) == "null" ) {
-								$query_array[$element['querySectionID']] =  "_missing_:" . $attribute;
+								$query_array[$element['querySegmentID']] =  "_missing_:" . $attribute;
 							}
 							else {
 								if ( is_numeric($value) ) {
 									$value = str_replace('-', '\-', $value); // Escape
 									$value = str_replace('+', '\+', $value); // Escape
-									$query_array[$element['querySectionID']] = $attribute . "_d:" . $value;
+									$query_array[$element['querySegmentID']] = $attribute . "_d:" . $value;
 								}
 							}
 						}
@@ -151,7 +151,7 @@ class Query extends CafeVariome {
 					elseif ( strtolower($element['operator']) == "!=" ) {
 //					elseif ( htmlentities($element->operator) == "&ne;" ) {
 						if ( $k == 'phenotypeFeature' ) {
-							$attribute = $element['attribute']['cursiveAttribute']['term'];
+							$attribute = $element['phenotypeConcept']['cursivePhenotypeConcept']['term'];
 							$value = strtolower($element['phenotypeFeature']['value']);
 
 							$attribute = str_replace(' ', '_', $attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
@@ -159,20 +159,20 @@ class Query extends CafeVariome {
 							$attribute = str_replace(']', '\]', $attribute); // Escape square brackets as these are reserved in ElasticSearch
 							
 							if ( strtolower($value) == "null" ) {
-								$query_array[$element['querySectionID']] =  "_exists_:" . $attribute;
+								$query_array[$element['querySegmentID']] =  "_exists_:" . $attribute;
 							}
 							else {
 								if ( is_numeric($value) ) {
 									$value = str_replace('-', '\-', $value); // Escape
 									$value = str_replace('+', '\+', $value); // Escape
-									$query_array[$element['querySectionID']] = $attribute . "_d:(" . "<" . $value . " OR >" . $value . ")";
+									$query_array[$element['querySegmentID']] = $attribute . "_d:(" . "<" . $value . " OR >" . $value . ")";
 								}
 							}
 						}
 					}
 					else { // Else it must be a numeric comparison >,<,>=,<=
 						if ( $k == 'phenotypeFeature' ) {
-							$attribute = $element['attribute']['cursiveAttribute']['term'];
+							$attribute = $element['phenotypeConcept']['cursivePhenotypeConcept']['term'];
 							$value = strtolower($element['phenotypeFeature']['value']);
 
 							$attribute = str_replace(' ', '_', $attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
@@ -181,10 +181,10 @@ class Query extends CafeVariome {
 							if ( is_numeric($value) ) {
 								$value = str_replace('-', '\-', $value); // Escape
 								$value = str_replace('+', '\+', $value); // Escape
-								$query_array[$element['querySectionID']] = $attribute . "_d:" . "" . $element['operator'] . "" . $value;
+								$query_array[$element['querySegmentID']] = $attribute . "_d:" . "" . $element['operator'] . "" . $value;
 							}
 							else { // A string value with numeric comparison shouldn't be possible as it's blocked in the query builder
-								$query_array[$element['querySectionID']] = $attribute . ":" . " " . $element['operator'] . "" . $value;
+								$query_array[$element['querySegmentID']] = $attribute . ":" . " " . $element['operator'] . "" . $value;
 							}
 						}
 					}
@@ -226,27 +226,27 @@ class Query extends CafeVariome {
 		if (strtolower($element['operator']) == "is") {
 			if ($k == 'phenotypeFeature') {
 				error_log("phenofeature -> " . print_r($element, 1));
-				$attribute = $element['attribute']['cursiveAttribute']['term'];
+				$attribute = $element['phenotypeConcept']['cursivePhenotypeConcept']['term'];
 				$value = $element['phenotypeFeature']['value'];
 				error_log("----> $attribute -> $value");
 				$attribute = str_replace(' ', '_', $attribute); // Replace spaces with underscore as this is how the phenotype attribute is indexed in ElasticSearch (ElasticSearch can't handle spaces in a field name so have removed spaces and replaced with underscore)
 				$attribute = str_replace('[', '\[', $attribute); // Escape square brackets as these are reserved in ElasticSearch
 				$attribute = str_replace(']', '\]', $attribute); // Escape square brackets as these are reserved in ElasticSearch
 				if (strtolower($value) == "null") {
-					$query_array[$element['querySectionID']] = "_missing_:" . $attribute;
+					$query_array[$element['querySegmentID']] = "_missing_:" . $attribute;
 				}
 				else {
 					$value = addcslashes($value, '-+=&&||><!\(\)\{\}\[\]^"~*?:\\');
-					$query_array[$element['querySectionID']] = $attribute . "_raw:" . $value;
+					$query_array[$element['querySegmentID']] = $attribute . "_raw:" . $value;
 				}
 			}
 			elseif ($k == "geneSymbol") {
 //							error_log("GS ---> " . print_r($element['geneSymbol'],1));
-				$query_array[$element['querySectionID']] = "gene:" . $element['geneSymbol']['symbol']; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
+				$query_array[$element['querySegmentID']] = "gene:" . $element['geneSymbol']['symbol']; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
 //							error_log("gene symbol -> " . $element['geneSymbol']['symbol']);
 			}
 			else {
-				$query_array[$element['querySectionID']] = $element[$k]; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
+				$query_array[$element['querySegmentID']] = $element[$k]; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
 //							$query_array[$element->id] = $element->{$k}; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
 			}
 		}
@@ -258,13 +258,13 @@ class Query extends CafeVariome {
 //							$element->{$k} = str_replace('-', '\-', $element->{$k}); // Escape
 //							$element->{$k} = str_replace('+', '\+', $element->{$k}); // Escape
 				$element->{$k} = addcslashes($element->{$k}, '-+=&&||><!\(\)\{\}\[\]^"~*?:\\');
-				$query_array[$element->querySectionID] = $attribute . "_raw:" . "*" . $element->{$k} . "*";
+				$query_array[$element->querySegmentID] = $attribute . "_raw:" . "*" . $element->{$k} . "*";
 			}
 			else {
 //							$element->{$k} = str_replace('-', '\-', $element->{$k}); // Escape
 //							$element->{$k} = str_replace('+', '\+', $element->{$k}); // Escape
 				$element->{$k} = addcslashes($element->{$k}, '-+=&&||><!\(\)\{\}\[\]^"~*?:\\');
-				$query_array[$element->querySectionID] = "*" . $element->{$k} . "*"; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
+				$query_array[$element->querySegmentID] = "*" . $element->{$k} . "*"; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
 //							$query_array[$element->id] = "*" . $element->{$k} . "*"; // Get query term using the value of the object name as the key (it's dynamic so need the curly brackets) then set this as the value in the query array and the key is the parameterID
 			}
 		}
