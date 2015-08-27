@@ -128,4 +128,8 @@ if ( strtolower($current_page) == "discover" || strtolower($current_page) == "au
 		<button type="submit" class="btn btn-primary" id="navbar-search"><i class="icon-search"></i> Discover Variants</button>
 	</div>
 </div>
-
+<?php if(file_exists("resources/elastic_search_status_incomplete")) { ?>
+    <script>
+        show_growl_elastic_search();
+    </script>
+<?php } ?>
