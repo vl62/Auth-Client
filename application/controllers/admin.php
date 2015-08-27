@@ -3161,8 +3161,7 @@ class Admin extends MY_Controller {
         // Build the variant to phenotypes linker table
 //		$this->build_variant_to_phenotypes_table();
         // Re-populate federated phenotype attribute list
-//                $this->regenerate_federated_phenotype_attributes_and_values_list();
-
+        $this->regenerate_federated_phenotype_attributes_and_values_list();
         $this->load->model('sources_model');
         $this->load->library('elasticsearch');
         // Create dynamic name for the ES index to try and avoid clashes with multiple instance of CV on the same server
@@ -3255,6 +3254,8 @@ class Admin extends MY_Controller {
         }
         if ($index_result_flag) {
             echo "Successfully regenerated the ElasticSearch index";
+            $this->session->set_userdata(array("growl_status" => false));
+            rename("resources/elastic_search_status_incomplete", "resources/elastic_search_status_complete");
 //			$map_data['phenotypes'][] = $phenotype_array;
 //			$map_data = array();
 //			$map_data['variants']['properties']['phenotypes']['properties']['APOE_[most_recent_result]']['type'] = 'integer';
@@ -4927,6 +4928,7 @@ class Admin extends MY_Controller {
 
     public function redirect_to_elastic_search() {
         $this->session->set_userdata(array('settings_tab' => "maintenance"));
+        $this->session->set_userdata(array('maintenance_tab' => "regenerate"));
         $this->_render("admin/settings");
     }
 

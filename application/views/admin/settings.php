@@ -174,12 +174,14 @@ $(document).ready(function() {
 						<div class="span4 pagination-centered">
 							<a onclick="regenerateAutocomplete();" class="btn" rel="popover" data-content="Click to regenerate a non-redundant list of autocomplete terms in your database (references, HGVS, genes, phenotypes). These terms will then be used for autocompletion in the main discovery search box. This should be done after importing new data." data-original-title="Regenerate autocomplete"><i class="icon-list-alt"></i>  Regenerate Autocomplete</a>
 						</div>
-						<br />
+                                                <?php if(false) { 
+						echo '<br />
 						<br />
 						<br />
 						<div class="span4 pagination-centered">
 							<a onclick="regenerateFederatedPhenotypeAttributesAndValues();" class="btn" rel="popover" data-content="Click to regenerate a non-redundant list of phenotype attributes and top 50 phenotype values from installations in your network which can be used in the query builder interface." data-original-title="Regenerate Federated Phenotype List"><i class="icon-list-alt"></i>  Regenerate Federated Phenotype List</a>
-						</div>
+						</div>';
+                                                }?>
 						<br />
 						<br />
 						<br />
