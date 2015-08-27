@@ -410,11 +410,29 @@ class Discover extends MY_Controller {
             $this->data['networks'] += array($value['network_name'] => $value['network_key']);
         }
 
+        $sources_options = $this->sources_model->getSources(); // Get all the available sources from db
+        $this->setSources($sources_options);
+        $this->data['sources_options'] = $sources_options;
+        $laboratory_options = $this->sources_model->getLaboratoryCategories(); // Get all available diagnostic labs
+        $source_counts = $this->sources_model->countOnlineSourceEntries(); // Get counts of variants for info box in discovery interface
+        $this->data['source_counts'] = $source_counts;
+        $this->data['laboratory_options'] = $laboratory_options;
+        $ontologiesused = $this->sources_model->getOntologiesUsedAndRoots();
+        $this->data['ontologiesused'] = $ontologiesused;
+        $jstree = $this->_generate_jstree($ontologiesused);
+        $this->data['jstree'] = $jstree;
+
         $this->data['type'] = $type;
         $this->_render('query_builder/check_for_networks');
     }
 
-    function query_builder($network_key = "") {
+    function query_builder($network_key) {
+        
+        if ($network_key) {
+            $this->session->set_userdata(array('network_key' => $network_key));
+        } else {
+                redirect('discover/proceed_to_query/query_builder', 'refresh');
+        }
 
         // Check if the user is in the master network group for this network
         $user_id = $this->ion_auth->user()->row()->id;
@@ -426,18 +444,15 @@ class Discover extends MY_Controller {
         if (!$network_master_group_test) {
             show_error("You are not a member of the master group for this network so cannot access any discovery interfaces. In order to search any networks you need to get an administrator to add you to the master network group for each network.");
         }
-
-//      $this->data['network_key'] = $this->input->post('selectNetwork');
-        // Check if there's a network key supplied in the URL, if not then check if it's set in the session, if not then redirect back to the select network page
-        if ($network_key) {
-            $this->session->set_userdata(array('network_key' => $network_key));
-        } else {
-            $network_key = $this->session->userdata('network_key');
-            if (!$network_key) {
-                redirect('discover/proceed_to_query/query_builder', 'refresh');
-            }
-        }
+        
         $this->data['network_key'] = $network_key;
+        
+        $token = $this->session->userdata('Token');
+        $data = authPostRequest($token, array('network_key' => $network_key), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_network");
+        $federated_installs = stripslashes($data);
+        error_log("federated_installs -> $federated_installs");
+        // Set the federated installs in the session so they can be used by variantcount
+        $this->session->set_userdata(array('federated_installs' => $federated_installs));
 
         $this->load->library('elasticsearch');
         $check_if_running = $this->elasticsearch->check_if_running();
@@ -451,7 +466,7 @@ class Discover extends MY_Controller {
 //		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
 //		$federated_installs = json_decode(stripslashes($data), 1);
 //		error_log("federated_installs -> " . print_r($federated_installs, 1));
-
+        $this->title = "Discover - Query Builder";
         $this->_render('query_builder/main');
     }
 
