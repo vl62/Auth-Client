@@ -428,6 +428,17 @@ class Discover extends MY_Controller {
 
     function query_builder($network_key) {
         
+        $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder.js');
+        $this->css = array('jquery.querybuilder.css');
+
+//		$token = $this->session->userdata('Token');
+//		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
+//		$federated_installs = json_decode(stripslashes($data), 1);
+//		error_log("federated_installs -> " . print_r($federated_installs, 1));
+        $this->title = "Discover - Query Builder";
+        $this->_render("query_builder/main");
+        return;
+        
         if ($network_key) {
             $this->session->set_userdata(array('network_key' => $network_key));
         } else {
@@ -467,7 +478,7 @@ class Discover extends MY_Controller {
 //		$federated_installs = json_decode(stripslashes($data), 1);
 //		error_log("federated_installs -> " . print_r($federated_installs, 1));
         $this->title = "Discover - Query Builder";
-        $this->_render('query_builder/main');
+        $this->_render("query_builder/main");
     }
 
     function get_phenotype_attributes_nr_list() {
@@ -567,11 +578,11 @@ class Discover extends MY_Controller {
 //		$this->data['network_key'] = $network_key;
 
         $query = $this->input->post('jsonAPI');
-        error_log("STARTING QUERY");
+//        error_log("STARTING QUERY");
 
         $network_to_search = $query['network_to_search'];
         $this->data['network_key'] = $network_to_search;
-        error_log("network_to_search -> " . $network_to_search . " -> " . $network);
+//        error_log("network_to_search -> " . $network_to_search . " -> " . $network);
 
 
         $parameters = array('syntax' => 'elasticsearch');
@@ -580,12 +591,15 @@ class Discover extends MY_Controller {
         $term = $query_statement;
 
         if ($term) {
-//			error_log("POST -> " . print_r($_POST, true));
+//            error_log("POST -> " . print_r($_POST, true));
             $data['term'] = $term;
+            error_log("Term: " . $term);
         } else {
             show_error("You must specify a search term");
         }
-
+        
+//        return;
+        
         $sources = array();
         $sources = $this->sources_model->getSources();
 
@@ -606,14 +620,15 @@ class Discover extends MY_Controller {
                 foreach ($federated_installs_array as $install) {
                     $c++;
                     $network_key = $install['network_key'];
-                    error_log("NETWORK KEY -> $network_key");
+//                    error_log("NETWORK KEY -> $network_key");
                     $install_uri = $install['installation_base_url'];
                     $install_uri = rtrim($install_uri, "/");
                     $user_id = $this->ion_auth->user()->row()->id;
 //					error_log("STARTING --> $term ---> " . $install_uri . "/discover/variantcount_federated/$term/$user_id");
 //					$this->variantcount_federated($term);
 //					$contents = curl_get_contents($install_uri . "/discover/variantcount_federated/$term");
-                    error_log("calling -> " . $install_uri . "/discover/query_federated/$term");
+//                    error_log("calling -> " . $install_uri . "/discover/query_federated/$term");
+                    if($install_uri !== "http://143.210.153.155/cafevariome_client") continue;
                     // Set the timeout for each call to federated installs to 5 seconds
                     $opts = array('http' =>
                         array(
@@ -627,7 +642,7 @@ class Discover extends MY_Controller {
                     $all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key", false, $context);
 //					$all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key");
 //					error_log(print_r($http_response_header, 1));
-                    error_log("all_counts_json -> $all_counts_json");
+//                    error_log("all_counts_json -> $all_counts_json");
 
                     $all_counts = json_decode($all_counts_json, 1);
                     $federated_site_title = $all_counts['site_title'];
@@ -637,7 +652,7 @@ class Discover extends MY_Controller {
                         foreach ($all_counts as $federated_source => $counts_for_source) {
 
                             $federated_source_name = $federated_source . "__install_$c";
-                            error_log("counts for source $federated_source_name -> " . print_r($counts_for_source, 1));
+//                            error_log("counts for source $federated_source_name -> " . print_r($counts_for_source, 1));
 //							error_log("adding to " . $federated_source);
                             $sources[$federated_source_name] = "$federated_source ($federated_site_title)";
 //							error_log("sources_full adding -> " . print_r($sources, 1));

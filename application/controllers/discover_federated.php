@@ -37,7 +37,7 @@ class Discover_federated extends MY_Controller {
 		
 		// Fetch any sources that the user has count display group level access to
 		$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_count_display_group_access_to");
-		error_log("sources count_display ------>------> $returned_sources");
+//		error_log("sources count_display ------>------> $returned_sources");
 		$accessible_sources_array = json_decode($returned_sources, 1);
 //		$accessible_source_ids = array_values($accessible_sources_array);
 		$accessible_source_ids_array = array();
@@ -45,13 +45,13 @@ class Discover_federated extends MY_Controller {
 			foreach ( $accessible_sources_array as $s ) {
 				$accessible_source_ids_array[$s['source_id']] = $s['source_id'];
 			}
-			error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
+//			error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
 		}
 //		$accessible_source_ids_array = array_flip($accessible_source_ids_array);
 		
 		// Fetch any sources that the user has source display group level access to
 		$source_display_sources_returned = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_source_display_group_access_to");
-		error_log("sources source_display ------>------> $source_display_sources_returned");
+//		error_log("sources source_display ------>------> $source_display_sources_returned");
 		$accessible_source_display_array = json_decode($source_display_sources_returned, 1);
 //		$accessible_source_ids = array_values($accessible_sources_array);
 		$accessible_source_display_ids_array = array();
@@ -59,7 +59,7 @@ class Discover_federated extends MY_Controller {
 			foreach ( $accessible_source_display_array as $s ) {
 				$accessible_source_display_ids_array[$s['source_id']] = $s['source_id'];
 			}
-			error_log("accessible_source_display_ids_array -> " . print_r($accessible_source_display_ids_array, 1));
+//			error_log("accessible_source_display_ids_array -> " . print_r($accessible_source_display_ids_array, 1));
 		}
 		
 		$this->load->model('sources_model');
@@ -69,7 +69,7 @@ class Discover_federated extends MY_Controller {
 		$all_source_counts = array();
 		foreach ($sources as $source_array ) {
 			
-			error_log('source ---> ' . print_r($source_array, 1));
+//			error_log('source ---> ' . print_r($source_array, 1));
 			$source = $source_array['name'];
 			
 			$open_access_flag = 0;
@@ -77,12 +77,12 @@ class Discover_federated extends MY_Controller {
 			// Get the ID of the source and fetch the groups that it belongs to
 			$source_id = $source_array['source_id'];
 			if (array_key_exists($source_id, $accessible_source_ids_array)) {
-				error_log("SET TO OPENACCESS!!");
+//				error_log("SET TO OPENACCESS!!");
 				$open_access_flag = 1;
 			}
 			
 			if ( ! array_key_exists($source_id, $accessible_source_display_ids_array)) {
-				error_log("Do not return this source!!!");
+//				error_log("Do not return this source!!!");
 				$all_source_counts[$source] = array("openAccess" => "BLOCKED", "linkedAccess" => "BLOCKED", "restrictedAccess" => "BLOCKED");
 				continue;
 			}
@@ -113,11 +113,16 @@ class Discover_federated extends MY_Controller {
 						
 			$query['query']['bool']['must'][] = array("term" => array("source" => $source));
 			$query['facets']['sharing_policy']['terms'] = array('field' => "sharing_policy");
+                        
+                        error_log(print_r($query, 1));
 			$query = json_encode($query);
-//			error_log("query ----> $query");
+                        
+			error_log("query ----> $query");
+//                        return;
+                        
 			$es_data = $this->elasticsearch->query_dsl($query);
 			$counts = array();
-			error_log("SOURCE -> $source");
+//			error_log("SOURCE -> $source");
 			
 //			$counts['openAccess'] = "";
 //			$counts['restrictedAccess'] = "";
@@ -125,7 +130,7 @@ class Discover_federated extends MY_Controller {
 			if ( ! empty($es_data)) { // Check there's some data returned from ES
 				foreach ( $es_data['facets']['sharing_policy']['terms'] as $facet_sharing_policy ) {
 					$sp_es = $facet_sharing_policy['term'];
-					error_log($sp_es . " -----> " . $facet_sharing_policy['count']);
+//					error_log($sp_es . " -----> " . $facet_sharing_policy['count']);
 					if ( $sp_es == "openaccess" ) {
 						$sp_es = "openAccess";
 						// Check if the access policy exists for the source (meaning there are already counts), if it does then add the counts, otherwise set the count
@@ -148,7 +153,7 @@ class Discover_federated extends MY_Controller {
 							else {
 								$counts[$sp_es] = $facet_sharing_policy['count'];
 							}
-							error_log("restrictedAccess -> openAccess -> " . $facet_sharing_policy['count']);
+//							error_log("restrictedAccess -> openAccess -> " . $facet_sharing_policy['count']);
 						}
 						else {
 							$sp_es = "restrictedAccess";
@@ -181,7 +186,7 @@ class Discover_federated extends MY_Controller {
 			
 		}
 		$all_source_counts['site_title'] = $this->config->item('site_title');
-		error_log(print_r($all_source_counts, 1));
+//		error_log(print_r($all_source_counts, 1));
 //		return $all_source_counts;
 		echo json_encode($all_source_counts);
 	}
@@ -754,9 +759,11 @@ class Discover_federated extends MY_Controller {
 //			$query['query']['bool']['must'][] = array("term" => array("sharing_policy" => $sharing_policy));
 			$query['query']['bool']['must'][] = array("term" => array("source" => $source));
 //			$query['facets']['sharing_policy']['terms'] = array('field' => "sharing_policy");
+//                        error_log("query ----> $query");
 			$query = json_encode($query);
-//			error_log("query ----> $query");
+			error_log("query ----> $query");
 			$es_data = $this->elasticsearch->query_dsl($query);
+                        error_log("es_data ----> " . print_r($es_data, 1));
 //			print_r($es_data);
 			$variants = array();
 			foreach ( $es_data['hits']['hits'] as $hit ) {

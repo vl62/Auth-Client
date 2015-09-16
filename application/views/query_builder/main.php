@@ -93,6 +93,7 @@
                 </div>
                 <div class="modal-body">
                     <h5>EXACT</h5>
+                    
                     <h6 class="form-control">Data feature must have same start and stop values as the query</h6>
                     
                     <h5>BEGIN_AT_START</h5>
@@ -126,14 +127,14 @@
         </div>
     </div>
     
-    <div id="waiting" style="display: none; text-align: center;">
+<!--    <div id="waiting" style="display: none; text-align: center;">
             <br />Please wait...<br />
-            <img src="<?php echo base_url("resources/images/cafevariome/ajax-loader.gif");?>" title="Loader" alt="Loader" />
+            <img src="<?php // echo base_url("resources/images/cafevariome/ajax-loader.gif");?>" title="Loader" alt="Loader" />
     </div>
     <div id="query_result"></div>
-    <input type="hidden" value="<?php echo $network_key; ?>" id="network_key"/>
+    <input type="hidden" value="<?php // echo $network_key; ?>" id="network_key"/>-->
     
 </div> <!-- end container -->
 
-<div id="loader"></div>
+<!--<div id="loader"></div>-->
 
