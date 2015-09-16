@@ -3144,7 +3144,8 @@ class Admin extends MY_Controller {
     }
 
     function regenerate_elasticsearch_index($md5 = NULL) {
-        if ($md5) {
+         
+       if ($md5) {
             $f = fopen(FCPATH . "resources/cron/cron_md5.txt", 'r');
             $file_md5 = fgets($f);
             fclose($f);
@@ -3197,7 +3198,7 @@ class Admin extends MY_Controller {
             $map_data['variants']['properties'][$field]['type'] = 'multi_field';
             $map_data['variants']['properties'][$field]['fields'] = array($field . '' => array('type' => 'string', 'index' => 'analyzed', 'ignore_malformed' => 'true'), $field . '_d' => array('type' => 'double', 'index' => 'analyzed', 'ignore_malformed' => 'true'));
         }
-        $this->load->model('phenotypes_model');
+        $this->load->model('phenotypes_model'); 
         $phenotype_fields = $this->phenotypes_model->getPhenotypeAttributesNRList(); // Get non redundant list of all the phenotype attributes
 //		error_log(print_r($phenotype_fields, 1));
         foreach ($phenotype_fields as $field) {
@@ -3206,6 +3207,7 @@ class Admin extends MY_Controller {
             $map_data['variants']['properties']['phenotypes']['properties'][$attribute_term]['type'] = 'multi_field';
             $map_data['variants']['properties']['phenotypes']['properties'][$attribute_term]['fields'] = array($attribute_term => array('type' => 'string', 'index' => 'analyzed', 'ignore_malformed' => 'true'), $attribute_term . '_d' => array('type' => 'double', 'index' => 'analyzed', 'ignore_malformed' => 'true'), $attribute_term . '_raw' => array('type' => 'string', 'ignore_malformed' => 'true', 'index' => 'not_analyzed')); // 'analyzer' => 'special_character_analyzer',  'index' => 'not_analyzed', 
         }
+//        error_log(print_r($map_data, 1));
         $map_json = json_encode($map_data);
 //		error_log(json_encode($map_data));
         $map_result = $this->elasticsearch->map($map_json); // Do the mapping
@@ -3255,7 +3257,7 @@ class Admin extends MY_Controller {
         if ($index_result_flag) {
             echo "Successfully regenerated the ElasticSearch index";
             $this->session->set_userdata(array("growl_status" => false));
-            rename("resources/elastic_search_status_incomplete", "resources/elastic_search_status_complete");
+//            rename("resources/elastic_search_status_incomplete", "resources/elastic_search_status_complete");
 //			$map_data['phenotypes'][] = $phenotype_array;
 //			$map_data = array();
 //			$map_data['variants']['properties']['phenotypes']['properties']['APOE_[most_recent_result]']['type'] = 'integer';
