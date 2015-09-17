@@ -3144,7 +3144,6 @@ class Admin extends MY_Controller {
     }
 
     function regenerate_elasticsearch_index($md5 = NULL) {
-         
        if ($md5) {
             $f = fopen(FCPATH . "resources/cron/cron_md5.txt", 'r');
             $file_md5 = fgets($f);
@@ -3173,8 +3172,6 @@ class Admin extends MY_Controller {
         $this->elasticsearch->set_type("variants");
         $this->elasticsearch->create();
         $this->elasticsearch->delete_all();
-
-
 
 //		$settings_data['index'] = array("number_of_shards" => 1, "number_of_replicas" => 1);
 //		$settings_data['settings']['analysis']['filter']['special_character_filter'] = array("type" => "word_delimiter", "type_table" => array("# => ALPHA", "@ => ALPHA"));
