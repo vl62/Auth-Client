@@ -62,18 +62,18 @@ $option_select2 = '<div class="pagination-centered {0}">\n\
                             </select>\n\
                         </div>';
 
-$textbox = '<div class="{0} pagination-centered">\n\
+$textbox = '<div class="span4 pagination-centered">\n\
                     <div class="input-append">\n\
-                        <input class="input_field textValidate {1}" data-type="{2}" type="text" placeholder="{3}">\n\
-                        <span class="add-on"><i class="icon-remove-circle"></i></span>\n\
+                        <input class="input_field textValidate {0}" data-type="{1}" type="text" placeholder="{2}">\n\
+                        <button class="btn btn-danger" type="button"><i class="icon-remove-circle icon-white"></i></button>\n\
                     </div>\n\
                 </div>';
 
-$options_container = '<div class="span7 pagination-centered"></div>';
+$dna_options_container = '<div class="span7 pagination-centered"></div>';
 
 $textbox_with_label = '<div class="input-prepend input-append text_with_label {0}" style="margin-bottom:10px">\n\
                             <span class="add-on">{1}</span>\n\
-                                <input class="input_field query_term {2}" type="text" placeholder="{3}">\n\
+                                <input class="input_field query_term input-medium {2}" type="text" placeholder="{3}">\n\
                             <span class="add-on"><i class="icon-remove-circle"></i></span>\n\
                           </div>';
 
@@ -91,26 +91,21 @@ $type_sample = '<div id="{0}" class="row-fluid type_sample {1}">\n\
 
 $row = '<div class="row-fluid pagination-centered"></div>';
 
-$genome_count = 1;
-$genome_option = ["EXACT", "EXCEED", "BEGIN_BETWEEN", "END_BETWEEN", "BEGIN_AND_END_BETWEEN", "ONLY_BEGIN_BETWEEN",
-    "ONLY_END_BETWEEN", "BEGIN_AT_START", "END_AT_STOP"];
-$genome_textbox_start = ["span6", "Start", "input-medium start", "2000001"];
-$genome_textbox_stop = ["span6", "Stop", "input-medium stop", "2000002"];
-$genome_option_chr = ["Select a chromosome", "chr1", "chr2", "chr3", "chr4", "chr5", "chr6", "chr7", "chr8", "chr9", "chr10", "chr11", "chr12", "chr13", "chr14", "chr15", "chr16", "chr17", "chr18", "chr19", "chr20", "chr21", "chr22", "chrX", "chrY"];
-$genome_option_build = ["Select a build", "GRCh38", "hg38", "GRCh37", "hg19", "hg18", "NCBI Build 36.1"];
-
-$accession_count = 1;
-$accession_option = ["EXACT", "EXCEED", "BEGIN_BETWEEN", "END_BETWEEN", "BEGIN_AND_END_BETWEEN", "ONLY_BEGIN_BETWEEN",
-    "ONLY_END_BETWEEN", "BEGIN_AT_START", "END_AT_STOP"];
-$accession_textbox_start = ["span6", "Start", "input-medium start", "2000001"];
-$accession_textbox_stop = ["span6", "Stop", "input-medium stop", "2000002"];
-$accession_textbox = ["span12", "Accession.Version", "input-large acc_ver", "eg. NG_007124.1"];
-
 $dna_count = 1;
-$dna_textbox = ["span5 offset3", "Enter a DNA Sequence", "input-large dnaSequence", "eg. ATGC"];
+$dna_option = ["EXACT", "EXCEED", "BEGIN_BETWEEN", "END_BETWEEN", "BEGIN_AND_END_BETWEEN", "ONLY_BEGIN_BETWEEN",
+    "ONLY_END_BETWEEN", "BEGIN_AT_START", "END_AT_STOP"];
+$dna_textbox_start = ["span6", "Start", "start\" disabled ", "2000001"];
+$dna_textbox_stop = ["span6", "Stop", "stop\" disabled ", "2000002"];
+$dna_textbox_sequence = ["span12", "DNA", "sequence", "A,T,G,C"];
 
-$protein_count = 1;
-$protein_textbox = ["span5 offset3", "Enter a Protein Sequence", "input-large proteinSequence", "eg. ATGC"];
+$build.unshift("[Input your own value]");
+$build.unshift("--Select a build--");
+
+$reference = {
+    custom_input: ["[Input your own accession & version]", "[Input your own chromosome & build]"],
+    accession: $accession,
+    chromosome: $chromosome,
+};
 
 $hgvs_acc_array = $accession;
 $hgvs_acc_array.unshift("[Input your own accession & version]");
@@ -118,21 +113,19 @@ $hgvs_acc_array.unshift("Select an accession.version");
 
 $geneSymbol_count = 1;
 $geneSymbol_option = ["IS", "IS LIKE"];
-$geneSymbol_textbox = ["span5", "Enter a gene symbol", "input-large geneSymbol", "eg. BRCA1 or BRCA*"];
+$geneSymbol_textbox = ["input-xlarge", "geneSymbol", "Enter a gene symbol"];
 
 $hgvs_count = 1;
-$hgvs_textbox_acc_ver = ["span4 offset1", "Accession and Version", "input-medium hgvs_acc_ver", "eg. NG_007124.1"];
-$hgvs_textbox = ["span4 offset1", "HGVS description", "input-medium hgvs_name", "eg. c.8167G>C"];
-
+$hgvs_option = ["IS"];
+$hgvs_option_2 = ["Select an accession.version", "NULL", "[Input your own value]"];
+$hgvs_textbox = ["input-large \" disabled ", "hgvs", "Enter a HGVS description"];
 
 $phenotype_count = 1;
 $phenotype_option_1 = ["IS", "IS LIKE", "IS NOT", "IS NOT LIKE", "---------------", "=", "≠", "<", ">", "<=", ">="];
 $phenotype_option_2 = ["--Select a value--", "NULL", "[Input your own value]"];
+$phenotype_textbox = ["phenotype", "Enter a value"];
 
-add_symbol("genomeContainer");
-add_symbol("accessionContainer");
 add_symbol("dnaContainer");
-add_symbol("proteinContainer");
 add_symbol("geneSymbolContainer");
 add_symbol("hgvsContainer");
 add_symbol("phenotypeContainer");
@@ -140,82 +133,34 @@ add_symbol("phenotypeContainer");
 function add_symbol($symbol) {
     switch ($symbol) {
 
-        case "genomeContainer":
-
-            if ($genome_count != 1)
-                $("#genomeContainer").append($or_logic);
-
-            $("#genomeContainer").append($($type_sample.format(["genome" + $genome_count, ""])).css({"margin-top": "10px", "margin-bottom": "10px"}));
-
-            $options = add_options($option.format(["span3", "input-large conditions", '', "<br/><button class='btn btn-info condition-info'>Info</button>"]), $genome_option);
-            $("#genome" + $genome_count).append($options);
-
-            $options_chr = add_options($option.format(["span6", "input-medium condition_ref chr" + $genome_count, "", ""]), $genome_option_chr);
-            $options_build = add_options($option.format(["span6", "input-medium condition_ref build" + $genome_count, "", ""]), $genome_option_build);
-
-            $row2 = $($row).append($textbox_with_label.format($genome_textbox_start)).append($textbox_with_label.format($genome_textbox_stop));
-
-            $("#genome" + $genome_count).append($($options_container)
-                    .append($options_chr)
-                    .append($options_build)
-                    .append($row2));
-
-            $("#genome" + $genome_count).append($add_remove_btn.format([""]));
-            $genome_count += 1;
-
-            break;
-        case "accessionContainer":
-
-            if ($accession_count != 1)
-                $("#accessionContainer").append($or_logic);
-
-            $("#accessionContainer").append($($type_sample.format(["accession" + $accession_count, ""])).css({"margin-top": "10px", "margin-bottom": "10px"}));
-
-            $options = add_options($option.format(["span3", "input-large conditions", '', "<br/><button class='btn btn-info condition-info'>Info</button>"]), $accession_option);
-            $("#accession" + $accession_count).append($options);
-
-            $row2 = $($row).append($textbox_with_label.format($accession_textbox_start)).append($textbox_with_label.format($accession_textbox_stop));
-
-            $("#accession" + $accession_count).append($($options_container)
-                    .append($textbox_with_label.format($accession_textbox))
-                    .append($row2));
-
-            $("#accession" + $accession_count).append($add_remove_btn.format([""]));
-            $accession_count += 1;
-
-            break;
         case "dnaContainer":
 
             if ($dna_count != 1)
                 $("#dnaContainer").append($or_logic);
 
-            $("#dnaContainer").append($type_sample.format(["dna" + $dna_count, ""]));
+            $("#dnaContainer").append($($type_sample.format(["dna" + $dna_count, ""])).css({"margin-top": "10px", "margin-bottom": "10px"}));
 
-            $("#dna" + $dna_count).append($textbox_with_label.format($dna_textbox));
+            $options = add_options($option.format(["span3", "input-medium conditions", '', "<br/><button class='btn btn-info condition-info'>Info</button>"]), $dna_option);
+            $("#dna" + $dna_count).append($options);
 
-            $("#dna" + $dna_count + " input").autocomplete({
-                source: gene_keys
+            $options_ref = add_options_group($option_select2.format(["span12", "input-medium condition_ref ref" + $dna_count]), $reference);
+
+            $row2 = $($row).append($textbox_with_label.format($dna_textbox_start)).append($textbox_with_label.format($dna_textbox_stop));
+
+            $("#dna" + $dna_count).append($($dna_options_container)
+                    .append("<h4>Reference</h4>")
+                    .append($options_ref)
+                    .append($row2)
+                    .append("<hr>")
+                    .append($textbox_with_label.format($dna_textbox_sequence)));
+
+            $(".ref" + $dna_count).select2({
+                placeholder: "--Select a reference--",
+//                    allowClear: true
             });
 
-            $("#dna" + $dna_count).append($add_remove_btn.format(["offset2"]));
+            $("#dna" + $dna_count).append($add_remove_btn.format([""]));
             $dna_count += 1;
-
-            break;
-        case "proteinContainer":
-
-            if ($protein_count != 1)
-                $("#proteinContainer").append($or_logic);
-
-            $("#proteinContainer").append($type_sample.format(["protein" + $protein_count, ""]));
-
-            $("#protein" + $protein_count).append($textbox_with_label.format($protein_textbox));
-
-            $("#protein" + $protein_count + " input").autocomplete({
-                source: gene_keys
-            });
-
-            $("#protein" + $protein_count).append($add_remove_btn.format(["offset2"]));
-            $protein_count += 1;
 
             break;
 
@@ -229,7 +174,7 @@ function add_symbol($symbol) {
             $options = add_options($option.format(["span3", "input-medium conditions", "", ""]), $geneSymbol_option);
             $("#geneSymbol" + $geneSymbol_count).append($options);
 
-            $("#geneSymbol" + $geneSymbol_count).append($textbox_with_label.format($geneSymbol_textbox));
+            $("#geneSymbol" + $geneSymbol_count).append($textbox.format($geneSymbol_textbox));
 
             $("#geneSymbol" + $geneSymbol_count + " input").autocomplete({
                 source: gene_keys
@@ -247,8 +192,13 @@ function add_symbol($symbol) {
 
             $("#hgvsContainer").append($type_sample.format(["hgvs" + $hgvs_count, ""]));
 
-            $("#hgvs" + $hgvs_count).append($textbox_with_label.format($hgvs_textbox_acc_ver));
-            $("#hgvs" + $hgvs_count).append($textbox_with_label.format($hgvs_textbox));
+            $options = add_options($option.format(["span3", "input-medium conditions", "", ""]), $hgvs_option);
+            $("#hgvs" + $hgvs_count).append($options);
+            
+            $options_2 = add_options($option.format(["span3", "input-large hgvs_accession", "", ""]), $hgvs_acc_array);
+            $("#hgvs" + $hgvs_count).append($options_2);
+
+            $("#hgvs" + $hgvs_count).append($textbox.format($hgvs_textbox));
 
             $("#hgvs" + $hgvs_count).append($add_remove_btn.format([""]));
             $hgvs_count += 1;
@@ -269,7 +219,7 @@ function add_symbol($symbol) {
             $("#phenotypeContainer").append($type_sample.format(["phenotype" + $phenotype_count, ""]));
 
             if ($phenotype_count == 1)
-                $("#phenotype" + $phenotype_count).append($option_select2.format(["span4 offset1", "keys phenotype_keys" + $phenotype_count]));
+                $("#phenotype" + $phenotype_count).append($option_select2.format(["span4", "keys phenotype_keys" + $phenotype_count]));
             else {
                 $options = add_options($option_select2.format(["span4", "keys phenotype_keys" + $phenotype_count]), phenotype_keys);
                 $("#phenotype" + $phenotype_count).append($options);
@@ -283,10 +233,10 @@ function add_symbol($symbol) {
             $options_1 = add_options($option.format(["span2", "input-medium conditions", "", ""]), $phenotype_option_1);
             $("#phenotype" + $phenotype_count).append($options_1);
 
-            $options_2 = add_options($option.format(["span3", "input-medium phenotype_values\" disabled ", "", ""]), $phenotype_option_2);
+            $options_2 = add_options($option.format(["span2", "input-medium phenotype_values\" disabled ", "", ""]), $phenotype_option_2);
             $("#phenotype" + $phenotype_count).append($options_2);
 
-            $("#phenotype" + $phenotype_count).append($add_remove_btn.format([""]));
+            $("#phenotype" + $phenotype_count).append($add_remove_btn.format(["offset2"]));
 
             $phenotype_count += 1;
             break;
@@ -313,8 +263,61 @@ $(document).ready(function () {
     });
 
     // DNA Type
+    $(document).on('change', ".condition_ref", function () {
 
-    $(document).on('click', "#genomeContainer .condition-info, #accessionContainer .condition-info", function () {
+        $(this).closest('[id^=dna]').find('.start').prop('disabled', "");
+        $(this).closest('[id^=dna]').find('.stop').prop('disabled', "");
+
+//                check_exact_match($(this).closest('[id^=dna]').attr('id'));
+
+        if ($(this).val() === "[Input your own accession & version]") {
+            $(this).parent().append($textbox_with_label.format(["acc_acc", 'Accession.Version', "", 'Enter a value', ]));
+//                    $(this).parent().append($textbox_with_label.format(["acc_ver", 'Version', "", 'Enter a value',]));
+            $(this).siblings('.chr_chr').remove();
+            $(this).siblings('.chr_build_parent').remove();
+        } else if ($(this).val() === "[Input your own chromosome & build]") {
+            $(this).parent().append($textbox_with_label.format(['chr_chr', 'Chromosome', "", 'Enter a value']));
+            $(this).parent().append(add_options($option.format(["chr_build_parent", "chr_build input-medium", "", ""]), $build));
+
+            $(this).siblings('.acc_acc').remove();
+//                    $(this).siblings('.acc_ver').remove();
+        } else {
+            $(this).siblings('.chr_chr').remove();
+            $(this).siblings('.chr_build_parent').remove();
+            $(this).siblings('.acc_acc').remove();
+//                    $(this).siblings('.acc_ver').remove();
+        }
+    });
+
+    var typingTimer;
+    $(document).on('keyup', '#dnaContainer [id^=dna] input.sequence', function () {
+        parentId = $(this).closest('[id^=dna]').attr('id');
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(function () {
+            check_exact_match(parentId);
+        }, 2000);
+    });
+
+    $(document).on('keydown', '#dnaContainer [id^=dna] input.sequence', function () {
+        clearTimeout(typingTimer);
+    });
+
+    function check_exact_match(parentId) {
+        seq = $("#" + parentId).find('.sequence').val();
+
+        if (seq !== "") {
+            if ($("#" + parentId).find('.conditions').val() !== "EXACT") {
+                if (confirm("If searching for a DNA sequence the operator must be 'EXACT'"))
+                    $("#" + parentId).find('.conditions').find('option:first').attr('selected', 'selected');
+                else {
+                    $.growl.warning({message: "You have not set a DNA type validation to \"EXACT\" match. Cannot proceed to query."});
+                    return false;
+                }
+            }
+        }
+    }
+
+    $(document).on('click', "#dnaContainer .condition-info", function () {
         $("#modalInfo").show();
         $(".closeModal").click(function (e) {
             e.preventDefault();
@@ -322,7 +325,42 @@ $(document).ready(function () {
         });
     });
 
+    $(document).on('change', "select.chr_build", function () {
+        if ($(this).val() === "[Input your own value]") {
+            $(this).parent().after('<div class="input-append chr_build_custom_value">\n\
+                                    <input class="input-large build chr_build" type="text" placeholder="Enter a value">\n\
+                                    <span class="add-on"><i class="icon-share-alt"></i></span>\n\
+                                </div>');
+            $build_value = $(this).parent().remove();
+        }
+    });
+
+    $(document).on('click', '.chr_build_custom_value .icon-share-alt', function () {
+        $(this).parent().parent().replaceWith($build_value.find('option:first').attr('selected', 'selected').parent().parent());
+    });
+    
     // Hgvs
+    $(document).on('change', "select.hgvs_accession", function () {
+        if ($(this).val() === "Select an accession.version") {
+            $(this).parent().parent().find('.input_field').prop('disabled', 'disabled').val("");        
+        } else if ($(this).val() === "[Input your own accession & version]") {
+            $(this).parent().parent().find('.input_field').prop('disabled', '').parent();
+            $(this).parent().append('<div class="input-append hgvs_acc_custom_value">\n\
+                                <input class="input-large hgvs_accession" data-type="hgvs" type="text" placeholder="Enter a value">\n\
+                                <span class="add-on"><i class="icon-share-alt"></i></span>\n\
+                            </div>');
+            $hgvs_accession = $(this).remove();
+        } else {
+            $(this).parent().parent().find('.input_field').prop('disabled', '').val("");        
+        }
+    });
+
+    $(document).on('click', '.hgvs_acc_custom_value .icon-share-alt', function () {
+        $(this).parent().parent().parent().parent().find(".input_field").prop('disabled', 'disabled').val("");        
+        $(this).parent().parent().parent().append($hgvs_accession)
+                .find('option:contains("Select an accession.version")').attr('selected', 'selected')
+                .parent().prev().remove();
+    });
 
     // Phenotype
     $(document).on('change', '.keys', function () {
@@ -366,17 +404,8 @@ $(document).ready(function () {
             $collapse = true;
 
             switch ($(this).parent().parent().next().attr('id')) {
-                case "genomeContainer":
-                    $collapse = validate_Genome("collapseEvent");
-                    break;
-                case "accessionContainer":
-                    $collapse = validate_Accession("collapseEvent");
-                    break;
                 case "dnaContainer":
                     $collapse = validate_DNA("collapseEvent");
-                    break;
-                case "proteinContainer":
-                    $collapse = validate_Protein("collapseEvent");
                     break;
                 case "geneSymbolContainer":
                     $collapse = validate_GeneSymbol("collapseEvent");
@@ -427,8 +456,7 @@ $(document).ready(function () {
 
     // AND-OR Toggle Function
     $(document).on('click', ".btn-toggle", function () {
-        if ($("a", this).hasClass("disabled"))
-            return;
+        if($("a", this).hasClass("disabled")) return;
         if ($(this).find('.btn-primary').length > 0) {
             if ($(this).parent().attr('id') === "phenotypeContainer") {
                 $(this).parent().find('.logic_phenotype .btn').toggleClass('active');
@@ -874,7 +902,7 @@ $(document).ready(function () {
                             return false;
                         }
                     }
-                } else if ($(this).find('.sequence').val() != "") {
+                } else if($(this).find('.sequence').val() != ""){
                     $.growl.error({message: "You have not enter a location reference value(s)"});
                     $error = true;
                     return false;
