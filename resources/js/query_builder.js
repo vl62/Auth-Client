@@ -124,10 +124,13 @@ $hgvs_count = 1;
 $hgvs_textbox_acc_ver = ["span4 offset1", "Accession and Version", "input-medium hgvs_acc_ver", "eg. NG_007124.1"];
 $hgvs_textbox = ["span4 offset1", "HGVS description", "input-medium hgvs_name", "eg. c.8167G>C"];
 
-
 $phenotype_count = 1;
 $phenotype_option_1 = ["IS", "IS LIKE", "IS NOT", "IS NOT LIKE", "---------------", "=", "≠", "<", ">", "<=", ">="];
 $phenotype_option_2 = ["--Select a value--", "NULL", "[Input your own value]"];
+
+$other_count = 1;
+$other_option = ["IS", "IS LIKE", "IS NOT", "IS NOT LIKE", "---------------", "=", "≠", "<", ">", "<=", ">="];
+$other_textbox = ["span4", "Enter a value", "input-large other_value", ""];
 
 add_symbol("genomeContainer");
 add_symbol("accessionContainer");
@@ -136,6 +139,7 @@ add_symbol("proteinContainer");
 add_symbol("geneSymbolContainer");
 add_symbol("hgvsContainer");
 add_symbol("phenotypeContainer");
+add_symbol("otherContainer");
 
 function add_symbol($symbol) {
     switch ($symbol) {
@@ -150,8 +154,8 @@ function add_symbol($symbol) {
             $options = add_options($option.format(["span3", "input-large conditions", '', "<br/><button class='btn btn-info condition-info'>Info</button>"]), $genome_option);
             $("#genome" + $genome_count).append($options);
 
-            $options_chr = add_options($option.format(["span6", "input-medium condition_ref chr" + $genome_count, "", ""]), $genome_option_chr);
-            $options_build = add_options($option.format(["span6", "input-medium condition_ref build" + $genome_count, "", ""]), $genome_option_build);
+            $options_chr = add_options($option.format(["span6", "input-medium chromosome chr" + $genome_count, "", ""]), $genome_option_chr);
+            $options_build = add_options($option.format(["span6", "input-medium build build" + $genome_count, "", ""]), $genome_option_build);
 
             $row2 = $($row).append($textbox_with_label.format($genome_textbox_start)).append($textbox_with_label.format($genome_textbox_stop));
 
@@ -290,6 +294,26 @@ function add_symbol($symbol) {
 
             $phenotype_count += 1;
             break;
+
+        case "otherContainer":
+
+            if ($other_count != 1)
+                $("#otherContainer").append($or_logic);
+
+            $("#otherContainer").append($type_sample.format(["other" + $other_count, ""]));
+
+            $options_1 = add_options($option.format(["span4", "input-large other_keys", "", ""]), ["Select a field", "one", "two", "three"]);
+            $("#other" + $other_count).append($options_1);
+
+            $options_2 = add_options($option.format(["span2", "input-medium conditions", "", ""]), $other_option);
+            $("#other" + $other_count).append($options_2);
+
+            $("#other" + $other_count).append($textbox_with_label.format($other_textbox));
+
+            $("#other" + $other_count).append($add_remove_btn.format([""]));
+
+            $other_count += 1;
+            break;
     }
 }
 
@@ -387,6 +411,8 @@ $(document).ready(function () {
                 case "phenotypeContainer":
                     $collapse = validate_Phenotype("collapseEvent");
                     break;
+                case "otherContainer":
+                    $collapse = validate_Other("collapseEvent");
             }
             if ($collapse) {
                 $(this).removeClass("btn-success").addClass("btn-info");
@@ -454,13 +480,17 @@ $(document).ready(function () {
         $('#waiting').show(500);
         $idCount = 1;
 
-        
-        d = validate_DNA("buildQueryEvent");
-        g = validate_GeneSymbol("buildQueryEvent");
-        h = validate_HGVS("buildQueryEvent");
-        p = validate_Phenotype("buildQueryEvent");
+        gen = validate_Genome("buildQueryEvent");
+        acc = validate_Accession("buildQueryEvent");
+        return;
+        dna = validate_DNA("buildQueryEvent");
+        pro = validate_Protein("buildQueryEvent");
+        gsm = validate_GeneSymbol("buildQueryEvent");
+        hgv = validate_HGVS("buildQueryEvent");
+        phe = validate_Phenotype("buildQueryEvent");
+        oth = validate_Other("buildQueryEvent");
 
-        if (!(d && g && h && p)) {
+        if (!(gen && acc && dna && pro && gsm && hgv && phe && oth)) {
             console.log("Build Query: Not Validated");
             return;
         }
@@ -541,9 +571,7 @@ $(document).ready(function () {
         if ($dna.trim() !== "") {
             $dna = $dna.trim().indexOf("OR") < 0 ? " " + $dna.trim() + " " : " (" + $dna.trim() + ") ";
             if ($geneSymbol.trim() === "" && $hgvs.trim() === "" && $dna.trim().indexOf('AND') > -1) {
-                console.log($dna.trim());
                 $dna = $dna.trim().substring(1, $dna.trim().length - 1);
-                console.log($dna.trim());
             }
 
             $genotype += $dna;
@@ -779,20 +807,32 @@ $(document).ready(function () {
     }
 
     function validate_Genome($for) {
-        $parentId = $("#dnaContainer");
+        $parentId = $("#genomeContainer");
         $parentType = $parentId.attr('data-type');
 
         if ($for === "collapseEvent") {
             if ($parentId.children('.type_sample').length === 1) {
-                if (($parentId.find('select.condition_ref').val().trim().length > 0) || ($parentId.find('input.sequence').val().trim().length > 0))
-                {
+
+                start = $(".start", $parentId).val().trim().length > 0;
+                stop = $(".stop", $parentId).val().trim().length > 0;
+                chromo = $("select.chromosome", $parentId).val() !== "Select a chromosome";
+                build = $("select.build", $parentId).val() !== "Select a build";
+
+                if (start || stop || chromo || build) {
                     $.growl.notice({message: "Non-empty sections cannot be collapsed."});
                     return false;
                 }
+
             } else {
                 $error = false;
                 $parentId.children('.type_sample').each(function () {
-                    if (($(this).find('select.condition_ref').val().trim().length > 0) || ($(this).find('input.sequence').val().trim().length > 0)) {
+
+                    start = $(".start", this).val().trim().length > 0;
+                    stop = $(".stop", this).val().trim().length > 0;
+                    chromo = $("select.chromosome", this).val() !== "Select a chromosome";
+                    build = $("select.build", this).val() !== "Select a build";
+
+                    if (start || stop || chromo || build) {
                         $.growl.notice({message: "Non-empty sections cannot be collapsed."});
                         $error = true;
                         return false;
@@ -806,40 +846,34 @@ $(document).ready(function () {
         } else if ($for === "buildQueryEvent") {
             $error = false;
             $parentId.children('.type_sample').each(function () {
-                if (($(this).find('select.condition_ref').val().length > 0)) {
-                    $start = parseInt($(this).find('.start').val().trim(), 10);
-                    $stop = parseInt($(this).find('.stop').val().trim(), 10);
+                $start = parseInt($(this).find('.start').val().trim(), 10);
+                $stop = parseInt($(this).find('.stop').val().trim(), 10);
 
-                    start = $(this).find('.start').val();
-                    stop = $(this).find('.stop').val();
-                    seq = $(this).find('.sequence').val();
-                    ref = $(this).find('.select2-chosen').html();
+                start = $(this).find('.start').val().trim();
+                stop = $(this).find('.stop').val().trim();
+                chromo = $("select.chromosome", this).val() !== "Select a chromosome";
+                build = $("select.build", this).val() !== "Select a build";
 
-                    if (start !== "" && stop !== "" && seq !== "" && ref !== "--Select a reference--") {
-                        if ($(this).find('.conditions').val() !== "EXACT") {
-                            $.growl.error({message: "You have not set a DNA type validation to \"EXACT\" match. Cannot proceed to query."});
-                            $error = true;
-                            return false;
-                        }
-                    }
+                if (start || stop || chromo || build) {
 
-                    if (isNaN($start)) {
-                        $.growl.error({message: "DNA start value(s) were empty."});
+                    if (!chromo) {
+                        $.growl.error({message: "You have not selected a chromosome value(s)"});
                         $error = true;
                         return false;
-                    } else if (!isNumber($start)) {
-                        console.log($start);
-                        $.growl.error({message: "DNA start value(s) were not numeric."});
+                    } else if (!build) {
+                        $.growl.error({message: "You have not selected a build value(s)"});
                         $error = true;
                         return false;
                     }
 
-                    if (isNaN($stop)) {
-                        $.growl.error({message: "DNA stop value(s) were empty."});
+                    if (!isNumber($start) || isNaN($start)) {
+                        $.growl.error({message: "DNA start value(s) were empty or not numeric."});
                         $error = true;
                         return false;
-                    } else if (!isNumber($stop)) {
-                        $.growl.error({message: "DNA stop value(s) were not numeric."});
+                    }
+
+                    if (!isNumber($stop) || isNaN($stop)) {
+                        $.growl.error({message: "DNA stop value(s) were empty or not numeric."});
                         $error = true;
                         return false;
                     }
@@ -849,57 +883,36 @@ $(document).ready(function () {
                         $error = true;
                         return false;
                     }
-
-                    if ($(this).find('select.condition_ref').val() === "[Input your own accession & version]") {
-
-                        if ($(this).find('.acc_acc input').val().trim().length === 0) {
-                            $.growl.error({message: "You have not entered an accession value(s)"});
-                            $error = true;
-                            return false;
-                        }
-//                            if($(this).find('.acc_ver input').val().trim().length === 0) {
-//                                $.growl.error({ message: "You have not entered an accession version value(s)" });
-//                                $error = true;
-//                                return false;
-//                            }
-                    } else if ($(this).find('select.condition_ref').val() === "[Input your own chromosome & build]") {
-
-                        if ($(this).find('.chr_chr input').val().trim().length === 0) {
-                            $.growl.error({message: "You have not entered a chromosome value(s)"});
-                            $error = true;
-                            return false;
-                        }
-                        if ($(this).find('.chr_build').val().trim().length === 0 || $(this).find('.chr_build').val() === "--Select a build--") {
-                            $.growl.error({message: "You have not entered an chromosome build value(s)"});
-                            $error = true;
-                            return false;
-                        }
-                    }
-                } else if ($(this).find('.sequence').val() != "") {
-                    $.growl.error({message: "You have not enter a location reference value(s)"});
-                    $error = true;
-                    return false;
                 }
             });
             return !$error;
         }
     }
-    
+
     function validate_Accession($for) {
-        $parentId = $("#dnaContainer");
+        $parentId = $("#accessionContainer");
         $parentType = $parentId.attr('data-type');
 
         if ($for === "collapseEvent") {
             if ($parentId.children('.type_sample').length === 1) {
-                if (($parentId.find('select.condition_ref').val().trim().length > 0) || ($parentId.find('input.sequence').val().trim().length > 0))
-                {
+
+                start = $(".start", $parentId).val().trim().length > 0;
+                stop = $(".stop", $parentId).val().trim().length > 0;
+                acc_ver = $(".acc_ver", $parentId).val().trim().length > 0;
+
+                if (start || stop || acc_ver) {
                     $.growl.notice({message: "Non-empty sections cannot be collapsed."});
                     return false;
                 }
             } else {
                 $error = false;
                 $parentId.children('.type_sample').each(function () {
-                    if (($(this).find('select.condition_ref').val().trim().length > 0) || ($(this).find('input.sequence').val().trim().length > 0)) {
+
+                    start = $(".start", this).val().trim().length > 0;
+                    stop = $(".stop", this).val().trim().length > 0;
+                    acc_ver = $(".acc_ver", this).val().trim().length > 0;
+
+                    if (start || stop || acc_ver) {
                         $.growl.notice({message: "Non-empty sections cannot be collapsed."});
                         $error = true;
                         return false;
@@ -913,40 +926,29 @@ $(document).ready(function () {
         } else if ($for === "buildQueryEvent") {
             $error = false;
             $parentId.children('.type_sample').each(function () {
-                if (($(this).find('select.condition_ref').val().length > 0)) {
-                    $start = parseInt($(this).find('.start').val().trim(), 10);
-                    $stop = parseInt($(this).find('.stop').val().trim(), 10);
+                $start = parseInt($(this).find('.start').val().trim(), 10);
+                $stop = parseInt($(this).find('.stop').val().trim(), 10);
 
-                    start = $(this).find('.start').val();
-                    stop = $(this).find('.stop').val();
-                    seq = $(this).find('.sequence').val();
-                    ref = $(this).find('.select2-chosen').html();
+                start = $(this).find('.start').val().trim();
+                stop = $(this).find('.stop').val().trim();
+                acc_ver = $(".acc_ver", this).val().trim();
 
-                    if (start !== "" && stop !== "" && seq !== "" && ref !== "--Select a reference--") {
-                        if ($(this).find('.conditions').val() !== "EXACT") {
-                            $.growl.error({message: "You have not set a DNA type validation to \"EXACT\" match. Cannot proceed to query."});
-                            $error = true;
-                            return false;
-                        }
-                    }
-
-                    if (isNaN($start)) {
-                        $.growl.error({message: "DNA start value(s) were empty."});
-                        $error = true;
-                        return false;
-                    } else if (!isNumber($start)) {
-                        console.log($start);
-                        $.growl.error({message: "DNA start value(s) were not numeric."});
+                if (start || stop || acc_ver) {
+                    
+                    if(!acc_ver) {
+                        $.growl.error({message: "Accession Version value(s) were empty."});
                         $error = true;
                         return false;
                     }
 
-                    if (isNaN($stop)) {
-                        $.growl.error({message: "DNA stop value(s) were empty."});
+                    if (!isNumber($start) || isNaN($start)) {
+                        $.growl.error({message: "DNA start value(s) were empty or not numeric."});
                         $error = true;
                         return false;
-                    } else if (!isNumber($stop)) {
-                        $.growl.error({message: "DNA stop value(s) were not numeric."});
+                    }
+
+                    if (!isNumber($stop) || isNaN($stop)) {
+                        $.growl.error({message: "DNA stop value(s) were empty or not numeric."});
                         $error = true;
                         return false;
                     }
@@ -957,36 +959,8 @@ $(document).ready(function () {
                         return false;
                     }
 
-                    if ($(this).find('select.condition_ref').val() === "[Input your own accession & version]") {
-
-                        if ($(this).find('.acc_acc input').val().trim().length === 0) {
-                            $.growl.error({message: "You have not entered an accession value(s)"});
-                            $error = true;
-                            return false;
-                        }
-//                            if($(this).find('.acc_ver input').val().trim().length === 0) {
-//                                $.growl.error({ message: "You have not entered an accession version value(s)" });
-//                                $error = true;
-//                                return false;
-//                            }
-                    } else if ($(this).find('select.condition_ref').val() === "[Input your own chromosome & build]") {
-
-                        if ($(this).find('.chr_chr input').val().trim().length === 0) {
-                            $.growl.error({message: "You have not entered a chromosome value(s)"});
-                            $error = true;
-                            return false;
-                        }
-                        if ($(this).find('.chr_build').val().trim().length === 0 || $(this).find('.chr_build').val() === "--Select a build--") {
-                            $.growl.error({message: "You have not entered an chromosome build value(s)"});
-                            $error = true;
-                            return false;
-                        }
-                    }
-                } else if ($(this).find('.sequence').val() != "") {
-                    $.growl.error({message: "You have not enter a location reference value(s)"});
-                    $error = true;
-                    return false;
                 }
+
             });
             return !$error;
         }
@@ -998,15 +972,15 @@ $(document).ready(function () {
 
         if ($for === "collapseEvent") {
             if ($parentId.children('.type_sample').length === 1) {
-                if (($parentId.find('select.condition_ref').val().trim().length > 0) || ($parentId.find('input.sequence').val().trim().length > 0))
-                {
+
+                if ($(".dnaSequence", $parentId).val().trim().length > 0) {
                     $.growl.notice({message: "Non-empty sections cannot be collapsed."});
                     return false;
                 }
             } else {
                 $error = false;
                 $parentId.children('.type_sample').each(function () {
-                    if (($(this).find('select.condition_ref').val().trim().length > 0) || ($(this).find('input.sequence').val().trim().length > 0)) {
+                    if ($(".dnaSequence", this).val().trim().length > 0) {
                         $.growl.notice({message: "Non-empty sections cannot be collapsed."});
                         $error = true;
                         return false;
@@ -1042,7 +1016,6 @@ $(document).ready(function () {
                         $error = true;
                         return false;
                     } else if (!isNumber($start)) {
-                        console.log($start);
                         $.growl.error({message: "DNA start value(s) were not numeric."});
                         $error = true;
                         return false;
@@ -1098,22 +1071,22 @@ $(document).ready(function () {
             return !$error;
         }
     }
-    
+
     function validate_Protein($for) {
-        $parentId = $("#dnaContainer");
+        $parentId = $("#proteinContainer");
         $parentType = $parentId.attr('data-type');
 
         if ($for === "collapseEvent") {
             if ($parentId.children('.type_sample').length === 1) {
-                if (($parentId.find('select.condition_ref').val().trim().length > 0) || ($parentId.find('input.sequence').val().trim().length > 0))
-                {
+                if ($(".proteinSequence", $parentId).val().trim().length > 0) {
                     $.growl.notice({message: "Non-empty sections cannot be collapsed."});
                     return false;
                 }
+
             } else {
                 $error = false;
                 $parentId.children('.type_sample').each(function () {
-                    if (($(this).find('select.condition_ref').val().trim().length > 0) || ($(this).find('input.sequence').val().trim().length > 0)) {
+                    if ($(".proteinSequence", this).val().trim().length > 0) {
                         $.growl.notice({message: "Non-empty sections cannot be collapsed."});
                         $error = true;
                         return false;
@@ -1149,7 +1122,6 @@ $(document).ready(function () {
                         $error = true;
                         return false;
                     } else if (!isNumber($start)) {
-                        console.log($start);
                         $.growl.error({message: "DNA start value(s) were not numeric."});
                         $error = true;
                         return false;
@@ -1203,6 +1175,104 @@ $(document).ready(function () {
                 }
             });
             return !$error;
+        }
+    }
+
+    function validate_GeneSymbol($for) {
+        $parentId = $("#geneSymbolContainer");
+        $parentType = $parentId.attr('data-type');
+
+        if ($for === "collapseEvent") {
+            if ($parentId.children('.type_sample').length === 1) {
+
+                if ($(".geneSymbol", $parentId).val().trim().length > 0) {
+                    $.growl.notice({message: "Non-empty sections cannot be collapsed."});
+                    return false;
+                }
+
+            } else {
+                $error = false;
+                $parentId.children('.type_sample').each(function () {
+
+                    if ($(".geneSymbol", this).val().trim().length > 0) {
+                        $.growl.notice({message: "Non-empty sections cannot be collapsed."});
+                        $error = true;
+                        return false;
+                    }
+                });
+
+                if ($error)
+                    return false;
+            }
+            return true;
+        } else if ($for === "buildQueryEvent") {
+            $parentId.children('.type_sample').each(function () {
+                if ($(this).find('.textValidate').val().trim().length > 0) {
+                    $.ajax({url: authurl + '/admin/validate_gene/',
+                        dataType: 'json',
+                        data: {'term': $(this).find('.textValidate').val()},
+                        delay: 200,
+                        type: 'POST',
+                        success: function (data) {
+                            if (data.status !== "Validated")
+                                $.growl.warning({message: "You have not entered a valid gene symbol value(s). Query result may not be exact"});
+                        }
+                    });
+                }
+            });
+            return true;
+        }
+    }
+
+    function validate_HGVS($for) {
+        $parentId = $("#hgvsContainer");
+        $parentType = $parentId.attr('data-type');
+
+        if ($for === "collapseEvent") {
+            if ($parentId.children('.type_sample').length === 1) {
+
+                acc_ver = $(".hgvs_acc_ver", $parentId).val().trim().length > 0;
+                hgvs = $(".hgvs_name", $parentId).val().trim().length > 0;
+
+                if (hgvs || acc_ver) {
+                    $.growl.notice({message: "Non-empty sections cannot be collapsed."});
+                    return false;
+                }
+
+            } else {
+                $error = false;
+                $parentId.children('.type_sample').each(function () {
+
+                    acc_ver = $(".hgvs_acc_ver", this).val().trim().length > 0;
+                    hgvs = $(".hgvs_name", this).val().trim().length > 0;
+
+                    if (hgvs || acc_ver) {
+                        $.growl.notice({message: "Non-empty sections cannot be collapsed."});
+                        $error = true;
+                        return false;
+                    }
+                });
+
+                if ($error)
+                    return false;
+            }
+            return true;
+        } else if ($for === "buildQueryEvent") {
+            $parentId.children('.type_sample').each(function () {
+                if ($(this).find('.textValidate').val().trim().length > 0) {
+                    $.ajax({url: authurl + '/admin/validate_hgvs/',
+                        dataType: 'json',
+                        data: {'term': $(this).find('.textValidate').val()},
+                        delay: 200,
+                        type: 'POST',
+                        success: function (data) {
+                            if (data.status !== "Validated")
+                                $.growl.warning({message: "You have not entered a valid HGVS description value(s). Query result may not be exact"});
+                        }
+                    });
+                }
+            });
+            return true;
         }
     }
 
@@ -1248,21 +1318,29 @@ $(document).ready(function () {
         }
     }
 
-    function validate_GeneSymbol($for) {
-        $parentId = $("#geneSymbolContainer");
+    function validate_Other($for) {
+        $parentId = $("#otherContainer");
         $parentType = $parentId.attr('data-type');
 
         if ($for === "collapseEvent") {
             if ($parentId.children('.type_sample').length === 1) {
-                if ($parentId.find('.textValidate').val().trim().length > 0)
-                {
+
+                key = $("select.other_keys", $parentId).val() !== "Select a field";
+                value = $(".other_value", $parentId).val().trim().length > 0;
+
+                if (key || value) {
                     $.growl.notice({message: "Non-empty sections cannot be collapsed."});
                     return false;
                 }
+
             } else {
                 $error = false;
                 $parentId.children('.type_sample').each(function () {
-                    if ($(this).find('.textValidate').val().trim().length > 0) {
+
+                    key = $("select.other_keys", this).val() !== "Select a field";
+                    value = $(".other_value", this).val().trim().length > 0;
+
+                    if (key || value) {
                         $.growl.notice({message: "Non-empty sections cannot be collapsed."});
                         $error = true;
                         return false;
@@ -1274,65 +1352,19 @@ $(document).ready(function () {
             }
             return true;
         } else if ($for === "buildQueryEvent") {
+            $error = false;
             $parentId.children('.type_sample').each(function () {
-                if ($(this).find('.textValidate').val().trim().length > 0) {
-                    $.ajax({url: authurl + '/admin/validate_gene/',
-                        dataType: 'json',
-                        data: {'term': $(this).find('.textValidate').val()},
-                        delay: 200,
-                        type: 'POST',
-                        success: function (data) {
-                            if (data.status !== "Validated")
-                                $.growl.warning({message: "You have not entered a valid gene symbol value(s). Query result may not be exact"});
-                        }
-                    });
-                }
-            });
-            return true;
-        }
-    }
-
-    function validate_HGVS($for) {
-        $parentId = $("#hgvsContainer");
-        $parentType = $parentId.attr('data-type');
-
-        if ($for === "collapseEvent") {
-            if ($parentId.children('.type_sample').length === 1) {
-                if ($parentId.find('.textValidate').val().trim().length > 0)
-                {
-                    $.growl.notice({message: "Non-empty sections cannot be collapsed."});
-                    return false;
-                }
-            } else {
-                $error = false;
-                $parentId.children('.type_sample').each(function () {
-                    if ($(this).find('.textValidate').val().trim().length > 0) {
-                        $.growl.notice({message: "Non-empty sections cannot be collapsed."});
+                if ($(this).find('select.keys').val().trim().length > 0) {
+                    condition_value = $(this).find('.conditions').val();
+                    field_value = $(this).find('.phenotype_values').val();
+                    if (field_value === "--Select a value--") {
+                        $.growl.error({message: "You have not entered a phenotype value(s)"});
+                    } else if (!phenotype_validation(condition_value, field_value)) {
                         $error = true;
-                        return false;
                     }
-                });
-
-                if ($error)
-                    return false;
-            }
-            return true;
-        } else if ($for === "buildQueryEvent") {
-            $parentId.children('.type_sample').each(function () {
-                if ($(this).find('.textValidate').val().trim().length > 0) {
-                    $.ajax({url: authurl + '/admin/validate_hgvs/',
-                        dataType: 'json',
-                        data: {'term': $(this).find('.textValidate').val()},
-                        delay: 200,
-                        type: 'POST',
-                        success: function (data) {
-                            if (data.status !== "Validated")
-                                $.growl.warning({message: "You have not entered a valid HGVS description value(s). Query result may not be exact"});
-                        }
-                    });
                 }
             });
-            return true;
+            return !$error;
         }
     }
 
