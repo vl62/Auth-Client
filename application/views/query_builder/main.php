@@ -43,7 +43,7 @@
                 <div class="row-fluid">
                     <div class="span12 pagination-centered" style="">
                         <button class="btn btn-large input-block-level btn-info btn-collapse" data-collapseStatus="false" style="text-align: left">
-                            DNA Sequence of variants
+                            DNA Sequence of variant
                             <i class="icon-chevron-left" style="float: right"></i>
                         </button>
                     </div>
@@ -61,7 +61,7 @@
                 <div class="row-fluid">
                     <div class="span12 pagination-centered" style="">
                         <button class="btn btn-large input-block-level btn-info btn-collapse" data-collapseStatus="false" style="text-align: left">
-                            Protein Sequence of variants
+                            Protein Sequence of variant
                             <i class="icon-chevron-left" style="float: right"></i>
                         </button>
                     </div>
@@ -79,7 +79,7 @@
                 <div class="row-fluid">
                     <div class="span12 pagination-centered" style="">
                         <button class="btn btn-large input-block-level btn-info btn-collapse" data-collapseStatus="false" style="text-align: left">
-                            Gene Symbol
+                            GENE SYMBOL or GENE SEARCH
                             <i class="icon-chevron-left" style="float: right"></i>
                         </button>
                     </div>
@@ -98,7 +98,7 @@
                 <div class="row-fluid">
                     <div class="span12 pagination-centered" style="">
                         <button class="btn btn-large input-block-level btn-info btn-collapse" data-collapseStatus="false" style="text-align: left">
-                            Hgvs
+                            HGVS or Variant Description (HGVS)
                             <i class="icon-chevron-left" style="float: right"></i>
                         </button>
                     </div>
