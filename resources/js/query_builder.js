@@ -454,6 +454,7 @@ $(document).ready(function () {
         $('#waiting').show(500);
         $idCount = 1;
 
+        
         d = validate_DNA("buildQueryEvent");
         g = validate_GeneSymbol("buildQueryEvent");
         h = validate_HGVS("buildQueryEvent");
@@ -777,7 +778,328 @@ $(document).ready(function () {
         return $arr;
     }
 
+    function validate_Genome($for) {
+        $parentId = $("#dnaContainer");
+        $parentType = $parentId.attr('data-type');
+
+        if ($for === "collapseEvent") {
+            if ($parentId.children('.type_sample').length === 1) {
+                if (($parentId.find('select.condition_ref').val().trim().length > 0) || ($parentId.find('input.sequence').val().trim().length > 0))
+                {
+                    $.growl.notice({message: "Non-empty sections cannot be collapsed."});
+                    return false;
+                }
+            } else {
+                $error = false;
+                $parentId.children('.type_sample').each(function () {
+                    if (($(this).find('select.condition_ref').val().trim().length > 0) || ($(this).find('input.sequence').val().trim().length > 0)) {
+                        $.growl.notice({message: "Non-empty sections cannot be collapsed."});
+                        $error = true;
+                        return false;
+                    }
+                });
+
+                if ($error)
+                    return false;
+            }
+            return true;
+        } else if ($for === "buildQueryEvent") {
+            $error = false;
+            $parentId.children('.type_sample').each(function () {
+                if (($(this).find('select.condition_ref').val().length > 0)) {
+                    $start = parseInt($(this).find('.start').val().trim(), 10);
+                    $stop = parseInt($(this).find('.stop').val().trim(), 10);
+
+                    start = $(this).find('.start').val();
+                    stop = $(this).find('.stop').val();
+                    seq = $(this).find('.sequence').val();
+                    ref = $(this).find('.select2-chosen').html();
+
+                    if (start !== "" && stop !== "" && seq !== "" && ref !== "--Select a reference--") {
+                        if ($(this).find('.conditions').val() !== "EXACT") {
+                            $.growl.error({message: "You have not set a DNA type validation to \"EXACT\" match. Cannot proceed to query."});
+                            $error = true;
+                            return false;
+                        }
+                    }
+
+                    if (isNaN($start)) {
+                        $.growl.error({message: "DNA start value(s) were empty."});
+                        $error = true;
+                        return false;
+                    } else if (!isNumber($start)) {
+                        console.log($start);
+                        $.growl.error({message: "DNA start value(s) were not numeric."});
+                        $error = true;
+                        return false;
+                    }
+
+                    if (isNaN($stop)) {
+                        $.growl.error({message: "DNA stop value(s) were empty."});
+                        $error = true;
+                        return false;
+                    } else if (!isNumber($stop)) {
+                        $.growl.error({message: "DNA stop value(s) were not numeric."});
+                        $error = true;
+                        return false;
+                    }
+
+                    if ($start > $stop) {
+                        $.growl.error({message: "DNA stop value(s) is greater than the start value(s)."});
+                        $error = true;
+                        return false;
+                    }
+
+                    if ($(this).find('select.condition_ref').val() === "[Input your own accession & version]") {
+
+                        if ($(this).find('.acc_acc input').val().trim().length === 0) {
+                            $.growl.error({message: "You have not entered an accession value(s)"});
+                            $error = true;
+                            return false;
+                        }
+//                            if($(this).find('.acc_ver input').val().trim().length === 0) {
+//                                $.growl.error({ message: "You have not entered an accession version value(s)" });
+//                                $error = true;
+//                                return false;
+//                            }
+                    } else if ($(this).find('select.condition_ref').val() === "[Input your own chromosome & build]") {
+
+                        if ($(this).find('.chr_chr input').val().trim().length === 0) {
+                            $.growl.error({message: "You have not entered a chromosome value(s)"});
+                            $error = true;
+                            return false;
+                        }
+                        if ($(this).find('.chr_build').val().trim().length === 0 || $(this).find('.chr_build').val() === "--Select a build--") {
+                            $.growl.error({message: "You have not entered an chromosome build value(s)"});
+                            $error = true;
+                            return false;
+                        }
+                    }
+                } else if ($(this).find('.sequence').val() != "") {
+                    $.growl.error({message: "You have not enter a location reference value(s)"});
+                    $error = true;
+                    return false;
+                }
+            });
+            return !$error;
+        }
+    }
+    
+    function validate_Accession($for) {
+        $parentId = $("#dnaContainer");
+        $parentType = $parentId.attr('data-type');
+
+        if ($for === "collapseEvent") {
+            if ($parentId.children('.type_sample').length === 1) {
+                if (($parentId.find('select.condition_ref').val().trim().length > 0) || ($parentId.find('input.sequence').val().trim().length > 0))
+                {
+                    $.growl.notice({message: "Non-empty sections cannot be collapsed."});
+                    return false;
+                }
+            } else {
+                $error = false;
+                $parentId.children('.type_sample').each(function () {
+                    if (($(this).find('select.condition_ref').val().trim().length > 0) || ($(this).find('input.sequence').val().trim().length > 0)) {
+                        $.growl.notice({message: "Non-empty sections cannot be collapsed."});
+                        $error = true;
+                        return false;
+                    }
+                });
+
+                if ($error)
+                    return false;
+            }
+            return true;
+        } else if ($for === "buildQueryEvent") {
+            $error = false;
+            $parentId.children('.type_sample').each(function () {
+                if (($(this).find('select.condition_ref').val().length > 0)) {
+                    $start = parseInt($(this).find('.start').val().trim(), 10);
+                    $stop = parseInt($(this).find('.stop').val().trim(), 10);
+
+                    start = $(this).find('.start').val();
+                    stop = $(this).find('.stop').val();
+                    seq = $(this).find('.sequence').val();
+                    ref = $(this).find('.select2-chosen').html();
+
+                    if (start !== "" && stop !== "" && seq !== "" && ref !== "--Select a reference--") {
+                        if ($(this).find('.conditions').val() !== "EXACT") {
+                            $.growl.error({message: "You have not set a DNA type validation to \"EXACT\" match. Cannot proceed to query."});
+                            $error = true;
+                            return false;
+                        }
+                    }
+
+                    if (isNaN($start)) {
+                        $.growl.error({message: "DNA start value(s) were empty."});
+                        $error = true;
+                        return false;
+                    } else if (!isNumber($start)) {
+                        console.log($start);
+                        $.growl.error({message: "DNA start value(s) were not numeric."});
+                        $error = true;
+                        return false;
+                    }
+
+                    if (isNaN($stop)) {
+                        $.growl.error({message: "DNA stop value(s) were empty."});
+                        $error = true;
+                        return false;
+                    } else if (!isNumber($stop)) {
+                        $.growl.error({message: "DNA stop value(s) were not numeric."});
+                        $error = true;
+                        return false;
+                    }
+
+                    if ($start > $stop) {
+                        $.growl.error({message: "DNA stop value(s) is greater than the start value(s)."});
+                        $error = true;
+                        return false;
+                    }
+
+                    if ($(this).find('select.condition_ref').val() === "[Input your own accession & version]") {
+
+                        if ($(this).find('.acc_acc input').val().trim().length === 0) {
+                            $.growl.error({message: "You have not entered an accession value(s)"});
+                            $error = true;
+                            return false;
+                        }
+//                            if($(this).find('.acc_ver input').val().trim().length === 0) {
+//                                $.growl.error({ message: "You have not entered an accession version value(s)" });
+//                                $error = true;
+//                                return false;
+//                            }
+                    } else if ($(this).find('select.condition_ref').val() === "[Input your own chromosome & build]") {
+
+                        if ($(this).find('.chr_chr input').val().trim().length === 0) {
+                            $.growl.error({message: "You have not entered a chromosome value(s)"});
+                            $error = true;
+                            return false;
+                        }
+                        if ($(this).find('.chr_build').val().trim().length === 0 || $(this).find('.chr_build').val() === "--Select a build--") {
+                            $.growl.error({message: "You have not entered an chromosome build value(s)"});
+                            $error = true;
+                            return false;
+                        }
+                    }
+                } else if ($(this).find('.sequence').val() != "") {
+                    $.growl.error({message: "You have not enter a location reference value(s)"});
+                    $error = true;
+                    return false;
+                }
+            });
+            return !$error;
+        }
+    }
+
     function validate_DNA($for) {
+        $parentId = $("#dnaContainer");
+        $parentType = $parentId.attr('data-type');
+
+        if ($for === "collapseEvent") {
+            if ($parentId.children('.type_sample').length === 1) {
+                if (($parentId.find('select.condition_ref').val().trim().length > 0) || ($parentId.find('input.sequence').val().trim().length > 0))
+                {
+                    $.growl.notice({message: "Non-empty sections cannot be collapsed."});
+                    return false;
+                }
+            } else {
+                $error = false;
+                $parentId.children('.type_sample').each(function () {
+                    if (($(this).find('select.condition_ref').val().trim().length > 0) || ($(this).find('input.sequence').val().trim().length > 0)) {
+                        $.growl.notice({message: "Non-empty sections cannot be collapsed."});
+                        $error = true;
+                        return false;
+                    }
+                });
+
+                if ($error)
+                    return false;
+            }
+            return true;
+        } else if ($for === "buildQueryEvent") {
+            $error = false;
+            $parentId.children('.type_sample').each(function () {
+                if (($(this).find('select.condition_ref').val().length > 0)) {
+                    $start = parseInt($(this).find('.start').val().trim(), 10);
+                    $stop = parseInt($(this).find('.stop').val().trim(), 10);
+
+                    start = $(this).find('.start').val();
+                    stop = $(this).find('.stop').val();
+                    seq = $(this).find('.sequence').val();
+                    ref = $(this).find('.select2-chosen').html();
+
+                    if (start !== "" && stop !== "" && seq !== "" && ref !== "--Select a reference--") {
+                        if ($(this).find('.conditions').val() !== "EXACT") {
+                            $.growl.error({message: "You have not set a DNA type validation to \"EXACT\" match. Cannot proceed to query."});
+                            $error = true;
+                            return false;
+                        }
+                    }
+
+                    if (isNaN($start)) {
+                        $.growl.error({message: "DNA start value(s) were empty."});
+                        $error = true;
+                        return false;
+                    } else if (!isNumber($start)) {
+                        console.log($start);
+                        $.growl.error({message: "DNA start value(s) were not numeric."});
+                        $error = true;
+                        return false;
+                    }
+
+                    if (isNaN($stop)) {
+                        $.growl.error({message: "DNA stop value(s) were empty."});
+                        $error = true;
+                        return false;
+                    } else if (!isNumber($stop)) {
+                        $.growl.error({message: "DNA stop value(s) were not numeric."});
+                        $error = true;
+                        return false;
+                    }
+
+                    if ($start > $stop) {
+                        $.growl.error({message: "DNA stop value(s) is greater than the start value(s)."});
+                        $error = true;
+                        return false;
+                    }
+
+                    if ($(this).find('select.condition_ref').val() === "[Input your own accession & version]") {
+
+                        if ($(this).find('.acc_acc input').val().trim().length === 0) {
+                            $.growl.error({message: "You have not entered an accession value(s)"});
+                            $error = true;
+                            return false;
+                        }
+//                            if($(this).find('.acc_ver input').val().trim().length === 0) {
+//                                $.growl.error({ message: "You have not entered an accession version value(s)" });
+//                                $error = true;
+//                                return false;
+//                            }
+                    } else if ($(this).find('select.condition_ref').val() === "[Input your own chromosome & build]") {
+
+                        if ($(this).find('.chr_chr input').val().trim().length === 0) {
+                            $.growl.error({message: "You have not entered a chromosome value(s)"});
+                            $error = true;
+                            return false;
+                        }
+                        if ($(this).find('.chr_build').val().trim().length === 0 || $(this).find('.chr_build').val() === "--Select a build--") {
+                            $.growl.error({message: "You have not entered an chromosome build value(s)"});
+                            $error = true;
+                            return false;
+                        }
+                    }
+                } else if ($(this).find('.sequence').val() != "") {
+                    $.growl.error({message: "You have not enter a location reference value(s)"});
+                    $error = true;
+                    return false;
+                }
+            });
+            return !$error;
+        }
+    }
+    
+    function validate_Protein($for) {
         $parentId = $("#dnaContainer");
         $parentType = $parentId.attr('data-type');
 
