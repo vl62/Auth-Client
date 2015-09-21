@@ -275,7 +275,7 @@ function add_symbol($symbol) {
             if ($phenotype_count == 1)
                 $("#phenotype" + $phenotype_count).append($option_select2.format(["span4 offset1", "keys phenotype_keys" + $phenotype_count]));
             else {
-                $options = add_options($option_select2.format(["span4", "keys phenotype_keys" + $phenotype_count]), phenotype_keys);
+                $options = add_options($option_select2.format(["span4 offset1", "keys phenotype_keys" + $phenotype_count]), phenotype_keys);
                 $("#phenotype" + $phenotype_count).append($options);
             }
 
@@ -322,7 +322,8 @@ var phenotype_values = new Array();
 
 $(document).ready(function () {
     $network_key = $("#network_key").val();
-    $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
+//    $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
+        $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/5b7a1ae7ac7fa0a4a4c7cedac1982dba',
         dataType: 'json',
         delay: 200,
         type: 'POST',
@@ -482,7 +483,6 @@ $(document).ready(function () {
 
         gen = validate_Genome("buildQueryEvent");
         acc = validate_Accession("buildQueryEvent");
-        return;
         dna = validate_DNA("buildQueryEvent");
         pro = validate_Protein("buildQueryEvent");
         gsm = validate_GeneSymbol("buildQueryEvent");
@@ -495,11 +495,16 @@ $(document).ready(function () {
             return;
         }
 
-        $dna_gene = $('#logic_dna_gene .active').html();
+        $genome_accession = $('#logic_genome_accession .active').html();
+        $accession_dna = $('#logic_accession_dna .active').html();
+        $dna_protein = $('#logic_dna_protein .active').html();
+        $protein_dna = $('#logic_protein_gene .active').html();
         $gene_hgvs = $('#logic_gene_hgvs .active').html();
-        $gen_phen = $('#logic_genotype_phenotype .active').html();
+        $genotype_phenotype = $('#logic_genotype_phenotype .active').html();
         $phen_phen = $('.logic_phenotype .active').html() ? $('.logic_phenotype .active').html() : "";
+        $phenotype_other = $('#logic_phenotype_other .active').html();
 
+        $coordinate = "";
         $dna = "";
         $geneSymbol = "";
         $hgvs = "";
@@ -507,7 +512,7 @@ $(document).ready(function () {
         $genotype = "";
         $phenotype = "";
 
-        $arr_dna = getJSON_DNA();
+//        $arr_dna = getJSON_DNA();
 
         $arr = {
             "queryMetadata": {
@@ -533,13 +538,25 @@ $(document).ready(function () {
                 }
             },
             "query": {
-                "coordinate": $arr_dna.coordinate,
-                "sequence": $arr_dna.sequence,
+                "coordinate": getJSON_Coordinate(),
+                "sequence": getJSON_DNASequence(),
                 "geneSymbol": getJSON_GeneSymbol(),
-                "hgvsName": getJSON_HGVS(),
+                "hgvsName": getJSON_HgvsName(),
                 "phenotypeFeature": getJSON_Phenotype(),
+                "otherFields": getJSON_OtherFields()
             }
+//            "query": {
+//                "coordinate": $arr_dna.coordinate,
+//                "sequence": $arr_dna.sequence,
+//                "geneSymbol": getJSON_GeneSymbol(),
+//                "hgvsName": getJSON_HGVS(),
+//                "phenotypeFeature": getJSON_Phenotype(),
+//            }
         };
+
+//        $.extend($arr, {"queryStatement": $query, "network_to_search": $network_key});
+//        console.log(JSON.stringify($arr, null, '\t'));
+        return;
 
         $.each($arr.query, function (key, value) {
             if (value.length === 0)
@@ -629,119 +646,206 @@ $(document).ready(function () {
 
     });
 
-    function getJSON_DNA() {
-        $parentId = $("#dnaContainer");
-        $parentType = $parentId.attr('data-type');
+    function getJSON_Coordinate() {
+        $parentId = $("#genomeContainer");
+        $parentType = $parentId.attr("data-type");
+        $genome = $accession = "";
+        $arr = [];
+        $parentId.children(".type_sample").each(function () {
+            start = $(".start", this).val().trim().toString();
+            stop = $(".stop", this).val().trim().toString();
+            chromo = $("select.chromosome", this).val().toString();
+            build = $("select.build", this).val().toString();
 
-        $arr = {
-            coordinate: [],
-            sequence: []
-        }
-
-        $parentId.children('.type_sample').each(function () {
-            if (($(this).find('select.condition_ref').val().length > 0) && ($(this).find('.sequence').val().trim().length > 0)) {
-
-                $reference = "";
-                if ($(this).find('select.condition_ref').val() === "[Input your own accession & version]") {
-                    $reference = $(this).find(".acc_acc").children('input').val();
-//                        $acc = $(this).find(".acc_acc").children('input').val();
-//                        $version = $(this).find(".acc_ver").children('input').val();
-//                        $reference = $acc + "." + $version;
-                } else if ($(this).find('select.condition_ref').val().toString() === "[Input your own chromosome & build]") {
-                    $chr = $(this).find(".chr_chr").children('input').val();
-                    $build = $(this).find(".chr_build").val();
-                    $reference = $chr + "." + $build;
-                } else {
-                    if ($(this).find('select.condition_ref').val().substring(0, "chr".length) == "chr")
-                        $reference = $(this).find('select.condition_ref').val() + "." + "hg38";
-                    else
-                        $reference = $(this).find('select.condition_ref').val();
+            if (start && stop && chromo && build) {
+                if ($genome)
+                    $genome += " OR ";
+                $genome_coordinate = {
+                    "querySegmentID": $idCount,
+                    "operator": $(this).find('.conditions').val().toString(),
+                    "reference": {"id": chromo + "." + build, "source": ""},
+                    "start": start,
+                    "stop": stop,
+                    "reference_type": "genome"
                 }
-
-                $data_coordinate = {
-                    "querySegmentID": $idCount,
-                    "operator": $(this).find('.conditions').val().toString(),
-                    "reference": {"id": $reference, "source": ""},
-                    "start": $(this).find('.start').val().toString(),
-                    "stop": $(this).find('.stop').val().toString(),
-                };
-
-                $dna += " (" + $idCount + " AND ";
+                $arr.push($genome_coordinate);
+                $genome += $idCount;
                 $idCount++;
-
-                $data_sequence = {
-                    "querySegmentID": $idCount,
-                    "operator": $(this).find('.conditions').val().toString(),
-                    "sequence": $(this).find('.sequence').val().toString()
-                };
-
-                $dna += "" + $idCount + ") ";
-                $idCount++;
-
-                $arr.coordinate.push($data_coordinate);
-                $arr.sequence.push($data_sequence);
-
-            } else if ($(this).find('select.condition_ref').val().length > 0) {
-                $reference = "";
-
-                if ($(this).find('select.condition_ref').val() === "[Input your own accession & version]") {
-                    $reference = $(this).find(".acc_acc").children('input').val();
-//                        $acc = $(this).find(".acc_acc").children('input').val();
-//                        $version = $(this).find(".acc_ver").children('input').val();
-//                        $reference = $acc + "." + $version;
-                } else if ($(this).find('select.condition_ref').val().toString() === "[Input your own chromosome & build]") {
-                    $chr = $(this).find(".chr_chr").children('input').val();
-                    $build = $(this).find(".chr_build").val();
-                    $reference = $chr + "." + $build;
-                } else {
-                    if ($(this).find('select.condition_ref').val().substring(0, "chr".length) == "chr")
-                        $reference = $(this).find('select.condition_ref').val() + "." + "hg38";
-                    else
-                        $reference = $(this).find('select.condition_ref').val();
-                }
-
-                $data_coordinate = {
-                    "querySegmentID": $idCount,
-                    "operator": $(this).find('.conditions').val().toString(),
-                    "reference": {"id": $reference, "source": ""},
-                    "start": $(this).find('.start').val().toString(),
-                    "stop": $(this).find('.stop').val().toString(),
-                };
-
-                $dna += " " + $idCount + " ";
-                $idCount++;
-
-                $arr.coordinate.push($data_coordinate);
-
-            } else if ($(this).find('.sequence').val().trim().length > 0) {
-
-                $data_sequence = {
-                    "querySegmentID": $idCount,
-                    "operator": $(this).find('.conditions').val().toString(),
-                    "sequence": $(this).find('.sequence').val().toString()
-                };
-
-                $dna += " " + $idCount + " ";
-                $idCount++;
-
-                $arr.sequence.push($data_sequence);
             }
 
-            $dna += "OR";
         });
 
+        $parentId = $("#accessionContainer");
+        $parentType = $parentId.attr("data-type");
+        $accession = "";
+        $parentId.children(".type_sample").each(function () {
+            start = $(".start", this).val().trim().toString();
+            stop = $(".stop", this).val().trim().toString();
+            acc_ver = $("input.acc_ver", this).val().toString();
+
+            if (start && stop && acc_ver) {
+                if ($accession)
+                    $accession += " OR ";
+                $accession_coordinate = {
+                    "querySegmentID": $idCount,
+                    "operator": $(this).find('.conditions').val().toString(),
+                    "reference": {"id": acc_ver, "source": ""},
+                    "start": start,
+                    "stop": stop,
+                    "reference_type": "accession"
+                }
+                $arr.push($accession_coordinate);
+                $accession += $idCount;
+                $idCount++;
+            }
+        });
+
+        if ($genome) $genome = "(" + $genome + ")";
+        if ($accession) $accession = "(" + $accession + ")";
+
+        if ($genome && $accession)
+            $coordinate = $genome + " " + $genome_accession + " " + $accession;
+        else
+            $coordinate = $genome + $accession;
+
+//        console.log($genome);
+//        console.log($accession);
+//        console.log($coordinate);
+//        console.log(JSON.stringify($arr, null, '\t'));
         return $arr;
     }
 
+    function getJSON_DNASequence() {
+        $parentId = $("#dnaContainer");
+        $parentType = $parentId.attr("data-type");
+        $dna = $protein = "";
+        $arr = [];
+
+        $parentId.children('.type_sample').each(function () {
+            if ($(".dnaSequence", this).val().trim()) {
+                if($dna) $dna += " OR ";
+                $DNA_sequence = {
+                    "querySegmentID": $idCount,
+                    "operator": "IS",
+                    "sequence": $(this).find('.dnaSequence').val().toString(),
+                    "molecule": "DNA"
+                };
+
+                $arr.push($DNA_sequence);
+                
+                $dna += $idCount;
+                $idCount++;
+            }
+        });
+        
+        $parentId = $("#proteinContainer");
+        $parentType = $parentId.attr("data-type");
+        
+        $parentId.children('.type_sample').each(function () {
+            if ($(".proteinSequence", this).val().trim()) {
+                if($protein) $protein += " OR ";
+                $Protein_sequence = {
+                    "querySegmentID": $idCount,
+                    "operator": "IS",
+                    "sequence": $(this).find('.proteinSequence').val().toString(),
+                    "molecule": "Protein"
+                };
+
+                $arr.push($Protein_sequence);
+                
+                $protein += $idCount;
+                $idCount++;
+            }
+        });
+        
+        if($dna) $dna = "(" + $dna + ")";
+        if($protein) $protein = "(" + $protein + ")";
+        
+        if($dna && $protein)
+            $sequence = $dna + " " + $dna_protein + " " + $protein;
+        else 
+            $sequence = $dna + $accession;
+        
+//        console.log($dna);
+//        console.log($protein);
+//        console.log($sequence);
+//        console.log(JSON.stringify($arr, null, '\t'));
+        return $arr;
+ 
+    }
+    
+    function getJSON_GeneSymbol() {
+        $parentId = $("#geneSymbolContainer");
+        $parentType = $parentId.attr('data-type');
+        $gene = "";
+        $arr = [];
+        
+        $parentId.children('.type_sample').each(function () {
+            if ($(this).find('.geneSymbol').val().trim()) {
+                if($gene) $gene += " OR ";
+                
+                $geneSymbol = {
+                    "querySegmentID": $idCount,
+                    "operator": $(this).find('.conditions').val().toString(),
+                    "geneSymbol": {"symbol": $(this).find('.geneSymbol').val().trim().toString(), "source": ""}
+                };
+
+                $arr.push($geneSymbol);
+
+                $gene += $idCount;
+                $idCount++;
+            }
+        });
+        
+        if($gene) $gene = "(" + $gene + ")";
+        
+//        console.log($gene);
+//        console.log(JSON.stringify($arr, null, '\t'));
+        
+        return $arr;
+    }
+    
+    function getJSON_HgvsName() {
+        $parentId = $("#hgvsContainer");
+        $parentType = $parentId.attr('data-type');
+        $hgvs = "";
+        $arr = [];
+        $parentId.children('.type_sample').each(function () {
+            if ($(this).find('.hgvs_acc_ver').val().trim() && $(this).find('.hgvs_name').val().trim()) {
+                if($hgvs) $hgvs += " OR ";
+                
+                $hgvsName = {
+                    "querySegmentID": $idCount,
+                    "operator": "IS",
+                    "reference": {"id": $(this).find('.hgvs_acc_ver').val().toString(), "source": ""},
+                    "hgvsName": $(this).find('.hgvs_name').val().trim().toString()
+                };
+
+                $arr.push($hgvsName);
+
+                $hgvs += $idCount;
+                $idCount++;
+            }
+        });
+        
+        if($hgvs) $hgvs = "(" + $hgvs + ")";
+        
+//        console.log($hgvs);
+//        console.log(JSON.stringify($arr, null, "\t"));
+        
+        return $arr;
+    }
+    
     function getJSON_Phenotype() {
         $parentId = $("#phenotypeContainer");
         $parentType = $parentId.attr('data-type');
-
+        $phen = "";
         $arr = [];
         $parentId.children('.type_sample').each(function () {
-            if ($(this).find('select.keys').val().trim().length > 0) {
-
-                $data = {
+            if ($(this).find('select.keys').val().trim()) {
+                if($phen) $phen += " " + $phen_phen + " ";
+                
+                $phenotype = {
                     "querySegmentID": $idCount,
                     "operator": $(this).find('.conditions').val().toString(),
                     "phenotypeConcept": {
@@ -750,59 +854,48 @@ $(document).ready(function () {
                     "phenotypeFeature": {"value": $(this).find('.phenotype_values').val().toString(), "units": "", "source": ""}
                 };
 
-                $arr.push($data);
-                $phenotype += " " + $idCount + " " + $phen_phen;
+                $arr.push($phenotype);
+                $phen += $idCount;
                 $idCount++;
             }
         });
+        
+        if($phen) $phen = "(" + $phen + ")";
+        
+        console.log($phen);
+        console.log(JSON.stringify($arr, null, "\t"));
+        
         return $arr;
     }
-
-    function getJSON_GeneSymbol() {
-        $parentId = $("#geneSymbolContainer");
+    
+    function getJSON_OtherFields() {
+        $parentId = $("#otherContainer");
         $parentType = $parentId.attr('data-type');
-
+        $other = "";
         $arr = [];
         $parentId.children('.type_sample').each(function () {
-            if ($(this).find('.textValidate').val().trim().length > 0) {
-
-                $data = {
+            if ($(this).find('select.other_keys').val() != "Select a field") {
+                if($other) $other += " OR ";
+                
+                $otherFields = {
                     "querySegmentID": $idCount,
                     "operator": $(this).find('.conditions').val().toString(),
-                    "geneSymbol": {"symbol": $(this).find('.textValidate').val().toString(), "source": ""}
+                    "otherField": $(this).find('select.other_keys').val().trim().toString(),
+                    "otherValue": $(this).find('.other_value').val().trim().toString(),
+                    "source": ""
                 };
 
-                $arr.push($data);
-
-                $geneSymbol += " " + $idCount + " OR";
+                $arr.push($otherFields);
+                $other += $idCount;
                 $idCount++;
             }
         });
-        return $arr;
-    }
-
-    function getJSON_HGVS() {
-        $parentId = $("#hgvsContainer");
-        $parentType = $parentId.attr('data-type');
-
-        $arr = [];
-        $parentId.children('.type_sample').each(function () {
-            if ($(this).find('.textValidate').val().trim().length > 0) {
-
-                $data = {
-                    "querySegmentID": $idCount,
-                    "operator": $(this).find('.conditions').val().toString(),
-                    "reference": {"id": $(this).find('.hgvs_accession').val().toString(), "source": ""},
-                    "hgvsName": $(this).find('.textValidate').val().toString()
-                };
-
-                $arr.push($data);
-
-                $hgvs += " " + $idCount + " OR";
-                $idCount++;
-            }
-
-        });
+        
+        if($other) $other = "(" + $other + ")";
+        
+        console.log($other);
+        console.log(JSON.stringify($arr, null, "\t"));
+        
         return $arr;
     }
 
@@ -934,8 +1027,8 @@ $(document).ready(function () {
                 acc_ver = $(".acc_ver", this).val().trim();
 
                 if (start || stop || acc_ver) {
-                    
-                    if(!acc_ver) {
+
+                    if (!acc_ver) {
                         $.growl.error({message: "Accession Version value(s) were empty."});
                         $error = true;
                         return false;
@@ -993,81 +1086,6 @@ $(document).ready(function () {
             return true;
         } else if ($for === "buildQueryEvent") {
             $error = false;
-            $parentId.children('.type_sample').each(function () {
-                if (($(this).find('select.condition_ref').val().length > 0)) {
-                    $start = parseInt($(this).find('.start').val().trim(), 10);
-                    $stop = parseInt($(this).find('.stop').val().trim(), 10);
-
-                    start = $(this).find('.start').val();
-                    stop = $(this).find('.stop').val();
-                    seq = $(this).find('.sequence').val();
-                    ref = $(this).find('.select2-chosen').html();
-
-                    if (start !== "" && stop !== "" && seq !== "" && ref !== "--Select a reference--") {
-                        if ($(this).find('.conditions').val() !== "EXACT") {
-                            $.growl.error({message: "You have not set a DNA type validation to \"EXACT\" match. Cannot proceed to query."});
-                            $error = true;
-                            return false;
-                        }
-                    }
-
-                    if (isNaN($start)) {
-                        $.growl.error({message: "DNA start value(s) were empty."});
-                        $error = true;
-                        return false;
-                    } else if (!isNumber($start)) {
-                        $.growl.error({message: "DNA start value(s) were not numeric."});
-                        $error = true;
-                        return false;
-                    }
-
-                    if (isNaN($stop)) {
-                        $.growl.error({message: "DNA stop value(s) were empty."});
-                        $error = true;
-                        return false;
-                    } else if (!isNumber($stop)) {
-                        $.growl.error({message: "DNA stop value(s) were not numeric."});
-                        $error = true;
-                        return false;
-                    }
-
-                    if ($start > $stop) {
-                        $.growl.error({message: "DNA stop value(s) is greater than the start value(s)."});
-                        $error = true;
-                        return false;
-                    }
-
-                    if ($(this).find('select.condition_ref').val() === "[Input your own accession & version]") {
-
-                        if ($(this).find('.acc_acc input').val().trim().length === 0) {
-                            $.growl.error({message: "You have not entered an accession value(s)"});
-                            $error = true;
-                            return false;
-                        }
-//                            if($(this).find('.acc_ver input').val().trim().length === 0) {
-//                                $.growl.error({ message: "You have not entered an accession version value(s)" });
-//                                $error = true;
-//                                return false;
-//                            }
-                    } else if ($(this).find('select.condition_ref').val() === "[Input your own chromosome & build]") {
-
-                        if ($(this).find('.chr_chr input').val().trim().length === 0) {
-                            $.growl.error({message: "You have not entered a chromosome value(s)"});
-                            $error = true;
-                            return false;
-                        }
-                        if ($(this).find('.chr_build').val().trim().length === 0 || $(this).find('.chr_build').val() === "--Select a build--") {
-                            $.growl.error({message: "You have not entered an chromosome build value(s)"});
-                            $error = true;
-                            return false;
-                        }
-                    }
-                } else if ($(this).find('.sequence').val() != "") {
-                    $.growl.error({message: "You have not enter a location reference value(s)"});
-                    $error = true;
-                    return false;
-                }
-            });
             return !$error;
         }
     }
@@ -1099,81 +1117,6 @@ $(document).ready(function () {
             return true;
         } else if ($for === "buildQueryEvent") {
             $error = false;
-            $parentId.children('.type_sample').each(function () {
-                if (($(this).find('select.condition_ref').val().length > 0)) {
-                    $start = parseInt($(this).find('.start').val().trim(), 10);
-                    $stop = parseInt($(this).find('.stop').val().trim(), 10);
-
-                    start = $(this).find('.start').val();
-                    stop = $(this).find('.stop').val();
-                    seq = $(this).find('.sequence').val();
-                    ref = $(this).find('.select2-chosen').html();
-
-                    if (start !== "" && stop !== "" && seq !== "" && ref !== "--Select a reference--") {
-                        if ($(this).find('.conditions').val() !== "EXACT") {
-                            $.growl.error({message: "You have not set a DNA type validation to \"EXACT\" match. Cannot proceed to query."});
-                            $error = true;
-                            return false;
-                        }
-                    }
-
-                    if (isNaN($start)) {
-                        $.growl.error({message: "DNA start value(s) were empty."});
-                        $error = true;
-                        return false;
-                    } else if (!isNumber($start)) {
-                        $.growl.error({message: "DNA start value(s) were not numeric."});
-                        $error = true;
-                        return false;
-                    }
-
-                    if (isNaN($stop)) {
-                        $.growl.error({message: "DNA stop value(s) were empty."});
-                        $error = true;
-                        return false;
-                    } else if (!isNumber($stop)) {
-                        $.growl.error({message: "DNA stop value(s) were not numeric."});
-                        $error = true;
-                        return false;
-                    }
-
-                    if ($start > $stop) {
-                        $.growl.error({message: "DNA stop value(s) is greater than the start value(s)."});
-                        $error = true;
-                        return false;
-                    }
-
-                    if ($(this).find('select.condition_ref').val() === "[Input your own accession & version]") {
-
-                        if ($(this).find('.acc_acc input').val().trim().length === 0) {
-                            $.growl.error({message: "You have not entered an accession value(s)"});
-                            $error = true;
-                            return false;
-                        }
-//                            if($(this).find('.acc_ver input').val().trim().length === 0) {
-//                                $.growl.error({ message: "You have not entered an accession version value(s)" });
-//                                $error = true;
-//                                return false;
-//                            }
-                    } else if ($(this).find('select.condition_ref').val() === "[Input your own chromosome & build]") {
-
-                        if ($(this).find('.chr_chr input').val().trim().length === 0) {
-                            $.growl.error({message: "You have not entered a chromosome value(s)"});
-                            $error = true;
-                            return false;
-                        }
-                        if ($(this).find('.chr_build').val().trim().length === 0 || $(this).find('.chr_build').val() === "--Select a build--") {
-                            $.growl.error({message: "You have not entered an chromosome build value(s)"});
-                            $error = true;
-                            return false;
-                        }
-                    }
-                } else if ($(this).find('.sequence').val() != "") {
-                    $.growl.error({message: "You have not enter a location reference value(s)"});
-                    $error = true;
-                    return false;
-                }
-            });
             return !$error;
         }
     }
@@ -1207,10 +1150,10 @@ $(document).ready(function () {
             return true;
         } else if ($for === "buildQueryEvent") {
             $parentId.children('.type_sample').each(function () {
-                if ($(this).find('.textValidate').val().trim().length > 0) {
+                if ($(this).find('.geneSymbol').val().trim().length > 0) {
                     $.ajax({url: authurl + '/admin/validate_gene/',
                         dataType: 'json',
-                        data: {'term': $(this).find('.textValidate').val()},
+                        data: {'term': $(this).find('.geneSymbol').val()},
                         delay: 200,
                         type: 'POST',
                         success: function (data) {
@@ -1259,10 +1202,10 @@ $(document).ready(function () {
             return true;
         } else if ($for === "buildQueryEvent") {
             $parentId.children('.type_sample').each(function () {
-                if ($(this).find('.textValidate').val().trim().length > 0) {
+                if ($(this).find('.hgvs_name').val().trim().length > 0) {
                     $.ajax({url: authurl + '/admin/validate_hgvs/',
                         dataType: 'json',
-                        data: {'term': $(this).find('.textValidate').val()},
+                        data: {'term': $(this).find('.hgvs_name').val()},
                         delay: 200,
                         type: 'POST',
                         success: function (data) {
@@ -1309,6 +1252,7 @@ $(document).ready(function () {
                     field_value = $(this).find('.phenotype_values').val();
                     if (field_value === "--Select a value--") {
                         $.growl.error({message: "You have not entered a phenotype value(s)"});
+                        $error = true;
                     } else if (!phenotype_validation(condition_value, field_value)) {
                         $error = true;
                     }
@@ -1354,11 +1298,12 @@ $(document).ready(function () {
         } else if ($for === "buildQueryEvent") {
             $error = false;
             $parentId.children('.type_sample').each(function () {
-                if ($(this).find('select.keys').val().trim().length > 0) {
+                if ($(this).find('select.other_keys').val().trim() != "Select a field") {
                     condition_value = $(this).find('.conditions').val();
-                    field_value = $(this).find('.phenotype_values').val();
-                    if (field_value === "--Select a value--") {
-                        $.growl.error({message: "You have not entered a phenotype value(s)"});
+                    field_value = $(this).find('.other_value').val().trim();
+                    if (!field_value) {
+                        $.growl.error({message: "You have not entered a custom value(s)"});
+                        $error = true;
                     } else if (!phenotype_validation(condition_value, field_value)) {
                         $error = true;
                     }

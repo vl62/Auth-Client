@@ -79,7 +79,7 @@
                 <div class="row-fluid">
                     <div class="span12 pagination-centered" style="">
                         <button class="btn btn-large input-block-level btn-info btn-collapse" data-collapseStatus="false" style="text-align: left">
-                            GENE SYMBOL or GENE SEARCH
+                            GENE SYMBOL
                             <i class="icon-chevron-left" style="float: right"></i>
                         </button>
                     </div>
@@ -98,7 +98,7 @@
                 <div class="row-fluid">
                     <div class="span12 pagination-centered" style="">
                         <button class="btn btn-large input-block-level btn-info btn-collapse" data-collapseStatus="false" style="text-align: left">
-                            HGVS or Variant Description (HGVS)
+                            HGVS Name
                             <i class="icon-chevron-left" style="float: right"></i>
                         </button>
                     </div>
@@ -132,7 +132,7 @@
                 
                 <!-- end Phenotype -->
 
-                <div class="btn-group btn-toggle logic" id="logic_hgvs_other" style="margin:20px 0">
+                <div class="btn-group btn-toggle logic" id="logic_phenotype_other" style="margin:20px 0">
                     <a class="btn btn-medium btn-default disabled">AND</a>
                     <a class="btn btn-medium btn-primary active disabled">OR</a>
                 </div>
@@ -140,7 +140,7 @@
                 <div class="row-fluid">
                     <div class="span12 pagination-centered" style="">
                         <button class="btn btn-large input-block-level btn-info btn-collapse" data-collapseStatus="false" style="text-align: left">
-                            Custom or Other Fields
+                            Other Search Fields
                             <i class="icon-chevron-left" style="float: right"></i>
                         </button>
                     </div>
