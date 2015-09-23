@@ -337,8 +337,7 @@ $(document).ready(function () {
         }
     });
 
-    // DNA Type
-
+    // Genome & Accession Type
     $(document).on('click', "#genomeContainer .condition-info, #accessionContainer .condition-info", function () {
         $("#modalInfo").show();
         $(".closeModal").click(function (e) {
@@ -346,8 +345,6 @@ $(document).ready(function () {
             $("#modalInfo").hide();
         });
     });
-
-    // Hgvs
 
     // Phenotype
     $(document).on('change', '.keys', function () {
@@ -498,21 +495,15 @@ $(document).ready(function () {
         $genome_accession = $('#logic_genome_accession .active').html();
         $accession_dna = $('#logic_accession_dna .active').html();
         $dna_protein = $('#logic_dna_protein .active').html();
-        $protein_dna = $('#logic_protein_gene .active').html();
+        $protein_gene = $('#logic_protein_gene .active').html();
         $gene_hgvs = $('#logic_gene_hgvs .active').html();
         $genotype_phenotype = $('#logic_genotype_phenotype .active').html();
         $phen_phen = $('.logic_phenotype .active').html() ? $('.logic_phenotype .active').html() : "";
         $phenotype_other = $('#logic_phenotype_other .active').html();
 
-        $coordinate = "";
-        $dna = "";
-        $geneSymbol = "";
-        $hgvs = "";
-
-        $genotype = "";
-        $phenotype = "";
-
-//        $arr_dna = getJSON_DNA();
+        
+        $coordinate = $sequence = $gene = $hgvs = $phen = $other = "";
+        $query = "";
 
         $arr = {
             "queryMetadata": {
@@ -545,18 +536,7 @@ $(document).ready(function () {
                 "phenotypeFeature": getJSON_Phenotype(),
                 "otherFields": getJSON_OtherFields()
             }
-//            "query": {
-//                "coordinate": $arr_dna.coordinate,
-//                "sequence": $arr_dna.sequence,
-//                "geneSymbol": getJSON_GeneSymbol(),
-//                "hgvsName": getJSON_HGVS(),
-//                "phenotypeFeature": getJSON_Phenotype(),
-//            }
         };
-
-//        $.extend($arr, {"queryStatement": $query, "network_to_search": $network_key});
-//        console.log(JSON.stringify($arr, null, '\t'));
-        return;
 
         $.each($arr.query, function (key, value) {
             if (value.length === 0)
@@ -567,71 +547,11 @@ $(document).ready(function () {
             alert("You have to select at least on type in order to proceed to a query!");
             return;
         }
-
-        $lastword = $dna.split(" ").splice(-1);
-        if ($lastword[0] === "AND" || $lastword[0] === "OR") {
-            $dna = $dna.substring(0, $dna.lastIndexOf(" "));
-        }
-
-        $lastword = $geneSymbol.split(" ").splice(-1);
-        if ($lastword[0] === "AND" || $lastword[0] === "OR")
-            $geneSymbol = $geneSymbol.substring(0, $geneSymbol.lastIndexOf(" "));
-
-        $lastword = $hgvs.split(" ").splice(-1);
-        if ($lastword[0] === "AND" || $lastword[0] === "OR")
-            $hgvs = $hgvs.substring(0, $hgvs.lastIndexOf(" "));
-
-        $lastword = $phenotype.split(" ").splice(-1);
-        if ($lastword[0] === "AND" || $lastword[0] === "OR")
-            $phenotype = $phenotype.substring(0, $phenotype.lastIndexOf(" "));
-
-        if ($dna.trim() !== "") {
-            $dna = $dna.trim().indexOf("OR") < 0 ? " " + $dna.trim() + " " : " (" + $dna.trim() + ") ";
-            if ($geneSymbol.trim() === "" && $hgvs.trim() === "" && $dna.trim().indexOf('AND') > -1) {
-                $dna = $dna.trim().substring(1, $dna.trim().length - 1);
-            }
-
-            $genotype += $dna;
-        }
-
-        if ($geneSymbol.trim() !== "") {
-            $geneSymbol = $geneSymbol.trim().indexOf("OR") < 0 ? " " + $geneSymbol.trim() + " " : " (" + $geneSymbol.trim() + ") ";
-            if ($dna.trim() === "" && $hgvs.trim() === "" && $geneSymbol.trim().indexOf('OR') > -1) {
-                $geneSymbol = $geneSymbol.trim().substring(1, $geneSymbol.trim().length - 1);
-            }
-            if ($genotype === "") {
-                $genotype += $geneSymbol;
-            } else {
-                $genotype += $dna_gene + $geneSymbol;
-            }
-        }
-
-        if ($hgvs.trim() !== "") {
-            $hgvs = $hgvs.trim().indexOf("OR") < 0 ? " " + $hgvs.trim() + " " : " (" + $hgvs.trim() + ") ";
-            if ($geneSymbol.trim() === "" && $dna.trim() === "" && $hgvs.trim().indexOf('OR') > -1) {
-                $hgvs = $hgvs.trim().substring(1, $hgvs.trim().length - 1);
-            }
-            if ($genotype === "")
-                $genotype += $hgvs;
-            else
-                $genotype += $gene_hgvs + $hgvs;
-        }
-
-        if ($genotype.trim() !== "") {
-            $genotype = ($genotype.trim().indexOf("AND") < 0 && $genotype.trim().indexOf("OR") < 0) ? " " + $genotype.trim() + " " : " (" + $genotype.trim() + ") ";
-            $phenotype = ($phenotype.trim().indexOf("AND") < 0 && $phenotype.trim().indexOf("OR") < 0) ? " " + $phenotype.trim() + " " : " (" + $phenotype.trim() + ") ";
-
-            if ($phenotype.trim() === "")
-                $query = $genotype;
-            else
-                $query = "(" + $genotype + $gen_phen + $phenotype + ")";
-        } else {
-            $query = "(" + $phenotype.trim() + ")";
-        }
-        $query = $query.trim();
+        
         $.extend($arr, {"queryStatement": $query, "network_to_search": $network_key});
         console.log(JSON.stringify($arr, null, '\t'));
-//			alert("queryString -> " + JSON.stringify($arr));
+//        alert("queryString -> " + JSON.stringify($arr));
+
         $.ajax({url: baseurl + 'discover/query/' + $network_key,
             dataType: 'html',
             delay: 200,
@@ -707,6 +627,8 @@ $(document).ready(function () {
             $coordinate = $genome + " " + $genome_accession + " " + $accession;
         else
             $coordinate = $genome + $accession;
+        
+        $query = $coordinate;
 
 //        console.log($genome);
 //        console.log($accession);
@@ -766,6 +688,11 @@ $(document).ready(function () {
         else 
             $sequence = $dna + $accession;
         
+        if($sequence) {
+            if($query) $query += " " + $accession_dna + " " + $sequence;
+            else    $query = $sequence;
+        }
+        
 //        console.log($dna);
 //        console.log($protein);
 //        console.log($sequence);
@@ -799,6 +726,11 @@ $(document).ready(function () {
         
         if($gene) $gene = "(" + $gene + ")";
         
+        if($gene) {
+            if($query) $query += " " + $protein_gene + " " + $gene;
+            else    $query = $gene;
+        }
+        
 //        console.log($gene);
 //        console.log(JSON.stringify($arr, null, '\t'));
         
@@ -829,6 +761,11 @@ $(document).ready(function () {
         });
         
         if($hgvs) $hgvs = "(" + $hgvs + ")";
+        
+        if($hgvs) {
+            if($query) $query += " " + $gene_hgvs + " " + $hgvs;
+            else    $query = $hgvs;
+        }
         
 //        console.log($hgvs);
 //        console.log(JSON.stringify($arr, null, "\t"));
@@ -862,8 +799,13 @@ $(document).ready(function () {
         
         if($phen) $phen = "(" + $phen + ")";
         
-        console.log($phen);
-        console.log(JSON.stringify($arr, null, "\t"));
+        if($phen) {
+            if($query) $query += " " + $genotype_phenotype + " " + $phen;
+            else    $query = $phen;
+        }
+        
+//        console.log($phen);
+//        console.log(JSON.stringify($arr, null, "\t"));
         
         return $arr;
     }
@@ -893,8 +835,13 @@ $(document).ready(function () {
         
         if($other) $other = "(" + $other + ")";
         
-        console.log($other);
-        console.log(JSON.stringify($arr, null, "\t"));
+        if($other) {
+            if($query) $query += " " + $phenotype_other + " " + $other;
+            else    $query = $other;
+        }
+        
+//        console.log($other);
+//        console.log(JSON.stringify($arr, null, "\t"));
         
         return $arr;
     }
