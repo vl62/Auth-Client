@@ -686,7 +686,7 @@ $(document).ready(function () {
         if($dna && $protein)
             $sequence = $dna + " " + $dna_protein + " " + $protein;
         else 
-            $sequence = $dna + $accession;
+            $sequence = $dna + $protein;
         
         if($sequence) {
             if($query) $query += " " + $accession_dna + " " + $sequence;
