@@ -1855,7 +1855,7 @@ class Variants extends MY_Controller {
                             } else {
                                 $core_fields[] = $cell_value; // Store the header name
                                 if (!array_key_exists($cell_value, $variant_table_fields)) { // Check whether this header is defined in the core fields table, return an error if not since there's a mismatch
-//									error_log("HEADER CELL ->  $cell_value");
+									error_log("HEADER CELL ->  $cell_value");
                                     $return_data['result_flag'] = 0;
                                     $return_data['error'] = "There are headers in your import template that do not match up to a field in the " . $this->config->item('feature_table_name') . " table. Import cannot proceed, email admin@cafevariome.org if you cannot resolve this problem.";
                                     return $return_data;
