@@ -209,14 +209,14 @@
         </div>
     </div>
 
-<!--        <div id="waiting" style="display: none; text-align: center;">
+        <div id="waiting" style="display: none; text-align: center;">
                 <br />Please wait...<br />
-                <img src="<?php // echo base_url("resources/images/cafevariome/ajax-loader.gif");   ?>" title="Loader" alt="Loader" />
+                <img src="<?php echo base_url("resources/images/cafevariome/ajax-loader.gif");   ?>" title="Loader" alt="Loader" />
         </div>
         <div id="query_result"></div>
-        <input type="hidden" value="<?php // echo $network_key;    ?>" id="network_key"/>-->
+        <input type="hidden" value="<?php echo $network_key;    ?>" id="network_key"/>
 
 </div> <!-- end container -->
 
-<!--<div id="loader"></div>-->
+<div id="loader"></div>
 
