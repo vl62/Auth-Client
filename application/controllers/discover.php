@@ -628,7 +628,7 @@ class Discover extends MY_Controller {
 //					$this->variantcount_federated($term);
 //					$contents = curl_get_contents($install_uri . "/discover/variantcount_federated/$term");
 //                    error_log("calling -> " . $install_uri . "/discover/query_federated/$term");
-                    if($install_uri !== "http://143.210.153.155/cafevariome_client") continue;
+//                    if($install_uri !== "http://143.210.153.155/cafevariome_client") continue;
                     // Set the timeout for each call to federated installs to 5 seconds
                     $opts = array('http' =>
                         array(

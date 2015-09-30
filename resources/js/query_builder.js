@@ -130,6 +130,7 @@ $phenotype_option_2 = ["--Select a value--", "NULL", "[Input your own value]"];
 
 $other_count = 1;
 $other_option = ["IS", "IS LIKE", "IS NOT", "IS NOT LIKE", "---------------", "=", "≠", "<", ">", "<=", ">="];
+$other_option_attr = ["Select a field", "Laboratory", "Individual_id", "Variant_id", "Pathogenicity", "Detection_method", "Comment", "dbsnp_id", "pmid"];
 $other_textbox = ["span4", "Enter a value", "input-large other_value", ""];
 
 add_symbol("genomeContainer");
@@ -302,7 +303,7 @@ function add_symbol($symbol) {
 
             $("#otherContainer").append($type_sample.format(["other" + $other_count, ""]));
 
-            $options_1 = add_options($option.format(["span4", "input-large other_keys", "", ""]), ["Select a field", "one", "two", "three"]);
+            $options_1 = add_options($option.format(["span4", "input-large other_keys", "", ""]), $other_option_attr);
             $("#other" + $other_count).append($options_1);
 
             $options_2 = add_options($option.format(["span2", "input-medium conditions", "", ""]), $other_option);
@@ -475,7 +476,7 @@ $(document).ready(function () {
 //        $idCount = 1;
     $("#buildQuery").click(function () {
         $("#query_result").empty();
-        $('#waiting').show(500);
+//        $('#waiting').show(500);
         $idCount = 1;
 
         gen = validate_Genome("buildQueryEvent");
@@ -489,9 +490,9 @@ $(document).ready(function () {
 
         if (!(gen && acc && dna && pro && gsm && hgv && phe && oth)) {
             console.log("Build Query: Not Validated");
-            return;
+            return false;
         }
-
+        
         $genome_accession = $('#logic_genome_accession .active').html();
         $accession_dna = $('#logic_accession_dna .active').html();
         $dna_protein = $('#logic_dna_protein .active').html();
@@ -545,13 +546,14 @@ $(document).ready(function () {
 
         if (Object.keys($arr.query).length === 0) {
             alert("You have to select at least on type in order to proceed to a query!");
-            return;
+            return false;
         }
         
         $.extend($arr, {"queryStatement": $query, "network_to_search": $network_key});
         console.log(JSON.stringify($arr, null, '\t'));
 //        alert("queryString -> " + JSON.stringify($arr));
 
+        $('#waiting').show(500);
         $.ajax({url: baseurl + 'discover/query/' + $network_key,
             dataType: 'html',
             delay: 200,

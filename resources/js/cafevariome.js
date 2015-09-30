@@ -3453,6 +3453,6 @@ $(document).ready(function () {
 });
 
 function show_growl_elastic_search() {
-    $.growl.warning({message: "Changes made to variants and/or phenotypes. <a href='"+ baseurl +"admin/redirect_to_elastic_search'>Click here</a> to re-build elastic search engine.",
+    $.growl.warning({message: "Changes made to variants and/or phenotypes. <a href='"+ baseurl +"admin/settings/regenerate_elastic_search'>Click here</a> to re-build elastic search engine.",
         duration: 1E11});
 }

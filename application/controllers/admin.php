@@ -149,6 +149,11 @@ class Admin extends MY_Controller {
             redirect('auth', 'refresh');
         }
 
+        if ($message = "regenerate_elastic_search") {
+            $this->session->set_userdata(array('settings_tab' => "maintenance"));
+            $this->session->set_userdata(array('maintenance_tab' => "regenerate"));
+        }
+
         if (!$this->session->userdata('settings_tab')) { // Set tab to settings if it's not already set
             $this->session->set_userdata('settings_tab', 'settings');
         }
@@ -2633,7 +2638,7 @@ class Admin extends MY_Controller {
     }
 
     function add_db_field() {
-
+        return;
         $this->data['title'] = "Add Field";
 
         if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
@@ -2906,7 +2911,7 @@ class Admin extends MY_Controller {
 
         $token = $this->session->userdata('Token');
         $installation_urls = json_decode(authPostRequest($token, array('network_key' => $network_key), $this->config->item('auth_server') . "/api/auth/get_all_installation_ips_for_network"), true);
-        
+
 //        echo "<pre>";
 //        var_dump($installation_urls);
 //        echo "</pre>";
@@ -2937,7 +2942,8 @@ class Admin extends MY_Controller {
                 foreach (json_decode($result, 1) as $res) {
                     if (array_key_exists($res['attribute'], $data)) {
                         foreach (explode("|", strtolower($res['value'])) as $val) {
-                            if (!in_array($val, $data[$res['attribute']])) array_push($data[$res['attribute']], $val);
+                            if (!in_array($val, $data[$res['attribute']]))
+                                array_push($data[$res['attribute']], $val);
                         }
                     } else {
                         $data[$res['attribute']] = explode("|", strtolower($res['value']));
@@ -3144,7 +3150,7 @@ class Admin extends MY_Controller {
     }
 
     function regenerate_elasticsearch_index($md5 = NULL) {
-       if ($md5) {
+        if ($md5) {
             $f = fopen(FCPATH . "resources/cron/cron_md5.txt", 'r');
             $file_md5 = fgets($f);
             fclose($f);
@@ -3195,7 +3201,7 @@ class Admin extends MY_Controller {
             $map_data['variants']['properties'][$field]['type'] = 'multi_field';
             $map_data['variants']['properties'][$field]['fields'] = array($field . '' => array('type' => 'string', 'index' => 'analyzed', 'ignore_malformed' => 'true'), $field . '_d' => array('type' => 'double', 'index' => 'analyzed', 'ignore_malformed' => 'true'));
         }
-        $this->load->model('phenotypes_model'); 
+        $this->load->model('phenotypes_model');
         $phenotype_fields = $this->phenotypes_model->getPhenotypeAttributesNRList(); // Get non redundant list of all the phenotype attributes
 //		error_log(print_r($phenotype_fields, 1));
         foreach ($phenotype_fields as $field) {
