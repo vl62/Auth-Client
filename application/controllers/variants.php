@@ -1700,7 +1700,7 @@ class Variants extends MY_Controller {
                             $column_count++;
                             if ($column) { // Only store if there's data for this column
                                 $cell_value = (string) $column;
-                                if (preg_match('/phenotype\:(.*)/', $cell_value, $phenotype_match)) {
+                                if (preg_match('/phe\:(.*)/', $cell_value, $phenotype_match)) {
 //									error_log('match -> ' . print_r($phenotype_match, 1));
                                     $core_fields[] = $phenotype_match[0]; // Store the header name
 //									error_log("okay $cell_value");
@@ -1740,7 +1740,7 @@ class Variants extends MY_Controller {
 //								error_log("value -> $cell_value");
                                 if (preg_match('/phenotype:(.*)/i', $current_header, $phenotype_match)) {
                                     error_log("phenotype -> " . print_r($phenotype_match, 1) . " -> $cell_value");
-                                    $phenotype_attribute = preg_replace('/phenotype\:/', '', $phenotype_match[0]);
+                                    $phenotype_attribute = preg_replace('/phe\:/', '', $phenotype_match[0]);
                                     $phenotype_value = $cell_value;
                                     error_log("attribute -> $phenotype_attribute --- value -> $phenotype_value");
                                     // TODO: Add this into the EAV table as it's a phenotype
@@ -1848,7 +1848,7 @@ class Variants extends MY_Controller {
                         if ($column) {
 
                             $cell_value = (string) $column;
-                            if (preg_match('/phenotype\:(.*)/', $cell_value, $phenotype_match)) {
+                            if (preg_match('/phe\:(.*)/', $cell_value, $phenotype_match)) {
 //								error_log('match -> ' . print_r($phenotype_match, 1));
                                 $core_fields[] = $phenotype_match[0]; // Store the header name
 //								error_log("okay $cell_value");
@@ -1888,9 +1888,9 @@ class Variants extends MY_Controller {
                             $cell_value = (string) $column;
                             $cell_value = trim($cell_value);
 //							error_log("value -> $cell_value");
-                            if (preg_match('/phenotype:(.*)/i', $current_header, $phenotype_match)) {
+                            if (preg_match('/phe:(.*)/i', $current_header, $phenotype_match)) {
 //								error_log("phenotype -> " . print_r($phenotype_match, 1) . " -> $cell_value");
-                                $phenotype_attribute = preg_replace('/phenotype\:/', '', $phenotype_match[0]);
+                                $phenotype_attribute = preg_replace('/phe\:/', '', $phenotype_match[0]);
                                 $phenotype_value = $cell_value;
 //								error_log("attribute -> $phenotype_attribute --- value -> $phenotype_value");
                                 // TODO: Add this into the EAV table as it's a phenotype

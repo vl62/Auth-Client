@@ -132,7 +132,7 @@ $(document).ready(function() {
 						</div>
 						<p>It is NOT recommended to modify database fields unless you are absolutely sure you wish to do so. Deleting a database field will result in deletion of the corresponding data for ALL records in the table.</p>
 						<div class="span7 offset2 pagination-centered">
-							<a href="<?php echo base_url() . "admin/add_db_field"; ?>" class="btn btn-small btn-primary" ><i class="icon-plus icon-white"></i> Add Field</a>
+							<!--<a href="<?php // echo base_url() . "admin/add_db_field"; ?>" class="btn btn-small btn-primary" ><i class="icon-plus icon-white"></i> Add Field</a>-->
 						</div>
 						<table class="table table-bordered table-striped table-hover" id="dbstructuretable">
 							<thead>
