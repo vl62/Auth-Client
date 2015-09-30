@@ -3260,7 +3260,7 @@ class Admin extends MY_Controller {
         if ($index_result_flag) {
             echo "Successfully regenerated the ElasticSearch index";
             $this->session->set_userdata(array("growl_status" => false));
-//            rename("resources/elastic_search_status_incomplete", "resources/elastic_search_status_complete");
+            rename("resources/elastic_search_status_incomplete", "resources/elastic_search_status_complete");
 //			$map_data['phenotypes'][] = $phenotype_array;
 //			$map_data = array();
 //			$map_data['variants']['properties']['phenotypes']['properties']['APOE_[most_recent_result]']['type'] = 'integer';
