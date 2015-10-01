@@ -249,9 +249,17 @@ class Sources_model extends CI_Model {
 	
 	public function insertVariants($variant_data) {
 		$this->db->insert('variants', $variant_data);
-//		error_log($this->db->last_query());
+		error_log($this->db->last_query());
 		$insert_id = $this->db->insert_id();
 		return $insert_id;
+	}
+        
+        public function checkVariants($variant_data) {
+                $sql = "SELECT record_id FROM variants WHERE source='" . $variant_data['source'] . "' AND record_id=" . $variant_data['record_id'];
+                if($this->db->query($sql)->result()) {
+                    return 0;
+                }
+                return 1;
 	}
         
 	public function insertPhenotypes($phenotype_data) {
