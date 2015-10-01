@@ -1698,6 +1698,59 @@ class Variants extends MY_Controller {
             }
         }
     }
+    
+    function do_upload_new() {
+        $config['upload_path'] = FCPATH . 'upload/';
+//		error_log(FCPATH . '/upload/');
+        $config['allowed_types'] = 'xls|xlsx|vcf|txt|xml|sql|lovd';
+//		$config['max_size'] = '1000';
+//		$config['max_width'] = '1024';
+//		$config['max_height'] = '768';
+
+        if ($this->input->post('sharing_policy')) {
+            $sharing_policy = $this->input->post('sharing_policy');
+        } else {
+            $sharing_policy = "openAccess";
+        }
+
+        $mutalyzer_check = $this->input->post('mutalyzer_check');
+
+        $fileformat = $this->input->post('fileformat');
+
+        $this->load->library('upload', $config);
+
+        if (!$this->upload->do_upload()) {
+            echo '<div id="status">error</div>';
+            echo '<div id="message">' . $this->upload->display_errors() . '</div>';
+        } else {
+            echo "fine";
+            return;
+            $data = array('upload_data' => $this->upload->data());
+//			error_log($data['upload_data']['file_name'] . " -> " . $data['upload_data']['full_path'] . " -> " . $data['upload_data']['file_ext']);
+            $source_id = $this->sources_model->getSourceIDFromName($source);
+            $validate_results = $this->_validateFile_Pre($data['upload_data']['full_path'], $data['upload_data']['file_ext'], $source, $source_id, $sharing_policy, $fileformat, $mutalyzer_check);
+            error_log(print_r($validate_results, 1));
+            if (($validate_results['result_flag'])) {
+                echo '<div id="status">success</div>';
+                //then output your message (optional)
+                echo '<div id="message">' . $data['upload_data']['file_name'] . ' SUCCESSFULLY IMPORTED.</div>';
+                //pass the data to js
+                echo '<div id="upload_data">' . json_encode($data) . '</div>';
+
+                if (file_exists("resources/elastic_search_status_complete"))
+                    unlink("resources/elastic_search_status_complete");
+                file_put_contents("resources/elastic_search_status_incomplete", "");
+            } else {
+//				error_log(print_r($validate_results, true));
+                echo '<div id="status">success</div>';
+                //then output your message (optional)
+                echo '<div id="message">' . $data['upload_data']['file_name'] . ' IMPORT FAILED: ' . $validate_results['error'] . '</div>';
+                //pass the data to js
+                echo '<div id="upload_data">' . json_encode($data) . '</div>';
+            }
+        }
+    }
+    
 
     function _validateFile_Pre($file, $extension, $source, $source_id, $sharing_policy, $fileformat, $mutalyzer_check) {
         $date_time = date("j M Y H:i A");
