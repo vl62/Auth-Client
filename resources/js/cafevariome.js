@@ -3456,3 +3456,27 @@ function show_growl_elastic_search() {
     $.growl.warning({message: "Changes made to variants and/or phenotypes. <a href='" + baseurl + "admin/settings/regenerate_elastic_search'>Click here</a> to re-build elastic search engine.",
         duration: 1E11});
 }
+
+$(document).ready(function (e) {
+    $("#variant_file_upload").on('submit', (function (e) {
+        e.preventDefault();
+        $("#uploadStatus").removeClass('hide');
+
+        $.ajax({
+            url: baseurl + 'variants/do_upload_new/',
+            type: "POST",
+            data: new FormData(this),
+            contentType: false,
+            cache: false,
+            processData: false,
+            dataType: "json",
+            success: function (data) {
+               console.log(data);
+            },
+            error: function () {
+                alert("error");
+            }
+        });
+    }));
+
+});
