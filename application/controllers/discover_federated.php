@@ -831,7 +831,7 @@ class Discover_federated extends MY_Controller {
 //			error_log("source_info -> " . print_r($source_info, 1));
 			$source_uri = $source_info['uri'];
 			$source_id = $source_info['source_id'];
-			error_log("source_id -> $source_id");
+//			error_log("source_id -> $source_id");
 			
 			
 			// Fetch any sources that the user has count display group level access to
@@ -844,18 +844,18 @@ class Discover_federated extends MY_Controller {
 				foreach ( $accessible_sources_array as $s ) {
 					$accessible_source_ids_array[$s['source_id']] = $s['source_id'];
 				}
-				error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
+//				error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
 			}
 			$open_access_flag = 0;
 			// Check whether the user has count display level access to this source and hence we will set restrictedAccess records to openAccess records for source
 			if (array_key_exists($source_id, $accessible_source_ids_array)) {
-				error_log("SET TO OPENACCESS");
+//				error_log("SET TO OPENACCESS");
 				$open_access_flag = 1;
 			}
 			
 			// Fetch any sources that the user has source display group level access to
 			$source_display_sources_returned = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_source_display_group_access_to");
-			error_log("sources source_display ------>------> $source_display_sources_returned");
+//			error_log("sources source_display ------>------> $source_display_sources_returned");
 			$accessible_source_display_array = json_decode($source_display_sources_returned, 1);
 //			$accessible_source_ids = array_values($accessible_sources_array);
 			$accessible_source_display_ids_array = array();
@@ -863,7 +863,7 @@ class Discover_federated extends MY_Controller {
 				foreach ( $accessible_source_display_array as $s ) {
 					$accessible_source_display_ids_array[$s['source_id']] = $s['source_id'];
 				}
-				error_log("accessible_source_display_ids_array -> " . print_r($accessible_source_display_ids_array, 1));
+//				error_log("accessible_source_display_ids_array -> " . print_r($accessible_source_display_ids_array, 1));
 			}
 			
 			// Return error if the user isn't a member of the source display group for this source
@@ -904,6 +904,7 @@ class Discover_federated extends MY_Controller {
 						}
 					}
 				}
+                                error_log("hello2 -------> " . print_r($variants_json, 1));
 				echo json_encode($variants_json);
 //				$this->output->set_content_type('application/json')->set_output(json_encode($variants_json));
 			}
@@ -968,7 +969,6 @@ class Discover_federated extends MY_Controller {
 		$source_email = $this->sources_model->getEmailFromSourceName($variant['source']);
 		$this->load->model('settings_model');
 		$individual_record_display_fields = $this->settings_model->getIndividualRecordDisplayFields();
-		
 		
 //		print_r($variant);
 		$variant_json['variant'] = $variant;

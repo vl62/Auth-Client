@@ -812,6 +812,7 @@ class Discover extends MY_Controller {
                 $display_fields = $this->settings_model->getDisplayFieldsForSharingPolicy('openAccess');
                 $this->data['display_fields'] = $display_fields;
                 if (strtolower($format) == "html") {
+                    error_log("hello ---------->" . print_r($variants));
                     $this->data['variants'] = $variants;
                     $this->_render('pages/variantshtml');
                 }
@@ -1232,6 +1233,7 @@ class Discover extends MY_Controller {
             if (strtolower($format) == "html") {
                 //TODO: make this client side
 //				$variants = @file_get_contents($federated_install_uri . "/discover_federated/variants/$term/$source/$sharing_policy/$format/$user_id");
+                error_log("hello-------> " . print_r($variants, 1));
                 $this->data['variants'] = $variants;
                 $this->data['display_fields'] = $display_fields;
                 $this->data['federated_install_uri'] = $federated_install_uri;
