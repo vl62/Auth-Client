@@ -22,7 +22,7 @@ class Discover extends MY_Controller {
             }
         }
     }
-
+    
     public $sources;
 
     public function index($network_key = '') {
