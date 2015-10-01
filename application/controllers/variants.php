@@ -1110,24 +1110,78 @@ class Variants extends MY_Controller {
             $cvid_link = base_url("/discover/variant/" . $variant['cafevariome_id']);
             $row[] = "<a class='basic' href='$cvid_link' href='$cvid_link'>" . $this->config->item('cvid_prefix') . $variant['cafevariome_id'] . "</a>";
 //			$row[] = $this->config->item('cvid_prefix') . $variant['cafevariome_id'];
-            if (isset($variant['gene'])) {
-                $row[] = $variant['gene'];
+            if (isset($variant['genome_chr'])) {
+                $row[] = $variant['genome_chr'];
             } else {
                 $row[] = "-";
             }
-
-            if (isset($variant['ref'])) {
-                $row[] = $variant['ref'];
+            
+            if (isset($variant['genome_build'])) {
+                $row[] = $variant['genome_build'];
             } else {
                 $row[] = "-";
             }
-
-            if (isset($variant['hgvs'])) {
-                $row[] = $variant['hgvs'];
+            
+            if (isset($variant['genome_start'])) {
+                $row[] = $variant['genome_start'];
             } else {
                 $row[] = "-";
             }
-
+            
+            if (isset($variant['genome_stop'])) {
+                $row[] = $variant['genome_stop'];
+            } else {
+                $row[] = "-";
+            }
+            
+            if (isset($variant['accession_ref'])) {
+                $row[] = $variant['accession_ref'];
+            } else {
+                $row[] = "-";
+            }
+            
+            if (isset($variant['accession_start'])) {
+                $row[] = $variant['accession_start'];
+            } else {
+                $row[] = "-";
+            }
+            
+            if (isset($variant['accession_stop'])) {
+                $row[] = $variant['accession_stop'];
+            } else {
+                $row[] = "-";
+            }
+            
+            if (isset($variant['dna_sequence'])) {
+                $row[] = $variant['dna_sequence'];
+            } else {
+                $row[] = "-";
+            }
+            
+            if (isset($variant['protein_sequence'])) {
+                $row[] = $variant['protein_sequence'];
+            } else {
+                $row[] = "-";
+            }
+            
+            if (isset($variant['gene_symbol'])) {
+                $row[] = $variant['gene_symbol'];
+            } else {
+                $row[] = "-";
+            }
+            
+            if (isset($variant['hgvs_reference'])) {
+                $row[] = $variant['hgvs_reference'];
+            } else {
+                $row[] = "-";
+            }
+            
+            if (isset($variant['hgvs_name'])) {
+                $row[] = $variant['hgvs_name'];
+            } else {
+                $row[] = "-";
+            }
+            
             //if ( (isset($variant['phenotype']) && ($variant['phenotype'] !== "") )) {
             //	$row[] = $variant['phenotype'];
 
@@ -1765,6 +1819,7 @@ class Variants extends MY_Controller {
                             if (!array_key_exists('sharing_policy', $insert_data)) {
                                 $insert_data['sharing_policy'] = $sharing_policy;
                             }
+                            
                             $insert_id = $this->sources_model->insertVariants($insert_data);
                             if (!$insert_id) {
                                 $return_data['result_flag'] = 0;
@@ -1837,8 +1892,6 @@ class Variants extends MY_Controller {
             // Get all the fields that are in the main records table (used for checking whether all fields in the import template actually exist in the database
             $variant_table_fields = $this->general_model->describeTable($this->config->item('feature_table_name'));
 //			error_log(print_r($variant_table_fields,1));
-
-
 
             foreach ($sheetData as $row) {
                 $row_count++;

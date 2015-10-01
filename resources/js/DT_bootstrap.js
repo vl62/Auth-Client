@@ -624,12 +624,21 @@ $(document).ready(function() {
 		"aoColumns": [
 			{ "bVisible": true, "bSearchable": false, "bSortable": false, "sTitle": "<input type='checkbox' id='selectall' />", "sType": "string" },
 			{ "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Cafe Variome ID", "sType": "cv" },
-			{ "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Gene", "sType": "string" },
-			{ "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Reference", "sType": "string" },
-			{ "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "HGVS", "sType": "string" },
-			{ "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Phenotype", "sType": "string" },
-			{ "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Sharing Policy", "sType": "string" },
-			{ "bVisible": true, "bSearchable": false, "bSortable": false, "sTitle": "Actions", "sType": "string" }
+			{ "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Genome Chromosome", "sType": "string" },
+			{ "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Genome Build", "sType": "string" },
+                        { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Genome Start", "sType": "string" },
+                        { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Genome Stop", "sType": "string" },
+                        { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Accession Reference", "sType": "string" },
+                        { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Accession Start", "sType": "string" },
+                        { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Accession Stop", "sType": "string" },
+                        { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "DNA Sequence", "sType": "string" },
+                        { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Protein Sequence", "sType": "string" },
+                        { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Gene Symbol", "sType": "string" },
+                        { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "HGVS Reference", "sType": "string" },
+                        { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "HGVS Name", "sType": "string" },
+                        { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Sharing Policy", "sType": "string" },
+                        { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Phenotype", "sType": "string" },
+//			{ "bVisible": true, "bSearchable": false, "bSortable": false, "sTitle": "Actions", "sType": "string" }
 		]
 	});
 	
