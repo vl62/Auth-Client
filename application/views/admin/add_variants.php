@@ -33,6 +33,7 @@
             <p>You can generate Excel and tab-delimited templates in the "Import Templates" tab on the <a href="<?php echo base_url() . "admin/settings?activeTab=templates"; ?>"> following page</a>.</p>
             <!--<p>N.B. Headers in your import template MUST match up to a corresponding (case sensitive) field in the <?php // echo $this->config->item('feature_table_name');   ?> table.</p><br />-->
             <form method="post" name="variant_file_upload" id="variant_file_upload" enctype="multipart/form-data">
+            <?php // echo form_open_multipart('variants/do_upload_new/');?>
                 <p>Specify the file format</p>
                 <?php
                 $options = array(
@@ -42,7 +43,7 @@
 //					'tab' => 'Tab Delimited Full',
                     'tab_core' => 'Tab Delimited Template',
                     'epad' => 'EPAD',
-                    'phenotype_test' => 'Phenotype Test',
+//                    'phenotype_test' => 'Phenotype Test',
 //					'dmudb' => 'DMuDB tab delimited (.txt)',
 //					'vcf' => 'VCF',
 //					'lovd2' => 'LOVD2',
@@ -60,8 +61,9 @@
                 );
                 echo form_dropdown('sharing_policy', $options, 'openAccess');
                 ?><br/>
+                
                 <span class="btn btn-default btn-file" style="padding-top: 10px;">
-                    Browse <input type="file" name="file">
+                    Browse <input type="file" name="userfile" />
                 </span>
                 <br/><br/><br/>
                 <div class="pagination-centered">
