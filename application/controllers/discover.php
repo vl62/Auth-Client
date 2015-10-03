@@ -620,11 +620,11 @@ class Discover extends MY_Controller {
                 foreach ($federated_installs_array as $install) {
                     $c++;
                     $network_key = $install['network_key'];
-//                    error_log("NETWORK KEY -> $network_key");
+                    error_log("NETWORK KEY -> $network_key");
                     $install_uri = $install['installation_base_url'];
                     $install_uri = rtrim($install_uri, "/");
                     $user_id = $this->ion_auth->user()->row()->id;
-//					error_log("STARTING --> $term ---> " . $install_uri . "/discover/variantcount_federated/$term/$user_id");
+					error_log("STARTING --> $term ---> " . $install_uri . "/discover/variantcount_federated/$term/$user_id");
 //					$this->variantcount_federated($term);
 //					$contents = curl_get_contents($install_uri . "/discover/variantcount_federated/$term");
 //                    error_log("calling -> " . $install_uri . "/discover/query_federated/$term");

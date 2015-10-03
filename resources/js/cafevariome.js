@@ -3461,17 +3461,43 @@ $(document).ready(function (e) {
     $("#variant_file_upload").on('submit', (function (e) {
         e.preventDefault();
         $("#uploadStatus").removeClass('hide');
-
+        $formData = new FormData(this);
         $.ajax({
             url: baseurl + 'variants/do_upload_new/',
             type: "POST",
-            data: new FormData(this),
+            data: $formData,
             contentType: false,
             cache: false,
             processData: false,
             dataType: "json",
             success: function (data) {
-               console.log(data);
+                if (data.status == "error") {
+                    alert("Upload failed.");
+                    $("#uploadStatus").addClass('hide');
+                } else if (data.status == "duplicate") {
+                    if (confirm("Duplicate record exists. Would you like to override them?")) {
+                        $.ajax({url: baseurl + 'variants/do_upload_new/true',
+                            type: "POST",
+                            data: $formData,
+                            contentType: false,
+                            cache: false,
+                            processData: false,
+                            dataType: "json",
+                            success: function (data) {
+                                if (data.status == "error") {
+                                    alert("Upload failed.");
+                                    $("#uploadStatus").addClass('hide');
+                                } else if (data.status == "success") {
+                                    alert("Upload Successful");
+                                    $("#uploadStatus").addClass('hide');
+                                }
+                            }
+                        });
+                    }
+                } else if (data.status == "success") {
+                    alert("Upload Successful");
+                    $("#uploadStatus").addClass('hide');
+                }
             },
             error: function () {
                 alert("error");
