@@ -1017,6 +1017,17 @@ CREATE TABLE `phenotypes` (
   `type` enum('quality','qualityValue','numeric') NOT NULL DEFAULT 'quality',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `local_phenotypes_lookup`;
+CREATE TABLE `local_phenotypes_lookup` (
+  `lookup_id` int(11) NOT NULL AUTO_INCREMENT,
+  `network_key` varchar(32) NOT NULL,
+  `phenotype_attribute` varchar(128) NOT NULL,
+  `phenotype_values` varchar(256) NOT NULL,
+  PRIMARY KEY (`lookup_id`),
+  KEY `network_key` (`network_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
