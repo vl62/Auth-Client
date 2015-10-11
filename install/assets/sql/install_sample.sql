@@ -20125,23 +20125,30 @@ CREATE TABLE `core_fields` (
 -- Dumping data for table `core_fields`
 --
 
-INSERT INTO `core_fields` VALUES(1, 'variant_id');
-INSERT INTO `core_fields` VALUES(2, 'gene');
-INSERT INTO `core_fields` VALUES(3, 'LRG');
-INSERT INTO `core_fields` VALUES(4, 'ref');
-INSERT INTO `core_fields` VALUES(5, 'hgvs');
-INSERT INTO `core_fields` VALUES(6, 'phenotype');
-INSERT INTO `core_fields` VALUES(7, 'individual_id');
-INSERT INTO `core_fields` VALUES(8, 'gender');
-INSERT INTO `core_fields` VALUES(9, 'ethnicity');
-INSERT INTO `core_fields` VALUES(10, 'pathogenicity');
-INSERT INTO `core_fields` VALUES(11, 'location_ref');
-INSERT INTO `core_fields` VALUES(12, 'start');
-INSERT INTO `core_fields` VALUES(13, 'end');
-INSERT INTO `core_fields` VALUES(14, 'build');
-INSERT INTO `core_fields` VALUES(15, 'source_url');
-INSERT INTO `core_fields` VALUES(16, 'comment');
-INSERT INTO `core_fields` VALUES(17, 'sharing_policy');
+INSERT INTO `core_fields` VALUES 
+(1,'cafevariome_id'),
+(2, 'record_id'),
+(3, 'genome_chr'),
+(4, 'genome_build'),
+(5, 'genome_start'),
+(6, 'genome_stop'),
+(7, 'accession_ref'),
+(8, 'accession_start'),
+(9, 'accession_stop'),
+(10, 'dna_sequence'),
+(11, 'protein_sequence'),
+(12, 'gene_symbol'),
+(13, 'hgvs_reference'),
+(14, 'hgvs_name'),
+(15, 'phenotype'),
+(16, 'laboratory'),
+(17, 'individual_id'),
+(18, 'variant_id'),
+(19, 'pathogenicity'),
+(20, 'detection_method'),
+(21, 'comment'),
+(22, 'dbsnp_id'),
+(23, 'pmid');
 
 --
 -- Table structure for table `messages`
@@ -20309,37 +20316,30 @@ CREATE TABLE `display_fields` (
 -- Dumping data for table `display_fields`
 --
 
-INSERT INTO `display_fields` VALUES(1, 'cafevariome_id', 'Cafe Variome ID', 1, 'openAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(2, 'gene', 'Gene', 2, 'openAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(3, 'ref', 'Reference', 3, 'openAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(4, 'hgvs', 'HGVS', 4, 'openAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(5, 'phenotype', 'Phenotype', 5, 'openAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(6, 'location_ref', 'Chr', 6, 'openAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(7, 'start', 'Start', 7, 'openAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(8, 'end', 'End', 8, 'openAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(9, 'source_url', 'Source URL', 9, 'openAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(10, 'cafevariome_id', 'Cafe Variome ID', 1, 'linkedAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(11, 'source_url', 'Source URL', 2, 'linkedAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(12, 'cafevariome_id', 'Cafe Variome ID', 1, 'restrictedAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(13, 'gene', 'Gene', 2, 'restrictedAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(14, 'ref', 'Reference', 3, 'restrictedAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(15, 'hgvs', 'HGVS', 4, 'restrictedAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(16, 'phenotype', 'Phenotype', 5, 'restrictedAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(17, 'pathogenicity', 'Pathogenicity', 6, 'restrictedAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(18, 'location_ref', 'Chr', 7, 'restrictedAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(19, 'start', 'Start', 8, 'restrictedAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(20, 'end', 'End', 9, 'restrictedAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(21, 'source_url', 'Source URL', 10, 'restrictedAccess', 'search_result');
-INSERT INTO `display_fields` VALUES(22, 'cafevariome_id', 'Cafe Variome ID', 1, '', 'individual_record');
-INSERT INTO `display_fields` VALUES(23, 'gene', 'Gene', 2, '', 'individual_record');
-INSERT INTO `display_fields` VALUES(24, 'ref', 'Reference', 3, '', 'individual_record');
-INSERT INTO `display_fields` VALUES(25, 'hgvs', 'HGVS', 4, '', 'individual_record');
-INSERT INTO `display_fields` VALUES(26, 'phenotype', 'Phenotype', 5, '', 'individual_record');
-INSERT INTO `display_fields` VALUES(27, 'location_ref', 'Chr', 6, '', 'individual_record');
-INSERT INTO `display_fields` VALUES(28, 'start', 'Start', 7, '', 'individual_record');
-INSERT INTO `display_fields` VALUES(29, 'end', 'End', 8, '', 'individual_record');
-INSERT INTO `display_fields` VALUES(30, 'dbsnp_id', 'dbSNP rsID', 9, '', 'individual_record');
-INSERT INTO `display_fields` VALUES(31, 'comment', 'Comment', 10, '', 'individual_record');
+INSERT INTO `display_fields` VALUES 
+(1,'cafevariome_id','Cafe Variome ID',1,'openAccess','search_result'),
+(2, 'record_id', 'Record Id', 2, 'openAccess', 'search_result'),
+(3, 'genome_chr', 'Genome Chr', 3, 'openAccess', 'search_result'),
+(4, 'genome_build', 'Genome Build', 4, 'openAccess', 'search_result'),
+(5, 'genome_start', 'Genome Start', 5, 'openAccess', 'search_result'),
+(6, 'genome_stop', 'Genome Stop', 6, 'openAccess', 'search_result'),
+(7, 'accession_ref', 'Accession Ref', 7, 'openAccess', 'search_result'),
+(8, 'accession_start', 'Accession Start', 8, 'openAccess', 'search_result'),
+(9, 'accession_stop', 'Accession Stop', 9, 'openAccess', 'search_result'),
+(10, 'dna_sequence', 'Dna Sequence', 10, 'openAccess', 'search_result'),
+(11, 'protein_sequence', 'Protein Sequence', 11, 'openAccess', 'search_result'),
+(12, 'gene_symbol', 'Gene Symbol', 12, 'openAccess', 'search_result'),
+(13, 'hgvs_reference', 'Hgvs Reference', 13, 'openAccess', 'search_result'),
+(14, 'hgvs_name', 'Hgvs Name', 14, 'openAccess', 'search_result'),
+(15, 'phenotype', 'Phenotype', 15, 'openAccess', 'search_result'),
+(16, 'laboratory', 'Laboratory', 16, 'openAccess', 'search_result'),
+(17, 'individual_id', 'Individual Id', 17, 'openAccess', 'search_result'),
+(18, 'variant_id', 'Variant Id', 18, 'openAccess', 'search_result'),
+(19, 'pathogenicity', 'Pathogenicity', 19, 'openAccess', 'search_result'),
+(20, 'detection_method', 'Detection Method', 20, 'openAccess', 'search_result'),
+(21, 'comment', 'Comment', 21, 'openAccess', 'search_result'),
+(22, 'dbsnp_id', 'Dbsnp Id', 22, 'openAccess', 'search_result'),
+(23, 'pmid', 'Pmid', 23, 'openAccess', 'search_result');
 
 --
 -- Table structure for table `search_fields`

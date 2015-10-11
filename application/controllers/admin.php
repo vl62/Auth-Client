@@ -2967,13 +2967,17 @@ class Admin extends MY_Controller {
     function regenerate_federated_phenotype_attributes_and_values_list() {
         $token = $this->session->userdata('Token');
         $result = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_and_their_sources_for_this_installation");
-//        error_log(print_r(json_decode($result, 1), 1));
+        $result = json_decode($result, 1);
 
         $this->load->model('phenotypes_model');
         $this->phenotypes_model->emptyLocalPhenotypesLookup();
         delete_files("resources/phenotype_lookup_data/");
 
-        foreach (json_decode($result, 1) as $row) {
+        // error_log(print_r($result, 1));
+        
+        if(isset($result['error'])) return;
+
+        foreach ($result as $row) {
 //            error_log($row['network_key'] . " | " . $row['source_id']);
             $data = $this->phenotypes_model->localPhenotypesLookupValues($row['source_id'], $row['network_key']);
             $json_data = array();
@@ -3168,6 +3172,7 @@ class Admin extends MY_Controller {
 //		$this->build_variant_to_phenotypes_table();
         // Re-populate federated phenotype attribute list
         $this->regenerate_federated_phenotype_attributes_and_values_list();
+        
         $this->load->model('sources_model');
         $this->load->library('elasticsearch');
         // Create dynamic name for the ES index to try and avoid clashes with multiple instance of CV on the same server

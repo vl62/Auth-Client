@@ -324,9 +324,9 @@ var phenotype_values = new Array();
 $(document).ready(function () {
     $("#loader").addClass('hide');
     $network_key = $("#network_key").val();
-//    $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
+   $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
 //        $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/5b7a1ae7ac7fa0a4a4c7cedac1982dba',
-        $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/f75ef233eb89ba76a4187912cd6f909d',
+        // $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/f75ef233eb89ba76a4187912cd6f909d',
         dataType: 'json',
         delay: 200,
         type: 'POST',

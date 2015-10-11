@@ -202,7 +202,7 @@ class Query extends CafeVariome {
 //		error_log("queryStatement: $query_statement");
         foreach ($query_array as $statement_id => $query_element) {
             $statement_id = "##" . $statement_id . "##";
-            $query_element = "##" . $query_element . "##";
+            $query_element = "##(" . $query_element . ")##";
 //            error_log("BEFORE query_element -> $statement_id -> $query_element -> $query_statement");
             $query_statement = preg_replace("/$statement_id/", "$query_element", $query_statement);
 //            error_log("AFTER query_element -> $statement_id -> $query_element -> $query_statement");

@@ -1216,7 +1216,10 @@ class Discover extends MY_Controller {
 //			echo "sending -> " . $federated_install_uri . "/discover_federated/variants/$term/$source/$sharing_policy/$format";
             $variants = @file_get_contents($federated_install_uri . "/discover_federated/variants_json/$term/$source/$sharing_policy/$format/$user_id");
 //			$variants = @file_get_contents($federated_install_uri . "/discover_federated/variants/$term/$source/$sharing_policy/$format/$user_id");
-//			echo $variants;
+   //          echo "<pre>";
+			// var_dump(json_decode($variants, 1));
+   //          echo "</pre>";
+   //          return;
 
             $variants = json_decode($variants, 1); // The json of variants for this source and other info returned from federated install
             // Print error message if any returned by federated client

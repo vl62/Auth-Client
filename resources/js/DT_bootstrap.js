@@ -636,8 +636,8 @@ $(document).ready(function() {
                         { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Gene Symbol", "sType": "string" },
                         { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "HGVS Reference", "sType": "string" },
                         { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "HGVS Name", "sType": "string" },
-                        { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Sharing Policy", "sType": "string" },
                         { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Phenotype", "sType": "string" },
+                        { "bVisible": true, "bSearchable": true, "bSortable": true, "sTitle": "Sharing Policy", "sType": "string" },
 //			{ "bVisible": true, "bSearchable": false, "bSortable": false, "sTitle": "Actions", "sType": "string" }
 		]
 	});
