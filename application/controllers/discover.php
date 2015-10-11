@@ -593,7 +593,7 @@ class Discover extends MY_Controller {
         if ($term) {
 //            error_log("POST -> " . print_r($_POST, true));
             $data['term'] = $term;
-            error_log("Term: " . $term);
+//            error_log("Term: " . $term);
         } else {
             show_error("You must specify a search term");
         }
@@ -620,11 +620,11 @@ class Discover extends MY_Controller {
                 foreach ($federated_installs_array as $install) {
                     $c++;
                     $network_key = $install['network_key'];
-                    error_log("NETWORK KEY -> $network_key");
+//                    error_log("NETWORK KEY -> $network_key");
                     $install_uri = $install['installation_base_url'];
                     $install_uri = rtrim($install_uri, "/");
                     $user_id = $this->ion_auth->user()->row()->id;
-					error_log("STARTING --> $term ---> " . $install_uri . "/discover/variantcount_federated/$term/$user_id");
+                    error_log("STARTING --> $term ---> " . $install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key");
 //					$this->variantcount_federated($term);
 //					$contents = curl_get_contents($install_uri . "/discover/variantcount_federated/$term");
 //                    error_log("calling -> " . $install_uri . "/discover/query_federated/$term");
@@ -642,7 +642,8 @@ class Discover extends MY_Controller {
                     $all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key", false, $context);
 //					$all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key");
 //					error_log(print_r($http_response_header, 1));
-//                    error_log("all_counts_json -> $all_counts_json");
+                    error_log("all_counts_json -> $all_counts_json");
+                    error_log("--------------------------");
 
                     $all_counts = json_decode($all_counts_json, 1);
                     $federated_site_title = $all_counts['site_title'];
