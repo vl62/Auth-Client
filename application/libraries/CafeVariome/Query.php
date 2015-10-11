@@ -193,7 +193,7 @@ class Query extends CafeVariome {
             }
         }
 
-        error_log("query array -> " . print_r($query_array, 1));
+//        error_log("query array -> " . print_r($query_array, 1));
 
         $query_statement = $query['queryStatement'];
 //        error_log("QUERY STATEMENT -> $query_statement");

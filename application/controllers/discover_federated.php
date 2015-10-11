@@ -114,7 +114,7 @@ class Discover_federated extends MY_Controller {
 			$query['query']['bool']['must'][] = array("term" => array("source" => $source));
 			$query['facets']['sharing_policy']['terms'] = array('field' => "sharing_policy");
                         
-                        error_log(print_r($query, 1));
+//                        error_log(print_r($query, 1));
 			$query = json_encode($query);
                         
 			error_log("query ----> $query");
