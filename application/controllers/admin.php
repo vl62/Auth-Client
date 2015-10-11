@@ -2974,7 +2974,7 @@ class Admin extends MY_Controller {
         delete_files("resources/phenotype_lookup_data/");
 
         // error_log(print_r($result, 1));
-        
+
         if(isset($result['error'])) return;
 
         foreach ($result as $row) {
