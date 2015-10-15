@@ -37,7 +37,7 @@ class Discover_federated extends MY_Controller {
 		
 		// Fetch any sources that the user has count display group level access to
 		$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_count_display_group_access_to");
-//		error_log("sources count_display ------>------> $returned_sources");
+		error_log("sources count_display ------>------> $returned_sources");
 		$accessible_sources_array = json_decode($returned_sources, 1);
 //		$accessible_source_ids = array_values($accessible_sources_array);
 		$accessible_source_ids_array = array();
@@ -51,7 +51,7 @@ class Discover_federated extends MY_Controller {
 		
 		// Fetch any sources that the user has source display group level access to
 		$source_display_sources_returned = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_source_display_group_access_to");
-//		error_log("sources source_display ------>------> $source_display_sources_returned");
+		error_log("sources source_display ------>------> $source_display_sources_returned");
 		$accessible_source_display_array = json_decode($source_display_sources_returned, 1);
 //		$accessible_source_ids = array_values($accessible_sources_array);
 		$accessible_source_display_ids_array = array();
@@ -59,7 +59,7 @@ class Discover_federated extends MY_Controller {
 			foreach ( $accessible_source_display_array as $s ) {
 				$accessible_source_display_ids_array[$s['source_id']] = $s['source_id'];
 			}
-//			error_log("accessible_source_display_ids_array -> " . print_r($accessible_source_display_ids_array, 1));
+			error_log("accessible_source_display_ids_array -> " . print_r($accessible_source_display_ids_array, 1));
 		}
 		
 		$this->load->model('sources_model');
@@ -904,7 +904,7 @@ class Discover_federated extends MY_Controller {
 						}
 					}
 				}
-                                error_log("hello2 -------> " . print_r($variants_json, 1));
+                                // error_log("hello2 -------> " . print_r($variants_json, 1));
 				echo json_encode($variants_json);
 //				$this->output->set_content_type('application/json')->set_output(json_encode($variants_json));
 			}
@@ -914,7 +914,9 @@ class Discover_federated extends MY_Controller {
 				// Get the dynamic display fields that can be changed by user in settings interface
 				$this->load->model('settings_model');
 				$display_fields = $this->settings_model->getDisplayFieldsForSharingPolicy('linkedAccess');
-				$this->data['display_fields'] = $display_fields;
+								// error_log("DS -> " . print_r($display_fields, 1));
+				// $this->data['display_fields'] = $display_fields;
+				$variants['display_fields'] = $display_fields;
 				$sources_types = $this->sources_model->getSourcesTypes();
 				$type = $sources_types[$source];
 				$this->output->set_content_type('application/json')->set_output(json_encode($variants));

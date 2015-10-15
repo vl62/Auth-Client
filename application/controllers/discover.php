@@ -624,7 +624,7 @@ class Discover extends MY_Controller {
                     $install_uri = $install['installation_base_url'];
                     $install_uri = rtrim($install_uri, "/");
                     $user_id = $this->ion_auth->user()->row()->id;
-                    error_log("STARTING --> $term ---> " . $install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key");
+                    // error_log("STARTING --> $term ---> " . $install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key");
 //					$this->variantcount_federated($term);
 //					$contents = curl_get_contents($install_uri . "/discover/variantcount_federated/$term");
 //                    error_log("calling -> " . $install_uri . "/discover/query_federated/$term");
@@ -642,8 +642,8 @@ class Discover extends MY_Controller {
                     $all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key", false, $context);
 //					$all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key");
 //					error_log(print_r($http_response_header, 1));
-                    error_log("all_counts_json -> $all_counts_json");
-                    error_log("--------------------------");
+                    // error_log("all_counts_json -> $all_counts_json");
+                    // error_log("--------------------------");
 
                     $all_counts = json_decode($all_counts_json, 1);
                     $federated_site_title = $all_counts['site_title'];
@@ -1229,7 +1229,7 @@ class Discover extends MY_Controller {
                 show_error($variants['error']);
             }
 
-            $s = $variants['source']; // The remote source name and description from json
+            // $s = $variants['source']; // The remote source name and description from json
             $display_fields = $variants['display_fields']; // The display fields set for the federated install
 //			error_log("ds -> " . print_r($display_fields, 1));
             unset($variants['display_fields']); // Remove display_fields from variants array - it's now stored in separate array
@@ -1237,7 +1237,7 @@ class Discover extends MY_Controller {
             if (strtolower($format) == "html") {
                 //TODO: make this client side
 //				$variants = @file_get_contents($federated_install_uri . "/discover_federated/variants/$term/$source/$sharing_policy/$format/$user_id");
-                error_log("hello-------> " . print_r($variants, 1));
+                // error_log("hello-------> " . print_r($variants, 1));
                 $this->data['variants'] = $variants;
                 $this->data['display_fields'] = $display_fields;
                 $this->data['federated_install_uri'] = $federated_install_uri;

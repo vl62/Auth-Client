@@ -27,13 +27,14 @@ class Groups extends MY_Controller {
 		}
 
 		$token = $this->session->userdata('Token');
-		$groups = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
-//		error_log("groups -> $groups");
+		$groups = authPostRequest($token, array('installation_key' => $this->config->item('installation_key'), 'url' => base_url()), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
+		// error_log("groups -> $groups");
 		$this->data['groups'] = json_decode($groups, TRUE);
+		
 //		$this->data['groups'] = $this->ion_auth->getGroupsFull();
 //		$this->load->model('sources_model');
 //		$source_groups = $this->sources_model->getSourceGroups();
-//		print_r($source_groups);
+		// print_r($source_groups);
 //		$this->data['source_groups'] = $source_groups;
 		$this->_render('federated/auth/network_groups');
 	}
@@ -56,7 +57,7 @@ class Groups extends MY_Controller {
 //			error_log("desc -> " .  $this->input->post('desc'));
 			// Create the new group
 			$token = $this->session->userdata('Token');
-			$new_group_id = authPostRequest($token, array('group_name' => $this->input->post('group_name'), 'group_description' => $this->input->post('desc'), 'group_type' => $this->input->post('group_type'), 'network_key' => $this->input->post('network')), $this->config->item('auth_server') . "/api/auth/create_network_group");
+			$new_group_id = authPostRequest($token, array('group_name' => $this->input->post('group_name'), 'group_description' => $this->input->post('desc'), 'group_type' => $this->input->post('group_type'), 'network_key' => $this->input->post('network'), 'url' => base_url()), $this->config->item('auth_server') . "/api/auth/create_network_group");
 			if($new_group_id) {
 				// check to see if we are creating the group
 				// redirect them back to the admin page

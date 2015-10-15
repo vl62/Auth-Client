@@ -995,7 +995,7 @@ class Auth_federated extends MY_Controller {
         }
 	
 	
-	function edit_user_network_groups($id) {
+	function edit_user_network_groups_old($id) {
 
 		$this->title = "Edit User Network Groups";
 
@@ -1038,6 +1038,73 @@ class Auth_federated extends MY_Controller {
 		$this->_render('federated/auth/edit_user_network_groups');
 //		$this->load->view('auth/edit_user', $this->data);
 	}
+
+    function edit_user_network_groups($id, $isMaster = false) {
+
+        $this->title = "Edit User Network Groups";
+
+        if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+            redirect('auth_federated', 'refresh');
+        }
+
+        $this->data['user_id'] = $id;
+        //display the edit user form
+        $this->data['csrf'] = $this->_get_csrf_nonce();
+
+        //set the flash data error message if there is one
+        $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
+
+        $token = $this->session->userdata('Token');
+        if($isMaster) {
+            $users = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_users_in_cafevariome");
+            $users = json_decode($users, 1);
+        } else {
+            $users = authPostRequest($token, array('installation_key' => $this->config->item('installation_key'), 'group_id' => $id), $this->config->item('auth_server') . "/api/auth/get_all_users_in_master_network_group");
+            $users = json_decode($users, 1);
+        }
+
+        $group_users = authPostRequest($token, array('installation_key' => $this->config->item('installation_key'), 'group_id' => $id), $this->config->item('auth_server') . "/api/auth/get_users_for_network_group");
+        $group_users = json_decode($group_users, 1);
+
+        // echo "<pre>";
+        // var_dump($users);
+        // var_dump($group_users);
+        // echo "</pre>";
+        // return;
+
+        if($isMaster) {
+            for($i = 0; $i < count($users); $i++) {
+                if($users[$i]['username'] == "admin@cafevariome") {
+                    unset($users[$i]);
+                    $users = array_values($users);
+                }
+            }
+        }
+
+        if (!array_key_exists('error', $group_users)) {
+            foreach ($group_users as $group_user) {
+                for($i = 0; $i < count($users); $i++) {
+                    if($group_user == $users[$i]) {
+                        unset($users[$i]);
+                        $users = array_values($users);
+                    }
+                }
+            }
+            $this->data['group_users'] = $group_users;   
+        }
+
+        if($isMaster)
+            $this->data['users'] = $users;
+        else {
+            if(!array_key_exists('error', $users))  $this->data['users'] = $users;
+        }
+        
+        $this->data['isMaster'] = $isMaster;
+        $this->data['user_id'] = $id;
+        $this->data['installation_key'] = $this->config->item('installation_key');
+        $this->_render('federated/auth/edit_network_groups_users');
+
+    }
 		
 	//view user profile (for non-admin user)
 	function user_profile($id)

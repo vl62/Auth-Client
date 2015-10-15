@@ -40,18 +40,31 @@
 
 								if ( array_key_exists($display_field['name'], $variant) ) {
 									
-									if ( $display_field['name'] == "cafevariome_id" ) {
-										$federated_url_encoded = urlencode(base64_encode($federated_install_uri));
-										// Get the numeric part of the cv ID with no prefix and create the link to the record in the federated install
-										$cafevariome_id_no_prefix = filter_var($variant[$display_field['name']], FILTER_SANITIZE_NUMBER_INT);
-										?>
-										<td><a href="<?php echo base_url(); ?>discover/variant_federated/<?php echo $cafevariome_id_no_prefix . "/" . $federated_url_encoded; ?>"><?php echo $variant[$display_field['name']]; ?></a></td>
-									<?php
+									if ( $display_field['name'] == "source_url" ) {
+										echo "<td><a target='_blank' href='" . $variant[$display_field['name']] . "'>URL</a></td>";
 									}
 									else {
 										echo "<td>" . $variant[$display_field['name']] . "</td>";
 									}
 								}
+
+								if(false) {
+									if ( array_key_exists($display_field['name'], $variant) ) {
+									
+										if ( $display_field['name'] == "cafevariome_id" ) {
+											$federated_url_encoded = urlencode(base64_encode($federated_install_uri));
+											// Get the numeric part of the cv ID with no prefix and create the link to the record in the federated install
+											$cafevariome_id_no_prefix = filter_var($variant[$display_field['name']], FILTER_SANITIZE_NUMBER_INT);
+											?>
+											<td><a href="<?php echo base_url(); ?>discover/variant_federated/<?php echo $cafevariome_id_no_prefix . "/" . $federated_url_encoded; ?>"><?php echo $variant[$display_field['name']]; ?></a></td>
+										<?php
+										}
+										else {
+											echo "<td>" . $variant[$display_field['name']] . "</td>";
+										}
+									}
+								}
+
 							}
 							echo "</tr>";
 						}

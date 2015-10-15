@@ -36,13 +36,19 @@
 						<td><?php echo $group['network_name']; ?></td>
 						<td><?php echo $group['group_type']; ?></td>
 						<td>
+						<?php $isMaster = $group['group_type'] == "master"; ?>
+						<a rel="popover" data-content="Add/Remove users for this network group" data-original-title="Edit User Network Groups" href="<?php echo base_url('auth_federated/edit_user_network_groups') . '/' . $group['id'] . '/' . $isMaster?>" ><i class="icon-edit"></i></a>
+						&nbsp;&nbsp;
 							<?php if ( $group['group_type'] == "master" ): ?>
-								Unable to delete master network group
+								<i class="icon-trash icon-grey-link" rel="popover" data-content="Unable to delete master network group" data-original-title="Delete Network Group"></i>
+								<!-- Unable to delete master network group -->
 							<?php elseif ( $group['number_of_sources'] > 0 ): ?>
-								Unable to delete group with sources assigned
+								<i class="icon-trash icon-grey-link" rel="popover" data-content="Unable to delete group with sources assigned" data-original-title="Delete Network Group"></i>
+								<!-- Unable to delete group with sources assigned -->
 							<?php else: ?>
 								<a href="<?php echo base_url('groups/delete_network_group'). "/" . $group['id']; ?>" ></i><i class="icon-trash"></i></a></td>
 							<?php endif; ?>
+
 					</tr>
 				<?php endforeach; ?>
 				</tbody>

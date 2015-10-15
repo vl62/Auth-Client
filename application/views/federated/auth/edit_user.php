@@ -65,7 +65,7 @@
 					<?php echo form_input($password_confirm); ?>
 				</p>
 				<?php echo form_hidden(array('installation_key' => $this->config->item('installation_key'))); ?>	
-				<p>
+				<!-- <p>
 					<?php if ( isset($groups)): ?>
 					<?php error_log(print_r($groups, 1)); ?>
 					Assign user to groups that given them openAccess to restrictedAccess records<br />(control click to select multiple): <br />
@@ -81,7 +81,7 @@
 					<?php else: ?>
 					<p><span class="label label-important">There are no network groups available to this installation. <br />A user will not be able to log in until they been assigned to at least one group.</span></p>
 					<?php endif; ?>
-				</p>
+				</p> -->
 				<p>
 				<div class="is_admin_slider span5 offset3" >
 					<label for="isadmin">Is Admin:</label>

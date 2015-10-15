@@ -73,7 +73,16 @@
 									<?php endforeach ?>
 									<?php endif; ?>
 								<?php endif; ?>
-								<a rel="popover" data-content="Edit the network groups for a user" data-original-title="Edit User Network Groups" href="<?php echo base_url('auth_federated/edit_user_network_groups'). "/" . $user->id; ?>" ><i class="icon-edit"></i></a>
+
+							<?php if(false) : ?>
+								<?php if ( $user->editable ): ?>
+									<a rel="popover" data-content="Edit the network groups for a user" data-original-title="Edit User Network Groups" href="<?php echo base_url('auth_federated/edit_user_network_groups'). "/" . $user->id; ?>" ><i class="icon-edit"></i></a>
+								<?php else: ?>
+									<i class="icon-edit icon-grey-link" rel="popover" data-content="Unable to edit the user's network groups since you are not an admin for the installation the user was created at" data-original-title="Edit User Network Groups Disabled"></i>
+								<?php endif; ?>
+							<?php endif; ?>
+
+								
 							</td>	
 							<?php if ( $user->editable ): ?>
 							<td><?php echo ($user->active) ? anchor("auth_federated/deactivate/" . $user->id, 'Active') : anchor("auth_federated/activate/" . $user->id, 'Inactive', array('id' => $user->id, 'class' => 'activateUser')); ?></td>
