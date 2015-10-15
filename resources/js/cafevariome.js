@@ -3179,8 +3179,8 @@ function edit_user_network_groups() {
                         $("#editUserError").removeClass('hide');
                         $("#editUserError").text(result.error);
                     } else if (result.success) {
-//					console.log(result.success);
-                        window.location = baseurl + "auth_federated/users";
+					// console.log(result.success);
+                        window.location = baseurl + "groups";
                     }
                 }
             });

@@ -146,49 +146,12 @@ class Sources extends MY_Controller {
                 // All groups were de-selected so remove this source from all groups - do this by passing NULL to ion_auth remove_sources_from_group function
 //				$this->sources_model->remove_sources_from_group(NULL, $this->input->post('source_id'));
             }
-
-            // Get the curators selected
-//			if ($this->input->post('curators')) {
-//				// Get all the curators for this source
-//				$current_curators = $this->sources_model->getSourceCurators($this->input->post('source_id'));
-//				$curators_in = array();
-//				foreach ( $current_curators as $user_id => $source_id ) {
-//					$curators_in[] = $user_id;
-//				}
-//				// Find which current curators have been deselected and therefore need to be removed from this source
-//				$diff = array_diff($curators_in, $this->input->post('curators'));
-////				error_log("diff -> " . print_r($diff, 1));
-//				if ( ! empty($diff) ) {
-//					foreach ( $diff as $delete_user_id ) {
-////						error_log("delete $delete_user_id");
-//						$this->sources_model->deleteCuratorFromSource($delete_user_id, $this->input->post('source_id'));
-////						$this->sources_model->remove_sources_from_group($delete_group_id, $this->input->post('source_id'));
-//					}
-//				}
-////				error_log("curators current -> " . print_r($current_curators, 1));
-////				error_log("curators post -> " . print_r($this->input->post('curators'), 1));
-////				$this->sources_model->deleteSourceCurators($this->input->post('source_id'));
-//				foreach ($this->input->post('curators') as $user_id) {
-//					if ( ! array_key_exists($user_id, $current_curators)) {
-//						$curator_data = array("user_id" => $user_id, "source_id" => $this->input->post('source_id'));
-//						$insert_id = $this->sources_model->insertSourceCurator($curator_data);
-//						if ( $insert_id ) {
-////							error_log("inserted curator_id -> " . $insert_id);
-//						}
-//					}
-//				}
-//			}
-//			else { // No curators selected, delete all for this source
-//				$this->sources_model->deleteSourceCurators($this->input->post('source_id'));
-//			}
-//			echo "---> $name $uri $description $type<br />";
             if (file_exists("resources/elastic_search_status_complete"))
                 unlink("resources/elastic_search_status_complete");
             file_put_contents("resources/elastic_search_status_incomplete", "");
 
             redirect("sources", 'refresh');
-        }
-        else {
+        } else {
             // Get all the users in this installation for the curator select list
 //			$this->data['users'] = $this->ion_auth->users()->result();
 //			// Get the current curators for this source
@@ -196,8 +159,9 @@ class Sources extends MY_Controller {
 //			$this->data['selected_curators'] = $selected_curators;
             // Get all available groups for the networks this installation is a member of from auth central for multi select list
             $token = $this->session->userdata('Token');
-            $groups = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
-//			print_r($groups);
+            $groups = authPostRequest($token, array('installation_key' => $this->config->item('installation_key'), 'url' => base_url()), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
+			// print_r($groups);
+
             $this->data['groups'] = json_decode($groups, TRUE);
 
             // Get all the network groups that this source from this installation is currently in so that these can be pre selected in the multiselect list

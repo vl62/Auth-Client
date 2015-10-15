@@ -24,7 +24,7 @@ class Settings_model extends CI_Model {
 	
 	public function getDisplayFieldsForSharingPolicy($sharing_policy) {
 		$query = $this->db->get_where('display_fields', array('sharing_policy' => $sharing_policy, 'type' => 'search_result'))->result_array();
-//		error_log("fields -> " . print_r($query, 1));
+		// error_log("fields -> " . print_r($query, 1));
 		return $query;
 	}
 	
