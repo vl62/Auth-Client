@@ -71,6 +71,7 @@ class Networks extends MY_Controller {
 //			$base_url = urlencode(base64_encode(base_url()));
             $token = $this->session->userdata('Token');
             $base_url = base_url();
+            error_log($base_url);
             $network = authPostRequest($token, array('installation_base_url' => $base_url, 'network_name' => $name, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/create_network");
 //			$data = json_decode(createNetwork(array('installation_base_url' => $base_url, 'network_name' => $name, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server')));
 //			echo "create network:<br />";

@@ -30,17 +30,17 @@ function isNumber(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
-var gene_keys = new Array();
-$.ajax({url: baseurl + 'discover/autocomplete_query_builder/gene',
-    dataType: 'json',
-    delay: 200,
-    type: 'POST',
-    success: function (json) {
-        $.each(json, function (i, value) {
-            gene_keys.push(value);
-        });
-    },
-});
+// var gene_keys = new Array();
+// $.ajax({url: baseurl + 'discover/autocomplete_query_builder/gene',
+//     dataType: 'json',
+//     delay: 200,
+//     type: 'POST',
+//     success: function (json) {
+//         $.each(json, function (i, value) {
+//             gene_keys.push(value);
+//         });
+//     },
+// });
 
 $and_or_logic = '<div class="btn-group btn-toggle logic_phenotype" id="" style="margin-bottom:20px">\n\
                         <a class="btn btn-medium {0}">AND</a>\n\
@@ -198,9 +198,8 @@ function add_symbol($symbol) {
 
             $("#dna" + $dna_count).append($textbox_with_label.format($dna_textbox));
 
-            $("#dna" + $dna_count + " input").autocomplete({
-                source: gene_keys
-            });
+            // 
+            
 
             $("#dna" + $dna_count).append($add_remove_btn.format(["offset2"]));
             $dna_count += 1;
@@ -215,9 +214,9 @@ function add_symbol($symbol) {
 
             $("#protein" + $protein_count).append($textbox_with_label.format($protein_textbox));
 
-            $("#protein" + $protein_count + " input").autocomplete({
-                source: gene_keys
-            });
+            // $("#protein" + $protein_count + " input").autocomplete({
+            //     source: gene_keys
+            // });
 
             $("#protein" + $protein_count).append($add_remove_btn.format(["offset2"]));
             $protein_count += 1;
@@ -236,9 +235,9 @@ function add_symbol($symbol) {
 
             $("#geneSymbol" + $geneSymbol_count).append($textbox_with_label.format($geneSymbol_textbox));
 
-            $("#geneSymbol" + $geneSymbol_count + " input").autocomplete({
-                source: gene_keys
-            });
+            // $("#geneSymbol" + $geneSymbol_count + " input").autocomplete({
+            //     source: gene_keys
+            // });
 
             $("#geneSymbol" + $geneSymbol_count).append($add_remove_btn.format(["offset2"]));
             $geneSymbol_count += 1;

@@ -169,11 +169,11 @@ $(document).ready(function() {
 						<div class="span4 pagination-centered">
 							<h4>Manual Maintenance</h4>
 						</div>
-						<br />
+						<!-- <br />
 						<br />
 						<div class="span4 pagination-centered">
 							<a onclick="regenerateAutocomplete();" class="btn" rel="popover" data-content="Click to regenerate a non-redundant list of autocomplete terms in your database (references, HGVS, genes, phenotypes). These terms will then be used for autocompletion in the main discovery search box. This should be done after importing new data." data-original-title="Regenerate autocomplete"><i class="icon-list-alt"></i>  Regenerate Autocomplete</a>
-						</div>
+						</div> -->
                                                 <?php if(false) { 
 						echo '<br />
 						<br />
