@@ -59,7 +59,7 @@
                     'linkedAccess' => 'linkedAccess',
                     'restrictedAccess' => 'restrictedAccess'
                 );
-                echo form_dropdown('sharing_policy', $options, 'openAccess');
+                echo form_dropdown('sharing_policy', $options, 'restrictedAccess');
                 ?><br/>
                 
                 <span class="btn btn-default btn-file" style="padding-top: 10px;">

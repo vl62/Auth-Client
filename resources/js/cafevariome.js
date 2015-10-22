@@ -130,19 +130,10 @@ function variantOpenAccessRequestFederated(term, source, source_full, count, fed
                     "label": "Close",
                     "icon": "icon-remove icon-black"
                 },
-//		{
-//		"label" : "VCF",
-//		"class" : "btn-primary btn-small",
-//		"callback": function() {
-////			console.log("Primary button");
-//			window.open(baseurl + 'discover/variants/' + term + '/' + source + '/openAccess/vcf');
-//			}
-//		},
                 {
                     "label": "RSS",
                     "class": "btn-primary btn-small",
                     "callback": function () {
-//			console.log("Primary button");
                         window.open(baseurl + 'discover/variants_federated/' + term + '/' + source + '/' + federated_install_uri + '/openAccess/rss');
                     }
                 },
@@ -150,7 +141,6 @@ function variantOpenAccessRequestFederated(term, source, source_full, count, fed
                     "label": "VarioML",
                     "class": "btn-primary btn-small",
                     "callback": function () {
-//			console.log("Primary button");
                         window.open(baseurl + 'discover/variants_federated/' + term + '/' + source + '/' + federated_install_uri + '/openAccess/varioml');
                     }
                 },
@@ -158,7 +148,6 @@ function variantOpenAccessRequestFederated(term, source, source_full, count, fed
                     "label": "JSON",
                     "class": "btn-primary btn-small",
                     "callback": function () {
-//			console.log("Primary button");
                         window.open(baseurl + 'discover/variants_federated/' + term + '/' + source + '/' + federated_install_uri + '/openAccess/json');
                     }
                 },
@@ -166,7 +155,6 @@ function variantOpenAccessRequestFederated(term, source, source_full, count, fed
                     "label": "LOVD",
                     "class": "btn-primary btn-small",
                     "callback": function () {
-//			console.log("Primary button");
                         window.open(baseurl + 'discover/variants_federated/' + term + '/' + source + '/' + federated_install_uri + '/openAccess/lovd');
                     }
                 },
@@ -174,7 +162,6 @@ function variantOpenAccessRequestFederated(term, source, source_full, count, fed
                     "label": "Excel",
                     "class": "btn-primary btn-small",
                     "callback": function () {
-//			console.log("Primary button");
                         window.open(baseurl + 'discover/variants_federated/' + term + '/' + source + '/' + federated_install_uri + '/openAccess/excel');
                     }
                 },
@@ -182,7 +169,6 @@ function variantOpenAccessRequestFederated(term, source, source_full, count, fed
                     "label": "Plain text",
                     "class": "btn-primary btn-small",
                     "callback": function () {
-//			console.log("Primary button");
                         window.open(baseurl + 'discover/variants_federated/' + term + '/' + source + '/' + federated_install_uri + '/openAccess/tab');
                     }
                 },
@@ -190,18 +176,7 @@ function variantOpenAccessRequestFederated(term, source, source_full, count, fed
                     "label": "Webpage",
                     "class": "btn-primary btn-small",
                     "callback": function () {
-//			console.log("Primary button");
                         window.open(baseurl + 'discover/variants_federated/' + term + '/' + source + '/' + federated_install_uri + '/openAccess/html');
-
-//			$.post("discover/variants", { term: term, source: source, source_full: source_full, count: count },
-//				function(data) {
-////					alert("Data Loaded: " + data);
-//					var win = window.open();
-//					win.document.write(data);
-////					$('#mutationTable').append(data);
-//			});
-
-
                     }
                 }
             ],
@@ -3506,3 +3481,30 @@ $(document).ready(function (e) {
     }));
 
 });
+
+$(document).on('click', '#show_admin_emails', function(e) {
+    e.preventDefault();
+
+    $(".closeModal").click(function(event) {
+        $("#modalEmailInfo").hide();
+    });
+    
+    $.ajax({
+        url: authurl + '/auth_accounts/admin_email_ids',
+        type: 'POST',
+        dataType: 'json',
+        data: {'url': $(this).attr('href')},
+    })
+    .done(function($data) {
+        $("#email_list").html("");
+        $.each($data.emails, function(index, val) {
+            $("#email_list").append("<h4><a href='" + val['email'] + "'>" + val['email'] + "</a></h4>");
+        });
+        $("#modalEmailInfo").show();
+    })
+    .fail(function() {
+        console.log("error");
+    });
+});
+
+
