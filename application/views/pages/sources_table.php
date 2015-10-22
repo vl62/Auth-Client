@@ -37,9 +37,9 @@ $(function (){
 							<?php if ( $this->config->item('show_sources_in_discover')): ?>
 								<?php $federated_source = preg_replace('/__install.*/', '', $source); ?>
 								<?php if ( $source_types[$source] == "federated" ): ?>
-									<td><a rel="popover" data-content="Click for a description of this source (opens in a new window)." data-original-title="Source Information" href="<?php echo base_url('discover/source/' . $source); ?>" target="_blank"><?php echo $sources_full[$source]; ?></a></td>
+									<td><a><?php echo $sources_full[$source]; ?></a></td>
 								<?php else: ?>
-									<td><a rel="popover" data-content="Click for a description of this source (opens in a new window)." data-original-title="Source Information" href="<?php echo base_url('discover/source/' . $federated_source); ?>" target="_blank"><?php echo $sources_full[$source]; ?></a></td>
+									<td><a><?php echo $sources_full[$source]; ?></a></td>
 								<?php endif; ?>
 							<?php endif; ?>
 							<td>
@@ -133,7 +133,11 @@ $(function (){
 							</td>
 							<td> 
 							
-							<a href="#" rel="popover" data-content="The display of record counts has been limited to specific users for this source." data-original-title="Unable to view counts"><i class="fa fa-ban fa-2x"></i></a>
+							<?php if ( array_key_exists('restrictedAccess', $count )) : ?>
+									<a id="show_admin_emails" href="<?php echo $install_uri[$source]?>" target="_blank" rel="popover" data-content="Click to view the admin email id's of this source." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
+							<?php else: ?>
+									<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
+							<?php endif; ?>
 
 							<!-- old version	 -->
 							<?php if(false) {
@@ -181,4 +185,22 @@ $(function (){
 	</div>
 </div>
 <hr>
+
+<div class="modal hide fade in" style="display: none;" id="modalEmailInfo" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close closeModal" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">List of Admin Email Id's</h4>
+                </div>
+                <div class="modal-body" id="email_list">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default closeModal" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 

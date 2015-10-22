@@ -402,12 +402,19 @@ class Discover extends MY_Controller {
     }
 
     function proceed_to_query($type) {
+        
         $token = $this->session->userdata('Token');
-        $networks = json_decode(authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of"), 1);
+        $networks = json_decode(authPostRequest($token, array('user_id' => $this->session->userdata('user_id')), $this->config->item('auth_server') . "/api/auth/get_networks_user_member_of"), 1);
+        // $networks = json_decode(authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_networks_installation_member_of"), 1);
         $this->data['networks'] = array();
 
+        // echo "<pre>";
+        // var_dump($networks);
+        // echo "</pre>";
+        // return;
+
         foreach ($networks as $key => $value) {
-            $this->data['networks'] += array($value['network_name'] => $value['network_key']);
+            $this->data['networks'] += array($value['name'] => $value['network_key']);
         }
 
         $sources_options = $this->sources_model->getSources(); // Get all the available sources from db
