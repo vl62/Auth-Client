@@ -677,6 +677,7 @@ class Discover extends MY_Controller {
 
         $data['sources_full'] = $sources;
 
+        
 
         $this->load->view('pages/sources_table', $data); // Don't use _render as headers are already sent, html output from the view is sent back to ajax function and appended to div
     }
