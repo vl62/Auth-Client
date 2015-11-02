@@ -726,7 +726,8 @@ class Discover_federated extends MY_Controller {
 			$this->elasticsearch->set_index($es_index);
 			$this->elasticsearch->set_type("variants");
 			$query = array();
-			$query['size'] = 10;
+			// Temporary fix for the spain presentation. 
+			$query['size'] = 100000;
 //			error_log("term -> $term");
 //			$sanitize_query = htmlentities(strip_tags( $query ));
 //			error_log("sanitize -> $sanitize_query");

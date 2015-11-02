@@ -1,7 +1,7 @@
 <div class="container" style="padding-left: 15px;
   padding-right: 15px;
   margin-left: auto;
-  margin-right: auto; width: 100%;">
+  margin-right: auto; width: 80%;">
 	<div class="row-fluid">
 		<div class="span12 pagination-centered" id="table_container">
 			<div class="well">
@@ -20,8 +20,8 @@
 <!--				<table class="table table-hover table-bordered table-striped">-->
 				<!--<a href="#exportModal" data-toggle="modal" data-backdrop="false" rel="popover" data-content="Export to Excel, visualise data in genome browsers." data-original-title="Export and Visualisation" class="btn" ><i class="icon-picture"></i> Export and Visualisation</a>-->
 				<!-- Table is created using datatables - initialised in DT_bootstrap.js file in resources/js -->
-                                <div style="overflow: hidden;">
-                                    <table cellpadding="0" style="width: 100%" cellspacing="0" border="0"  class="table table-striped table-bordered generaltablewithpagination">
+            <div style="overflow: scroll;">
+                <table cellpadding="0" style="width: 100%" cellspacing="0" border="0"  class="table table-striped table-bordered generaltablewithpagination">
 					<thead>
 						<tr>
 							<?php
