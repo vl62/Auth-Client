@@ -134,9 +134,13 @@ $(function (){
 							<td> 
 							
 							<?php if ( array_key_exists('restrictedAccess', $count )) : ?>
+								<?php if ( $count['restrictedAccess'] > 0 ): ?>
 									<a id="show_admin_emails" href="<?php echo $install_uri[$source]?>" target="_blank" rel="popover" data-content="Click to view the admin email id's of this source." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
-							<?php else: ?>
+								<?php elseif ( $count['restrictedAccess'] == 0 ): ?>
+									<?php echo "0"; ?>
+								<?php else: ?>
 									<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
+								<?php endif; ?>
 							<?php endif; ?>
 
 							<!-- old version	 -->
