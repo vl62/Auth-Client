@@ -83,7 +83,7 @@ class Discover_federated extends MY_Controller {
 			
 			if ( ! array_key_exists($source_id, $accessible_source_display_ids_array)) {
 //				error_log("Do not return this source!!!");
-				// $all_source_counts[$source] = array("openAccess" => "BLOCKED", "linkedAccess" => "BLOCKED", "restrictedAccess" => "BLOCKED");
+				$all_source_counts[$source] = array("openAccess" => "BLOCKED", "linkedAccess" => "BLOCKED", "restrictedAccess" => "BLOCKED");
 				continue;
 			}
 			
