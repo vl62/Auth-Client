@@ -252,10 +252,9 @@ class Sources_model extends CI_Model {
     }
 
     public function insertVariants($variant_data) {
-        
-        $sql = "SELECT record_id FROM variants WHERE source='" . $variant_data['source'] . "' AND record_id=" . $variant_data['record_id'];
+        $sql = "SELECT record_id FROM variants WHERE source='" . $variant_data['source'] . "' AND record_id=" . "'" . $variant_data['record_id'] . "'" ;
         if ($this->db->query($sql)->result()) {
-            $sql = "DELETE from VARIANTS WHERE source='" . $variant_data['source'] . "' AND record_id=" . $variant_data['record_id'];
+            $sql = "DELETE from VARIANTS WHERE source='" . $variant_data['source'] . "' AND record_id=" . "'"  . $variant_data['record_id'] . "'" ;
             $this->db->query($sql);
         }
         $this->db->insert('variants', $variant_data);
@@ -265,7 +264,7 @@ class Sources_model extends CI_Model {
     }
 
     public function checkVariants($variant_data) {
-        $sql = "SELECT record_id FROM variants WHERE source='" . $variant_data['source'] . "' AND record_id=" . $variant_data['record_id'];
+        $sql = "SELECT record_id FROM variants WHERE source='" . $variant_data['source'] . "' AND record_id=" . "'"  . $variant_data['record_id'] . "'" ;
         if ($this->db->query($sql)->result()) {
             return 0;
         }

@@ -1960,8 +1960,13 @@ class Variants extends MY_Controller {
                     $primary_phenotype_lookup_data = array();
                     foreach ($row as $column) {
                         $column_count++;
+                        echo $column_count;
+                        
                         $current_header = (string) $core_fields[$column_count - 1]; // Match this column to the correct header name (stored above)
-//						error_log("header -> " . $current_header);
+						
+                        echo $current_header;
+
+                        // error_log("header -> " . $current_header);
 
                         if ($current_header == "variant_id") { // Do a check to see if this is the variant_id column (it may or may not have data)
                             if (!$column) { // If it is then check to see there's a value present, if not then return error
