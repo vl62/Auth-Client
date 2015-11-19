@@ -1960,11 +1960,11 @@ class Variants extends MY_Controller {
                     $primary_phenotype_lookup_data = array();
                     foreach ($row as $column) {
                         $column_count++;
-                        echo $column_count;
+                        // echo $column_count;
                         
                         $current_header = (string) $core_fields[$column_count - 1]; // Match this column to the correct header name (stored above)
 						
-                        echo $current_header;
+                        // echo $current_header;
 
                         // error_log("header -> " . $current_header);
 
