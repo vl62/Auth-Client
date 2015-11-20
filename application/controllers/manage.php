@@ -46,7 +46,3 @@ class manage extends MY_Controller {
 
 }
 
-?>
-
-
-
