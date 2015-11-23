@@ -1830,7 +1830,7 @@ class Variants extends MY_Controller {
 
                                 $cell_value = trim($column);
 //								error_log("value -> $cell_value");
-                                if (preg_match('/phenotype:(.*)/i', $current_header, $phenotype_match)) {
+                                if (preg_match('/phe:(.*)/i', $current_header, $phenotype_match)) {
                                     error_log("phenotype -> " . print_r($phenotype_match, 1) . " -> $cell_value");
                                     $phenotype_attribute = preg_replace('/phe\:/', '', $phenotype_match[0]);
                                     $phenotype_value = $cell_value;
@@ -2309,7 +2309,7 @@ class Variants extends MY_Controller {
 
                                 $cell_value = trim($column);
 //								error_log("value -> $cell_value");
-                                if (preg_match('/phenotype:(.*)/i', $current_header, $phenotype_match)) {
+                                if (preg_match('/phe:(.*)/i', $current_header, $phenotype_match)) {
                                     error_log("phenotype -> " . print_r($phenotype_match, 1) . " -> $cell_value");
                                     $phenotype_attribute = preg_replace('/phe\:/', '', $phenotype_match[0]);
                                     $phenotype_value = $cell_value;

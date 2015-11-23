@@ -8,7 +8,6 @@ class manage extends MY_Controller {
 
     public function index(){
 
-
 		$this->title = "Cafe Variome - Manage";
 		$this->_render('pages/manage');
 
