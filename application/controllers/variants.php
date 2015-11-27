@@ -1789,7 +1789,7 @@ class Variants extends MY_Controller {
                     $c++;
                     if ($c === 1) { // Get the header line
                         foreach ($data as $column) {
-                            $column_count++;
+                            // $column_count++;
                             if ($column) { // Only store if there's data for this column
                                 $cell_value = (string) $column;
                                 if (preg_match('/phe\:(.*)/', $cell_value, $phenotype_match)) {
@@ -2268,7 +2268,7 @@ class Variants extends MY_Controller {
                     $c++;
                     if ($c === 1) { // Get the header line
                         foreach ($data as $column) {
-                            $column_count++;
+                            // $column_count++;
                             if ($column) { // Only store if there's data for this column
                                 $cell_value = (string) $column;
                                 if (preg_match('/phe\:(.*)/', $cell_value, $phenotype_match)) {
