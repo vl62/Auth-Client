@@ -1588,6 +1588,7 @@ table {
   border-spacing: 0;
 }
 .table {
+  table-layout: auto;
   width: 100%;
   margin-bottom: 21px;
 }
@@ -1598,8 +1599,18 @@ table {
   text-align: left;
   vertical-align: top;
   border-top: 1px solid #dddddd;
-  text-align: center; /* Owen - added to align the text in centre */
+  <!-- text-align: center; /* Owen - added to align the text in centre */ -->
 }
+
+
+.table td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+
 .table th {
   font-weight: bold;
   font-size:18px;

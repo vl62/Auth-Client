@@ -19104,6 +19104,12 @@ CREATE TABLE `variants` (
 -- Dumping data for table `variants`
 --
 
+
+
+ALTER TABLE `variants` ADD INDEX(`cafevariome_id`);
+
+
+
 LOCK TABLES `variants` WRITE;
 /*!40000 ALTER TABLE `variants` DISABLE KEYS */;
 INSERT INTO `variants` (`cafevariome_id`, `variant_id`, `source`, `laboratory`, `gene`, `LRG`, `ref`, `hgvs`, `genomic_ref`, `genomic_hgvs`, `protein_ref`, `protein_hgvs`, `phenotype`, `individual_id`, `gender`, `ethnicity`, `location_ref`, `start`, `end`, `strand`, `build`, `pathogenicity`, `pathogenicity_list_type`, `detection_method`, `germline_or_somatic`, `comment`, `sharing_policy`, `mutalyzer_check`, `source_url`, `dbsnp_id`, `date_time`, `pmid`, `active`) VALUES

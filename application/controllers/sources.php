@@ -75,7 +75,7 @@ class Sources extends MY_Controller {
                     $this->sources_model->deleteSource($source_id);
                     if ($this->input->post('variants') == 'yes') { // also delete variants for the source
 //                                                $is_deleted = $this->sources_model->delete_variants_and_phenotypes($source);
-                        $is_deleted = $this->sources_model->deleteVariants($source);
+                        $is_deleted = $this->sources_model->delete_variants_and_phenotypes($source);
                     }
                 }
                 if (file_exists("resources/elastic_search_status_complete"))

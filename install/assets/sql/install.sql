@@ -19102,6 +19102,10 @@ CREATE TABLE `variants` (
 -- Dumping data for table `variants`
 --
 
+
+ALTER TABLE `variants` ADD INDEX(`cafevariome_id`);
+
+
 LOCK TABLES `variants` WRITE;
 /*!40000 ALTER TABLE `variants` DISABLE KEYS */;
 /*!40000 ALTER TABLE `variants` ENABLE KEYS */;
