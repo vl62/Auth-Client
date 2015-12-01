@@ -3482,7 +3482,8 @@ $(document).ready(function (e) {
 
 });
 
-$(document).on('click', '#show_admin_emails', function(e) {
+$(document).on('click', '.show_admin_emails', function(e) { 
+
     e.preventDefault();
 
     $(".closeModal").click(function(event) {
@@ -3505,6 +3506,33 @@ $(document).on('click', '#show_admin_emails', function(e) {
     .fail(function() {
         console.log("error");
     });
+
 });
+
+
+// $(document).on('click', '#show_admin_emails', function(e) {
+//     e.preventDefault();
+
+//     $(".closeModal").click(function(event) {
+//         $("#modalEmailInfo").hide();
+//     });
+    
+//     $.ajax({
+//         url: authurl + '/auth_accounts/admin_email_ids',
+//         type: 'POST',
+//         dataType: 'json',
+//         data: {'url': $(this).attr('href')},
+//     })
+//     .done(function($data) {
+//         $("#email_list").html("");
+//         $.each($data.emails, function(index, val) {
+//             $("#email_list").append("<h4><a href='" + val['email'] + "'>" + val['email'] + "</a></h4>");
+//         });
+//         $("#modalEmailInfo").show();
+//     })
+//     .fail(function() {
+//         console.log("error");
+//     });
+// });
 
 
