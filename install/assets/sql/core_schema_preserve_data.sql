@@ -945,6 +945,11 @@ CREATE TABLE `variants` (
 -- Table structure for table `variant_aliases`
 --
 
+
+
+ALTER TABLE `variants` ADD INDEX(`cafevariome_id`);
+
+
 DROP TABLE IF EXISTS `variant_aliases`;
 CREATE TABLE `variant_aliases` (
   `alias_id` int(10) NOT NULL AUTO_INCREMENT,

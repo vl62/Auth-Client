@@ -42,7 +42,7 @@
                     'excel_core' => 'Excel Template',
 //					'tab' => 'Tab Delimited Full',
                     'tab_core' => 'Tab Delimited Template',
-                    'epad' => 'EPAD',
+                    // 'epad' => 'EPAD',
 //                    'phenotype_test' => 'Phenotype Test',
 //					'dmudb' => 'DMuDB tab delimited (.txt)',
 //					'vcf' => 'VCF',

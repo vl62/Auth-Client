@@ -173,6 +173,10 @@ INSERT INTO `core_fields` VALUES
 /*!40000 ALTER TABLE `core_fields` ENABLE KEYS */;
 UNLOCK TABLES;
 
+
+ALTER TABLE `variants` ADD INDEX(`cafevariome_id`);
+
+
 --
 -- Table structure for table `curators`
 --
@@ -1783,6 +1787,11 @@ CREATE TABLE `variants` (
 --
 -- Dumping data for table `variants`
 --
+
+
+ALTER TABLE `variants` ADD INDEX(`cafevariome_id`);
+
+
 
 LOCK TABLES `variants` WRITE;
 /*!40000 ALTER TABLE `variants` DISABLE KEYS */;

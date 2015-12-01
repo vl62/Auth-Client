@@ -885,6 +885,10 @@ CREATE TABLE `variants` (
 -- Dumping data for table `variants`
 --
 
+
+ALTER TABLE `variants` ADD INDEX(`cafevariome_id`);
+
+
 LOCK TABLES `variants` WRITE;
 /*!40000 ALTER TABLE `variants` DISABLE KEYS */;
 INSERT INTO `variants` VALUES(1, '', 'dmudb', 'dmudb', 'APC', '', 'NM_000038.4', 'c.4691T>C', '', '', '', 'p.(Leu1564Ser)', '', '', '', '', '', 'chr5', 112175982, 112175982, '', '', 'Unknown', '', '', '', '', 'linkedAccess', 0, 'https://secure.dmudb.net/ngrl-rep/BrowseData.do?advancedReferralSearch.save=0&docucfilter=1&advancedReferralSearch.gene=APC&advancedReferralSearch.hgvsName=c.4691T%3EC', '', '', '', 1);
