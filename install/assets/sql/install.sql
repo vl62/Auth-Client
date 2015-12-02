@@ -19015,7 +19015,7 @@ CREATE TABLE `variants` (
   `record_id` varchar(200) NOT NULL,
   `included` tinyint(1) NOT NULL DEFAULT 1,
   `requested` tinyint(1) NOT NULL DEFAULT 0,
-  `IE_date_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `IE_date_time` timestamp NOT NULL "0000-00-00 00:00:00",
   `req_date_time` timestamp,
   `source` varchar(50) NOT NULL,
   `sharing_policy` varchar(50) NOT NULL DEFAULT 'openAccess',
