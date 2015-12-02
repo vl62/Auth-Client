@@ -135,7 +135,7 @@ $(function (){
 							
 							<?php if ( array_key_exists('restrictedAccess', $count )) : ?>
 								<?php if ( $count['restrictedAccess'] > 0 ): ?>
-									<a id="show_admin_emails" href="<?php echo $install_uri[$source]?>" target="_blank" rel="popover" data-content="Click to view the admin email id's of this source." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
+									<a class="show_admin_emails" href="<?php echo $install_uri[$source]?>" target="_blank" rel="popover" data-content="Click to view the admin email id's of this source." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
 								<?php elseif ( $count['restrictedAccess'] == 0 ): ?>
 									<?php echo "0"; ?>
 								<?php else: ?>

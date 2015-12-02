@@ -620,7 +620,7 @@ class Variants extends REST_Controller {
 							"termName" => $variant->phenotype,
 							"cafevariome_id" => $insert_id);
 //
-						$phenotype_insert_id = $this->sources_model->insertPhenotypes($phenotype_data);
+						// $phenotype_insert_id = $this->sources_model->insertPhenotypes($phenotype_data);
 						$pl = $this->sources_model->getPrimaryLookup($termId);
 						if (!$pl) {
 							$lookup_data = array(

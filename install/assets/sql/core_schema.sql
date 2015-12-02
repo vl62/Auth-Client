@@ -865,7 +865,11 @@ DROP TABLE IF EXISTS `variants`;
 
 CREATE TABLE `variants` (
   `cafevariome_id` int(11) NOT NULL AUTO_INCREMENT,
-  `record_id` varchar(50) NOT NULL,
+  `record_id` varchar(200) NOT NULL,
+  `included` tinyint(1) NOT NULL DEFAULT 1,
+  `requested` tinyint(1) NOT NULL DEFAULT 0,
+  `IE_date_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `req_date_time` timestamp,
   `source` varchar(50) NOT NULL,
   `sharing_policy` varchar(50) NOT NULL DEFAULT 'openAccess',
   `mutalyzer_check` tinyint(1) NOT NULL,
@@ -951,6 +955,11 @@ CREATE TABLE `variants` (
 --
 -- Table structure for table `variant_aliases`
 --
+
+
+ALTER TABLE `variants` ADD INDEX(`cafevariome_id`);
+
+
 
 DROP TABLE IF EXISTS `variant_aliases`;
 CREATE TABLE `variant_aliases` (
