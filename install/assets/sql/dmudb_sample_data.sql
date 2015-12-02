@@ -886,7 +886,7 @@ CREATE TABLE `variants` (
 --
 
 
-ALTER TABLE `variants` ADD INDEX(`cafevariome_id`);
+-- ALTER TABLE `variants` ADD INDEX(`cafevariome_id`);
 
 
 LOCK TABLES `variants` WRITE;

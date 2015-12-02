@@ -174,7 +174,7 @@ INSERT INTO `core_fields` VALUES
 UNLOCK TABLES;
 
 
-ALTER TABLE `variants` ADD INDEX(`cafevariome_id`);
+-- ALTER TABLE `variants` ADD INDEX(`cafevariome_id`);
 
 
 --
