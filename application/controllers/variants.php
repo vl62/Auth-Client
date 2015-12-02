@@ -60,8 +60,9 @@ class Variants extends MY_Controller {
                 // do we have the right userlevel?
                 do {
                     if ($this->ion_auth->logged_in() && $this->ion_auth->is_admin()) {
-//                                            $is_deleted = $this->sources_model->delete_variants_and_phenotypes($source);
-                        $is_deleted = $this->sources_model->deleteVariants($source);
+                     
+                        $is_deleted = $this->sources_model->delete_variants_and_phenotypes($source);
+                        // $is_deleted = $this->sources_model->deleteVariants($source);
 
                         // ElasticSearch delete by query (if ElasticSearch is enabled and running)
                         // http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-delete-by-query.html
@@ -94,8 +95,9 @@ class Variants extends MY_Controller {
                         if (!$can_curate_source) {
                             show_error("Sorry, you are not listed as a curator for that particular source.");
                         }
-//                                                $is_deleted = $this->sources_model->delete_variants_and_phenotypes($source);
-                        $is_deleted = $this->sources_model->deleteVariants($source);
+                        
+                        $is_deleted = $this->sources_model->delete_variants_and_phenotypes($source);
+                        // $is_deleted = $this->sources_model->deleteVariants($source);
 
                         // ElasticSearch delete by query (if ElasticSearch is enabled and running)
                         // http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-delete-by-query.html
@@ -1789,7 +1791,7 @@ class Variants extends MY_Controller {
                     $c++;
                     if ($c === 1) { // Get the header line
                         foreach ($data as $column) {
-                            $column_count++;
+                            // $column_count++;
                             if ($column) { // Only store if there's data for this column
                                 $cell_value = (string) $column;
                                 if (preg_match('/phe\:(.*)/', $cell_value, $phenotype_match)) {
@@ -1810,6 +1812,8 @@ class Variants extends MY_Controller {
                     } else { // All other lines are actual data
                         $column_count = 0;
                         $insert_data = array();
+                        $phenotype_insert_data = array();
+                        $primary_phenotype_lookup_data = array();
                         foreach ($data as $column) {
                             $column_count++;
                             $current_header = $core_fields[$column_count - 1];
@@ -1830,7 +1834,7 @@ class Variants extends MY_Controller {
 
                                 $cell_value = trim($column);
 //								error_log("value -> $cell_value");
-                                if (preg_match('/phenotype:(.*)/i', $current_header, $phenotype_match)) {
+                                if (preg_match('/phe:(.*)/i', $current_header, $phenotype_match)) {
                                     error_log("phenotype -> " . print_r($phenotype_match, 1) . " -> $cell_value");
                                     $phenotype_attribute = preg_replace('/phe\:/', '', $phenotype_match[0]);
                                     $phenotype_value = $cell_value;
@@ -1871,7 +1875,7 @@ class Variants extends MY_Controller {
                                 $phenotype_array = array();
                                 foreach ($phenotype_insert_data as $phenotype_data) {
                                     $phenotype_data['cafevariome_id'] = $insert_id; // Add the ID of the variant so that the phenotype can be linked to it
-                                    $phenotype_insert_id = $this->sources_model->insertPhenotypes($phenotype_data);
+                                    // $phenotype_insert_id = $this->sources_model->insertPhenotypes($phenotype_data);
 
                                     // Get the term name and add it to the insert_data array that is indexed in ElasticSearch
                                     $phenotype_array['term_name'] = $phenotype_data['attribute_termName'];
@@ -1960,8 +1964,13 @@ class Variants extends MY_Controller {
                     $primary_phenotype_lookup_data = array();
                     foreach ($row as $column) {
                         $column_count++;
+                        // echo $column_count;
+                        
                         $current_header = (string) $core_fields[$column_count - 1]; // Match this column to the correct header name (stored above)
-//						error_log("header -> " . $current_header);
+						
+                        // echo $current_header;
+
+                        // error_log("header -> " . $current_header);
 
                         if ($current_header == "variant_id") { // Do a check to see if this is the variant_id column (it may or may not have data)
                             if (!$column) { // If it is then check to see there's a value present, if not then return error
@@ -2021,7 +2030,7 @@ class Variants extends MY_Controller {
                             foreach ($phenotype_insert_data as $phenotype_data) {
                                 $phenotype_data['cafevariome_id'] = $insert_id; // Add the ID of the variant so that the phenotype can be linked to it
 //								error_log("before -> " . print_r($phenotype_data, 1));
-                                $phenotype_insert_id = $this->sources_model->insertPhenotypes($phenotype_data);
+                                // $phenotype_insert_id = $this->sources_model->insertPhenotypes($phenotype_data);
 //								error_log("$insert_id -> $phenotype_insert_id");
                                 // Get the term name and add it to the insert_data array that is indexed in ElasticSearch
                                 $phenotype_array['term_name'] = $phenotype_data['attribute_termName'];
@@ -2169,7 +2178,7 @@ class Variants extends MY_Controller {
                             foreach ($phenotype_insert_data as $phenotype_data) {
 //								error_log("phenotype_data $insert_id -> " . print_r($phenotype_data, 1));
                                 $phenotype_data['cafevariome_id'] = $insert_id; // Add the ID of the variant so that the phenotype can be linked to it
-                                $phenotype_insert_id = $this->sources_model->insertPhenotypes($phenotype_data);
+                                // $phenotype_insert_id = $this->sources_model->insertPhenotypes($phenotype_data);
                                 // Get the term name and add it to the insert_data array that is indexed in ElasticSearch
 //								$phenotype_array['term_name'] = $phenotype_data['attribute_termName'];
 //								$insert_data['phenotypes'][] = $phenotype_array;
@@ -2263,7 +2272,7 @@ class Variants extends MY_Controller {
                     $c++;
                     if ($c === 1) { // Get the header line
                         foreach ($data as $column) {
-                            $column_count++;
+                            // $column_count++;
                             if ($column) { // Only store if there's data for this column
                                 $cell_value = (string) $column;
                                 if (preg_match('/phe\:(.*)/', $cell_value, $phenotype_match)) {
@@ -2284,6 +2293,8 @@ class Variants extends MY_Controller {
                     } else { // All other lines are actual data
                         $column_count = 0;
                         $insert_data = array();
+                        $phenotype_insert_data = array();
+                        $primary_phenotype_lookup_data = array();
                         foreach ($data as $column) {
                             $column_count++;
                             $current_header = $core_fields[$column_count - 1];
@@ -2304,7 +2315,7 @@ class Variants extends MY_Controller {
 
                                 $cell_value = trim($column);
 //								error_log("value -> $cell_value");
-                                if (preg_match('/phenotype:(.*)/i', $current_header, $phenotype_match)) {
+                                if (preg_match('/phe:(.*)/i', $current_header, $phenotype_match)) {
                                     error_log("phenotype -> " . print_r($phenotype_match, 1) . " -> $cell_value");
                                     $phenotype_attribute = preg_replace('/phe\:/', '', $phenotype_match[0]);
                                     $phenotype_value = $cell_value;
@@ -2344,7 +2355,7 @@ class Variants extends MY_Controller {
                                 $phenotype_array = array();
                                 foreach ($phenotype_insert_data as $phenotype_data) {
                                     $phenotype_data['cafevariome_id'] = $insert_id; // Add the ID of the variant so that the phenotype can be linked to it
-                                    $phenotype_insert_id = $this->sources_model->insertPhenotypes($phenotype_data);
+                                    $phenotype_insert_id = $this->sources_model->insertPhenotypes($phenotype_data); // inserts phenotype
 
                                     // Get the term name and add it to the insert_data array that is indexed in ElasticSearch
                                     $phenotype_array['term_name'] = $phenotype_data['attribute_termName'];
@@ -2490,7 +2501,7 @@ class Variants extends MY_Controller {
                             foreach ($phenotype_insert_data as $phenotype_data) {
                                 $phenotype_data['cafevariome_id'] = $insert_id; // Add the ID of the variant so that the phenotype can be linked to it
 //								error_log("before -> " . print_r($phenotype_data, 1));
-                                $phenotype_insert_id = $this->sources_model->insertPhenotypes($phenotype_data);
+                                $phenotype_insert_id = $this->sources_model->insertPhenotypes($phenotype_data); // nothing?
 //								error_log("$insert_id -> $phenotype_insert_id");
                                 // Get the term name and add it to the insert_data array that is indexed in ElasticSearch
                                 $phenotype_array['term_name'] = $phenotype_data['attribute_termName'];

@@ -27,7 +27,7 @@
 			<br />
 			<?php echo form_hidden(array('source' => $source)); ?>
 			<?php echo form_hidden(array('source_id' => $source_id)); ?>
-                        <p><button type="submit" name="submit" class="btn btn-primary"><i class="icon-remove icon-white"></i>  Delete Source</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "admin/sources";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
+                        <p><button type="submit" name="submit" class="btn btn-primary"><i class="icon-remove icon-white"></i>  Delete Source</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "sources";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
 		</div>
 	</div>
 </div>
