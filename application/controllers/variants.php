@@ -1816,7 +1816,9 @@ class Variants extends MY_Controller {
                         $primary_phenotype_lookup_data = array();
                         foreach ($data as $column) {
                             $column_count++;
-                            $current_header = $core_fields[$column_count - 1];
+
+                            $current_header = isset($core_fields[$column_count - 1]) ? $core_fields[$column_count - 1] : null;
+                            // $current_header = $core_fields[$column_count - 1];
 
                             if ($current_header == "variant_id") { // Do a check to see if this is the variant_id column (it may or may not have data)
                                 if (!$column) { // If it is then check to see there's a value present, if not then return error
@@ -1962,11 +1964,13 @@ class Variants extends MY_Controller {
                     $insert_data = array();
                     $phenotype_insert_data = array();
                     $primary_phenotype_lookup_data = array();
+
                     foreach ($row as $column) {
                         $column_count++;
                         // echo $column_count;
-                        
-                        $current_header = (string) $core_fields[$column_count - 1]; // Match this column to the correct header name (stored above)
+
+                        $current_header = isset($core_fields[$column_count - 1]) ? $core_fields[$column_count - 1] : null;
+                        // $current_header = (string) $core_fields[$column_count - 1]; // Match this column to the correct header name (stored above)
 						
                         // echo $current_header;
 
@@ -2104,7 +2108,10 @@ class Variants extends MY_Controller {
                     $present_flags = array();
                     foreach ($row as $column) {
                         $column_count++;
-                        $current_header = (string) $core_fields[$column_count - 1]; // Match this column to the correct header name (stored above)
+
+                        $current_header = isset($core_fields[$column_count - 1]) ? $core_fields[$column_count - 1] : null;
+                        // $current_header = (string) $core_fields[$column_count - 1]; // Match this column to the correct header name (stored above)
+
 //						error_log("header -> " . $current_header);
                         $cell_value = (string) $column;
                         $cell_value = trim($cell_value);
@@ -2297,7 +2304,9 @@ class Variants extends MY_Controller {
                         $primary_phenotype_lookup_data = array();
                         foreach ($data as $column) {
                             $column_count++;
-                            $current_header = $core_fields[$column_count - 1];
+
+                            $current_header = isset($core_fields[$column_count - 1]) ? $core_fields[$column_count - 1] : null;
+                            // $current_header = $core_fields[$column_count - 1];
 
                             if ($current_header == "variant_id") { // Do a check to see if this is the variant_id column (it may or may not have data)
                                 if (!$column) { // If it is then check to see there's a value present, if not then return error
@@ -2444,7 +2453,9 @@ class Variants extends MY_Controller {
                     $primary_phenotype_lookup_data = array();
                     foreach ($row as $column) {
                         $column_count++;
-                        $current_header = (string) $core_fields[$column_count - 1]; // Match this column to the correct header name (stored above)
+
+                        $current_header = isset($core_fields[$column_count - 1]) ? $core_fields[$column_count - 1] : null;
+                        // $current_header = (string) $core_fields[$column_count - 1]; // Match this column to the correct header name (stored above)
 //						error_log("header -> " . $current_header);
 
                         if ($current_header == "variant_id") { // Do a check to see if this is the variant_id column (it may or may not have data)
@@ -2574,8 +2585,11 @@ class Variants extends MY_Controller {
                     $present_flags = array();
                     foreach ($row as $column) {
                         $column_count++;
-                        $current_header = (string) $core_fields[$column_count - 1]; // Match this column to the correct header name (stored above)
-//						error_log("header -> " . $current_header);
+
+                        $current_header = isset($core_fields[$column_count - 1]) ? $core_fields[$column_count - 1] : null;
+                        // $current_header = (string) $core_fields[$column_count - 1]; // Match this column to the correct header name (stored above)
+
+
                         $cell_value = (string) $column;
                         $cell_value = trim($cell_value);
 
