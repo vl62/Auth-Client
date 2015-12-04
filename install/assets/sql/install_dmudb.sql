@@ -18763,8 +18763,8 @@ INSERT INTO `settings` (`setting_id`, `name`, `value`, `info`, `validation_rules
 (28, 'template', 'default', 'Specify the name of the css template file (located in views/css/)', 'xss_clean'),
 (29, 'discovery_requires_login', 'off', 'If set to on then discovery searches cannot be done unless a user is logged in.', 'xss_clean'),
 (30, 'show_sources_in_discover', 'off', 'If set to off then only the search box will be shown in the discovery interface (i.e. not the sources to search)', 'xss_clean'),
-(31, 'use_elasticsearch', 'on', 'If set to on then elasticsearch will be used instead of the basic search (elasticsearch needs to be running of course)', 'xss_clean');
-
+(31, 'use_elasticsearch', 'on', 'If set to on then elasticsearch will be used instead of the basic search (elasticsearch needs to be running of course)', 'xss_clean'),
+(32, 'allow_discovery', 'on', 'If set to on then users can discover on the site, otherwise the discovery is hidden', 'xss_clean');
 --
 -- Table structure for table `orcid_alert`
 --
