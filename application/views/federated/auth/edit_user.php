@@ -33,10 +33,10 @@
 					<button onclick="fetchORCID(); return false;" class="btn btn-small btn-primary" rel="popover" data-content="Click to fetch ORCID details." data-original-title="Fetch ORCID"><i class="icon-check"></i> Fetch ORCID details</button>
 				</div>
 				<br />
-				<p>
+<!-- 				<p>
 					<label>Username:</label>
 					<?php echo form_input($username); ?>
-				</p>
+				</p> -->
 				<p>
 					First Name: <br />
 					<?php echo form_input($first_name); ?>

@@ -773,7 +773,7 @@ class Auth_federated extends MY_Controller {
                         'name' => 'username',
                         'id' => 'username',
                         'type' => 'text',
-                        'value' => $this->form_validation->set_value('username'),
+                        'value' => $this->form_validation->set_value('email'),
                 );
                 $this->data['first_name'] = array(
                         'name'  => 'first_name',
@@ -828,7 +828,7 @@ class Auth_federated extends MY_Controller {
             }
             
             //validate form input
-            $this->form_validation->set_rules('username', 'Username', 'required|xss_clean|alpha_dash');
+            // $this->form_validation->set_rules('username', 'Username', 'required|xss_clean|alpha_dash');
             $this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');
             $this->form_validation->set_rules('last_name', 'Last Name', 'required|xss_clean');
             $this->form_validation->set_rules('email', 'Email Address', 'required|valid_email');
@@ -965,7 +965,7 @@ class Auth_federated extends MY_Controller {
             }
             
             //validate form input
-            $this->form_validation->set_rules('username', 'Username', 'required|xss_clean|alpha_dash');
+            // $this->form_validation->set_rules('username', 'Username', 'required|xss_clean|alpha_dash');
             $this->form_validation->set_rules('first_name', 'First Name', 'required|xss_clean');
             $this->form_validation->set_rules('last_name', 'Last Name', 'required|xss_clean');
             $this->form_validation->set_rules('email', 'Email Address', 'required|valid_email');
