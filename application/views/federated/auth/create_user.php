@@ -18,7 +18,7 @@
 				<h2>Create User</h2>
 				<p>Please enter the users information below. Required fields are marked (*).</p>
 				
-                                <div id="createUserError" class="hide" style="color: red;"></div>
+                <div id="createUserError" class="hide" style="color: red;"></div>
 					
 				<?php echo form_open("auth_federated/create_user", array('name' => 'createUser')); ?>
 				<div class="row">
@@ -34,11 +34,31 @@
 					<img src="<?php echo base_url();?>resources/images/cafevariome/ajax-loader.gif" id="loading-indicator" style="display:none" />
 				</div>
 				<br />
-				<p>
+<!-- 				<p>
 					Username: (*)<br />
 					<?php echo form_input($username); ?>
+				</p> -->
+
+				<p>
+					Email as Username: (*)<br />
+					<?php echo form_input($email); ?>
 				</p>
 					
+				<p>
+					Password (at least 6 characters): (*)<br />
+					<?php echo form_input($password); ?>
+				</p>
+					
+				<p>
+					Confirm Password: (*)<br />
+					<?php echo form_input($password_confirm); ?>
+				</p>
+
+				<p>
+					<button class="btn btn-small" id="generate_random_password">Generate random password</button>
+					<div id="random_password"></div>
+				</p>
+
 				<p>
 					First Name: (*)<br />
 					<?php echo form_input($first_name); ?>
@@ -54,24 +74,6 @@
 					<?php echo form_input($company); ?>
 				</p>
 					
-				<p>
-					Email: (*)<br />
-					<?php echo form_input($email); ?>
-				</p>
-					
-				<p>
-					Password (at least 6 characters): (*)<br />
-					<?php echo form_input($password); ?>
-				</p>
-					
-				<p>
-					Confirm Password: (*)<br />
-					<?php echo form_input($password_confirm); ?>
-				</p>
-				<p>
-					<button class="btn btn-small" id="generate_random_password">Generate random password</button>
-					<div id="random_password"></div>
-				</p>
 					
 				<?php echo form_hidden(array('installation_key' => $this->config->item('installation_key'))); ?>	
 				<p>
