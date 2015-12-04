@@ -65,11 +65,18 @@ if ( strtolower($current_page) == "discover" || strtolower($current_page) == "au
 				<?php endif; ?>
             </p>
 
+
+
+
+
 			<ul class="nav">
 				<?php if ( ! $this->config->item('cafevariome_central') ): ?>
 					<?php $this->load->model('cms_model'); ?>
 					<?php foreach ( $menus as $menu_item ): ?>
 						<?php $pages_for_menu = $this->cms_model->getPagesForMenu($menu_item['menu_name']);?>
+						
+						<?php if (strtolower($menu_item['menu_name']) !== "discover" || $this->config->item('allow_discovery') == 'on'): ?>
+
 						<?php if (preg_match('/\|/', $pages_for_menu)): ?>
 							<?php $pages = explode('|', $pages_for_menu); ?>
 							<?php foreach ( $pages as $page ): ?>
@@ -82,6 +89,10 @@ if ( strtolower($current_page) == "discover" || strtolower($current_page) == "au
 								<li <?php if (strtolower($current_cms_view) == strtolower($menu_item['menu_name'])) { print 'class="active"'; } ?>><a href="<?php echo base_url() . "pages/" . strtolower($menu_item['menu_name']); ?>"><?php echo ucwords($menu_item['menu_name']); ?></a></li>
 							<?php endif; ?>
 						<?php endif; ?>
+
+					<?php endif; ?>
+
+
 					<?php endforeach; ?>
 				<?php else: ?>
 				<li <?php if (strcasecmp($current_controller, "home") == 0) { print 'class="active"';} ?>><a href="<?php echo base_url(); ?>home">Home</a></li>
@@ -109,6 +120,10 @@ if ( strtolower($current_page) == "discover" || strtolower($current_page) == "au
 	</div>
 </div>
 
+
+
+
+
 <div id="searchBarModal" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -128,6 +143,8 @@ if ( strtolower($current_page) == "discover" || strtolower($current_page) == "au
 		<button type="submit" class="btn btn-primary" id="navbar-search"><i class="icon-search"></i> Discover Variants</button>
 	</div>
 </div>
+
+
 <?php if(file_exists("resources/elastic_search_status_incomplete")) { ?>
     <script>
         show_growl_elastic_search();

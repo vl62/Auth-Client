@@ -265,6 +265,7 @@ class Admin extends MY_Controller {
             $this->data['settings'] = $settings;
             $this->data['success_message'] = true;
 //			$this->_export_settings(); // Write the settings to the settings.php file
+            header("refresh: 0;");
             $this->_render('admin/settings');
         }
 //		$this->_render('admin/settings');
