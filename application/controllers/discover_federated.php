@@ -112,6 +112,8 @@ class Discover_federated extends MY_Controller {
 			}
 						
 			$query['query']['bool']['must'][] = array("term" => array("source" => $source));
+			$query['query']['bool']['must'][] = array("term" => array("included" => 1));
+
 			$query['facets']['sharing_policy']['terms'] = array('field' => "sharing_policy");
                         
 //                        error_log(print_r($query, 1));
@@ -759,10 +761,14 @@ class Discover_federated extends MY_Controller {
 //			print "<h4>$term AND $sharing_policy</h4>";
 //			$query['query']['bool']['must'][] = array("term" => array("sharing_policy" => $sharing_policy));
 			$query['query']['bool']['must'][] = array("term" => array("source" => $source));
+
+			//included must always be true
+			$query['query']['bool']['must'][] = array("term" => array("included" => 1));
 //			$query['facets']['sharing_policy']['terms'] = array('field' => "sharing_policy");
 //                        error_log("query ----> $query");
 			$query = json_encode($query);
 			error_log("query ----> $query");
+			// error_log($query,3,'test_cc.txt');
 			$es_data = $this->elasticsearch->query_dsl($query);
                         error_log("es_data ----> " . print_r($es_data, 1));
 //			print_r($es_data);
@@ -798,7 +804,90 @@ class Discover_federated extends MY_Controller {
 
 //		return $variants;
 	}
-	
+
+
+	function variants_json_restricted ($term, $source, $sharing_policy, $format = NULL, $user_id = NULL) {
+
+		// Return error if the installation has turned off allowing record hits to be diplayed
+		if ( $this->config->item('disable_record_hits_display') ) {
+			echo json_encode(array("error" => "The display of record hits has been disabled for the installation you are trying to access"));
+			return 0;
+		}
+
+
+//		error_log("term -> " . $term . " -> " . urldecode($term));
+		$variants_json = array();
+		$term = html_entity_decode($term);
+//		$term = urldecode($term);
+		if ( $term && $source && $sharing_policy ) {
+			$s = $this->sources_model->getSourceSingle($source);
+			
+			// $variants_json['source'] = $s;
+			// Check if this source actually exists
+			if ( ! $s ) {
+				show_error("The specified source does not seem to exist in this instance");
+			}
+			
+			// If no format is provided then default to html table display
+			if ( ! isset($format)) { // If no format specified set it to tab as default
+				$format = "tab";
+			}
+			
+			$sources_types = $this->sources_model->getSourcesTypes();
+			$type = $sources_types[$source];
+
+			$source_info = $this->sources_model->getSource($source);
+//			error_log("source_info -> " . print_r($source_info, 1));
+			$source_uri = $source_info['uri'];
+			$source_id = $source_info['source_id'];
+//			error_log("source_id -> $source_id");
+			
+			
+			// Fetch any sources that the user has count display group level access to
+			$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_count_display_group_access_to");
+//			error_log("sources ------>------> $returned_sources");
+			$accessible_sources_array = json_decode($returned_sources, 1);
+//			$accessible_source_ids = array_values($accessible_sources_array);
+			$accessible_source_ids_array = array();
+			if ( ! array_key_exists('error', $accessible_sources_array)) {
+				foreach ( $accessible_sources_array as $s ) {
+					$accessible_source_ids_array[$s['source_id']] = $s['source_id'];
+				}
+//				error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
+			}
+			$open_access_flag = 0;
+			// Check whether the user has count display level access to this source and hence we will set restrictedAccess records to openAccess records for source
+			if (array_key_exists($source_id, $accessible_source_ids_array)) {
+//				error_log("SET TO OPENACCESS");
+				$open_access_flag = 1;
+			}
+		
+			
+			if ( preg_match('/restrictedAccess/i', $sharing_policy)) {
+
+				$variants = $this->getVariantsElasticSearch($term, $source, "restrictedAccess");
+
+				// Get the dynamic display fields that can be changed by user in settings interface
+				$this->load->model('settings_model');
+				
+				// ksort($variants, SORT_NUMERIC);
+				foreach ( $variants as $variant ) {
+					$variants_json[$variant['cafevariome_id']] = $variant['record_id'];
+
+					}
+				ksort($variants_json, SORT_NUMERIC);
+				echo json_encode($variants_json);
+			}
+			
+		}
+		else {
+			show_404();
+		}
+	}
+
+
+
+
 	function variants_json ($term, $source, $sharing_policy, $format = NULL, $user_id = NULL) {
 
 		// Return error if the installation has turned off allowing record hits to be diplayed
