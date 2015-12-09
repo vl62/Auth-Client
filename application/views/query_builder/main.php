@@ -4,7 +4,7 @@
             <h2>Query Builder</h2><hr>
             <div class="" id="genotypeContainer" style="">
 
-                <div class="row-fluid">
+<!--                <div class="row-fluid">
                     <div class="span12 pagination-centered" style="">
                         <button class="btn btn-large input-block-level btn-info btn-collapse" data-collapseStatus="false" style="text-align: left">
                             Genome Coordinate
@@ -12,16 +12,17 @@
                         </button>
                     </div>
                 </div>
-
+-->
                 <div class="collapse" id="genomeContainer" data-type='genome'>
                 </div> <!-- end Genome Coordinate -->
-
+<!--
                 <div class="btn-group btn-toggle logic" id="logic_genome_accession" style="margin:20px 0">
                     <a class="btn btn-medium btn-default disabled">AND</a>
                     <a class="btn btn-medium btn-primary active disabled">OR</a>
                 </div>
+-->                
                 <!-- End section 1 -->
-
+<!--
                 <div class="row-fluid">
                     <div class="span12 pagination-centered" style="">
                         <button class="btn btn-large input-block-level btn-info btn-collapse" data-collapseStatus="false" style="text-align: left">
@@ -30,16 +31,17 @@
                         </button>
                     </div>
                 </div>
-
+-->
                 <div class="collapse" id="accessionContainer" data-type='accession'>
                 </div> <!-- end Accession Coordinate -->
-
+<!--
                 <div class="btn-group btn-toggle logic" id="logic_accession_dna" style="margin:20px 0">
                     <a class="btn btn-medium btn-default disabled">AND</a>
                     <a class="btn btn-medium btn-primary active disabled">OR</a>
                 </div>
+-->                
                 <!-- End section 2 -->
-
+<!--
                 <div class="row-fluid">
                     <div class="span12 pagination-centered" style="">
                         <button class="btn btn-large input-block-level btn-info btn-collapse" data-collapseStatus="false" style="text-align: left">
@@ -48,16 +50,17 @@
                         </button>
                     </div>
                 </div>
-
+-->
                 <div class="collapse" id="dnaContainer" data-type='dna'>
                 </div> <!-- end DNA Symbol -->
-
+<!--
                 <div class="btn-group btn-toggle logic" id="logic_dna_protein" style="margin:20px 0">
                     <a class="btn btn-medium btn-default disabled">AND</a>
                     <a class="btn btn-medium btn-primary active disabled">OR</a>
                 </div>
+-->                
                 <!-- End section 3 -->
-
+<!--
                 <div class="row-fluid">
                     <div class="span12 pagination-centered" style="">
                         <button class="btn btn-large input-block-level btn-info btn-collapse" data-collapseStatus="false" style="text-align: left">
@@ -66,16 +69,17 @@
                         </button>
                     </div>
                 </div>
-
+-->
                 <div class="collapse" id="proteinContainer" data-type='protein'>
                 </div> <!-- end DNA Symbol -->
-
+<!--
                 <div class="btn-group btn-toggle logic" id="logic_protein_gene" style="margin:20px 0">
                     <a class="btn btn-medium btn-default disabled">AND</a>
                     <a class="btn btn-medium btn-primary active disabled">OR</a>
                 </div>
+-->                
                 <!-- End section 4 -->
-
+<!--
                 <div class="row-fluid">
                     <div class="span12 pagination-centered" style="">
                         <button class="btn btn-large input-block-level btn-info btn-collapse" data-collapseStatus="false" style="text-align: left">
@@ -84,17 +88,18 @@
                         </button>
                     </div>
                 </div>
-
+-->
                 <div class="collapse" id="geneSymbolContainer" data-type='geneSymbol'>
                 </div> 
                 <!-- end Gene Symbol -->
-
+<!--
                 <div class="btn-group btn-toggle logic" id="logic_gene_hgvs" style="margin:20px 0">
                     <a class="btn btn-medium btn-default disabled">AND</a>
                     <a class="btn btn-medium btn-primary active disabled">OR</a>
                 </div>
+-->                
                 <!-- End section 5 -->
-
+<!--
                 <div class="row-fluid">
                     <div class="span12 pagination-centered" style="">
                         <button class="btn btn-large input-block-level btn-info btn-collapse" data-collapseStatus="false" style="text-align: left">
@@ -103,7 +108,7 @@
                         </button>
                     </div>
                 </div>
-
+-->
                 <div class="collapse" id="hgvsContainer" data-type='hgvs'>
                 </div> 
                 <!-- end Hgvs -->
@@ -111,12 +116,12 @@
                 <!-- End section 6 -->
 
             </div> <!-- end Genotype -->
-
+<!--
             <div class="btn-group btn-toggle logic" id="logic_genotype_phenotype" style="margin:20px 0">
                 <a class="btn btn-medium btn-default disabled">AND</a>
                 <a class="btn btn-medium btn-primary active disabled">OR</a>
             </div>
-
+-->
             <div class="" id="phenotypeBox">
                 <div class="row-fluid">
                     <div class="span12 pagination-centered" style="">
@@ -131,7 +136,7 @@
                 </div>
                 
                 <!-- end Phenotype -->
-
+<!--
                 <div class="btn-group btn-toggle logic" id="logic_phenotype_other" style="margin:20px 0">
                     <a class="btn btn-medium btn-default disabled">AND</a>
                     <a class="btn btn-medium btn-primary active disabled">OR</a>
@@ -145,7 +150,7 @@
                         </button>
                     </div>
                 </div>
-
+-->
                 <div class="collapse" id="otherContainer" data-type='other'>
                 </div> 
                 <!-- end Custom -->
