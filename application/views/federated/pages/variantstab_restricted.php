@@ -18,7 +18,7 @@ echo "</BR>";
 
 echo $this->input->post('email');
 
-echo 'List of Derids: </BR>';
+echo 'List of DerIDs: </BR>';
 foreach ($variants as $variant) {
     echo $variant;
     echo '</BR>';
