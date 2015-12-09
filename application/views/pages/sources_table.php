@@ -21,9 +21,9 @@ $(function (){
 							<?php if ( $this->config->item('show_sources_in_discover')): ?>
 							<th align="center" class="title">Source</th>
 							<?php endif; ?>
-							<th colspan="2" align="center" class="title">openAccess</th>
-							<th colspan="2" align="center" class="title">linkedAccess</th>
-							<th colspan="2" align="center" class="title">restrictedAccess</th>
+							<th colspan="2" align="center" class="title">Open Access</th>
+							<th colspan="2" align="center" class="title">Linked Access</th>
+							<th colspan="2" align="center" class="title">Restricted Access</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -136,7 +136,7 @@ $(function (){
 							<?php if ( array_key_exists('restrictedAccess', $count )) : ?>
 								<?php if ( $count['restrictedAccess'] > 0 ): ?>
 
-									<a href="<?php echo base_url();?>discover/variants_federated_restricted/<?php echo urlencode($term);?>/<?php echo $federated_source;?>/<?php echo urlencode(base64_encode($install_uri[$source]));?>" target="_blank" rel="popover" data-content="Click to view the admin email id's of this source." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
+									<a href="<?php echo base_url();?>discover/variants_federated_restricted/<?php echo urlencode($term);?>/<?php echo $federated_source;?>/<?php echo urlencode(base64_encode($install_uri[$source]));?>" target="_blank" rel="popover" data-content="Click to view the DerIDs and email address of the source owner." data-original-title="Get DerIDs"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
 									<!-- <a class="show_admin_emails" href="<?php echo $install_uri[$source]?>" target="_blank" rel="popover" data-content="Click to view the admin email id's of this source." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a> -->
 								
 
@@ -145,6 +145,8 @@ $(function (){
 								<?php else: ?>
 									<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
 								<?php endif; ?>
+								<?php else: ?>
+									<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Get DerIDs"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
 							<?php endif; ?>
 
 							<!-- old version	 -->
