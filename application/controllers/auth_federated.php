@@ -760,7 +760,7 @@ class Auth_federated extends MY_Controller {
 		$this->title = "Create User";
 				// Get all the available network groups for this installation
 				$token = $this->session->userdata('Token');
-                $groups = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
+                $groups = authPostRequest($token, array('installation_key' => $this->config->item('installation_key'), 'url' => base_url()), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
 //                error_log(print_r($groups, 1));
 				$this->data['groups'] = json_decode($groups, TRUE);
 
@@ -891,12 +891,12 @@ class Auth_federated extends MY_Controller {
 		$this->data['user'] = $user;
 
 		// Get all the available network groups for this installation
-		$groups = json_decode(authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation"), TRUE);
+		$groups = json_decode(authPostRequest($token, array('installation_key' => $this->config->item('installation_key'), 'url' => base_url()), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation"), TRUE);
 		if (! array_key_exists('error', $groups)) {
 			$this->data['groups'] = $groups;
 		}
 		// Get all the network groups that this user from this installation is currently in so that these can be pre selected in the multiselect list
-		$returned_groups = authPostRequest($token, array('user_id' => $id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_user_in_installation");
+		$returned_groups = authPostRequest($token, array('user_id' => $id, 'installation_key' => $this->config->item('installation_key'), 'url' => base_url()), $this->config->item('auth_server') . "/api/auth/get_current_network_groups_for_user_in_installation");
 		$tmp_selected_groups = json_decode($returned_groups, TRUE);
 		$selected_groups = array();
 		if (! array_key_exists('error', $tmp_selected_groups)) {
