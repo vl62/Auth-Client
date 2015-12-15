@@ -96,9 +96,9 @@
 					</div>
 					<div class="modal-body">
 						<div class="well">
-							<p align="center">Select how you would like to import records for this source:</p><hr>
+							<!-- <p align="center">Select how you would like to import records for this source:</p><hr>
 							<p align="center"><a href="<?php echo base_url() . "variants/add/" . $source->name;?>" class="btn btn-small btn-primary"><i class="icon-plus"></i> Manually enter records</a><br /><br /><i>Use a form to manually enter variants one by one.</i></p>
-							<hr>
+							<hr> -->
 							<p align="center"><a href="<?php echo base_url() . "variants/import/" . $source->name; ?>" class="btn btn-small btn-primary"><i class="icon-plus"></i> Bulk import records</a><br /><br /><i>Use a bulk import tool to upload multiple records at once (various formats accepted).</i></p>
 							<hr>
 						</div>
@@ -199,10 +199,12 @@
 			<hr>
 			<p align="center"><br /><a class="btn btn-primary btn-medium" href="<?php echo base_url('sources/add_federated_source') ?>" ><i class="icon-file icon-white"></i>  Add federated source</a><br /><br /><small>Select which federated sources are discoverable, N.B. you must have set up federated source details in the settings page of the admin dashboard.</small></p>
 			<?php endif; ?>
+			<!-- 
 			<?php if ( ! $this->config->item('cafevariome_central') ): ?>
 			<hr>
 			<p align="center"><br /><a class="btn btn-primary btn-medium" href="<?php echo base_url('sources/add_central_source') ?>" ><i class="icon-file icon-white"></i>  Add Cafe Variome Central source</a><br /><br /><small>Cafe Variome Central contains a number of sources of public records such as dbSNP, 1000 genomes project etc. You can add these sources and make records discoverable through your own Cafe Variome instance search interface by clicking this button and selecting which sources you want to add/remove.</small></p>
-			<?php endif; ?>
+			<?php endif; ?> -->
+			
 		</div>
 	</div>
 	<div class="modal-footer">
