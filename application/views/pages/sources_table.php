@@ -21,9 +21,9 @@ $(function (){
 							<?php if ( $this->config->item('show_sources_in_discover')): ?>
 							<th align="center" class="title">Source</th>
 							<?php endif; ?>
-							<th colspan="2" align="center" class="title">openAccess</th>
-							<th colspan="2" align="center" class="title">linkedAccess</th>
-							<th colspan="2" align="center" class="title">restrictedAccess</th>
+							<th colspan="2" align="center" class="title">Open Access</th>
+							<th colspan="2" align="center" class="title">Linked Access</th>
+							<th colspan="2" align="center" class="title">Restricted Access</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -133,17 +133,49 @@ $(function (){
 							</td>
 							<td> 
 							
+							<?php if ( array_key_exists('restrictedAccess', $count )): ?>
+									<?php if ( $source_types[$source] == "central" ): ?>
+										<?php echo anchor("http://www.cafevariome.org/discover/variants/$term/" . $central_source[$source] . "/openAccess", img(array('src' => base_url('resources/images/cafevariome/cafevariome_node.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to access these records in Cafe Variome Central. N.B. All access control to these records is controlled by Cafe Variome Central.", 'data-original-title' => "Access CV Central Records")); ?>
+									<?php elseif ( $source_types[$source] == "federated" ): ?>
+										<?php if ( $count['restrictedAccess'] === 0 ): ?>
+											<?php echo "0"; ?>
+										<?php elseif ( $count['restrictedAccess'] === "BLOCKED" ): ?>
+											<a href="#" rel="popover" data-content="The display of record counts has been limited to specific users for this source." data-original-title="Unable to view counts"><i class="fa fa-ban fa-2x"></i></a>
+										<?php elseif ( $count['restrictedAccess'] > $this->config->item('variant_count_cutoff') ): ?>
+											<a href="<?php echo base_url();?>discover/variants_federated_restricted/<?php echo urlencode($term);?>/<?php echo $federated_source;?>/<?php echo urlencode(base64_encode($install_uri[$source]));?>" target="_blank" rel="popover" data-content="Click to view the DerIDs and email address of the source owner." data-original-title="Get DerIDs"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
+										<?php else: ?>
+											<a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a>
+										<?php endif; ?>
+									<?php else: ?>
+										<?php if ( $count['restrictedAccess'] > $this->config->item('variant_count_cutoff') ): ?>
+											<a rel="popover" data-content="Click to access these records." data-original-title="Access Records"> <input type="image" onclick="javascript:variantOpenAccessRequest('<?php echo urlencode($term);?>', '<?php echo $source;?>', '<?php echo $sources_full[$source];?>', '<?php echo $count['openAccess'];?>')" src="<?php echo base_url('resources/images/cafevariome/request.png');?>"></a>
+										<?php else: ?>
+											<a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a>
+										<?php endif; ?>
+									<?php endif; ?>
+								<?php else: ?>
+									<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
+								<?php endif; ?>
+							
+							
+							<!--
 							<?php if ( array_key_exists('restrictedAccess', $count )) : ?>
 								<?php if ( $count['restrictedAccess'] > 0 ): ?>
-									<a class="show_admin_emails" href="<?php echo $install_uri[$source]?>" target="_blank" rel="popover" data-content="Click to view the admin email id's of this source." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
+
+									<a href="<?php echo base_url();?>discover/variants_federated_restricted/<?php echo urlencode($term);?>/<?php echo $federated_source;?>/<?php echo urlencode(base64_encode($install_uri[$source]));?>" target="_blank" rel="popover" data-content="Click to view the DerIDs and email address of the source owner." data-original-title="Get DerIDs"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
+									<!-- <a class="show_admin_emails" href="<?php echo $install_uri[$source]?>" target="_blank" rel="popover" data-content="Click to view the admin email id's of this source." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a> -->
+								
+							<!--
 								<?php elseif ( $count['restrictedAccess'] == 0 ): ?>
 									<?php echo "0"; ?>
 								<?php else: ?>
 									<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
 								<?php endif; ?>
+								<?php else: ?>
+									<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Get DerIDs"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
 							<?php endif; ?>
-
-							<!-- old version	 -->
+							-->
+							<!-- old version	 
 							<?php if(false) {
 								if ( array_key_exists('restrictedAccess', $count )) : ?>
 									<?php if ( $source_types[$source] == "central" ): ?>
@@ -171,7 +203,7 @@ $(function (){
 									<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
 								<?php endif;
 								} ?>
-										
+							-->			
 							</td>
 						<?php
 						endforeach;

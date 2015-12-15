@@ -84,8 +84,8 @@
 			</div>
 			<div class="modal-body">
 				<div class="well">
-					<p align="center">Select how you would like to import records for this source:</p><hr>
-					<p align="center"><a href="<?php echo base_url() . "variants/add/" . $source->name;?>" class="btn btn-small btn-primary"><i class="icon-plus"></i> Manually enter records</a><br /><br /><i>Use a form to manually enter records one by one.</i></p>
+					<!-- <p align="center">Select how you would like to import records for this source:</p><hr>
+					<p align="center"><a href="<?php echo base_url() . "variants/add/" . $source->name;?>" class="btn btn-small btn-primary"><i class="icon-plus"></i> Manually enter records</a><br /><br /><i>Use a form to manually enter records one by one.</i></p> -->
 					<hr>
 					<p align="center"><a href="<?php echo base_url() . "variants/import/" . $source->name; ?>" class="btn btn-small btn-primary"><i class="icon-plus"></i> Bulk import records</a><br /><br /><i>Use a bulk import tool to upload multiple records at once (various formats accepted).</i></p>
 					<hr>
