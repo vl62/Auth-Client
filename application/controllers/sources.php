@@ -254,7 +254,7 @@ class Sources extends MY_Controller {
 //		$this->form_validation->set_rules('type', 'Source Type', 'required|xss_clean');
         // Get all available groups for the networks this installation is a member of from auth central for multi select list
         $token = $this->session->userdata('Token');
-        $groups = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
+        $groups = authPostRequest($token, array('installation_key' => $this->config->item('installation_key'),'url' => base_url()), $this->config->item('auth_server') . "/api/auth/get_network_groups_for_installation");
 //		print_r($groups);
         $this->data['groups'] = json_decode($groups, TRUE);
 
