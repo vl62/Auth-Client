@@ -15,12 +15,12 @@
 				<br />
 				<br />
 				<br />
-				<span class="label label-info">Also delete all variants linked to this source (<?php echo $source; ?>):</span><br />
-				<table border="0">
+<!--				<span class="label label-info">Also delete all variants linked to this source (<?php echo $source; ?>):</span><br />-->
+				<table style="visibility:hidden" border="0">
 					<tr>
 						<td>Yes:</td><td><input type="radio" name="variants" value="yes" checked="checked" /></td>
 						<td>&nbsp;&nbsp;</td><td>&nbsp;&nbsp;</td>
-						<td>No:</td><td><input type="radio" name="variants" value="no" checked="checked" /></td>
+						<td>No:</td><td><input type="radio" name="variants" value="no" /></td>
 					</tr>
 				</table>
 			</p>
