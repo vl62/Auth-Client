@@ -3,7 +3,7 @@
 
 echo '<div style="width:800px; margin:0 auto;">';
 
-foreach ($query->result_array() as $row)
+foreach ($source_owner as $row)
 {
    echo '<em><strong>Source owner name: ';
    echo $row['owner_name'];
