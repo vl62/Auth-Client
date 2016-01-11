@@ -1240,16 +1240,15 @@ class Discover extends MY_Controller {
                 show_error($variants['error']);
             }
 
-            // $sql = "SELECT * FROM sources WHERE name = '$source'";
-            // $query = $this->db->query($sql);
+            $sql = "SELECT * FROM sources WHERE name = '$source'";
+            $query = $this->db->query($sql);
 
-            $source_owner = @file_get_contents($federated_install_uri . "/discover_federated/get_source_owner/$source");
-            $source_owner = json_decode($source_owner, 1);
+
             
             $this->_render('pages/variantstab_restricted');
 
             $data['variants'] = $variants;
-            $data['source_owner'] = $source_owner;
+            $data['query'] = $query;
             
             // $data['display_fields'] = $display_fields;
             $this->output->set_header("Content-Type: text/html");
