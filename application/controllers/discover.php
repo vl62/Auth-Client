@@ -1192,6 +1192,77 @@ class Discover extends MY_Controller {
         }
     }
 
+
+
+    function variants_federated_restricted($term, $source, $federated_install_uri) {
+        
+
+        $federated_install_uri = base64_decode(urldecode($federated_install_uri));
+
+
+        $term = urldecode($term);
+        $term = html_entity_decode($term);
+        $this->data['term'] = $term;
+        $this->data['source'] = $source;
+        // $this->data['sharing_policy'] = $sharing_policy;
+
+        // $user_id = $this->ion_auth->user()->row()->id;
+
+
+
+        $user_logged = false;
+
+
+        if ($this->ion_auth->user()->row()->id)
+            {   
+                $user_logged = true;
+            }
+
+
+ 
+        if ($user_logged == false)
+            {   
+                redirect('auth/login', 'refresh');
+            }
+        else {
+            $user_id = $this->ion_auth->user()->row()->id;
+            $sharing_policy = "restrictedAccess";
+            $format = "tab";
+
+            $this->data['sharing_policy'] = $sharing_policy;
+            $this->data['format'] = $format;
+
+            $variants = @file_get_contents($federated_install_uri . "/discover_federated/variants_json_restricted/$term/$source/$sharing_policy/$format/$user_id");
+            
+            $variants = json_decode($variants, 1);
+
+            if (array_key_exists('error', $variants)) {
+                show_error($variants['error']);
+            }
+
+            $sql = "SELECT * FROM sources WHERE name = '$source'";
+            $query = $this->db->query($sql);
+
+
+            
+            $this->_render('pages/variantstab_restricted');
+
+            $data['variants'] = $variants;
+            $data['query'] = $query;
+            
+            // $data['display_fields'] = $display_fields;
+            $this->output->set_header("Content-Type: text/html");
+            $this->load->view('federated/pages/variantstab_restricted', $data);
+            $this->output->set_header("Content-Type: text/html");
+        }
+
+    }
+
+
+
+
+
+
     // This is the call that's used to get variants from a federated installs in a network
     // The URL is used to make the call to the variants_json function in the discover_federated controller in the federated install
     // Returned data is json which is then rendered according to the display type specified
@@ -1233,6 +1304,8 @@ class Discover extends MY_Controller {
             $variants = json_decode($variants, 1); // The json of variants for this source and other info returned from federated install
             // Print error message if any returned by federated client
             // Main error currently would be that the federated installation has turned off the allow_record_hits_display setting
+            
+
             if (array_key_exists('error', $variants)) {
                 show_error($variants['error']);
             }
@@ -1440,7 +1513,11 @@ class Discover extends MY_Controller {
                 $query['query']['bool']['must'][] = array('query_string' => array("query" => "$term", 'default_operator' => "AND"));
             }
             $query['query']['bool']['must'][] = array('query_string' => array("query" => "$sharing_policy"));
-//			print "<h4>$term AND $sharing_policy</h4>";
+
+            $query['query']['bool']['must'][] = array("term" => array("included" => 1));
+//			
+
+            print "<h4>$term AND $sharing_policy</h4>";
 //			$query['query']['bool']['must'][] = array("term" => array("sharing_policy" => $sharing_policy));
             $query['query']['bool']['must'][] = array("term" => array("source" => $source));
 //			$query['facets']['sharing_policy']['terms'] = array('field' => "sharing_policy");
@@ -1473,6 +1550,8 @@ class Discover extends MY_Controller {
 //					print "$phenotypes_string<br /><br />";
                 }
             }
+
+            
         }
         return $variants;
 

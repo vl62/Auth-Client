@@ -3509,7 +3509,30 @@ $(document).on('click', '.show_admin_emails', function(e) {
 
 });
 
+// $(document).on('click', '.show_restricted_data', function(e) { 
 
+//     e.preventDefault();
+
+//     $(".closeModal").click(function(event) {
+//         $("#modalEmailInfo").hide();
+//     });
+    
+//     $.ajax({
+//         url: authurl,
+//         type: 'POST',
+//         dataType: 'json',
+//         data: {'url': $(this).attr('href')},
+//     })
+//     .done(function($data) {
+//         $("#email_list").html("");
+//         $("#email_list").append($data);
+//         $("#modalEmailInfo").show();
+//     })
+//     .fail(function() {
+//         console.log("error");
+//     });
+
+// });
 // $(document).on('click', '#show_admin_emails', function(e) {
 //     e.preventDefault();
 
