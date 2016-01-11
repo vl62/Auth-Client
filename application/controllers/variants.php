@@ -1831,7 +1831,7 @@ class Variants extends MY_Controller {
                                 } else {
                                     $insert_data[$current_header] = $column;
                                 }
-                            } elseif ($column) { // Only store if there's data for this column
+                            } elseif (isset($column)) { // Only store if there's data for this column
                                 $column = trim($column); // Remove whitespace from start and end of the string
 
                                 $cell_value = trim($column);
@@ -1987,7 +1987,7 @@ class Variants extends MY_Controller {
                             } else {
                                 $insert_data[$current_header] = $cell_value;
                             }
-                        } elseif ($column) { // Check to see there's a value present for this column
+                        } elseif (isset($column)) { // Check to see there's a value present for this column
                             $cell_value = (string) $column;
                             $cell_value = trim($cell_value);
 //							error_log("value -> $cell_value");
@@ -2319,7 +2319,7 @@ class Variants extends MY_Controller {
                                 } else {
                                     $insert_data[$current_header] = $column;
                                 }
-                            } elseif ($column) { // Only store if there's data for this column
+                            } elseif (isset($column)) { // Only store if there's data for this column
                                 $column = trim($column); // Remove whitespace from start and end of the string
 
                                 $cell_value = trim($column);
@@ -2469,7 +2469,7 @@ class Variants extends MY_Controller {
                             } else {
                                 $insert_data[$current_header] = $cell_value;
                             }
-                        } elseif ($column) { // Check to see there's a value present for this column
+                        } elseif (isset($column)) { // Check to see there's a value present for this column
                             $cell_value = (string) $column;
                             $cell_value = trim($cell_value);
 //							error_log("value -> $cell_value");
