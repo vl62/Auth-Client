@@ -806,6 +806,30 @@ class Discover_federated extends MY_Controller {
 	}
 
 
+	function get_source_owner($source){
+
+
+		$sql = "SELECT * FROM sources WHERE name = '$source'";
+        $query = $this->db->query($sql);
+
+        echo json_encode($query->result_array());
+
+		// foreach ($source_owner->result_array() as $row)
+		// {
+		// 	   echo '<em><strong>Source owner name: ';
+		// 	   echo $row['owner_name'];
+		// 	   echo "</BR>";
+		// 	   echo 'Source owner email: ';
+		// 	   echo $row['email'];
+		// 	   echo '</em></strong>';
+		// 	   echo "</BR>";
+		// }
+
+
+	}
+
+
+
 	function variants_json_restricted ($term, $source, $sharing_policy, $format = NULL, $user_id = NULL) {
 
 		// Return error if the installation has turned off allowing record hits to be diplayed
