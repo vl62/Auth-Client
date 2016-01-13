@@ -2958,7 +2958,10 @@ class Admin extends MY_Controller {
 //        echo "</pre>";
 //        return;
 //        return;
-
+		foreach(array_keys($data) as $key){
+			sort($data[$key]);
+		}
+		ksort($data);
         if ($data) {
             file_put_contents("resources/phenotype_lookup_data/" . "local_" . $network_key . ".json", json_encode($data));
         }
@@ -2998,11 +3001,16 @@ class Admin extends MY_Controller {
         $modification_time = $this->input->post('modification_time');
         $network_key = $this->input->post('network_key');
 //        error_log($modification_time . " " . filemtime("resources/phenotype_lookup_data/" . $network_key . ".json"));
-        if (file_exists('resources/phenotype_lookup_data/' . $network_key . ".json") && (filemtime("resources/phenotype_lookup_data/" . $network_key . ".json") > $modification_time)) {
+//        if (file_exists('resources/phenotype_lookup_data/' . $network_key . ".json") && (filemtime("resources/phenotype_lookup_data/" . $network_key . ".json") > $modification_time)) {
+//            echo (file_get_contents("resources/phenotype_lookup_data/" . $network_key . ".json"));
+//       } else {
+//            echo false;
+//        }
+        if (file_exists('resources/phenotype_lookup_data/' . $network_key . ".json")) {
             echo (file_get_contents("resources/phenotype_lookup_data/" . $network_key . ".json"));
         } else {
             echo false;
-        }
+        }        
     }
 
     function regenerate_federated_phenotype_attributes_and_values_list_old() {
