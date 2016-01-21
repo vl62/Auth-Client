@@ -50,12 +50,14 @@ class Auth_federated extends MY_Controller {
 			redirect('/', 'refresh');
 		}
                 
-                $fp = @fsockopen("auth.cafevariome.org", 80, $errno, $errstr, 30);
+                // $fp = @fsockopen("auth.cafevariome.org", 80, $errno, $errstr, 30);
+                $fp = fsockopen("www112.lamp.le.ac.uk", 443, $errno, $errstr, 30);
+
                 if (!$fp) {
                     redirect(base_url("/auth/login"));
                 }
                 
-		$this->title = "Login";
+                $this->title = "Login";
                 $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
 
                 $this->data['identity'] = array('name' => 'identity',

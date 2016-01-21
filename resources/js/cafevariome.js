@@ -2944,10 +2944,25 @@ function register_user() {
 }
 
 // login user
+// $(document).ready(function () {
+//     $("#loginUser").click(function (e) {
+//         e.preventDefault();
+//         $.ajax({url: 'https://auth.cafevariome.org/',
+//             complete: function (xhr, status) {
+//                 if (status === "success") {
+//                     window.location.href = baseurl + "auth_federated/login";
+//                 } else {
+//                     window.location.href = baseurl + "auth/login";
+//                 }
+//             }
+//         });
+//     });
+// });
+
 $(document).ready(function () {
     $("#loginUser").click(function (e) {
         e.preventDefault();
-        $.ajax({url: 'https://auth.cafevariome.org/',
+        $.ajax({url: 'http://www112.lamp.le.ac.uk/cafevariome_auth/',
             complete: function (xhr, status) {
                 if (status === "success") {
                     window.location.href = baseurl + "auth_federated/login";
