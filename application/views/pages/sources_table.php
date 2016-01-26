@@ -132,15 +132,17 @@ $(function (){
 								<?php endif; ?>
 							</td>
 							<td> 
-							
+						
 							<?php if ( array_key_exists('restrictedAccess', $count )) : ?>
-								<?php if ( $count['restrictedAccess'] > 0 ): ?>
-									<a class="show_admin_emails" href="<?php echo $install_uri[$source]?>" target="_blank" rel="popover" data-content="Click to view the admin email id's of this source." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
-								<?php elseif ( $count['restrictedAccess'] == 0 ): ?>
+								<?php if ( $count['restrictedAccess'] === 0 ): ?>
 									<?php echo "0"; ?>
+								<?php elseif ( $count['restrictedAccess'] == "BLOCKED" ): ?>
+									<a href="#" rel="popover" data-content="The display of record counts has been limited to specific users for this source." data-original-title="Unable to view counts"><i class="fa fa-ban fa-2x"></i></a>
 								<?php else: ?>
-									<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
+									<a class="show_admin_emails" href="<?php echo $install_uri[$source] . '/'?>" target="_blank" rel="popover" data-content="Click to view the admin email id's of this source." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
 								<?php endif; ?>
+							<?php else: ?>
+								<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
 							<?php endif; ?>
 
 							<!-- old version	 -->
