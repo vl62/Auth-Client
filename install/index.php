@@ -78,7 +78,7 @@ if ($_POST):
         // Send installation_key to Cafe Variome Central
         // $api_url = "https://auth.cafevariome.org/api/auth_general/add_installation/format/json";
 //		$api_url = "http://143.210.153.155/cafevariome_server/api/auth_general/add_installation/format/json";
-        $api_url = "http://www112.lamp.le.ac.uk/cafevariome_auth/api/auth_general/add_installation/format/json";
+        $api_url = "https://www112.lamp.le.ac.uk/cafevariome_auth/api/auth_general/add_installation/format/json";
         error_log("api_url -> $api_url");
         $data = array('installation_key' => $mdstring, 'installation_name' => $_POST['sitetitle'], 'installation_base_url' => $_POST['externalurl']);
         $opts = array('http' =>
