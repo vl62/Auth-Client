@@ -2962,7 +2962,7 @@ function register_user() {
 $(document).ready(function () {
     $("#loginUser").click(function (e) {
         e.preventDefault();
-        $.ajax({url: 'http://www112.lamp.le.ac.uk/cafevariome_auth/',
+        $.ajax({url: 'https://www112.lamp.le.ac.uk/cafevariome_uth/',
             complete: function (xhr, status) {
                 if (status === "success") {
                     window.location.href = baseurl + "auth_federated/login";

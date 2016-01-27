@@ -5,7 +5,7 @@ error_log("checking external url -> $externalurl");
 //$api_url = "http://localhost/cafevariome_server/api/auth_general/checkexternalurl/format/json";
 //$api_url = "http://143.210.153.155/cafevariome_server/api/auth_general/checkexternalurl/format/json";
 // $api_url = "https://auth.cafevariome.org/api/auth_general/checkexternalurl/format/json";
-$api_url = "http://www112.lamp.le.ac.uk/cafevariome_auth/api/auth_general/checkexternalurl/format/json";
+$api_url = "https://www112.lamp.le.ac.uk/cafevariome_auth/api/auth_general/checkexternalurl/format/json";
 $data = array( 'externalurl' => $externalurl);
 
 

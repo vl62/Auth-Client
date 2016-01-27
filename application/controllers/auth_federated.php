@@ -1124,8 +1124,8 @@ class Auth_federated extends MY_Controller {
                     }
 		}
 		
-
-                $user_id = $this->session->userdata("user_id");
+        error_log("helll: " . $this->config->item('auth_server'));
+        $user_id = $this->session->userdata("user_id");
 		$this->data['user'] = json_decode(authPostRequest('', array("user_id" => $user_id), $this->config->item('auth_server') . "/api/auth_general/get_users_info"), 1);
                 
 		// Get all the network groups that this user from this installation is currently in so that these can be pre selected in the multiselect list
