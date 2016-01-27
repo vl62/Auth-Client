@@ -321,7 +321,7 @@ var phenotype_keys = new Array();
 var phenotype_values = new Array();
 
 $(document).ready(function () {
-    $("#loader").addClass('hide');
+    // $("#loader").addClass('hide');
     $network_key = $("#network_key").val();
    $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
 //        $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/5b7a1ae7ac7fa0a4a4c7cedac1982dba',
