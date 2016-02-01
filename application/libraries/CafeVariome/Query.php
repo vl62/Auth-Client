@@ -24,13 +24,15 @@ class Query extends CafeVariome {
                     continue;
 
                 if($k == "coordinate") {
+                    $type = $element['reference_type'];
+
+                    if($type == "genome") {
+                        $chr = substr(explode(".",$element['reference']['id'])[0], 3);
+                        $build = explode(".",$element['reference']['id'])[1];    
+                    }
                     $element['operator'] = strtolower($element['operator']);
-                    $chr = substr(explode(".",$element['reference']['id'])[0], 3);
-                    $build = explode(".",$element['reference']['id'])[1];
                     $start = $element['start'];
                     $stop = $element['stop'];
-                    $type = $element['reference_type'];
-                    
                     if($element['operator'] == "exact") {
                         if($type == "genome") {
                             $query_array[$element['querySegmentID']] = "(genome_chr:" . $chr . " OR genome_chr:chr" . $chr . ") AND genome_build:" . $build . " AND genome_start_d:" . $start . " AND genome_stop_d:" . $stop;
@@ -218,7 +220,8 @@ class Query extends CafeVariome {
         $query_statement_for_display = str_replace('\[', '[', $query_statement_for_display);
         $query_statement_for_display = str_replace('\]', ']', $query_statement_for_display);
 //        $query_statement_for_display = str_replace('_', ' ', $query_statement_for_display);
-        print "<h4>$query_statement_for_display</h4>";
+        // print "<h4>$query_statement_for_display</h4>";
+        print "<h4>" . $query['queryString'] . "</h4>";
         return $query_statement;
     }
 

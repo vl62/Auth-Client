@@ -505,7 +505,8 @@ $(document).ready(function () {
 
         
         $coordinate = $sequence = $gene = $hgvs = $phen = $other = "";
-        $query = "";
+        $coordinate_str = $sequence_str = $gene_str = $hgvs_str = $phen_str = $other_str = "";
+        $query = ""; $query_str = "";
 
         $arr = {
             "queryMetadata": {
@@ -550,7 +551,7 @@ $(document).ready(function () {
             return false;
         }
         
-        $.extend($arr, {"queryStatement": $query, "network_to_search": $network_key});
+        $.extend($arr, {"queryStatement": $query, "queryString": $query_str, "network_to_search": $network_key});
         console.log(JSON.stringify($arr, null, '\t'));
 //        alert("queryString -> " + JSON.stringify($arr));
 
@@ -569,11 +570,13 @@ $(document).ready(function () {
 
     });
 
-    function getJSON_Coordinate() {
+    function getJSON_Coordinate() {    
+        $arr = [];
+
         $parentId = $("#genomeContainer");
         $parentType = $parentId.attr("data-type");
-        $genome = $accession = "";
-        $arr = [];
+        $genome = "";
+        $genome_str = "";
         $parentId.children(".type_sample").each(function () {
             start = $(".start", this).val().trim().toString();
             stop = $(".stop", this).val().trim().toString();
@@ -581,8 +584,10 @@ $(document).ready(function () {
             build = $("select.build", this).val().toString();
 
             if (start && stop && chromo && build) {
-                if ($genome)
+                if ($genome) {
                     $genome += " OR ";
+                    $genome_str += " OR ";
+                }
                 $genome_coordinate = {
                     "querySegmentID": $idCount,
                     "operator": $(this).find('.conditions').val().toString(),
@@ -593,6 +598,7 @@ $(document).ready(function () {
                 }
                 $arr.push($genome_coordinate);
                 $genome += $idCount;
+                $genome_str += "genome_chr:" + chromo + " AND genome_build:" + build + " AND genome_start:" + start + " AND genome_stop:" + stop;
                 $idCount++;
             }
 
@@ -601,14 +607,17 @@ $(document).ready(function () {
         $parentId = $("#accessionContainer");
         $parentType = $parentId.attr("data-type");
         $accession = "";
+        $accession_str = "";
         $parentId.children(".type_sample").each(function () {
             start = $(".start", this).val().trim().toString();
             stop = $(".stop", this).val().trim().toString();
             acc_ver = $("input.acc_ver", this).val().toString();
 
             if (start && stop && acc_ver) {
-                if ($accession)
+                if ($accession) {
                     $accession += " OR ";
+                    $accession_str += " OR ";
+                }
                 $accession_coordinate = {
                     "querySegmentID": $idCount,
                     "operator": $(this).find('.conditions').val().toString(),
@@ -619,19 +628,31 @@ $(document).ready(function () {
                 }
                 $arr.push($accession_coordinate);
                 $accession += $idCount;
+                $accession_str += "accession_ref:" + acc_ver + " AND accession_start:" + start + " AND accession_stop:" + stop;
                 $idCount++;
             }
         });
 
-        if ($genome) $genome = "(" + $genome + ")";
-        if ($accession) $accession = "(" + $accession + ")";
+        if ($genome) {
+            $genome = "(" + $genome + ")";
+            $genome_str = "(" + $genome_str + ")";
+        }
+        if ($accession) {
+            $accession = "(" + $accession + ")";
+            $accession_str = "(" + $accession_str + ")";
+        }
 
-        if ($genome && $accession)
+        if ($genome && $accession) {
             $coordinate = $genome + " " + $genome_accession + " " + $accession;
-        else
+            $coordinate_str = $genome_str + " " + $genome_accession + " " + $accession_str;
+        }
+        else {
             $coordinate = $genome + $accession;
+            $coordinate_str = $genome_str + $accession_str;
+        }
         
         $query = $coordinate;
+        $query_str = $coordinate_str;
 
 //        console.log($genome);
 //        console.log($accession);
@@ -644,11 +665,16 @@ $(document).ready(function () {
         $parentId = $("#dnaContainer");
         $parentType = $parentId.attr("data-type");
         $dna = $protein = "";
+        $dna_str = $protein_str = "";
         $arr = [];
 
         $parentId.children('.type_sample').each(function () {
             if ($(".dnaSequence", this).val().trim()) {
-                if($dna) $dna += " OR ";
+                if($dna) {
+                    $dna += " OR ";
+                    $dna_str += " OR ";
+                }
+
                 $DNA_sequence = {
                     "querySegmentID": $idCount,
                     "operator": "IS",
@@ -659,6 +685,7 @@ $(document).ready(function () {
                 $arr.push($DNA_sequence);
                 
                 $dna += $idCount;
+                $dna_str += "dna_sequence: " + $(this).find('.dnaSequence').val().toString();
                 $idCount++;
             }
         });
@@ -668,7 +695,11 @@ $(document).ready(function () {
         
         $parentId.children('.type_sample').each(function () {
             if ($(".proteinSequence", this).val().trim()) {
-                if($protein) $protein += " OR ";
+                if($protein) {
+                    $protein += " OR ";
+                    $protein_str += " OR ";
+                }
+
                 $Protein_sequence = {
                     "querySegmentID": $idCount,
                     "operator": "IS",
@@ -679,21 +710,38 @@ $(document).ready(function () {
                 $arr.push($Protein_sequence);
                 
                 $protein += $idCount;
+                $protein_str += "protein_sequence: " + $(this).find('.proteinSequence').val().toString();;
                 $idCount++;
             }
         });
         
-        if($dna) $dna = "(" + $dna + ")";
-        if($protein) $protein = "(" + $protein + ")";
+        if($dna) {
+            $dna = "(" + $dna + ")";
+            $dna_str = "(" + $dna_str + ")";
+        }
+
+        if($protein) {
+            $protein = "(" + $protein + ")";
+            $protein_str = "(" + $protein_str + ")";
+        }
         
-        if($dna && $protein)
+        if($dna && $protein) {
             $sequence = $dna + " " + $dna_protein + " " + $protein;
-        else 
+            $sequence_str = $dna_str + " " + $dna_protein + " " + $protein_str;
+        } else {
             $sequence = $dna + $protein;
+            $sequence_str = $dna_str + $protein_str;
+        }
         
         if($sequence) {
-            if($query) $query += " " + $accession_dna + " " + $sequence;
-            else    $query = $sequence;
+            if($query) {
+                $query += " " + $accession_dna + " " + $sequence;
+                $query_str += " " + $accession_dna + " " + $sequence_str;
+            }
+            else {
+                $query = $sequence;
+                $query_str = $sequence_str;
+            }
         }
         
 //        console.log($dna);
@@ -708,11 +756,15 @@ $(document).ready(function () {
         $parentId = $("#geneSymbolContainer");
         $parentType = $parentId.attr('data-type');
         $gene = "";
+        $gene_str = "";
         $arr = [];
         
         $parentId.children('.type_sample').each(function () {
             if ($(this).find('.geneSymbol').val().trim()) {
-                if($gene) $gene += " OR ";
+                if($gene) {
+                    $gene += " OR ";
+                    $gene_str += " OR ";
+                }
                 
                 $geneSymbol = {
                     "querySegmentID": $idCount,
@@ -723,15 +775,25 @@ $(document).ready(function () {
                 $arr.push($geneSymbol);
 
                 $gene += $idCount;
+                $gene_str += "gene_symbol " + $(this).find('.conditions').val().toString().toLowerCase() + " " + $(this).find('.geneSymbol').val().trim().toString();
                 $idCount++;
             }
         });
         
-        if($gene) $gene = "(" + $gene + ")";
+        if($gene) {
+            $gene = "(" + $gene + ")";
+            $gene_str = "(" + $gene_str + ")";
+        }
         
         if($gene) {
-            if($query) $query += " " + $protein_gene + " " + $gene;
-            else    $query = $gene;
+            if($query) {
+                $query += " " + $protein_gene + " " + $gene;
+                $query_str += " " + $protein_gene + " " + $gene_str;
+            }
+            else {
+                $query = $gene;
+                $query_str = $gene_str;
+            }
         }
         
 //        console.log($gene);
@@ -744,10 +806,15 @@ $(document).ready(function () {
         $parentId = $("#hgvsContainer");
         $parentType = $parentId.attr('data-type');
         $hgvs = "";
+        $hgvs_str = "";
+
         $arr = [];
         $parentId.children('.type_sample').each(function () {
             if ($(this).find('.hgvs_acc_ver').val().trim() && $(this).find('.hgvs_name').val().trim()) {
-                if($hgvs) $hgvs += " OR ";
+                if($hgvs) {
+                    $hgvs += " OR ";
+                    $hgvs_str += " OR ";
+                }
                 
                 $hgvsName = {
                     "querySegmentID": $idCount,
@@ -759,15 +826,25 @@ $(document).ready(function () {
                 $arr.push($hgvsName);
 
                 $hgvs += $idCount;
+                $hgvs_str += "(hgvs_reference: " + $(this).find('.hgvs_acc_ver').val().toString() + " AND hgvs_name: " + $(this).find('.hgvs_name').val().trim().toString() + ")";
                 $idCount++;
             }
         });
         
-        if($hgvs) $hgvs = "(" + $hgvs + ")";
+        if($hgvs) {
+            $hgvs = "(" + $hgvs + ")";
+            $hgvs_str = "(" + $hgvs_str + ")";
+        }
         
         if($hgvs) {
-            if($query) $query += " " + $gene_hgvs + " " + $hgvs;
-            else    $query = $hgvs;
+            if($query) {
+                $query += " " + $gene_hgvs + " " + $hgvs;
+                $query_str += " " + $gene_hgvs + " " + $hgvs_str;
+            }
+            else {
+                $query = $hgvs;
+                $query_str = $hgvs_str;
+            }
         }
         
 //        console.log($hgvs);
@@ -780,10 +857,15 @@ $(document).ready(function () {
         $parentId = $("#phenotypeContainer");
         $parentType = $parentId.attr('data-type');
         $phen = "";
+        $phen_str = "";
+
         $arr = [];
         $parentId.children('.type_sample').each(function () {
             if ($(this).find('select.keys').val().trim()) {
-                if($phen) $phen += " " + $phen_phen + " ";
+                if($phen) {
+                    $phen += " " + $phen_phen + " ";
+                    $phen_str += " " + $phen_phen + " ";
+                }
                 
                 $phenotype = {
                     "querySegmentID": $idCount,
@@ -796,15 +878,24 @@ $(document).ready(function () {
 
                 $arr.push($phenotype);
                 $phen += $idCount;
+                $phen_str += $(this).find('select.keys').val().toString() + " " + $(this).find('.conditions').val().toString().toLowerCase() + " " + $(this).find('.phenotype_values').val().toString().toLowerCase();
                 $idCount++;
             }
         });
         
-        if($phen) $phen = "(" + $phen + ")";
+        if($phen) {
+            $phen = "(" + $phen + ")";
+            $phen_str = "(" + $phen_str + ")";
+        }
         
         if($phen) {
-            if($query) $query += " " + $genotype_phenotype + " " + $phen;
-            else    $query = $phen;
+            if($query) {
+                $query += " " + $genotype_phenotype + " " + $phen;
+                $query_str += " " + $genotype_phenotype + " " + $phen_str;
+            } else {
+                $query = $phen;
+                $query_str = $phen_str;
+            }
         }
         
 //        console.log($phen);
@@ -817,10 +908,14 @@ $(document).ready(function () {
         $parentId = $("#otherContainer");
         $parentType = $parentId.attr('data-type');
         $other = "";
+        $other_str = "";
         $arr = [];
         $parentId.children('.type_sample').each(function () {
             if ($(this).find('select.other_keys').val() != "Select a field") {
-                if($other) $other += " OR ";
+                if($other) {
+                    $other += " OR ";
+                    $other_str += " OR ";
+                }
                 
                 $otherFields = {
                     "querySegmentID": $idCount,
@@ -832,15 +927,25 @@ $(document).ready(function () {
 
                 $arr.push($otherFields);
                 $other += $idCount;
+                $other_str += $(this).find('select.other_keys').val().trim().toString() + " " + $(this).find('.conditions').val().toString().toLowerCase() + " " + $(this).find('.other_value').val().trim().toString();
                 $idCount++;
             }
         });
         
-        if($other) $other = "(" + $other + ")";
+        if($other) {
+            $other = "(" + $other + ")";
+            $other_str = "(" + $other_str + ")";
+        }
         
         if($other) {
-            if($query) $query += " " + $phenotype_other + " " + $other;
-            else    $query = $other;
+            if($query) {
+                $query += " " + $phenotype_other + " " + $other;
+                $query_str += " " + $phenotype_other + " " + $other_str;
+            }
+            else {
+                $query = $other;
+                $query_str = $other_str;
+            }
         }
         
 //        console.log($other);
