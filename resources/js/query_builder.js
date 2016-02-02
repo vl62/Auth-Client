@@ -374,6 +374,11 @@ $(document).ready(function () {
     // Rest
     $(document).on('click', ".btn-collapse", function () {
 
+        // Precanned
+        if($(this).attr('id') == "collapsePrecanned")
+            $("input[name='precannedQueries']").attr('checked', false);
+        // End of Precanned
+        
         if ($(this).attr('id') === "isPhenotype")
             $parent = $(this).parent().parent().parent();
         else
@@ -476,8 +481,34 @@ $(document).ready(function () {
 
 //        $idCount = 1;
     $("#buildQuery").click(function () {
+
         $("#query_result").empty();
 //        $('#waiting').show(500);
+        
+        // Precanned
+        if(typeof $("input[name='precannedQueries']:checked").val() != 'undefined') {
+            // console.log($("input[name='precannedQueries']:checked").val());
+            var $arr = $.parseJSON($("input[name='precannedQueries']:checked").val());
+            $arr.network_to_search = $network_key;
+            console.log(JSON.stringify($arr, null, '\t'));
+    //        alert("queryString -> " + JSON.stringify($arr));
+
+            $('#waiting').show(500);
+            $.ajax({url: baseurl + 'discover/query/' + $network_key,
+                dataType: 'html',
+                delay: 200,
+                type: 'POST',
+                data: {'jsonAPI': $arr},
+                success: function (data) {
+    //                        alert('test -> ' + data);
+                    $('#waiting').hide(500);
+                    $("#query_result").html(data);
+                }
+            });
+            return;
+        } 
+        // End of precanned 
+        
         $idCount = 1;
 
         gen = validate_Genome("buildQueryEvent");

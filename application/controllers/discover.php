@@ -468,7 +468,7 @@ class Discover extends MY_Controller {
         $token = $this->session->userdata('Token');
         $data = authPostRequest($token, array('network_key' => $network_key), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_network");
         $federated_installs = stripslashes($data);
-        error_log("federated_installs -> $federated_installs");
+        // error_log("federated_installs -> $federated_installs");
         // Set the federated installs in the session so they can be used by variantcount
         $this->session->set_userdata(array('federated_installs' => $federated_installs));
 
@@ -477,6 +477,11 @@ class Discover extends MY_Controller {
         if (!array_key_exists('ok', $check_if_running)) {
             show_error("The query builder interface is currently not accessible as Elasticsearch is not running. Please get an administrator to start Elasticsearch and then try again.");
         }
+
+        // Precanned
+        if(PRECAN)
+            $this->data['precanned_queries'] = json_decode(file_get_contents(base_url() . "resources/precanned.json"), 1);
+        
         $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder.js');
         $this->css = array('jquery.querybuilder.css');
 
