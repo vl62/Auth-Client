@@ -2,7 +2,41 @@
     <div class="row-fluid" id="genotype_phenotype">
         <div class="span12 pagination-centered">
             <h2>Query Builder</h2><hr>
+
             <div class="" id="genotypeContainer" style="">
+
+                <?php if(isset($precanned_queries)): ?>
+                <div class="row-fluid">
+                    <div class="span12 pagination-centered" style="">
+                        <button class="btn btn-large input-block-level btn-info btn-collapse" id="collapsePrecanned" data-collapseStatus="false" style="text-align: left">
+                            Precanned Queries
+                            <i class="icon-chevron-left" style="float: right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="collapse" id="precannedContainer" data-type='precanned'>
+                    <?php 
+                        foreach ($precanned_queries as $key => $value) { ?>
+                            <div class="row-fluid type_sample">
+                                <div class="span7 offset2 pagination-centered">
+                                <label class="radio">
+                                    <input type="radio" name="precannedQueries" value="<?php echo htmlspecialchars(json_encode($value)); ?>">
+                                        <?php echo $value['queryString']; ?>
+                                    </label>
+                                </div>
+                            </div>
+                        <?php }
+                     ?>
+                </div> 
+                <!-- end Precanned Queries -->
+
+                <div class="btn-group btn-toggle logic" id="logic_gene_hgvs" style="margin:20px 0">
+                    <a class="btn btn-medium btn-default disabled">AND</a>
+                    <a class="btn btn-medium btn-primary active disabled">OR</a>
+                </div>
+                <!-- End section 0 -->
+                <?php endif; ?>
 
                 <div class="row-fluid">
                     <div class="span12 pagination-centered" style="">

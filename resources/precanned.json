@@ -1,0 +1,134 @@
+[{
+	"queryMetadata": {
+		"queryId": "<identifier>",
+		"queryType": "once|periodic",
+		"queryStart": "<Date, Time>",
+		"queryStop": "<Date, Time>",
+		"queryLabel": "<identifier>",
+		"queryResultLevel": "Exists|Counts|Records",
+		"submitter": {
+			"id": "SubmitterPersonID",
+			"name": "First [Middle] Last",
+			"email": "email@domain.com",
+			"institution": "AffiliationOfSubmitterPerson",
+			"urls": [
+				"SubmitterPersonalURL",
+				"..."
+			]
+		},
+		"contact": {
+			"id": "ContactPersonID",
+			"name": "First [Middle] Last",
+			"email": "email@domain.com",
+			"institution": "AffiliationOfContactPerson",
+			"urls": [
+				"ContactPersonURL",
+				"..."
+			]
+		}
+	},
+	"query": {
+		"phenotypeFeature": [
+			{
+				"querySegmentID": 1,
+				"operator": ">",
+				"phenotypeConcept": {
+					"cursivePhenotypeConcept": {
+						"term": "MMSE score [lowest]",
+						"source": ""
+					}
+				},
+				"phenotypeFeature": {
+					"value": "5",
+					"units": "",
+					"source": ""
+				}
+			},
+			{
+				"querySegmentID": 2,
+				"operator": "IS",
+				"phenotypeConcept": {
+					"cursivePhenotypeConcept": {
+						"term": "Gender",
+						"source": ""
+					}
+				},
+				"phenotypeFeature": {
+					"value": "female",
+					"units": "",
+					"source": ""
+				}
+			}
+		]
+	},
+	"queryStatement": "(1 AND 2)",
+	"queryString": "(MMSE score [lowest] > 5 AND Gender is female)",
+	"network_to_search": "044c667be7d19cc87b428bcd786d2835"
+},
+{
+	"queryMetadata": {
+		"queryId": "<identifier>",
+		"queryType": "once|periodic",
+		"queryStart": "<Date, Time>",
+		"queryStop": "<Date, Time>",
+		"queryLabel": "<identifier>",
+		"queryResultLevel": "Exists|Counts|Records",
+		"submitter": {
+			"id": "SubmitterPersonID",
+			"name": "First [Middle] Last",
+			"email": "email@domain.com",
+			"institution": "AffiliationOfSubmitterPerson",
+			"urls": [
+				"SubmitterPersonalURL",
+				"..."
+			]
+		},
+		"contact": {
+			"id": "ContactPersonID",
+			"name": "First [Middle] Last",
+			"email": "email@domain.com",
+			"institution": "AffiliationOfContactPerson",
+			"urls": [
+				"ContactPersonURL",
+				"..."
+			]
+		}
+	},
+	"query": {
+		"phenotypeFeature": [
+			{
+				"querySegmentID": 1,
+				"operator": "=",
+				"phenotypeConcept": {
+					"cursivePhenotypeConcept": {
+						"term": "MMSE score [lowest]",
+						"source": ""
+					}
+				},
+				"phenotypeFeature": {
+					"value": "18",
+					"units": "",
+					"source": ""
+				}
+			},
+			{
+				"querySegmentID": 2,
+				"operator": "IS LIKE",
+				"phenotypeConcept": {
+					"cursivePhenotypeConcept": {
+						"term": "Gender",
+						"source": ""
+					}
+				},
+				"phenotypeFeature": {
+					"value": "male",
+					"units": "",
+					"source": ""
+				}
+			}
+		]
+	},
+	"queryStatement": "(1 AND 2)",
+	"queryString": "(MMSE score [lowest] = 18 AND Gender is like male)",
+	"network_to_search": "044c667be7d19cc87b428bcd786d2835"
+}]
