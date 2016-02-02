@@ -361,6 +361,7 @@ $(document).ready(function () {
                                 <input class="input-large phenotype_values" data-type="phenotype" type="text" placeholder="Enter a value">\n\
                                 <span class="add-on"><i class="icon-share-alt"></i></span>\n\
                             </div>');
+            $(this).parent().parent().find('.add_remove_btn').addClass('offset1');
             $phenotype_values = $(this).remove();
         }
     });
