@@ -218,6 +218,17 @@ class Phenotypes_model extends CI_Model {
             
             if(strlen($value) > 229) continue;
 
+            if(is_numeric($value)) {
+            	if($value) {
+            		if($value < 0) {
+            			$value = $this->RoundSigDigs($value * -1, 3) * -1;
+            		} else {
+            			$value = $this->RoundSigDigs($value, 3);
+            		}
+            		
+            	}
+            }
+
             $sql = "select * from local_phenotypes_lookup where network_key='$network_key' AND phenotype_attribute='$attr'";
             $data2 = $this->db->query($sql)->result_array();
             if(count($data2) > 0) {
@@ -240,5 +251,18 @@ class Phenotypes_model extends CI_Model {
         $sql = "select phenotype_attribute, phenotype_values from local_phenotypes_lookup where network_key='$network_key'";
         return $this->db->query($sql)->result_array();
     }
+
+    function RoundSigDigs($number, $sigdigs) { 
+	    $multiplier = 1; 
+	    while ($number < 0.1) { 
+	        $number *= 10; 
+	        $multiplier /= 10; 
+	    } 
+	    while ($number >= 1) { 
+	        $number /= 10; 
+	        $multiplier *= 10; 
+	    } 
+	    return round($number, $sigdigs) * $multiplier; 
+	}
         
 }
