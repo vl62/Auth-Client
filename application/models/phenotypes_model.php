@@ -204,35 +204,65 @@ class Phenotypes_model extends CI_Model {
 //                $sql = "select attribute from networks_phenotypes_attributes_values where network_key='93eea0d840980f8356ea20ea612dd28c'"
 	}
         
-        function emptyLocalPhenotypesLookup() {
-            $sql = "delete from local_phenotypes_lookup";
-            $this->db->query($sql);
-        }
+    function emptyLocalPhenotypesLookup() {
+        $sql = "delete from local_phenotypes_lookup";
+        $this->db->query($sql);
+    }
 	
-        function localPhenotypesLookupValues($source_id, $network_key) {
-            $sql = "select attribute_termName, value from phenotypes where cafevariome_id in (select cafevariome_id from variants where source=(select name from sources where source_id='$source_id'))";
-            $data = $this->db->query($sql)->result_array();
-            foreach ($data as $d) {
-                $attr = $d['attribute_termName'];
-                $value = $d['value'];
-                $sql = "select * from local_phenotypes_lookup where network_key='$network_key' AND phenotype_attribute='$attr'";
-                $data2 = $this->db->query($sql)->result_array();
-                if(count($data2) > 0) {
-                    if(in_array($value, explode("|" , $data2[0]['phenotype_values']))) continue;
-                    else {
-                        $val = $data2[0]['phenotype_values'].$value."|";
-                        $sql = "UPDATE `local_phenotypes_lookup` SET `phenotype_values`='$val' WHERE lookup_id=" . $data2[0]['lookup_id'];
-                        $this->db->query($sql);
-                    }
-                } else {
-                    $value = $value."|";
-                    $sql = "INSERT INTO `local_phenotypes_lookup`(`network_key`, `phenotype_attribute`, `phenotype_values`) VALUES ('$network_key', '$attr', '$value')";
+    function localPhenotypesLookupValues($source_id, $network_key) {
+        $sql = "select attribute_termName, value from phenotypes where cafevariome_id in (select cafevariome_id from variants where source=(select name from sources where source_id='$source_id'))";
+        $data = $this->db->query($sql)->result_array();
+        foreach ($data as $d) {
+            $attr = $d['attribute_termName'];
+            $value = $d['value'];
+            
+            if(strlen($value) > 229) continue;
+
+            if(is_numeric($value)) {            
+            	if(floatval($value)) {
+            		if($value < 0) {
+            			$value = $this->RoundSigDigs($value * -1, 3) * -1;
+            		} else {
+            			$value = $this->RoundSigDigs($value, 3);
+            		}
+            		
+            	}
+            }
+            $value = (string)$value;       
+            $sql = "select * from local_phenotypes_lookup where network_key='$network_key' AND phenotype_attribute='$attr'";
+            $data2 = $this->db->query($sql)->result_array();
+            if(count($data2) > 0) {
+                if(in_array($value, explode("|" , $data2[0]['phenotype_values'])) || (strpos($data2[0]['phenotype_values'], 'Not all values displayed|') !== false)) continue;
+                else {
+                    if(strlen($data2[0]['phenotype_values'] . $value . "|") > 229)
+                    	$val = $data2[0]['phenotype_values'] . "Not all values displayed|";
+                    else
+                    	$val = $data2[0]['phenotype_values'] . $value . "|";
+                    $sql = "UPDATE `local_phenotypes_lookup` SET `phenotype_values`='$val' WHERE lookup_id=" . $data2[0]['lookup_id'];
                     $this->db->query($sql);
                 }
+            } else {
+                $value = $value . "|";
+                $sql = "INSERT INTO `local_phenotypes_lookup`(`network_key`, `phenotype_attribute`, `phenotype_values`) VALUES ('$network_key', '$attr', '$value')";
+                $this->db->query($sql);
             }
-            
-            $sql = "select phenotype_attribute, phenotype_values from local_phenotypes_lookup where network_key='$network_key'";
-            return $this->db->query($sql)->result_array();
         }
         
+        $sql = "select phenotype_attribute, phenotype_values from local_phenotypes_lookup where network_key='$network_key'";
+        return $this->db->query($sql)->result_array();
+    }
+    
+    function RoundSigDigs($number, $sigdigs) { 
+	    $multiplier = 1; 
+	    while ($number < 0.1) { 
+	        $number *= 10; 
+	        $multiplier /= 10; 
+	    } 
+	    while ($number >= 1) { 
+	        $number /= 10; 
+	        $multiplier *= 10; 
+	    } 
+	    return round($number, $sigdigs) * $multiplier; 
+	}
+                
 }
