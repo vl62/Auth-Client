@@ -229,6 +229,8 @@ class Phenotypes_model extends CI_Model {
             	}
             }
 
+            $value = (string) $value;
+            
             $sql = "select * from local_phenotypes_lookup where network_key='$network_key' AND phenotype_attribute='$attr'";
             $data2 = $this->db->query($sql)->result_array();
             if(count($data2) > 0) {
