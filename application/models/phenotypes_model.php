@@ -219,7 +219,7 @@ class Phenotypes_model extends CI_Model {
             if(strlen($value) > 229) continue;
 
             if(is_numeric($value)) {
-            	if($value) {
+            	if(floatval($value)) {
             		if($value < 0) {
             			$value = $this->RoundSigDigs($value * -1, 3) * -1;
             		} else {
