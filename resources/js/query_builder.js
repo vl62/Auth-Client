@@ -9,8 +9,12 @@ String.prototype.format = function (arguments) {
 
 function add_options(option, arguments) {
     $select = $.parseHTML(option);
-    for (var arg in arguments)
-        $("<option />", {value: arguments[arg], text: arguments[arg]}).appendTo($($select).children('select'));
+    for (var arg in arguments) {
+        if(arguments[arg] == "----------------------" || arguments[arg] == "not all values displayed")
+            $($select).children('select').append("<option value='" + arguments[arg] + "' disabled>" + arguments[arg] + "</option>");
+        else
+            $("<option />", {value: arguments[arg], text: arguments[arg]}).appendTo($($select).children('select'));
+    }
     return $select;
 }
 
@@ -333,7 +337,14 @@ $(document).ready(function () {
             $.each(json, function (attribute, value) {
                 $('select.phenotype_keys1').append($('<option>').text(attribute).attr('value', attribute));
                 phenotype_keys.push(attribute);
+                var index = value.indexOf("not all values displayed");
+                if(index != -1) {
+                    value.splice(index, 1);
+                    value.push("----------------------", "not all values displayed");
+                }
+                
                 phenotype_values[attribute] = value;
+                
             });
             $("#loader").addClass('hide');
         }
