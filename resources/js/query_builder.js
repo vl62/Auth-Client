@@ -489,6 +489,8 @@ $(document).ready(function () {
 
     $(document).on('click', ".clear_all_textbox", function () {
         $('input').val('');
+        $('select').prop('selectedIndex',0);
+        $(".keys").select2('val', 'All');
     });
 
 //        $idCount = 1;

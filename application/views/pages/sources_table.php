@@ -138,8 +138,10 @@ $(function (){
 									<?php echo "0"; ?>
 								<?php elseif ( $count['restrictedAccess'] == "BLOCKED" ): ?>
 									<a href="#" rel="popover" data-content="The display of record counts has been limited to specific users for this source." data-original-title="Unable to view counts"><i class="fa fa-ban fa-2x"></i></a>
-								<?php else: ?>
+								<?php elseif ( $count['restrictedAccess'] > $this->config->item('variant_count_cutoff') ): ?>
 									<a class="show_admin_emails" href="<?php echo $install_uri[$source] . '/'?>" target="_blank" rel="popover" data-content="Click to view the admin email id's of this source." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
+								<?php else: ?>
+										<a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a> 
 								<?php endif; ?>
 							<?php else: ?>
 								<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
