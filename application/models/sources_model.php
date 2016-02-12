@@ -941,4 +941,11 @@ class Sources_model extends CI_Model {
         return $query;
     }
 
+    function view_derids_status($user_id) {
+        $data = $this->db->select("*")->from("view_derids")->where("id", $user_id)->get()->result_array();
+        if(count($data))
+            return TRUE;
+        return FALSE;
+    }
+
 }

@@ -445,20 +445,20 @@ $(document).ready(function () {
 
     $(document).on('click', 'button.remove', function () {
 
-        parent = $(this).closest('.row-fluid');
+        // parent = $(this).closest('.row-fluid');
 
-        if ($(parent).is(":first-child"))
-            $(parent).next().remove();
+        if ($(this).closest('.row-fluid').is(":first-child"))
+            $(this).closest('.row-fluid').next().remove();
         else {
-            $(parent).prev().remove();
-            if ($(parent).is(":last-child"))
-                parent.prev().find(".add_remove_btn").prepend($add_btn);
+            $(this).closest('.row-fluid').prev().remove();
+            if ($(this).closest('.row-fluid').is(":last-child"))
+                $(this).closest('.row-fluid').prev().find(".add_remove_btn").prepend($add_btn);
         }
 
-        if ($(parent).siblings().length === 1)
-            $(parent).siblings('.row-fluid').find('.remove').addClass('hidden');
+        if ($(this).closest('.row-fluid').siblings().length === 1)
+            $(this).closest('.row-fluid').siblings('.row-fluid').find('.remove').addClass('hidden');
 
-        $(parent).remove();
+        $(this).closest('.row-fluid').remove();
 
     });
 
@@ -489,6 +489,7 @@ $(document).ready(function () {
     $("#buildQuery").click(function () {
         $("#query_result").empty();
 //        $('#waiting').show(500);
+
         $idCount = 1;
 
         gen = validate_Genome("buildQueryEvent");

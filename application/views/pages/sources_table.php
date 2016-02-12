@@ -4,7 +4,6 @@ $(function (){
 	$("[rel=popover]").popover({placement:'right', trigger:'hover', animation:'true', delay: { show: 50, hide: 300 }});
 });
 </script>
-
 <div class="container">
 	<div class="row-fluid">
 		<div class="span12 pagination-centered">
@@ -134,7 +133,10 @@ $(function (){
 							<td> 
 							
 							<?php if ( array_key_exists('restrictedAccess', $count )): ?>
-									<?php if ( $source_types[$source] == "central" ): ?>
+									<?php if(!$view_derids): ?>
+										<!-- <a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a> -->
+										<a href="#" rel="popover" data-content="The display of DerIDs has been limited to specific users for this source." data-original-title="Unable to view DerIDs"><i class="fa fa-ban fa-2x"></i></a>
+									<?php elseif ( $source_types[$source] == "central" ): ?>
 										<?php echo anchor("http://www.cafevariome.org/discover/variants/$term/" . $central_source[$source] . "/openAccess", img(array('src' => base_url('resources/images/cafevariome/cafevariome_node.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to access these records in Cafe Variome Central. N.B. All access control to these records is controlled by Cafe Variome Central.", 'data-original-title' => "Access CV Central Records")); ?>
 									<?php elseif ( $source_types[$source] == "federated" ): ?>
 										<?php if ( $count['restrictedAccess'] === 0 ): ?>
