@@ -449,7 +449,7 @@ class Discover extends MY_Controller {
         if ($network_key) {
             $this->session->set_userdata(array('network_key' => $network_key));
         } else {
-                redirect('discover/proceed_to_query/query_builder', 'refresh');
+            redirect('discover/proceed_to_query/query_builder', 'refresh');
         }
 
         // Check if the user is in the master network group for this network
@@ -468,7 +468,7 @@ class Discover extends MY_Controller {
         $token = $this->session->userdata('Token');
         $data = authPostRequest($token, array('network_key' => $network_key), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_network");
         $federated_installs = stripslashes($data);
-        error_log("federated_installs -> $federated_installs");
+        // error_log("federated_installs -> $federated_installs");
         // Set the federated installs in the session so they can be used by variantcount
         $this->session->set_userdata(array('federated_installs' => $federated_installs));
 
@@ -477,15 +477,25 @@ class Discover extends MY_Controller {
         if (!array_key_exists('ok', $check_if_running)) {
             show_error("The query builder interface is currently not accessible as Elasticsearch is not running. Please get an administrator to start Elasticsearch and then try again.");
         }
-        $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder.js');
-        $this->css = array('jquery.querybuilder.css');
+
+        $this->title = "Discover - Query Builder";
+        $this->css = array('jquery.querybuilder.css');    
+        
+        // Precanned
+        if(PRECAN && $this->sources_model->view_derids_status($this->session->userdata('user_id'))) {
+            $this->data['precanned_queries'] = json_decode(file_get_contents(base_url() . "resources/precanned.json"), 1);
+            $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder_precan.js');
+            $this->_render("query_builder/main_precan");
+        } else {
+            $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder.js');
+            $this->_render("query_builder/main");
+        }
 
 //		$token = $this->session->userdata('Token');
 //		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
 //		$federated_installs = json_decode(stripslashes($data), 1);
 //		error_log("federated_installs -> " . print_r($federated_installs, 1));
-        $this->title = "Discover - Query Builder";
-        $this->_render("query_builder/main");
+        
     }
 
     function get_phenotype_attributes_nr_list() {
@@ -571,6 +581,7 @@ class Discover extends MY_Controller {
     }
 
     function query($network = '') {
+        $view_derids = $this->sources_model->view_derids_status($this->session->userdata('user_id'));
 
         // Check if there's a network key supplied in the URL, if not then check if it's set in the session, if not then redirect back to the select network page
 //		if ( $network_key ) {
@@ -675,6 +686,7 @@ class Discover extends MY_Controller {
             }
         }
 
+        $data['view_derids'] = $view_derids;
         $data['sources_full'] = $sources;
 
         
