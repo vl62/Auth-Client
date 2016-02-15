@@ -1066,7 +1066,7 @@ CREATE TABLE `phenotypes` (
   `attribute_qualifier` varchar(200) DEFAULT NULL,
   `value` varchar(200) DEFAULT 'present',
   `type` enum('quality','qualityValue','numeric') NOT NULL DEFAULT 'quality',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),  KEY `cvid` (`cafevariome_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `local_phenotypes_lookup`;
@@ -1833,3 +1833,10 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2015-06-23 15:53:39
+
+CREATE TABLE `view_derids` (
+  `count` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) DEFAULT NULL,
+  `username` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`count`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8  AUTO_INCREMENT=1 ;

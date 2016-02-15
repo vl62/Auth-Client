@@ -1219,7 +1219,7 @@ CREATE TABLE `phenotypes` (
  `termId` varchar(200) NOT NULL,
  `termName` varchar(200) NOT NULL,
  `ontologyVersion` int(20) NOT NULL,
- PRIMARY KEY (`id`)
+ PRIMARY KEY (`id`),  KEY `cvid` (`cafevariome_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `local_phenotypes_lookup`;
@@ -1292,3 +1292,9 @@ INSERT INTO `pages` (`page_id`, `page_name`, `page_content`, `date_created`, `pa
 (1, 'Home', '<h2 style="text-align: center;">Welcome</h2>\n<p style="text-align: center;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus tincidunt tristique nisl, vitae tincidunt orci dignissim vel. Vestibulum ultricies a magna sed dictum. Quisque vehicula urna leo, posuere bibendum leo ultricies in. Integer volutpat ornare mollis. Nunc id porttitor libero. Sed a purus eget velit ullamcorper porttitor. Donec sodales neque eget dolor auctor, vitae fermentum augue egestas. Cras eget augue erat. Vivamus aliquam massa purus, id tincidunt neque porttitor at.</p>\n<p style="text-align: center;">Vivamus ullamcorper tincidunt dolor vel lacinia. Suspendisse pretium molestie ornare. Donec dapibus egestas leo et rhoncus. Nulla eleifend aliquam nibh, quis posuere augue porttitor vel. Vestibulum a neque dapibus, imperdiet mi ut, sodales quam. Phasellus quis faucibus metus. Mauris volutpat dui id arcu faucibus, a eleifend augue pharetra. Phasellus et dolor massa. Pellentesque condimentum posuere odio non ultrices. Pellentesque vestibulum justo in orci porta, ut semper urna feugiat. Etiam eget turpis hendrerit, dictum lacus a, adipiscing mi. Etiam ornare libero in mi commodo, quis scelerisque diam accumsan. Integer semper orci ut eros tincidunt, non egestas sem laoreet. Phasellus sit amet consectetur sapien.</p>\n<p style="text-align: center;">Mauris pellentesque quam sed est pretium varius. Cras quis metus imperdiet, commodo mi nec, egestas nunc. Sed eu tincidunt diam. Quisque quam ligula, venenatis at arcu et, eleifend varius risus. Fusce scelerisque dolor ante, ac rhoncus enim convallis et. Donec et dui erat. Mauris bibendum nunc nec iaculis molestie. Vestibulum sit amet turpis tempus libero dapibus interdum. Suspendisse vulputate dolor ut tristique faucibus.</p>\n<p style="text-align: center;">Nulla sit amet sapien in mi porta pellentesque sit amet nec arcu. Pellentesque aliquet erat at dolor sollicitudin tempus. Nullam feugiat laoreet mi tempor facilisis. Sed elit mauris, ultricies hendrerit mi ut, sodales lobortis felis. Curabitur venenatis sagittis massa, et commodo quam mollis id. Sed faucibus mi purus, vitae bibendum nibh lobortis eu. Nullam nec magna non erat consectetur imperdiet vitae non lacus. Suspendisse dictum mauris id accumsan sodales. Pellentesque cursus magna quis feugiat egestas.</p>', '2013-11-25 10:17:52', 'Home'),
 (2, 'Contact', '<h2 style="text-align: center;">Contact</h2>\n<p></p>\n<p></p>\n<p style="text-align: center;"><a href="http://www.ngrl.org.uk/Manchester/projects/dmudb" target="_blank"><img style="display: block; margin-left: auto; margin-right: auto;" src="http://127.0.0.1/cafevariome/resources/images/ico/media_set/64x64/home.png" alt="test" /></a></p>\n<p style="text-align: center;"><a href="mailto:support@dmudb.net"><img style="display: block; margin-left: auto; margin-right: auto;" src="http://127.0.0.1/cafevariome/resources/images/ico/media_set/64x64/mail.png" alt="test" /></a></p>', '2013-11-25 11:18:40', 'Contact');
 
+CREATE TABLE `view_derids` (
+  `count` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) DEFAULT NULL,
+  `username` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`count`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8  AUTO_INCREMENT=1 ;

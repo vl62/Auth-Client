@@ -19447,7 +19447,7 @@ CREATE TABLE `phenotypes` (
  `termId` varchar(200) NOT NULL,
  `termName` varchar(200) NOT NULL,
  `ontologyVersion` int(20) NOT NULL,
- PRIMARY KEY (`id`)
+ PRIMARY KEY (`id`),  KEY `cvid` (`cafevariome_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `local_phenotypes_lookup`;
@@ -19520,3 +19520,9 @@ INSERT INTO `pages` (`page_id`, `page_name`, `page_content`, `date_created`, `pa
 (1, 'Home', '<h2 style="text-align: center;">Welcome</h2><p style="text-align: center;">Extensive amounts of intrinsically useful mutation data cannot be openly shared for legal, ethical or competitive reasons. The full value of these data is therefore never realised, and this fundamental &lsquo;data access&rsquo; problem cannot be &lsquo;solved&rsquo; by any technically practicable solution.</p><p style="text-align: center;">The Cafe Variome approach changes the nature of the problem by offering a complete data sharing software solution based upon enabling fully open and comprehensive &lsquo;data discovery&rsquo; (i.e., making the existence rather than the substance of the data openly accessible), for example, between networks of diagnostic laboratories or disease consortia that know/trust each other and share an interest in certain causative genes or diseases.</p><p style="text-align: center;">The web application software is offered either as a fully hosted solution (on University of Leicester servers) or as downloadable &ldquo;in-a-box&rdquo; software with a browser-based GUI installer that can be easily deployed on any LAMP type system.</p><p style="text-align: center;">An intuitive administrator dashboard gives owners complete control over their data and installation. Dashboard configuration options include a content management system for adding/editing custom pages and menus, full control over site appearance (logo, colours, backgrounds, themes). Easy import of source mutation data via templates, control over how search results are displayed (ordering and specifying of fields) and a comprehensive access control system for users and groups.</p><hr /><p style="text-align: center;"><em><strong>This front page welcome message can be modified (and additional pages/menus added) through the administrators dashboard.</strong></em></p><hr />', '2013-11-25 10:17:52', 'Home'),
 (2, 'Contact', '<h2 style="text-align: center;">Contact</h2><hr /><p style="text-align: center;"><em><strong>This contact page can be modified (and additional pages/menus added) through the administrators dashboard. The contact page is required so that the Cafe Variome branding can be included in your installation.</strong></em></p><hr />', '2013-11-25 11:18:40', 'Contact');
 
+CREATE TABLE `view_derids` (
+  `count` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) DEFAULT NULL,
+  `username` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`count`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8  AUTO_INCREMENT=1 ;

@@ -828,6 +828,7 @@ class Discover_federated extends MY_Controller {
 
 //		error_log("term -> " . $term . " -> " . urldecode($term));
 		$variants_json = array();
+		$term = urldecode($term);
 		$term = html_entity_decode($term);
 //		$term = urldecode($term);
 		if ( $term && $source && $sharing_policy ) {
