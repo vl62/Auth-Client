@@ -19447,7 +19447,7 @@ CREATE TABLE `phenotypes` (
   `attribute_qualifier` varchar(200) DEFAULT NULL,
   `value` varchar(200) DEFAULT 'present',
   `type` enum('quality','qualityValue','numeric') NOT NULL DEFAULT 'quality',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),  KEY `cvid` (`cafevariome_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
 
 DROP TABLE IF EXISTS `local_phenotypes_lookup`;
@@ -19627,3 +19627,9 @@ ALTER TABLE `network_requests`
   MODIFY `request_id` int(10) NOT NULL AUTO_INCREMENT;
 
 
+CREATE TABLE `view_derids` (
+  `count` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) DEFAULT NULL,
+  `username` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`count`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8  AUTO_INCREMENT=1 ;

@@ -1208,6 +1208,8 @@ class Discover extends MY_Controller {
 
     function variants_federated_restricted($term, $source, $federated_install_uri) {
         
+        if(!$this->sources_model->view_derids_status($this->session->userdata('user_id')))
+            show_error("You don't have sufficient privilages to access this url");
 
         $federated_install_uri = base64_decode(urldecode($federated_install_uri));
 
@@ -1243,7 +1245,7 @@ class Discover extends MY_Controller {
 
             $this->data['sharing_policy'] = $sharing_policy;
             $this->data['format'] = $format;
-
+            $term = urlencode($term);
             $variants = @file_get_contents($federated_install_uri . "/discover_federated/variants_json_restricted/$term/$source/$sharing_policy/$format/$user_id");
             
             $variants = json_decode($variants, 1);
