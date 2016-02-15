@@ -10,7 +10,7 @@ textarea {
 
 <div class="container">
 
-<h3>Submit the Records IDs to EXCLUDE them from the Study</h3>
+<h3>Enter IDs to EXCLUDE them from discovery</h3>
 
 <form>
   <textarea name="content"></textarea>

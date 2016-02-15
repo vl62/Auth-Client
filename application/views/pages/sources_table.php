@@ -63,7 +63,8 @@ $(function (){
 										<?php echo anchor("http://www.cafevariome.org/discover/variants/$term/" . $central_source[$source] . "/openAccess", img(array('src' => base_url('resources/images/cafevariome/cafevariome_node.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to access these records in Cafe Variome Central. N.B. All access control to these records is controlled by Cafe Variome Central.", 'data-original-title' => "Access CV Central Records")); ?>
 									<?php elseif ( $source_types[$source] == "federated" ): ?>
 										<?php if ( $count['openAccess'] === 0 ): ?>
-											<?php echo "0"; ?>
+											<!-- <?php echo "0"; ?> -->
+											<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
 										<?php elseif ( $count['openAccess'] === "BLOCKED" ): ?>
 											<a href="#" rel="popover" data-content="The display of record counts has been limited to specific users for this source." data-original-title="Unable to view counts"><i class="fa fa-ban fa-2x"></i></a>
 										<?php elseif ( $count['openAccess'] > $this->config->item('variant_count_cutoff') ): ?>
@@ -103,7 +104,8 @@ $(function (){
 										<?php echo anchor("http://www.cafevariome.org/discover/variants/$term/" . $central_source[$source] . "/linkedAccess", img(array('src' => base_url('resources/images/cafevariome/cafevariome_node.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to access these records in Cafe Variome Central. N.B. All access control to these records is controlled by Cafe Variome Central.", 'data-original-title' => "Access CV Central Records")); ?>
 									<?php elseif ( $source_types[$source] == "federated" ): ?>
 										<?php if ( $count['linkedAccess'] === 0 ): ?>
-											<?php echo "0"; ?>
+											<!-- <?php echo "0"; ?> -->
+											<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
 										<?php elseif ( $count['linkedAccess'] === "BLOCKED" ): ?>
 											<a href="#" rel="popover" data-content="The display of record counts has been limited to specific users for this source." data-original-title="Unable to view counts"><i class="fa fa-ban fa-2x"></i></a>
 										<?php else: ?>
@@ -135,7 +137,8 @@ $(function (){
 						
 							<?php if ( array_key_exists('restrictedAccess', $count )) : ?>
 								<?php if ( $count['restrictedAccess'] === 0 ): ?>
-									<?php echo "0"; ?>
+									<!-- <?php echo "0"; ?> -->
+									<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
 								<?php elseif ( $count['restrictedAccess'] == "BLOCKED" ): ?>
 									<a href="#" rel="popover" data-content="The display of record counts has been limited to specific users for this source." data-original-title="Unable to view counts"><i class="fa fa-ban fa-2x"></i></a>
 								<?php elseif ( $count['restrictedAccess'] > $this->config->item('variant_count_cutoff') ): ?>
