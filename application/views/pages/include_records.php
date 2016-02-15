@@ -10,7 +10,7 @@ textarea {
 
 <div class="container">
 
-<h3>Submit the Records IDs to INCLUDE them from the Study</h3>
+<h3>Enter IDs to INCLUDE them for discovery</h3>
 
 <form>
   <textarea name="content" id="content"></textarea>
