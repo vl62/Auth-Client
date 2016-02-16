@@ -120,10 +120,10 @@ function add_symbol($symbol) {
             $options_1 = add_options($option.format(["span2", "input-medium conditions", "", ""]), $phenotype_option_1);
             $("#phenotype" + $phenotype_count).append($options_1);
 
-            $options_2 = add_options($option.format(["span3", "input-medium phenotype_values\" disabled ", "", ""]), $phenotype_option_2);
+            $options_2 = add_options($option.format(["span2", "input-medium phenotype_values\" disabled ", "", ""]), $phenotype_option_2);
             $("#phenotype" + $phenotype_count).append($options_2);
 
-            $("#phenotype" + $phenotype_count).append($add_remove_btn.format([""]));
+            $("#phenotype" + $phenotype_count).append($add_remove_btn.format(["offset1"]));
 
             $phenotype_count += 1;
             break;
@@ -170,7 +170,7 @@ $(document).ready(function () {
     $(document).on('change', "select.phenotype_values", function () {
         if ($(this).val() === "[Input your own value]") {
             $(this).parent().append('<div class="input-append phenotype_custom_value">\n\
-                                <input class="input-large phenotype_values" data-type="phenotype" type="text" placeholder="Enter a value">\n\
+                                <input class="input-medium phenotype_values" data-type="phenotype" type="text" placeholder="Enter a value">\n\
                                 <span class="add-on"><i class="icon-share-alt"></i></span>\n\
                             </div>');
             $phenotype_values = $(this).remove();
