@@ -710,16 +710,21 @@ class Discover_federated extends MY_Controller {
 	
 	function getVariantsElasticSearch($term, $source, $sharing_policy) {
 		$term = urldecode($term);
-		if (preg_match('/chr\S+:\d+\-|\.\.\d+/', $term)) { // Match chromosome region regex
-			error_log("region -> $term");
-			$locations = $this->_splitRegion($term);
-			$variants = $this->search_model->getVariantsForRegion($locations, $source, $sharing_policy);
-		}
-		elseif (preg_match('/N\S+_\S+:\S+/', $term)) {
-			$ref_hgvs = $this->_splitRefHGVS($term);
-			$variants = $this->search_model->getVariantsForRefHGVS($ref_hgvs, $source, $sharing_policy);
-		}
-		else {
+		error_log($term);
+		// if (preg_match('/chr\S+:\d+\-|\.\.\d+/', $term)) { // Match chromosome region regex
+		// 	error_log("checked1");
+		// 	error_log("region -> $term");
+		// 	$locations = $this->_splitRegion($term);
+		// 	$variants = $this->search_model->getVariantsForRegion($locations, $source, $sharing_policy);
+		// }
+		// elseif (preg_match('/N\S+_\S+:\S+/', $term)) {
+			
+		// 	error_log("checked2");
+		// 	$ref_hgvs = $this->_splitRefHGVS($term);
+		// 	$variants = $this->search_model->getVariantsForRefHGVS($ref_hgvs, $source, $sharing_policy);
+		// }
+		// else {
+			error_log("checked3");
 			$this->load->library('elasticsearch');
 			// Create dynamic name for the ES index to try and avoid clashes with multiple instance of CV on the same server
 			$es_index = $this->config->item('site_title');
@@ -797,7 +802,7 @@ class Discover_federated extends MY_Controller {
 //					print "$phenotypes_string<br /><br />";
 				}
 			}
-		}
+		// }
 		return $variants;
 
 //		$variants = $this->search_model->getVariantsForGene($term, $source, $sharing_policy);
@@ -951,7 +956,7 @@ class Discover_federated extends MY_Controller {
 			$open_access_flag = 0;
 			// Check whether the user has count display level access to this source and hence we will set restrictedAccess records to openAccess records for source
 			if (array_key_exists($source_id, $accessible_source_ids_array)) {
-//				error_log("SET TO OPENACCESS");
+				error_log("SET TO OPENACCESS");
 				$open_access_flag = 1;
 			}
 			
@@ -976,11 +981,13 @@ class Discover_federated extends MY_Controller {
 			}
 			
 			if ( preg_match('/openAccess/i', $sharing_policy)) {
-				
+				error_log("hello1");
 				$variants = $this->getVariantsElasticSearch($term, $source, "openAccess");
 				
 				// If this user has restrictedAccess to this source then also get all the restrictedAccess variants and combine them with the openAccess ones
+				
 				if ( $open_access_flag ) {
+					error_log("hello2");
 					$restricted_variants = $this->getVariantsElasticSearch($term, $source, "restrictedAccess");
 					$variants = array_merge($variants, $restricted_variants);
 				}
@@ -988,8 +995,6 @@ class Discover_federated extends MY_Controller {
 				// Get the dynamic display fields that can be changed by user in settings interface
 				$this->load->model('settings_model');
 				
-				
-
 				$display_fields = $this->settings_model->getDisplayFieldsForSharingPolicy('openAccess');
 //				error_log("DS -> " . print_r($display_fields, 1));
 				$variants_json['display_fields'] = $display_fields;
