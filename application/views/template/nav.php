@@ -38,13 +38,13 @@ if ( strtolower($current_page) == "discover" || strtolower($current_page) == "au
 				<?php if (! $this->ion_auth->logged_in()): ?>	
 					<?php if ( ! preg_match('/login/i', $this->uri->rsegment(2))): ?>
                                                 <a class="btn btn-small" href="<?php echo base_url() . "auth_federated/login";?>" class="navbar-link" id="loginUser">Login</a>
-						<?php if ( $this->config->item('allow_registrations') ): ?>
+						<?php if ( false ):  // if ( $this->config->item('allow_registrations') ): ?>
 							<?php if ( ! preg_match('/signup/i', $this->uri->rsegment(2))): ?>
 							 <a class="btn btn-small btn-primary" href="<?php echo base_url() . "auth_federated/signup";?>" class="navbar-link">Sign up</a>
 							<?php endif; ?>
 						<?php endif; ?>
 					<?php else: ?>
-						<?php if ( $this->config->item('allow_registrations') ): ?>
+						<?php if(false): // if ( $this->config->item('allow_registrations') ): ?>
 							<?php if ( ! preg_match('/signup/i', $this->uri->rsegment(2))): ?>
 							<a class="btn btn-small btn-primary" href="<?php echo base_url() . "auth_federated/signup";?>" class="navbar-link">Sign up</a>
 							<?php endif; ?>
