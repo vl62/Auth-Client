@@ -22,7 +22,8 @@
 				</p>
 				<p><button type="submit" name="submit" onclick="login_user();" class="btn btn-large"><i class="icon-user"></i>  Login</button></p>
 				<p><a href="forgot_password">Forgot your password?</a></p>
-				<?php if ( $this->config->item('allow_registrations') ): ?><p><a href="signup">Register for a new account?</a></p><?php endif; ?>
+				<!-- <?php if ( $this->config->item('allow_registrations') ): ?><p><a href="signup">Register for a new account?</a></p><?php endif; ?> -->
+				<?php if ( false ): ?><p><a href="signup">Register for a new account?</a></p><?php endif; ?>
 				<!--<p><a href="openid">Login with OpenID</a>-->
 			</div>
 		</div>
