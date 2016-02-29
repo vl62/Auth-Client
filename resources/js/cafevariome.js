@@ -3145,11 +3145,14 @@ function edit_user() {
     });
 }
 
-function edit_user_network_groups() {
+function edit_user_network_groups_sources() {
     $callAjax = true;
 
-    $(".groupsSelected").find('option').each(function ()
-    {
+    $(".groupsSelected").find('option').each(function () {
+        $(this).attr('selected', 'selected');
+    });
+
+    $(".sourcesSelected").find('option').each(function () {
         $(this).attr('selected', 'selected');
     });
 
@@ -3169,7 +3172,7 @@ function edit_user_network_groups() {
                         $("#editUserError").removeClass('hide');
                         $("#editUserError").text(result.error);
                     } else if (result.success) {
-					// console.log(result.success);
+                    // console.log(result.success);
                         window.location = baseurl + "groups";
                     }
                 }
@@ -3178,6 +3181,40 @@ function edit_user_network_groups() {
     });
 
 }
+
+// function edit_user_network_groups() {
+//     $callAjax = true;
+
+//     $(".groupsSelected").find('option').each(function ()
+//     {
+//         $(this).attr('selected', 'selected');
+//     });
+
+//     $('form[name="editUser"]').submit(function (e) {
+//         e.preventDefault();
+//         $postData = $(this).serialize();
+
+//         if ($callAjax)
+//             $.ajax({
+//                 url: authurl + '/auth_accounts/edit_user_network_groups/',
+//                 data: $postData,
+//                 dataType: 'json',
+//                 delay: 200,
+//                 type: 'POST',
+//                 success: function (result) {
+//                     if (result.error) {
+//                         $("#editUserError").removeClass('hide');
+//                         $("#editUserError").text(result.error);
+//                     } else if (result.success) {
+// 					// console.log(result.success);
+//                         window.location = baseurl + "groups";
+//                     }
+//                 }
+//             });
+//         $callAjax = false;
+//     });
+
+// }
 
 function select_groups() {
     $(".groupsSelected").find('option').each(function () {
@@ -3432,6 +3469,26 @@ $(document).ready(function () {
     });
 
     $("input[value='<<']").click(function () {
+        $prevTag = $(this).parent().prev().find("select");
+        $(this).parent().next().find(":selected").each(function () {
+            $prevTag.append($("<option></option>")
+                    .attr("value", $(this).val())
+                    .text($(this).html()));
+            $(this).remove();
+        });
+    });
+
+    $("input[value='Add >>']").click(function () {
+        $nextTag = $(this).parent().next().find("select");
+        $(this).parent().prev().find(":selected").each(function () {
+            $nextTag.append($("<option></option>")
+                    .attr("value", $(this).val())
+                    .text($(this).html()));
+            $(this).remove();
+        });
+    });
+
+    $("input[value='<< Remove']").click(function () {
         $prevTag = $(this).parent().prev().find("select");
         $(this).parent().next().find(":selected").each(function () {
             $prevTag.append($("<option></option>")

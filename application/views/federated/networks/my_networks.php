@@ -34,7 +34,8 @@
 							</tr>
 						</thead>
 						<tbody>
-							<?php foreach ( $networks as $network ):  ?>
+							<?php foreach ( $networks as $network ):  
+							error_log(print_r($network, 1));?>
 							<tr>
 								<td><?php echo $network['network_id']; ?></td>
 								<td><?php echo $network['network_name']; ?></td>
@@ -44,7 +45,12 @@
 									<?php endforeach; ?>
 								</td>
 								<td><?php echo $network['count']; ?></td>
-								<td><a href="<?php echo base_url('networks/leave_network') . "/" . $network['network_key'] . "/" . $network['count'] . "/" . $network['network_name']; ?>" rel="popover" data-content="Click to leave the network. N.B. this action cannot be undone and you will need to request to join the network again. If you are the last member of the network then this network will be permanently deleted." data-original-title="Leave Network"></i><i class="icon-remove"></i></a></td>
+								<td>
+									<a rel="popover" data-content="Add/Remove users for this network" data-original-title="Edit Network Users" 
+									href="<?php echo base_url('auth_federated/edit_user_network_groups') . '/' . $network['group_id'] . '/1'?>" ><i class="icon-edit"></i></a>
+									&nbsp;&nbsp;
+									<a href="<?php echo base_url('networks/leave_network') . "/" . $network['network_key'] . "/" . $network['count'] . "/" . $network['network_name']; ?>" rel="popover" data-content="Click to leave the network. N.B. this action cannot be undone and you will need to request to join the network again. If you are the last member of the network then this network will be permanently deleted." data-original-title="Leave Network"></i><i class="icon-remove"></i></a>
+								</td>
 							</tr>
 							<?php endforeach; ?>
 						</tbody>
