@@ -16,7 +16,7 @@
 	<div class="row-fluid">
 		<div class="span10 offset1 pagination-centered">
 			<div class="well">
-				<h2>Edit User Network Groups</h2>
+				<h2>Edit Users for Network: <?php $groups['network_name'] ?></h2>
 
 				<p>Please enter the users information below.</p>
                                 
