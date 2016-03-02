@@ -3581,6 +3581,24 @@ $(document).on('click', '.show_admin_emails', function(e) {
 
 });
 
+$(document).on('click', '#btn_save_threshold', function(e) { 
+    e.preventDefault();
+
+    if(isNaN($("#threshold").val()) || $("#threshold").val() < 0) {
+        alert("Invalid threshold value");
+        return;
+    }
+
+    $.ajax({
+        url: authurl + '/auth_accounts/set_network_threshold',
+        type: 'POST',
+        dataType: 'JSON',
+        data: {network_key: $("#threshold_network_key").val(), network_threshold: $("#threshold").val()},
+    }).done(function(data) {
+        window.location = baseurl + "networks";
+    });
+});
+
 
 // $(document).on('click', '#show_admin_emails', function(e) {
 //     e.preventDefault();
