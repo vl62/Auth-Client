@@ -97,7 +97,9 @@
                         <?php endforeach; endif;?>
 
                     <?php else: ?>
-                        <p><span class="label label-important">There are no sources present in this installation.</span></p>
+                        <?php if($group_type != 'master'): ?>
+                            <p><span class="label label-important">There are no sources present in this installation.</span></p>
+                        <?php endif; ?>
                     <?php endif; ?>
 
                     
