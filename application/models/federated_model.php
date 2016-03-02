@@ -256,6 +256,10 @@ class Federated_model extends CI_Model {
 	public function add_source_name_to_ids($ids) {
 		return $this->db->select('source_id, owner_name')->from('sources')->where_in('source_id', $ids)->get()->result_array();
 	}
+
+	public function get_variant_cutoff() {
+		return $this->db->select("value")->from('settings')->where('name', 'variant_count_cutoff')->get()->result_array()[0]['value'];
+	}
 	
 
 }

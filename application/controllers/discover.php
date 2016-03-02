@@ -645,7 +645,7 @@ class Discover extends MY_Controller {
                     $opts = array('http' =>
                         array(
                             'method' => 'GET',
-                            'timeout' => 5
+                            'timeout' => 10
                         )
                     );
                     $context = stream_context_create($opts);
@@ -654,7 +654,7 @@ class Discover extends MY_Controller {
                     $all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key", false, $context);
 //					$all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key");
 //					error_log(print_r($http_response_header, 1));
-                    // error_log("all_counts_json -> $all_counts_json");
+                    error_log("all_counts_json -> $all_counts_json");
                     // error_log("--------------------------");
 
                     $all_counts = json_decode($all_counts_json, 1);

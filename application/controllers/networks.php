@@ -46,8 +46,8 @@ class Networks extends MY_Controller {
 
         $token = $this->session->userdata('Token');
         error_log("key: " . $network_key);
-        $network_threshold = authPostRequest($token, array('network_key' => $network_key), $this->config->item('auth_server') . "/api/auth/get_network_threshold");
-
+        $network_threshold = authPostRequest($token, array('network_key' => $network_key), $this->config->item('auth_server') . "/auth_accounts/get_network_threshold");
+        // $network_threshold = $network_threshold['network_threshold'];
         $this->data['network_threshold'] = $network_threshold;
         $this->data['network_key'] = $network_key;
         error_log($network_threshold);
