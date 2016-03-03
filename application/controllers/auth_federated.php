@@ -1066,6 +1066,8 @@ class Auth_federated extends MY_Controller {
         $group_users = authPostRequest($token, array('installation_key' => $this->config->item('installation_key'), 'group_id' => $id), $this->config->item('auth_server') . "/api/auth/get_users_for_network_group");
         $group_users = json_decode($group_users, 1);
 
+        $group_details = json_decode(authPostRequest($token, array('installation_key' => $this->config->item('installation_key'), 'group_id' => $id), $this->config->item('auth_server') . "/api/auth/get_network_name_and_type_for_id"), TRUE);
+
         $this->data['name'] = $group_details[0]['name'];   
         $this->data['group_type'] = $group_details[0]['group_type']; 
 
