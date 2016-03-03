@@ -186,8 +186,8 @@ $(document).ready(function () {
     // Rest
     $(document).on('click', ".btn-collapse", function () {
         // Precanned
-        if($(this).attr('id') == "collapsePrecanned")
-            $("input[name='precannedQueries']").attr('checked', false);
+        // if($(this).attr('id') == "collapsePrecanned")
+            // $("input[name='precannedQueries']").attr('checked', false);
         // End of Precanned
 
         if ($(this).attr('id') === "isPhenotype")
@@ -294,9 +294,9 @@ $(document).ready(function () {
 
     $("#reset_phenotype").click(function(e) {
         e.preventDefault();
-        $('input').val('');
-        $('select').prop('selectedIndex',0);
-        $(".keys").select2('val', 'All');
+        $('#phenotypeContainer input').val('');
+        $('#phenotypeContainer select').prop('selectedIndex',0);
+        $("#phenotypeContainer .keys").select2('val', 'All');
     });
 
     $("#buildQuery_precanned").click(function () {
@@ -412,11 +412,11 @@ $(document).ready(function () {
     function getJSON_Phenotype() {
         $parentId = $("#phenotypeContainer");
         $parentType = $parentId.attr('data-type');
-        $phen = "";
+        $query = "";
         $arr = [];
         $parentId.children('.type_sample').each(function () {
             if ($(this).find('select.keys').val().trim()) {
-                if($phen) $phen += " " + $phen_phen + " ";
+                if($query) $query += " " + $phen_phen + " ";
                 
                 $phenotype = {
                     "querySegmentID": $idCount,
@@ -428,17 +428,12 @@ $(document).ready(function () {
                 };
 
                 $arr.push($phenotype);
-                $phen += $idCount;
+                $query += $idCount;
                 $idCount++;
             }
         });
         
-        if($phen) $phen = "(" + $phen + ")";
-        
-        if($phen) {
-            if($query) $query += " " + $genotype_phenotype + " " + $phen;
-            else    $query = $phen;
-        }
+        $query = "(" + $query + ")";
         
 //        console.log($phen);
 //        console.log(JSON.stringify($arr, null, "\t"));

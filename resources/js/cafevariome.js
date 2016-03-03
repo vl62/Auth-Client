@@ -3130,13 +3130,17 @@ function edit_user() {
     });
 }
 
-function edit_user_network_groups() {
+function edit_user_network_groups_sources() {
     $callAjax = true;
 
     $(".groupsSelected").find('option').each(function ()
     {
         $(this).attr('selected', 'selected');
     });
+
+    $(".sourcesSelected").find('option').each(function () {
+         $(this).attr('selected', 'selected');
+     });
 
     $('form[name="editUser"]').submit(function (e) {
         e.preventDefault();
@@ -3425,6 +3429,26 @@ $(document).ready(function () {
             $(this).remove();
         });
     });
+
+    $("input[value='Add >>']").click(function () {
+        $nextTag = $(this).parent().next().find("select");
+        $(this).parent().prev().find(":selected").each(function () {
+            $nextTag.append($("<option></option>")
+                    .attr("value", $(this).val())
+                    .text($(this).html()));
+            $(this).remove();
+        });
+    });
+
+    $("input[value='<< Remove']").click(function () {
+        $prevTag = $(this).parent().prev().find("select");
+        $(this).parent().next().find(":selected").each(function () {
+            $prevTag.append($("<option></option>")
+                    .attr("value", $(this).val())
+                    .text($(this).html()));
+            $(this).remove();
+        });
+    });
 });
 
 function show_growl_elastic_search() {
@@ -3508,6 +3532,25 @@ $(document).on('click', '.show_admin_emails', function(e) {
     });
 
 });
+
+$(document).on('click', '#btn_save_threshold', function(e) { 
+    e.preventDefault();
+
+    if(isNaN($("#threshold").val()) || $("#threshold").val() < 0) {
+        alert("Invalid threshold value");
+        return;
+    }
+
+    $.ajax({
+        url: authurl + '/auth_accounts/set_network_threshold',
+        type: 'POST',
+        dataType: 'JSON',
+        data: {network_key: $("#threshold_network_key").val(), network_threshold: $("#threshold").val()},
+    }).done(function(data) {
+        window.location = baseurl + "networks";
+    });
+});
+
 
 // $(document).on('click', '.show_restricted_data', function(e) { 
 

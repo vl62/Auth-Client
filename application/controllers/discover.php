@@ -484,17 +484,17 @@ class Discover extends MY_Controller {
         // Precanned
         if(PRECAN && $this->sources_model->view_derids_status($this->session->userdata('user_id'))) {
             $this->data['precanned_queries'] = json_decode(file_get_contents(base_url() . "resources/precanned.json"), 1);
-            $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder_precan.js');
+            $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder_precan.js', 'query_builder_advanced.js');
             $this->_render("query_builder/main_precan");
         } else {
             $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder.js');
             $this->_render("query_builder/main");
         }
 
-//		$token = $this->session->userdata('Token');
-//		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
-//		$federated_installs = json_decode(stripslashes($data), 1);
-//		error_log("federated_installs -> " . print_r($federated_installs, 1));
+		$token = $this->session->userdata('Token');
+		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
+		$federated_installs = json_decode(stripslashes($data), 1);
+		error_log("federated_installs -> " . print_r($federated_installs, 1));
         
     }
 
@@ -580,6 +580,188 @@ class Discover extends MY_Controller {
         print_r($query_response);
     }
 
+    private $AMBIGUITY = false;
+    private $qData = array();
+    private $ambigious = array();
+    private $cnt;
+    function validate_query_string() {
+
+        $str = $this->input->post('query_string');
+        $str = str_replace("AND", "+", $str);
+        $str = str_replace("OR", "-", $str);
+        $str = "(" . $str . ")";
+        $this->validate_exp($str, 0, 1);
+        if($this->AMBIGUITY) {
+            // error_log("ambigious");
+            echo json_encode(array("status" => "error", "choices" => $this->ambigious));
+            return;
+        }
+        // error_log("Not ambigious");
+
+        $str = str_replace(" + ", "", $str);
+        $str = str_replace(" - ", " or ", $str);
+        $this->cnt = 0;
+
+        while(substr_count($str, "(") > 1) 
+            $str = preg_replace_callback("#\([^()]*\)#", 
+
+                function ($matches) {
+                    foreach ($matches as $key => $value) {
+                        $value = trim($value, '()');
+                        if(strpos($value, 'or') !== false) {
+                            foreach (explode(" or ", $value) as $key => $value)
+                                if($value[0] == '#') $this->qData["#" . $this->cnt][] = $this->qData[$value];
+                                else $this->qData["#" . $this->cnt][] = $value;        
+                        } else {
+                            if(strpos($value, '#') !== false) {
+                                $c = 0;
+                                foreach (str_split($value) as $key => $val) {
+                                    if(ord($val) >=48 && ord($val) <=57) {
+                                        $temp[$c-1] = $temp[$c-1] . $val;
+                                        $c--;
+                                    } elseif(ord($val) == 35) $temp[$c] = $val;
+                                    else $temp[$c][] = $val;
+                                    $c++;
+                                }
+
+                                while(count($temp) > 1) {
+                                    if(!is_array($temp[0])) {
+                                        foreach ($this->qData[$temp[0]] as $key => $value1) {
+                                            if(!is_array($temp[1]))
+                                                foreach ($this->qData[$temp[1]] as $key => $value2) $total[] = $value1 . $value2;
+                                            else 
+                                                foreach ($temp[1] as $key => $value2) $total[] = $value1 . $value2;
+                                        } 
+                                    } else {
+                                        foreach ($temp[0] as $key => $value1) {
+                                            if(!is_array($temp[1]))
+                                                foreach ($this->qData[$temp[1]] as $key => $value2) $total[] = $value1 . $value2;
+                                            else
+                                                foreach ($temp[1] as $key => $value2) $total[] = $value1 . $value2;
+                                        }  
+                                    }
+                                    
+                                    $temp[0] = $total;
+                                    unset($temp[1]);
+                                    $temp = array_values($temp);
+                                }
+                                $this->qData["#" . $this->cnt] = $temp;
+                            } else $this->qData["#" . $this->cnt] = $value;
+                        } 
+                    }
+                    return "#" . $this->cnt++;
+                }, 
+            $str);
+
+        $str = $this->callback([$str]);
+        error_log(print_r(end($this->qData), 1));
+
+        $result = array();
+        if(is_array(end($this->qData))) {
+            foreach (end($this->qData) as $key => $value)
+                $result[] = $value;
+        } else {
+            $result = $this->qData;
+        }
+
+        echo json_encode(array("status" => "success", "choices" => trim($this->concat_final($result), ", ")));
+        
+        return;
+    }
+
+    function concat_final($arr) {
+        $str = "";
+        foreach ($arr as $key => $value) {
+            if(is_array($value)) {
+                $str = $str . $this->concat_final($value);
+            } else {
+                if(strlen($value) > 1) {
+                    $str = $str . implode(" and ", str_split($value)) . ", ";
+                }
+                else    {
+                    $str = $str . $value . ", ";
+                }
+            }
+        }
+        return $str;
+    }
+
+    function callback($matches) {
+        foreach ($matches as $key => $value) {
+            $value = trim($value, '()');
+            if(strpos($value, 'or') !== false) {
+                foreach (explode(" or ", $value) as $key => $value)
+                    if($value[0] == '#') $this->qData["#" . $this->cnt][] = $this->qData[$value];
+                    else $this->qData["#" . $this->cnt][] = $value;        
+            } else {
+                if(strpos($value, '#') !== false) {
+                    $c = 0;
+                    foreach (str_split($value) as $key => $val) {
+                        if(ord($val) >=48 && ord($val) <=57) {
+                            $temp[$c-1] = $temp[$c-1] . $val;
+                            $c--;
+                        } elseif(ord($val) == 35) $temp[$c] = $val;
+                        else $temp[$c][] = $val;
+                        $c++;
+                    }
+
+                    while(count($temp) > 1) {
+                        if(!is_array($temp[0])) {
+                            foreach ($this->qData[$temp[0]] as $key => $value1) {
+                                if(!is_array($temp[1]))
+                                    foreach ($this->qData[$temp[1]] as $key => $value2) $total[] = $value1 . $value2;
+                                else 
+                                    foreach ($temp[1] as $key => $value2) $total[] = $value1 . $value2;
+                            } 
+                        } else {
+                            foreach ($temp[0] as $key => $value1) {
+                                if(!is_array($temp[1]))
+                                    foreach ($this->qData[$temp[1]] as $key => $value2) $total[] = $value1 . $value2;
+                                else
+                                    foreach ($temp[1] as $key => $value2) $total[] = $value1 . $value2;
+                            }  
+                        }
+                        
+                        $temp[0] = $total;
+                        unset($temp[1]);
+                        $temp = array_values($temp);
+                    }
+                    $this->qData["#" . $this->cnt] = $temp;
+
+                } else $this->qData["#" . $this->cnt] = $value;
+            } 
+        }
+        return "#" . $this->cnt++;
+    }
+
+    function validate_exp($s, $pos, $cnt) {
+        while($pos < strlen($s)) {
+
+            if($s[$pos] == '(') {
+                $begin = $pos;
+                $pos = $this->validate_exp($s, $pos+1, $cnt);
+
+                $str = substr($s, $begin, $pos - $begin);
+                while(substr_count($str, "(") > 1)
+                    $str = preg_replace("#\([^()]*\)#", "£" . $cnt++, $str);
+                
+                if(strpos($str, '+') !== false && strpos($str, '-') !== false) {
+                    $this->AMBIGUITY = true;
+                    $str = preg_replace("(\£[\d]*)", "()", $str);
+                    $str = str_replace("-", "OR", $str);
+                    $str = str_replace("+", "AND", $str);
+                    array_push($this->ambigious, "Ambigious at: " . preg_replace("(\£[\d]*)", "()", $str));
+                    // error_log("Ambigious at: " . preg_replace("(\£[\d]*)", "()", $str) . "\n");
+                }
+            } else if($s[$pos] != ')') {
+                $pos+=1;
+            } else { 
+                return $pos+1;
+            }
+        }
+        return $pos;
+    }
+
     function query($network = '') {
         $view_derids = $this->sources_model->view_derids_status($this->session->userdata('user_id'));
 
@@ -651,13 +833,15 @@ class Discover extends MY_Controller {
                     $opts = array('http' =>
                         array(
                             'method' => 'GET',
-                            'timeout' => 5
+                            'timeout' => 10
                         )
                     );
                     $context = stream_context_create($opts);
 
+                    $network_threshold = authPostRequest('', array('network_key' => $network_key), $this->config->item('auth_server') . "/auth_accounts/get_network_threshold");
 
-                    $all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key", false, $context);
+
+                    $all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key/$network_threshold", false, $context);
 //					$all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key");
 //					error_log(print_r($http_response_header, 1));
                     // error_log("all_counts_json -> $all_counts_json");
