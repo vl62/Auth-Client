@@ -42,6 +42,18 @@ class Networks extends MY_Controller {
         $this->_render('federated/networks/my_networks');
     }
 
+    function edit_threshold($network_key) {
+
+        $token = $this->session->userdata('Token');
+        error_log("key: " . $network_key);
+        $network_threshold = authPostRequest($token, array('network_key' => $network_key), $this->config->item('auth_server') . "/auth_accounts/get_network_threshold");
+
+        $this->data['network_threshold'] = $network_threshold;
+        $this->data['network_key'] = $network_key;
+        error_log($network_threshold);
+        $this->_render('federated/networks/network_threshold');
+    }
+
     function create_network() {
         $this->data['title'] = "Create Network";
 

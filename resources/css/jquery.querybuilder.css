@@ -36,7 +36,7 @@ input[type=radio]:checked + label::before {
     border: 1px dashed darkgray;
 }
 
-#genotypeContainer .btn[data-collapseStatus], #phenotypeBox .btn[data-collapseStatus] {
+#genotypeContainer .btn[data-collapseStatus], #phenotypeBox .btn[data-collapseStatus], #advancedBox .btn[data-collapseStatus] {
     padding: 14px 24px;
     border: 0 none;
     font-weight: 700;
@@ -281,3 +281,9 @@ li.select2-result {
     border: 1px solid #aaaaaa;
     font-size: 0.875em;
 }
+
+
+
+
+
+

@@ -21,7 +21,16 @@ class Discover_federated extends MY_Controller {
 	}
 
 	// Federated variant count function that will get the counts for all local sources for an installation
-	function variantcount($term, $user_id, $network_key) {
+	function variantcount($term, $user_id, $network_key, $network_threshold) {
+
+		$network_threshold = authPostRequest('', array('network_key' => $network_key), $this->config->item('auth_server') . "/auth_accounts/get_network_threshold");
+        error_log("threshold: " . $network_threshold);
+        $this->load->model('federated_model');
+        $installation_threshold = $this->federated_model->get_variant_cutoff();
+        error_log("cutoff: " . $installation_threshold);
+        $threshold = $installation_threshold > $network_threshold ? $installation_threshold : $network_threshold;
+        error_log($threshold);
+
 //		error_log("variantcount_federated -> $term");
 		$term = urldecode($term);
 		$term = html_entity_decode($term);
@@ -177,6 +186,16 @@ class Discover_federated extends MY_Controller {
 			if ( ! empty($counts)) { // Only add the sources that have some counts returned
 //				$all_source_counts[$source . "_" . $this->config->item('installation_key')] = $counts;
 //				$all_source_counts[$source . "_" . $this->config->item('site_title')] = $counts;
+				
+				if(isset($counts['openAccess']))
+					$counts['openAccess'] = $counts['openAccess'] > $threshold ? $counts['openAccess'] : "THRESHOLD";
+				
+				if(isset($counts['linkedAccess']))
+					$counts['linkedAccess'] = $counts['linkedAccess'] > $threshold ? $counts['linkedAccess'] : "THRESHOLD";
+
+				if(isset($counts['restrictedAccess']))
+					$counts['restrictedAccess'] = $counts['restrictedAccess'] > $threshold ? $counts['restrictedAccess'] : "THRESHOLD";
+
 				$all_source_counts[$source] = $counts;
 //				error_log(print_r($counts, 1));
 			}

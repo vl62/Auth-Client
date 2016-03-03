@@ -1066,11 +1066,53 @@ class Auth_federated extends MY_Controller {
         $group_users = authPostRequest($token, array('installation_key' => $this->config->item('installation_key'), 'group_id' => $id), $this->config->item('auth_server') . "/api/auth/get_users_for_network_group");
         $group_users = json_decode($group_users, 1);
 
+        $this->data['name'] = $group_details[0]['name'];   
+        $this->data['group_type'] = $group_details[0]['group_type']; 
+
         // echo "<pre>";
         // var_dump($users);
         // var_dump($group_users);
         // echo "</pre>";
         // return;
+
+        if(!$isMaster) {
+            $this->load->model('federated_model');
+            $sources = $this->federated_model->get_sources();
+
+            $group_sources = json_decode(authPostRequest($token, array('installation_key' => $this->config->item('installation_key'), 'group_id' => $id), $this->config->item('auth_server') . "/api/auth/get_sources_for_group"), TRUE);
+
+            // error_log(print_r($sources, 1));
+            // error_log(print_r($group_sources, 1));
+
+            $ids = [];
+            foreach ($group_sources as $key => $value)
+                $ids[] = $value['source_id'];
+
+            if($ids)
+                $group_sources = $this->federated_model->add_source_name_to_ids($ids);
+
+            // error_log(print_r($group_sources, 1));
+
+            $sources_left = []; 
+            $sources_right = [];
+
+            foreach ($sources as $key => $value)
+                $sources_left[$value['source_id']] = $value['owner_name'];
+
+            foreach ($group_sources as $key => $value)
+                $sources_right[$value['source_id']] = $value['owner_name'];
+
+            foreach ($sources_right as $key => $value) {
+                if(array_key_exists($key, $sources_left))
+                    unset($sources_left[$key]);
+            }
+
+            // error_log(print_r($sources_left, 1));
+            // error_log(print_r($sources_right, 1));
+
+            $this->data['sources_left'] = $sources_left;
+            $this->data['sources_right'] = $sources_right;
+        }
 
         if($isMaster) {
             for($i = 0; $i < count($users); $i++) {

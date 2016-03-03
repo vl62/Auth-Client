@@ -47,10 +47,10 @@ $(function (){
 										<?php echo "0"; ?>
 									<?php elseif ( $count['openAccess'] === "BLOCKED" ): ?>
 											<a href="#" rel="popover" data-content="The display of record counts has been limited to specific users for this source." data-original-title="Unable to view counts"><i class="fa fa-ban fa-2x"></i></a>
-									<?php elseif ( $count['openAccess'] > $this->config->item('variant_count_cutoff') ): ?>
-										<?php echo $count['openAccess']; ?>
+									<?php elseif ( $count['openAccess'] === "THRESHOLD" ): ?>
+										<a href="#" rel="popover" data-content="Unable to display records since the number of counts is less than the threshold value." data-original-title="Records"><i class="icon-question-sign"></i></a> 
 									<?php else: ?>
-										<a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a>
+										<?php echo $count['openAccess']; ?>
 									<?php endif; ?>
 								<?php else: ?>
 									<?php echo "0"; ?>
@@ -66,16 +66,17 @@ $(function (){
 											<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
 										<?php elseif ( $count['openAccess'] === "BLOCKED" ): ?>
 											<a href="#" rel="popover" data-content="The display of record counts has been limited to specific users for this source." data-original-title="Unable to view counts"><i class="fa fa-ban fa-2x"></i></a>
-										<?php elseif ( $count['openAccess'] > $this->config->item('variant_count_cutoff') ): ?>
-											<a rel="popover" data-content="Click to access these records." data-original-title="Access Records"> <input type="image" onclick="javascript:variantOpenAccessRequestFederated('<?php echo urlencode($term);?>', '<?php echo $federated_source;?>', '<?php echo $sources_full[$source];?>', '<?php echo $count['openAccess'];?>', '<?php echo urlencode(base64_encode($install_uri[$source])); ?>')" src="<?php echo base_url('resources/images/cafevariome/request.png');?>"></a>
+										<?php elseif ( $count['openAccess'] === "THRESHOLD"): ?>
+											<a href="#" rel="popover" data-content="Unable to display records since the number of counts is less than the threshold value." data-original-title="Records"><i class="icon-question-sign"></i></a> 
 										<?php else: ?>
-											<a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a>
+											<a rel="popover" data-content="Click to access these records." data-original-title="Access Records"> <input type="image" onclick="javascript:variantOpenAccessRequestFederated('<?php echo urlencode($term);?>', '<?php echo $federated_source;?>', '<?php echo $sources_full[$source];?>', '<?php echo $count['openAccess'];?>', '<?php echo urlencode(base64_encode($install_uri[$source])); ?>')" src="<?php echo base_url('resources/images/cafevariome/request.png');?>"></a>
 										<?php endif; ?>
 									<?php else: ?>
-										<?php if ( $count['openAccess'] > $this->config->item('variant_count_cutoff') ): ?>
-											<a rel="popover" data-content="Click to access these records." data-original-title="Access Records"> <input type="image" onclick="javascript:variantOpenAccessRequest('<?php echo urlencode($term);?>', '<?php echo $source;?>', '<?php echo $sources_full[$source];?>', '<?php echo $count['openAccess'];?>')" src="<?php echo base_url('resources/images/cafevariome/request.png');?>"></a>
+										<?php if ( $count['openAccess'] === "THRESHOLD"): ?>
+											<a href="#" rel="popover" data-content="Unable to display records since the number of counts is less than the threshold value." data-original-title="Records"><i class="icon-question-sign"></i></a> 
 										<?php else: ?>
-											<a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a>
+											
+											<a rel="popover" data-content="Click to access these records." data-original-title="Access Records"> <input type="image" onclick="javascript:variantOpenAccessRequest('<?php echo urlencode($term);?>', '<?php echo $source;?>', '<?php echo $sources_full[$source];?>', '<?php echo $count['openAccess'];?>')" src="<?php echo base_url('resources/images/cafevariome/request.png');?>"></a>
 										<?php endif; ?>
 									<?php endif; ?>
 								<?php else: ?>
@@ -88,10 +89,11 @@ $(function (){
 										<?php echo "0"; ?>
 									<?php elseif ( $count['linkedAccess'] === "BLOCKED" ): ?>
 											<a href="#" rel="popover" data-content="The display of record counts has been limited to specific users for this source." data-original-title="Unable to view counts"><i class="fa fa-ban fa-2x"></i></a>
-									<?php elseif ( $count['linkedAccess'] > $this->config->item('variant_count_cutoff') ): ?>
-										<?php echo $count['linkedAccess']; ?>
+									<?php elseif ( $count['linkedAccess'] === "THRESHOLD"): ?>
+										<a href="#" rel="popover" data-content="Unable to display records since the number of counts is less than the threshold value." data-original-title="Records"><i class="icon-question-sign"></i></a> 
+
 									<?php else: ?>
-										<a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a>
+										<?php echo $count['linkedAccess']; ?>
 									<?php endif; ?>
 								<?php else: ?>
 									<?php echo "0"; ?>
@@ -123,10 +125,11 @@ $(function (){
 										<?php echo "0"; ?>
 									<?php elseif ( $count['restrictedAccess'] === "BLOCKED" ): ?>
 										<a href="#" rel="popover" data-content="The display of record counts has been limited to specific users for this source." data-original-title="Unable to view counts"><i class="fa fa-ban fa-2x"></i></a>
-									<?php elseif ( $count['restrictedAccess'] > $this->config->item('variant_count_cutoff') ): ?>
-										<?php echo $count['restrictedAccess']; ?>
+									<?php elseif ( $count['restrictedAccess'] === "THRESHOLD"): ?>
+										<a href="#" rel="popover" data-content="Unable to display records since the number of counts is less than the threshold value." data-original-title="Records"><i class="icon-question-sign"></i></a>  
 									<?php else: ?>
-										<a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a> 
+										
+										<?php echo $count['restrictedAccess']; ?>
 									<?php endif; ?>
 								<?php else: ?>
 									<?php echo "0"; ?>
@@ -152,16 +155,18 @@ $(function (){
 											<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
 										<?php elseif ( $count['restrictedAccess'] === "BLOCKED" ): ?>
 											<a href="#" rel="popover" data-content="The display of record counts has been limited to specific users for this source." data-original-title="Unable to view counts"><i class="fa fa-ban fa-2x"></i></a>
-										<?php elseif ( $count['restrictedAccess'] > $this->config->item('variant_count_cutoff') ): ?>
-											<a href="<?php echo base_url();?>discover/variants_federated_restricted/<?php echo urlencode($term);?>/<?php echo $federated_source;?>/<?php echo urlencode(base64_encode($install_uri[$source]));?>" target="_blank" rel="popover" data-content="Click to view the DerIDs and email address of the source owner." data-original-title="Get DerIDs"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
+										<?php elseif ( $count['restrictedAccess'] === "THRESHOLD"): ?>
+											<a href="#" rel="popover" data-content="Unable to display records since the number of counts is less than the threshold value." data-original-title="Records"><i class="icon-question-sign"></i></a> 
+
 										<?php else: ?>
-											<a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a>
+											<a href="<?php echo base_url();?>discover/variants_federated_restricted/<?php echo urlencode($term);?>/<?php echo $federated_source;?>/<?php echo urlencode(base64_encode($install_uri[$source]));?>" target="_blank" rel="popover" data-content="Click to view the DerIDs and email address of the source owner." data-original-title="Get DerIDs"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
 										<?php endif; ?>
 									<?php else: ?>
-										<?php if ( $count['restrictedAccess'] > $this->config->item('variant_count_cutoff') ): ?>
-											<a rel="popover" data-content="Click to access these records." data-original-title="Access Records"> <input type="image" onclick="javascript:variantOpenAccessRequest('<?php echo urlencode($term);?>', '<?php echo $source;?>', '<?php echo $sources_full[$source];?>', '<?php echo $count['openAccess'];?>')" src="<?php echo base_url('resources/images/cafevariome/request.png');?>"></a>
+										<?php if ( $count['restrictedAccess'] === "THRESHOLD"): ?>
+											<a href="#" rel="popover" data-content="Unable to display records since the number of counts is less than the threshold value." data-original-title="Records"><i class="icon-question-sign"></i></a> 
 										<?php else: ?>
-											<a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a>
+											
+											<a rel="popover" data-content="Click to access these records." data-original-title="Access Records"> <input type="image" onclick="javascript:variantOpenAccessRequest('<?php echo urlencode($term);?>', '<?php echo $source;?>', '<?php echo $sources_full[$source];?>', '<?php echo $count['openAccess'];?>')" src="<?php echo base_url('resources/images/cafevariome/request.png');?>"></a>
 										<?php endif; ?>
 									<?php endif; ?>
 								<?php else: ?>
@@ -199,14 +204,14 @@ $(function (){
 										<?php elseif ( $count['restrictedAccess'] > $this->config->item('variant_count_cutoff') ): ?>
 											<?php echo anchor("discover/variants/" . urlencode($term) . "/$source/restrictedAccess", img(array('src' => base_url('resources/images/cafevariome/request-icon.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to request access to these records (requires login).", 'data-original-title' => "Access Records")); ?>
 										<?php else: ?>
-											<a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a>
+											<a href="#" rel="popover" data-content="Unable to display records since the number of counts is less than the threshold value." data-original-title="Records"><i class="icon-question-sign"></i></a> 
 										<?php endif; ?>
 
 									<?php else: ?>
 										<?php if ( $count['restrictedAccess'] > $this->config->item('variant_count_cutoff') ): ?>
 											<?php echo anchor("discover/variants/" . urlencode($term) . "/$source/restrictedAccess", img(array('src' => base_url('resources/images/cafevariome/request-icon.png'),'border'=>'0','alt'=>'Request Data')),array('class'=>'imglink', 'target' => '_blank', 'rel' => "popover", 'data-content' => "Click to request access to these records (requires login).", 'data-original-title' => "Access Records")); ?>
 										<?php else: ?>
-											<a href="#" rel="popover" data-content="<?php echo $this->config->item('variant_count_cutoff_message'); ?>" data-original-title="Records"><i class="icon-question-sign"></i></a>
+											<a href="#" rel="popover" data-content="Unable to display records since the number of counts is less than the threshold value." data-original-title="Records"><i class="icon-question-sign"></i></a> 
 										<?php endif; ?>
 									<?php endif; ?>
 
