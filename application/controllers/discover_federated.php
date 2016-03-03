@@ -21,9 +21,9 @@ class Discover_federated extends MY_Controller {
 	}
 
 	// Federated variant count function that will get the counts for all local sources for an installation
-	function variantcount($term, $user_id, $network_key) {
+	function variantcount($term, $user_id, $network_key, $network_threshold) {
 
-		$network_threshold = authPostRequest('', array('network_key' => $network_key), $this->config->item('auth_server') . "/auth_accounts/get_network_threshold");
+		
         error_log("threshold: " . $network_threshold);
         $this->load->model('federated_model');
         $installation_threshold = $this->federated_model->get_variant_cutoff();
