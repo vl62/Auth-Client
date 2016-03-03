@@ -1097,10 +1097,10 @@ class Auth_federated extends MY_Controller {
             $sources_right = [];
 
             foreach ($sources as $key => $value)
-                $sources_left[$value['source_id']] = $value['owner_name'];
+                $sources_left[$value['source_id']] = $value['name'];
 
             foreach ($group_sources as $key => $value)
-                $sources_right[$value['source_id']] = $value['owner_name'];
+                $sources_right[$value['source_id']] = $value['name'];
 
             foreach ($sources_right as $key => $value) {
                 if(array_key_exists($key, $sources_left))
