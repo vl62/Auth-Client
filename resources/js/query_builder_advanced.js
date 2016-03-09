@@ -270,26 +270,47 @@ $(document).ready(function () {
         var invalid = false; 
         str = str.trim();
         arr = [];
-
+        console.log("trim: " + str);
         if(str == "") invalid = true;
 
         var opr = true;
         var alpha = false;
 
+        strstr = "";
         $.each(str.split(" "), function(key, val) {
-            if(val.trim() != "") {
-                if((val == "AND" || val == "OR") && alpha) {
+            if(val.trim() != "") strstr = strstr + " " + val.trim();
+        }); 
+        str = strstr.trim();
+
+        var s = "";
+        for (var i = 0, len = str.length; i < len; i++)
+            if(!(str[i] == " " && i > 0 && (str[i-1] == '(' || str[i+1] == ')' || str[i-1] == ' ' || str[i+1] == ' '))) s = s + str[i];
+
+        // console.log("s: " + s);
+        str = "";
+        str = s;
+
+        $.each(str.split(" "), function(key, val) {
+            // console.log(key + " " + val);
+            val = val.trim();
+            if(val != "") {
+                console.log(val.length);
+                if(val.length == 3 && val.charCodeAt(1) >=65 && val.charCodeAt(1) <= alpha_max) {
+                    arr.push(val[1]);
+                    alpha = true;
+                    opr = false;
+                } else if((val == "AND" || val == "OR") && alpha) {
                     arr.push(val);
                     opr = true;
                     alpha = false;
-                } else if((val.length > 1 && ((val[0] == "(" && val.charCodeAt(val.length-1) >= 65 && val.charCodeAt(val.length-1) <= 68) || (val[val.length-1] == ")" && val.charCodeAt(0) >= 65 && val.charCodeAt(0) <= 68)) && opr)
+                } else if((val.length > 1 && ((val[0] == "(" && val.charCodeAt(val.length-1) >= 65 && val.charCodeAt(val.length-1) <= alpha_max) || (val[val.length-1] == ")" && val.charCodeAt(0) >= 65 && val.charCodeAt(0) <= alpha_max)) && opr)
                 || (val.length == 1 && val.charCodeAt(0) >= 65 && val.charCodeAt(0) <= alpha_max && opr)) {
                     arr.push(val);
                     alpha = true;
                     opr = false;
                 } else {
                     invalid = true;
-                    console.log(val);
+                    console.log("Invalid: " + val);
                 }
             }
         });
@@ -299,6 +320,7 @@ $(document).ready(function () {
             return false;
         }
 
+        // console.log(arr.join(" "));
         return arr.join(" ");
     }
 
@@ -306,7 +328,7 @@ $(document).ready(function () {
 
     $("#buildQuery_advanced").click(function () {
 
-        var queryString = validate_query_string($("input#queryString").val(), label_counter + 64);
+        var queryString = validate_query_string($("input#queryString").val().toUpperCase(), label_counter + 64);
 
         $("#query_result_advanced").empty();
        
