@@ -45,7 +45,12 @@
 					</tr>
 				</table>
 				<br />
-				<p><a href="<?php echo base_url() . "auth_federated/user_edit_profile/" . $user['id']; ?>" class="btn btn-primary"><i class="icon-user"></i>  Edit Profile</a><?php echo nbs(6); ?><a href="<?php echo base_url() . "admin/data_access/" . $user['id']; ?>" class="btn"><i class="icon-download-alt"></i>  Data Access & Requests</a></p>
+				<!-- <p><a href="<?php echo base_url() . "auth_federated/user_edit_profile/" . $user['id']; ?>" class="btn btn-primary"><i class="icon-user"></i>  Edit Profile</a><?php echo nbs(6); ?><a href="<?php echo base_url() . "admin/data_access/" . $user['id']; ?>" class="btn"><i class="icon-download-alt"></i>  Data Access & Requests</a></p> -->
+				<p><a href="<?php echo base_url() . "auth_federated/user_edit_profile/" . $user['id']; ?>" class="btn btn-primary"><i class="icon-user"></i>  Edit Profile</a><?php echo nbs(6); ?></p>
+			</div>
+		</div>
+	</div>
+
 			</div>
 		</div>
 	</div>

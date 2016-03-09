@@ -71,6 +71,13 @@ class Discover_federated extends MY_Controller {
 			error_log("accessible_source_display_ids_array -> " . print_r($accessible_source_display_ids_array, 1));
 		}
 		
+		$displayable_sources = authPostRequest('', array(
+				'network_key' => $network_key, 
+				'installation_key' => $this->config->item('installation_key')
+			), 
+			$this->config->item('auth_server') . "/api/auth_general/get_sources_for_network_part_of_group");
+		$displayable_sources = json_decode($displayable_sources, 1)['sources'];
+
 		$this->load->model('sources_model');
 		// Get the sources for this installation which are to be search (any that are not federated i.e. local sources)
 		$sources = $this->sources_model->getSourcesForFederatedQuery();
@@ -89,7 +96,8 @@ class Discover_federated extends MY_Controller {
 //				error_log("SET TO OPENACCESS!!");
 				$open_access_flag = 1;
 			}
-			
+
+			if(!in_array($source_id, $displayable_sources)) continue;
 			if ( ! array_key_exists($source_id, $accessible_source_display_ids_array)) {
 //				error_log("Do not return this source!!!");
 				$all_source_counts[$source] = array("openAccess" => "BLOCKED", "linkedAccess" => "BLOCKED", "restrictedAccess" => "BLOCKED");
