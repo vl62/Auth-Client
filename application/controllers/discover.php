@@ -750,8 +750,8 @@ class Discover extends MY_Controller {
                     $str = preg_replace("(\£[\d]*)", "()", $str);
                     $str = str_replace("-", "OR", $str);
                     $str = str_replace("+", "AND", $str);
-                    array_push($this->ambigious, "Ambigious at: " . preg_replace("(\£[\d]*)", "()", $str));
-                    // error_log("Ambigious at: " . preg_replace("(\£[\d]*)", "()", $str) . "\n");
+                    array_push($this->ambigious, "Ambiguous at: " . preg_replace("(\£[\d]*)", "()", $str));
+                    // error_log("Ambiguous at: " . preg_replace("(\£[\d]*)", "()", $str) . "\n");
                 }
             } else if($s[$pos] != ')') {
                 $pos+=1;
