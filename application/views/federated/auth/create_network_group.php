@@ -47,7 +47,7 @@
 			<p>
 				Group Type: <br />
 				<?php
-					$options = array('count_display' => 'Count Display', 'source_display' => 'Source Display');
+					$options = array('source_display' => 'Source Display', 'count_display' => 'Count Display');
 					echo form_dropdown('group_type', $options);
 				?>
 				<?php // echo form_input($network); ?>
