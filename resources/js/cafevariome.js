@@ -3159,7 +3159,8 @@ function edit_user_network_groups_sources() {
     $('form[name="editUser"]').submit(function (e) {
         e.preventDefault();
         $postData = $(this).serialize();
-
+        $dat = $(this);
+        
         if ($callAjax)
             $.ajax({
                 url: authurl + '/auth_accounts/edit_user_network_groups/',
@@ -3173,7 +3174,11 @@ function edit_user_network_groups_sources() {
                         $("#editUserError").text(result.error);
                     } else if (result.success) {
                     // console.log(result.success);
+                    if($($dat).find('input[name="isMaster"]').val()) 
+                        window.location = baseurl + "networks";
+                    else
                         window.location = baseurl + "groups";
+                        
                     }
                 }
             });
