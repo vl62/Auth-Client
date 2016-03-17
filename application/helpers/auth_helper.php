@@ -32,24 +32,25 @@ function authPostRequest($token, $data, $uri) {
     $result = curl_exec($ch);
 //    error_log($result);
 //    error_log(curl_error($ch));
+   // error_log("Result1: " . $result);
+    // error_log("Result2: " . print_r($result, 1));
+   	$session_status = json_decode($result, 1);
     curl_close($ch);
-    return $result;
-	
-//	
-//	$url = $uri . '/format/json';
-//	error_log($url);
-//	$opts = array('http' =>
-//		array(
-//			'method'  => 'POST',
-//			'header'  =>	"Content-type: application/x-www-form-urlencoded\r\n" .
-//							"Token: $token\r\n" .
-//							"Access-Control-Allow-Origin: *\r\n",
-//			'content' => http_build_query($data)
-//		)
-//	);
-//	$context  = stream_context_create($opts);
-//	$result = file_get_contents($url, false, $context);
-//	return $result;
+
+    error_log("session: " . print_r($session_status, 1));
+    // return $result;
+
+    if(isset($session_status['error']) && $session_status['error'] == "Token is not valid") {
+    	if($data['tokenCheck']) {
+    		return "expired";
+    	} else {
+    		redirect('auth_federated/logout', 'refresh');
+    	}
+    	
+    } else {
+    	return $result;
+    }
+   	
 }
 
 function authGetRequest($token, $uri) {

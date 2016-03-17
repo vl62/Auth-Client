@@ -1532,5 +1532,17 @@ class Auth_federated extends MY_Controller {
 			return FALSE;
 		}
 	}
+
+    function get_session_status() {
+        if(!$this->session->userdata('Token')) {
+            echo "not expired";
+            return;
+        }
+        $token = $this->session->userdata('Token');
+        $data = authPostRequest($token, array('tokenCheck' => true, 'token' => $this->session->userdata('Token'), 'user_id' => $this->session->userdata('user_id')), $this->config->item('auth_server') . "/api/auth/get_session_status");
+        $data = trim($data);
+        $data = trim($data, '"');
+        echo trim($data);
+    }
         
 }
