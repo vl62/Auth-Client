@@ -486,6 +486,9 @@ class Discover extends MY_Controller {
             $this->data['precanned_queries'] = json_decode(file_get_contents(base_url() . "resources/precanned.json"), 1);
             $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder_precan.js', 'query_builder_advanced.js');
             $this->_render("query_builder/main_precan");
+        } elseif(PHENOTYPE_CATEGORIES) {
+            $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder_category.js');
+            $this->_render("query_builder/main");
         } else {
             $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder.js');
             $this->_render("query_builder/main");

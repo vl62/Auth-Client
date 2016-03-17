@@ -10,7 +10,7 @@ String.prototype.format = function (arguments) {
 function add_options(option, arguments) {
     $select = $.parseHTML(option);
     for (var arg in arguments) {
-        if(arguments[arg] == "----------------------" || arguments[arg] == "not all values displayed")
+        if(arguments[arg] == "----------------------" || arguments[arg] == "not all values might be displayed")
             $($select).children('select').append("<option value='" + arguments[arg] + "' disabled>" + arguments[arg] + "</option>");
         else
             $("<option />", {value: arguments[arg], text: arguments[arg]}).appendTo($($select).children('select'));
@@ -150,7 +150,7 @@ $(document).ready(function () {
                 var index = value.indexOf("not all values displayed");
                 if(index != -1) {
                     value.splice(index, 1);
-                    value.push("----------------------", "not all values displayed");
+                    value.push("----------------------", "not all values might be displayed");
                 }
                 
                 phenotype_values[attribute] = value;
