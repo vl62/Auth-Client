@@ -3599,16 +3599,16 @@ $(document).on('click', '#btn_save_threshold', function(e) {
     });
 });
 
-// $(document).ready(function() {
-//     $.ajax({
-//         url: baseurl + 'auth_federated/get_session_status',
-//         type: 'GET',
-//         dataType: 'text',
-//     }).done(function(data) {
-//         if(data == "expired")
-//             window.location = baseurl + "auth_federated/logout";
-//     });
-// });
+$(document).ready(function() {
+    $.ajax({
+        url: baseurl + 'auth_federated/get_session_status',
+        type: 'GET',
+        dataType: 'text',
+    }).done(function(data) {
+        if(data == "expired")
+            window.location = baseurl + "auth_federated/logout";
+    });
+});
 
 
 // $(document).on('click', '#show_admin_emails', function(e) {
