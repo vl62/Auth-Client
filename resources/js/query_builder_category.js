@@ -97,7 +97,6 @@ $phen_attr_with_cat_array = {
                                         "Number of APOE-e4 alleles", 
                                         "Has first degree relative with AD", 
                                         "CSF amyloid 1-42 [abnormally decreased]",
-                                        "CSF amyloid 1-42 [abnormal since 2014]",
                                         "CSF amyloid 1-42 [latest result]",
                                         "CSF amyloid 1-42 [year of latest result]",
                                         "CSF t-tau [abnormally increased]",
@@ -114,9 +113,7 @@ $phen_attr_with_cat_array = {
         "Cognitive tests": [
                                         "MMSE score [latest result]", 
                                         "MMSE score [year of latest result]", 
-                                        "MMSE score [decline rate per year]", 
-                                        "Delayed recall z-score", 
-                                        "Delayed recall (decline per year)", 
+                                        "MMSE score [decline rate per year]",  
                                         "Immediate recall z-score [latest result]", 
                                         "Immediate recall [year of latest result]", 
                                         "Immediate recall [decline per year]",
