@@ -3146,8 +3146,6 @@ function edit_user_network_groups_sources() {
         e.preventDefault();
         $postData = $(this).serialize();
 
-        $dat = $(this);
-
         if ($callAjax)
             $.ajax({
                 url: authurl + '/auth_accounts/edit_user_network_groups/',
@@ -3161,9 +3159,6 @@ function edit_user_network_groups_sources() {
                         $("#editUserError").text(result.error);
                     } else if (result.success) {
 					// console.log(result.success);
-                    if($($dat).find('input[name="isMaster"]').val()) 
-                        window.location = baseurl + "networks";
-                    else
                          window.location = baseurl + "groups";
                     }
                 }
@@ -3553,6 +3548,17 @@ $(document).on('click', '#btn_save_threshold', function(e) {
         data: {network_key: $("#threshold_network_key").val(), network_threshold: $("#threshold").val()},
     }).done(function(data) {
         window.location = baseurl + "networks";
+    });
+});
+
+$(document).ready(function() {
+    $.ajax({
+        url: baseurl + 'auth_federated/get_session_status',
+        type: 'GET',
+        dataType: 'text',
+    }).done(function(data) {
+        if(data == "expired")
+            window.location = baseurl + "auth_federated/logout";
     });
 });
 
