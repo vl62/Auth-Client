@@ -4,13 +4,19 @@
             <h2>Query Builder</h2><hr>
 
             <ul class="nav nav-tabs">
-                <li class="active" style="width: 33%;"><a href="#tab-phenotype" data-toggle="tab">Phenotype Query</a></li>
-                <li style="width: 33%;"><a href="#tab-precanned" data-toggle="tab">Precanned Query</a></li>
-                <li style="width: 33%;"><a href="#tab-advanced" data-toggle="tab">Advanced Query</a></li>
+                <?php if($qb_basic): ?>
+                    <li style="width: 33%;"><a href="#tab-phenotype" data-toggle="tab">Basic Query</a></li>
+                <?php endif; ?>
+                <?php if($qb_precan): ?>
+                    <li style="width: 33%;"><a href="#tab-precanned" data-toggle="tab">Precanned Query</a></li>
+                <?php endif; ?>
+                <?php if($qb_advanced): ?>
+                    <li style="width: 33%;"><a href="#tab-advanced" data-toggle="tab">Advanced Query</a></li>
+                <?php endif; ?>
             </ul>
 
             <div class="tab-content">
-                <div id="tab-phenotype" class="tab-pane active">
+                <div id="tab-phenotype" class="tab-pane">
                     <div class="" id="phenotypeBox">
                         <div class="row-fluid">
                             <div class="span12 pagination-centered" style="">

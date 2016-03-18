@@ -135,6 +135,9 @@ var phenotype_values = new Array();
 
 $(document).ready(function () {
 
+    var tab_id = $('.nav-tabs li:first').addClass('active').children().attr('href');
+    $("#" + tab_id.substring(1)).addClass('active');
+
     $("#loader").addClass('hide');
     $network_key = $("#network_key").val();
     $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,

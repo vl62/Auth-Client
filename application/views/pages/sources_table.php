@@ -138,7 +138,7 @@ $(function (){
 							<td> 
 							
 							<?php if ( array_key_exists('restrictedAccess', $count )): ?>
-									<?php if(!$view_derids): ?>
+									<?php if($this->session->userdata('view_derids') == "no"): ?>
 										<?php if ( $count['restrictedAccess'] === 0 ): ?>
 											<!-- <?php echo "0"; ?> -->
 											<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
