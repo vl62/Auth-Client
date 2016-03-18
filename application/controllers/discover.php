@@ -479,20 +479,53 @@ class Discover extends MY_Controller {
         }
 
         $this->title = "Discover - Query Builder";
-        $this->css = array('jquery.querybuilder.css');    
+        $this->css = array('jquery.querybuilder.css');  
+
+        // query_builder_basic
+        // query_builder_advanced
+        // query_builder_precan
+        // view_derids
         
-        // Precanned
-        if(PRECAN && $this->sources_model->view_derids_status($this->session->userdata('user_id'))) {
+        error_log("derids: " . $this->session->userdata('view_derids'));
+
+        $basic = $this->session->userdata('query_builder_basic') == "yes" ? 1 : 0;
+        $advanced = $this->session->userdata('query_builder_advanced') == "yes" ? 1 : 0;
+        $precan = $this->session->userdata('query_builder_precan') == "yes" ? 1 : 0;
+
+        if($basic && !$advanced && !$precan)  {
+            if(PHENOTYPE_CATEGORIES) {
+                $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder_category.js');
+                $this->_render("query_builder/main");
+            } else {
+                $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder.js');
+                $this->_render("query_builder/main");
+            }
+        } else {
             $this->data['precanned_queries'] = json_decode(file_get_contents(base_url() . "resources/precanned.json"), 1);
             $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder_precan.js', 'query_builder_advanced.js');
+
+            $this->data['qb_basic'] = $basic ? 1 : 0;
+            $this->data['qb_advanced'] = $advanced ? 1 : 0;
+            $this->data['qb_precan'] = $precan ? 1 : 0;
+
             $this->_render("query_builder/main_precan");
-        } elseif(PHENOTYPE_CATEGORIES) {
-            $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder_category.js');
-            $this->_render("query_builder/main");
-        } else {
-            $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder.js');
-            $this->_render("query_builder/main");
+
+            
+
         }
+        
+        // // Precanned
+        // if(PRECAN && $this->sources_model->view_derids_status($this->session->userdata('user_id'))) {
+        //     $this->data['precanned_queries'] = json_decode(file_get_contents(base_url() . "resources/precanned.json"), 1);
+        //     $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder_precan.js', 'query_builder_advanced.js');
+        //     $this->_render("query_builder/main_precan");
+        // } elseif(PHENOTYPE_CATEGORIES) {
+        //     $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder_category.js');
+        //     $this->_render("query_builder/main");
+        // } else {
+        //     $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder.js');
+        //     $this->_render("query_builder/main");
+        // }
 
 		$token = $this->session->userdata('Token');
 		$data = authPostRequest($token, array('installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_networks_this_installation_is_a_member_of");
@@ -766,7 +799,7 @@ class Discover extends MY_Controller {
     }
 
     function query($network = '') {
-        $view_derids = $this->sources_model->view_derids_status($this->session->userdata('user_id'));
+        $view_derids = $this->session->userdata('view_derids');
 
         // Check if there's a network key supplied in the URL, if not then check if it's set in the session, if not then redirect back to the select network page
 //		if ( $network_key ) {
@@ -1395,7 +1428,7 @@ class Discover extends MY_Controller {
 
     function variants_federated_restricted($term, $source, $federated_install_uri) {
         
-        if(!$this->sources_model->view_derids_status($this->session->userdata('user_id')))
+        if($this->session->userdata('view_derids') == "no")
             show_error("You don't have sufficient privilages to access this url");
 
         $federated_install_uri = base64_decode(urldecode($federated_install_uri));

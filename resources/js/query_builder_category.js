@@ -402,6 +402,7 @@ $(document).ready(function () {
                 if($phen) $phen += " " + $phen_phen + " ";
             
                 var operator = $(this).find('.conditions').val().toString();
+                var value = "";
 
                 if($(this).find('select.keys').val().toString() == "Age [by start of this year]") {
                     switch(operator) {
@@ -417,6 +418,9 @@ $(document).ready(function () {
                         case ">=":
                             operator = "<=";
                     }
+                    value = new Date().getFullYear() - (parseInt($(this).find('.phenotype_values').val().toString()) + 1);
+                } else {
+                    value = $(this).find('.phenotype_values').val().toString();
                 }
 
                 $phenotype = {
@@ -425,7 +429,7 @@ $(document).ready(function () {
                     "phenotypeConcept": {
                         "cursivePhenotypeConcept": {"term": $(this).find('select.keys').val().toString(), "source": ""}
                     },
-                    "phenotypeFeature": {"value": new Date().getFullYear() - (parseInt($(this).find('.phenotype_values').val().toString()) + 1), "units": "", "source": ""}
+                    "phenotypeFeature": {"value": value, "units": "", "source": ""}
                 };
 
                 $arr.push($phenotype);

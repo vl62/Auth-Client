@@ -93,6 +93,8 @@ class Auth_federated extends MY_Controller {
             if(! $this->input->is_ajax_request()) {
                     redirect('404');
             }
+
+            // error_log("Session_data: " . print_r($this->input->post(), 1));
             
                 $session_data = array(
                     'user_id'                   => $this->input->post('user_id'),
@@ -115,7 +117,11 @@ class Auth_federated extends MY_Controller {
                     'is_admin'                  => $this->input->post('is_admin') === "admin" ? TRUE : FALSE,
                     'Token'                     => $this->input->post('Token'),
                     'controller'                => "auth_federated",
-                    'email_notification'        => $this->input->post('email_notification')
+                    'email_notification'        => $this->input->post('email_notification'),
+                    'query_builder_basic'       => $this->input->post('query_builder_basic'),
+                    'query_builder_advanced'    => $this->input->post('query_builder_advanced'),
+                    'query_builder_precan'      => $this->input->post('query_builder_precan'),
+                    'view_derids'               => $this->input->post('view_derids')
                 );
                 
                 $this->session->set_userdata($session_data);
