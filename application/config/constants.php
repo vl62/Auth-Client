@@ -71,7 +71,7 @@ define('BASE_URL', $base_url);
 define('BASE_URI', $base_uri);
 define('APPPATH_URI', BASE_URI.APPPATH);
 define('PRECAN', false); // Set/Unset to enable/disable Precanned Queries feature in Query Builder
-define('PHENOTYPE_CATEGORIES', false); // Set/Unset to enable/disable categories wise split in phenotype attributes
+define('PHENOTYPE_CATEGORIES', true); // Set/Unset to enable/disable categories wise split in phenotype attributes
 // We dont need these variables any more
 unset($base_uri, $base_url);
 

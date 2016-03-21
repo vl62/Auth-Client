@@ -501,13 +501,12 @@ class Discover extends MY_Controller {
                 $this->_render("query_builder/main");
             }
         } else {
-
             if(PHENOTYPE_CATEGORIES) {
                 $this->data['precanned_queries'] = json_decode(file_get_contents(base_url() . "resources/precanned.json"), 1);
-            $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder_precan_category.js', 'query_builder_advanced.js');
+                $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder_precan_category.js', 'query_builder_advanced_category.js');
             } else {
                 $this->data['precanned_queries'] = json_decode(file_get_contents(base_url() . "resources/precanned.json"), 1);
-            $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder_precan.js', 'query_builder_advanced.js');
+             $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder_precan.js', 'query_builder_advanced.js');
             }
 
             $this->data['qb_basic'] = $basic ? 1 : 0;
@@ -515,9 +514,6 @@ class Discover extends MY_Controller {
             $this->data['qb_precan'] = $precan ? 1 : 0;
 
             $this->_render("query_builder/main_precan");
-
-            
-
         }
         
         // // Precanned

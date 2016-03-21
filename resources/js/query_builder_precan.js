@@ -431,7 +431,10 @@ $(document).ready(function () {
                 };
 
                 $arr.push($phenotype);
-                $query += $idCount;
+                if($query == "")
+                    $query = $idCount;
+                else
+                    $query = $query + " " + $phen_phen + " " + $idCount;
                 $idCount++;
             }
         });
