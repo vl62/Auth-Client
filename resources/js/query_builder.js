@@ -288,8 +288,6 @@ $(document).ready(function () {
         $genotype_phenotype = $('#logic_genotype_phenotype .active').html();
         $phen_phen = $('.logic_phenotype .active').html() ? $('.logic_phenotype .active').html() : "";
 
-        
-        $phen = "";
         $query = "";
 
         $arr = {
@@ -356,7 +354,6 @@ $(document).ready(function () {
         $arr = [];
         $parentId.children('.type_sample').each(function () {
             if ($(this).find('select.keys').val().trim()) {
-                if($phen) $phen += " " + $phen_phen + " ";
                 
                 $phenotype = {
                     "querySegmentID": $idCount,
@@ -368,7 +365,10 @@ $(document).ready(function () {
                 };
 
                 $arr.push($phenotype);
-                $query += $idCount;
+                if($query == "")
+                    $query = $idCount;
+                else
+                    $query = $query + " " + $phen_phen + " " + $idCount;
                 $idCount++;
             }
         });
