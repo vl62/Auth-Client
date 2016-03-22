@@ -24,43 +24,43 @@ class Discover_federated extends MY_Controller {
 	function variantcount($term, $user_id, $network_key, $network_threshold) {
 
 		$network_threshold = authPostRequest('', array('network_key' => $network_key), $this->config->item('auth_server') . "/auth_accounts/get_network_threshold");
-        error_log("threshold: " . $network_threshold);
+       // error_log("threshold: " . $network_threshold);
         $this->load->model('federated_model');
         $installation_threshold = $this->federated_model->get_variant_cutoff();
-        error_log("cutoff: " . $installation_threshold);
+       // error_log("cutoff: " . $installation_threshold);
         $threshold = $installation_threshold > $network_threshold ? $installation_threshold : $network_threshold;
-        error_log($threshold);
-
-//		error_log("variantcount_federated -> $term");
+       // error_log($threshold);
+//
+		// error_log("variantcount_federated -> $term");
 		$term = urldecode($term);
 		$term = html_entity_decode($term);
-//		$token = $this->session->userdata('Token');
-//		error_log("token ---> $token ---> $user_id");
+//		$token = $this->session->userdata('Token');//
+		// error_log("token ---> $token ---> $user_id");
 //		
 		// Check the network key exists and that this installation is a member of the network
 		$network_check = json_decode(authPostRequest('', array('network_key' => $network_key, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/check_installation_is_a_member_of_a_network"), 1);
 		if ( $network_check == 'false' ) {
-			error_log("network_check failed FALSE  -> " . $network_check);
+		//	error_log("network_check failed FALSE  -> " . $network_check);
 			show_error("The network key check failed for discover_federated/variantcount - the requesting installation might not be part of the specified network");
 		}
 		
 		// Fetch any sources that the user has count display group level access to
 		$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_count_display_group_access_to");
-		error_log("sources count_display ------>------> $returned_sources");
+	//	error_log("sources count_display ------>------> $returned_sources");
 		$accessible_sources_array = json_decode($returned_sources, 1);
 //		$accessible_source_ids = array_values($accessible_sources_array);
 		$accessible_source_ids_array = array();
 		if ( ! array_key_exists('error', $accessible_sources_array)) {
 			foreach ( $accessible_sources_array as $s ) {
 				$accessible_source_ids_array[$s['source_id']] = $s['source_id'];
-			}
-//			error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
+			}//
+			// error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
 		}
 //		$accessible_source_ids_array = array_flip($accessible_source_ids_array);
 		
 		// Fetch any sources that the user has source display group level access to
 		$source_display_sources_returned = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_source_display_group_access_to");
-		error_log("sources source_display ------>------> $source_display_sources_returned");
+	//	error_log("sources source_display ------>------> $source_display_sources_returned");
 		$accessible_source_display_array = json_decode($source_display_sources_returned, 1);
 //		$accessible_source_ids = array_values($accessible_sources_array);
 		$accessible_source_display_ids_array = array();
@@ -68,7 +68,7 @@ class Discover_federated extends MY_Controller {
 			foreach ( $accessible_source_display_array as $s ) {
 				$accessible_source_display_ids_array[$s['source_id']] = $s['source_id'];
 			}
-			error_log("accessible_source_display_ids_array -> " . print_r($accessible_source_display_ids_array, 1));
+		//	error_log("accessible_source_display_ids_array -> " . print_r($accessible_source_display_ids_array, 1));
 		}
 		
 		$displayable_sources = authPostRequest('', array(
@@ -80,26 +80,26 @@ class Discover_federated extends MY_Controller {
 
 		$this->load->model('sources_model');
 		// Get the sources for this installation which are to be search (any that are not federated i.e. local sources)
-		$sources = $this->sources_model->getSourcesForFederatedQuery();
-//		error_log("sources -> " . print_r($sources, 1));
+		$sources = $this->sources_model->getSourcesForFederatedQuery();//
+		// error_log("sources -> " . print_r($sources, 1));
 		$all_source_counts = array();
 		foreach ($sources as $source_array ) {
-			
-//			error_log('source ---> ' . print_r($source_array, 1));
+			//
+			// error_log('source ---> ' . print_r($source_array, 1));
 			$source = $source_array['name'];
 			
 			$open_access_flag = 0;
 			// Check whether the user can access restrictedAccess variants in this source
 			// Get the ID of the source and fetch the groups that it belongs to
 			$source_id = $source_array['source_id'];
-			if (array_key_exists($source_id, $accessible_source_ids_array)) {
-//				error_log("SET TO OPENACCESS!!");
+			if (array_key_exists($source_id, $accessible_source_ids_array)) {//
+				// error_log("SET TO OPENACCESS!!");
 				$open_access_flag = 1;
 			}
 
 			if(!in_array($source_id, $displayable_sources)) continue;
-			if ( ! array_key_exists($source_id, $accessible_source_display_ids_array)) {
-//				error_log("Do not return this source!!!");
+			if ( ! array_key_exists($source_id, $accessible_source_display_ids_array)) {//
+				// error_log("Do not return this source!!!");
 				$all_source_counts[$source] = array("openAccess" => "BLOCKED", "linkedAccess" => "BLOCKED", "restrictedAccess" => "BLOCKED");
 				continue;
 			}
@@ -120,8 +120,8 @@ class Discover_federated extends MY_Controller {
 				$search_fields_elasticsearch = array();
 				foreach ($search_fields as $fields) {
 					$search_fields_elasticsearch[] = $fields['field_name'];
-				}
-//				error_log("search fields -> " . print_r($search_fields, 1));
+				}//
+				// error_log("search fields -> " . print_r($search_fields, 1));
 				$query['query']['bool']['must'][] = array('query_string' => array("fields" => $search_fields_elasticsearch, "query" => "$term", 'default_operator' => "AND"));
 			}
 			else { // Otherwise search across all fields
@@ -132,24 +132,24 @@ class Discover_federated extends MY_Controller {
 			$query['query']['bool']['must'][] = array("term" => array("included" => 1));
 
 			$query['facets']['sharing_policy']['terms'] = array('field' => "sharing_policy");
-                        
-//                        error_log(print_r($query, 1));
+                        //
+                       // error_log(print_r($query, 1));
 			$query = json_encode($query);
                         
-			error_log("query ----> $query");
+		//	error_log("query ----> $query");
 //                        return;
                         
 			$es_data = $this->elasticsearch->query_dsl($query);
-			$counts = array();
-//			error_log("SOURCE -> $source");
+			$counts = array();//
+			// error_log("SOURCE -> $source");
 			
 //			$counts['openAccess'] = "";
 //			$counts['restrictedAccess'] = "";
 //			$counts['openAccess'] = "";
 			if ( ! empty($es_data)) { // Check there's some data returned from ES
 				foreach ( $es_data['facets']['sharing_policy']['terms'] as $facet_sharing_policy ) {
-					$sp_es = $facet_sharing_policy['term'];
-//					error_log($sp_es . " -----> " . $facet_sharing_policy['count']);
+					$sp_es = $facet_sharing_policy['term'];//
+					// error_log($sp_es . " -----> " . $facet_sharing_policy['count']);
 					if ( $sp_es == "openaccess" ) {
 						$sp_es = "openAccess";
 						// Check if the access policy exists for the source (meaning there are already counts), if it does then add the counts, otherwise set the count
@@ -171,8 +171,8 @@ class Discover_federated extends MY_Controller {
 							}
 							else {
 								$counts[$sp_es] = $facet_sharing_policy['count'];
-							}
-//							error_log("restrictedAccess -> openAccess -> " . $facet_sharing_policy['count']);
+							}//
+							// error_log("restrictedAccess -> openAccess -> " . $facet_sharing_policy['count']);
 						}
 						else {
 							$sp_es = "restrictedAccess";
@@ -204,37 +204,37 @@ class Discover_federated extends MY_Controller {
 				if(isset($counts['restrictedAccess']))
 					$counts['restrictedAccess'] = $counts['restrictedAccess'] > $threshold ? $counts['restrictedAccess'] : "THRESHOLD";
 
-				$all_source_counts[$source] = $counts;
-//				error_log(print_r($counts, 1));
+				$all_source_counts[$source] = $counts;//
+				// error_log(print_r($counts, 1));
 			}
 			else {
-				$all_source_counts[$source] = array("openAccess" => 0, "linkedAccess" => 0, "restrictedAccess" => 0);
-//				error_log("empty counts");
+				$all_source_counts[$source] = array("openAccess" => 0, "linkedAccess" => 0, "restrictedAccess" => 0);//
+				// error_log("empty counts");
 			}
 			
 			
 		}
-		$all_source_counts['site_title'] = $this->config->item('site_title');
-//		error_log(print_r($all_source_counts, 1));
+		$all_source_counts['site_title'] = $this->config->item('site_title');//
+		// error_log(print_r($all_source_counts, 1));
 //		return $all_source_counts;
 		echo json_encode($all_source_counts);
 	}
 	
 		// Fetch any sources that the user has group level access to
-//		$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_count_display_group_access_to");
-//		error_log("sources ------>------> $returned_sources");
+//		$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_count_display_group_access_to");//
+		// error_log("sources ------>------> $returned_sources");
 //		$accessible_sources_array = json_decode($returned_sources, 1);
 ////		$accessible_source_ids = array_values($accessible_sources_array);
 //		$accessible_source_ids_array = array();
 //		if ( ! array_key_exists('error', $accessible_sources_array)) {
 //			foreach ( $accessible_sources_array as $s ) {
 //				$accessible_source_ids_array[$s['source_id']] = $s['source_id'];
-//			}
-//			error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
+//			}//
+			// error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
 //		}
 	
-	function variants ($term, $source, $sharing_policy, $format = NULL, $user_id = NULL) {
-//		error_log("term -> " . $term . " -> " . urldecode($term));
+	function variants ($term, $source, $sharing_policy, $format = NULL, $user_id = NULL) {//
+		// error_log("term -> " . $term . " -> " . urldecode($term));
 		
 		$term = html_entity_decode($term);
 //		$term = urldecode($term);
@@ -244,7 +244,7 @@ class Discover_federated extends MY_Controller {
 			$this->data['source'] = $source;
 			$this->data['sharing_policy'] = $sharing_policy;
 			$s = $this->sources_model->getSourceSingle($source);
-			error_log("s -> " . print_r($s, 1));
+		//	error_log("s -> " . print_r($s, 1));
 			// Check if this source actually exists
 			if ( ! $s ) {
 				show_error("The specified source does not seem to exist in this instance");
@@ -280,7 +280,7 @@ class Discover_federated extends MY_Controller {
 			$source_id = $source_info['source_id'];
 			// Fetch any sources that the user has group level access to
 			$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_count_display_group_access_to");
-			error_log("sources ------>------> $returned_sources");
+		//	error_log("sources ------>------> $returned_sources");
 			$accessible_sources_array = json_decode($returned_sources, 1);
 //			$accessible_source_ids = array_values($accessible_sources_array);
 			$accessible_source_ids_array = array();
@@ -288,14 +288,14 @@ class Discover_federated extends MY_Controller {
 				foreach ( $accessible_sources_array as $s ) {
 					$accessible_source_ids_array[$s['source_id']] = $s['source_id'];
 				}
-				error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
+			//	error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
 			}
 			
 			$open_access_flag = 0;
 			// Check whether the user can access restrictedAccess variants in this source
 			// Get the ID of the source and fetch the groups that it belongs to
 			if (array_key_exists($source_id, $accessible_source_ids_array)) {
-				error_log("SET TO OPENACCESS");
+			//	error_log("SET TO OPENACCESS");
 				$open_access_flag = 1;
 			}
 			
@@ -314,10 +314,10 @@ class Discover_federated extends MY_Controller {
 						// If this user has restrictedAccess to this source then also get all the restrictedAccess variants and combine them with the openAccess ones
 						if ( $open_access_flag ) {
 							$restricted_variants = $this->getVariantsElasticSearch($term, $source, "restrictedAccess");
-							error_log("restricted_variants ----> " . print_r($restricted_variants, 1));
+						//	error_log("restricted_variants ----> " . print_r($restricted_variants, 1));
 							$variants = array_merge($variants, $restricted_variants);
-							error_log("variants ----> " . print_r($variants, 1));
-							error_log("merge");
+						//	error_log("variants ----> " . print_r($variants, 1));
+						//	error_log("merge");
 						}
 						
 					}
@@ -415,11 +415,11 @@ class Discover_federated extends MY_Controller {
 			}
 			else if ( preg_match('/restrictedAccess/i', $sharing_policy)) {
 				
-				if (isset($_SERVER['PHP_AUTH_USER'])) { // Basic authentication method of accessing (used by non-local website based traffic)
-//					error_log("AUTH -> " . $_SERVER['PHP_AUTH_USER']);
+				if (isset($_SERVER['PHP_AUTH_USER'])) { // Basic authentication method of accessing (used by non-local website based traffic)//
+					// error_log("AUTH -> " . $_SERVER['PHP_AUTH_USER']);
 					$username = $_SERVER['PHP_AUTH_USER'];
-					$password = $_SERVER['PHP_AUTH_PW'];
-//					error_log(print_r($_SERVER, 1));
+					$password = $_SERVER['PHP_AUTH_PW'];//
+					// error_log(print_r($_SERVER, 1));
 
 					if ( $type == "api" ) {
 						// If federated API then just run the search via the node, don't need to format the data like below as this is already done by the federated source so just echo it
@@ -431,11 +431,11 @@ class Discover_federated extends MY_Controller {
 					$this->load->model('general_model');
 					$is_valid = $this->general_model->authenticateUser($username, $password);
 					if ( $is_valid ) {
-						$user_id = $is_valid['id'];
-//						error_log("VALID -> " . print_r($is_valid, 1));
+						$user_id = $is_valid['id'];//
+						// error_log("VALID -> " . print_r($is_valid, 1));
 					}
-					else {
-//						error_log("NOT VALID");
+					else {//
+						// error_log("NOT VALID");
 						$response_code = "401";
 						$response_text = $this->http_response_code($response_code);
 						header("HTTP/1.0 $response_code $response_text");
@@ -456,26 +456,26 @@ class Discover_federated extends MY_Controller {
 				$source_id = $this->sources_model->getSourceIDFromName($source);
 				$current_source_groups = $this->sources_model->getSourceGroups($source_id);
 				$source_group_ids = array();
-				foreach ( $current_source_groups as $source_group ) {
-//					error_log("source group -> " . $source_group['group_id']);
+				foreach ( $current_source_groups as $source_group ) {//
+					// error_log("source group -> " . $source_group['group_id']);
 					$source_group_ids[] = $source_group['group_id'];
 				}
 					
 				// Get the id of the current user (if not already obtained from the basic auth validation method) and fetch the groups that they belong to
-				if ( ! isset($user_id) ) {
-//					error_log("user id not defined");
-					$user_id = $this->ion_auth->user()->row()->id;
-//					error_log("userid $user_id");
+				if ( ! isset($user_id) ) {//
+					// error_log("user id not defined");
+					$user_id = $this->ion_auth->user()->row()->id;//
+					// error_log("userid $user_id");
 				}
-				else {
-//					error_log("already got userid $user_id");
+				else {//
+					// error_log("already got userid $user_id");
 				}
 				$user_group_ids = array();
 				foreach ($this->ion_auth->get_users_groups($user_id)->result() as $group) {
 //					echo "groupid -> " . $group->id . " groupname -> " . $group->name . " description -> " . $group->description;
 //					$groups_in[] = $group->id;
-					$user_group_ids[] = $group->id;
-//					error_log("user group -> " . $group->id);
+					$user_group_ids[] = $group->id;//
+					// error_log("user group -> " . $group->id);
 				}
 					
 				// Check whether the user is a group that this source belongs to
@@ -493,8 +493,8 @@ class Discover_federated extends MY_Controller {
 						$justification = $_POST['justification'];
 						$source = $_POST['source'];
 						$source_full = $_POST['source_full'];
-						$term = $_POST['term'];
-//						error_log("source_full -> $source_full | source -> $source | term -> $term");
+						$term = $_POST['term'];//
+						// error_log("source_full -> $source_full | source -> $source | term -> $term");
 						$datetime = date('d-m-Y H:i:s');
 						$ip = getRealIpAddr();
 						$source_details = $this->sources_model->getSourceOwner($source);
@@ -536,13 +536,13 @@ class Discover_federated extends MY_Controller {
 						$tmp_recipients = $this->messages_model->get_curator_user_ids();
 						$recipients = array();
 						foreach ( $tmp_recipients as $user_id ) {
-							$query = $this->sources_model->getSourcesThatTheUserCanCurate($user_id);
-//							error_log("query -> " . print_r($query, 1));
+							$query = $this->sources_model->getSourcesThatTheUserCanCurate($user_id);//
+							// error_log("query -> " . print_r($query, 1));
 							$can_curate_flag = FALSE;
-							foreach ($query->result() as $curate_source) {
-//								error_log(print_r($curate_source, 1));
-								if ( $source == $curate_source->name ) {
-//									error_log("$source vs " . $curate_source->name);
+							foreach ($query->result() as $curate_source) {//
+								// error_log(print_r($curate_source, 1));
+								if ( $source == $curate_source->name ) {//
+									// error_log("$source vs " . $curate_source->name);
 									$recipients[] = $user_id;
 								}
 							}
@@ -687,7 +687,7 @@ class Discover_federated extends MY_Controller {
 				$sources_types = $this->sources_model->getSourcesTypes();
 				$type = $sources_types[$source];
 				if ( $type == "das" ) {
-					error_log("das");
+				//	error_log("das");
 				}
 
 				$this->data['variants'] = $variants; // Pass variants array to the view//		
@@ -737,21 +737,21 @@ class Discover_federated extends MY_Controller {
 	
 	function getVariantsElasticSearch($term, $source, $sharing_policy) {
 		$term = urldecode($term);
-		error_log($term);
+	//	error_log($term);
 		// if (preg_match('/chr\S+:\d+\-|\.\.\d+/', $term)) { // Match chromosome region regex
-		// 	error_log("checked1");
-		// 	error_log("region -> $term");
+	//		// error_log("checked1");
+	//		// error_log("region -> $term");
 		// 	$locations = $this->_splitRegion($term);
 		// 	$variants = $this->search_model->getVariantsForRegion($locations, $source, $sharing_policy);
 		// }
 		// elseif (preg_match('/N\S+_\S+:\S+/', $term)) {
 			
-		// 	error_log("checked2");
+	//		// error_log("checked2");
 		// 	$ref_hgvs = $this->_splitRefHGVS($term);
 		// 	$variants = $this->search_model->getVariantsForRefHGVS($ref_hgvs, $source, $sharing_policy);
 		// }
 		// else {
-			error_log("checked3");
+		//	error_log("checked3");
 			$this->load->library('elasticsearch');
 			// Create dynamic name for the ES index to try and avoid clashes with multiple instance of CV on the same server
 			$es_index = $this->config->item('site_title');
@@ -761,10 +761,10 @@ class Discover_federated extends MY_Controller {
 			$this->elasticsearch->set_type("variants");
 			$query = array();
 			// Temporary fix for the spain presentation. 
-			$query['size'] = 100000;
-//			error_log("term -> $term");
-//			$sanitize_query = htmlentities(strip_tags( $query ));
-//			error_log("sanitize -> $sanitize_query");
+			$query['size'] = 100000;//
+			// error_log("term -> $term");
+//			$sanitize_query = htmlentities(strip_tags( $query ));//
+			// error_log("sanitize -> $sanitize_query");
 //			$query['query']['query_string'] = array('query' =>  "$term AND $source", 'fields' => array("source", "gene"), 'default_operator' => "AND");
 //			$query['indices'] = array ('hgvs', 'gene', 'hits');
 //			$query['partial_fields']['_source']['include'] = array("gene", "hgvs");
@@ -781,8 +781,8 @@ class Discover_federated extends MY_Controller {
 				$search_fields_elasticsearch = array();
 				foreach ($search_fields as $fields) {
 					$search_fields_elasticsearch[] = $fields['field_name'];
-				}
-//				error_log("search fields -> " . print_r($search_fields, 1));
+				}//
+				// error_log("search fields -> " . print_r($search_fields, 1));
 				$query['query']['bool']['must'][] = array('query_string' => array("fields" => $search_fields_elasticsearch, "query" => "$term", 'default_operator' => "AND"));
 			}
 			else {
@@ -796,13 +796,13 @@ class Discover_federated extends MY_Controller {
 
 			//included must always be true
 			$query['query']['bool']['must'][] = array("term" => array("included" => 1));
-//			$query['facets']['sharing_policy']['terms'] = array('field' => "sharing_policy");
-//                        error_log("query ----> $query");
+//			$query['facets']['sharing_policy']['terms'] = array('field' => "sharing_policy");//
+                       // error_log("query ----> $query");
 			$query = json_encode($query);
-			error_log("query ----> $query");
-			// error_log($query,3,'test_cc.txt');
+		//	error_log("query ----> $query");
+			//// error_log($query,3,'test_cc.txt');
 			$es_data = $this->elasticsearch->query_dsl($query);
-                        error_log("es_data ----> " . print_r($es_data, 1));
+                       // error_log("es_data ----> " . print_r($es_data, 1));
 //			print_r($es_data);
 			$variants = array();
 			foreach ( $es_data['hits']['hits'] as $hit ) {
@@ -812,11 +812,11 @@ class Discover_federated extends MY_Controller {
 				$variants[$id] = $hit['_source'];
 //				print_r($variants[$id]);
 //				print "<br />";
-				$phenotypes_array = array();
-//				error_log(print_r($hit['_source'], 1));
+				$phenotypes_array = array();//
+				// error_log(print_r($hit['_source'], 1));
 				if ( array_key_exists('phenotypes', $hit['_source'])) {
-					foreach ( $hit['_source']['phenotypes'] as $phenotype ) {
-//						error_log(print_r($phenotype,1));
+					foreach ( $hit['_source']['phenotypes'] as $phenotype ) {//
+						// error_log(print_r($phenotype,1));
 						foreach ( $phenotype as $phenotype_attribute => $phenotype_value ) {
 							$phenotype_attribute = str_replace('_', ' ', $phenotype_attribute);
 							$phenotypes_array[] = $phenotype_attribute . ": " . $phenotype_value;
@@ -857,8 +857,8 @@ class Discover_federated extends MY_Controller {
 			return 0;
 		}
 
-
-//		error_log("term -> " . $term . " -> " . urldecode($term));
+//
+		// error_log("term -> " . $term . " -> " . urldecode($term));
 		$variants_json = array();
 		$term = urldecode($term);
 		$term = html_entity_decode($term);
@@ -880,29 +880,29 @@ class Discover_federated extends MY_Controller {
 			$sources_types = $this->sources_model->getSourcesTypes();
 			$type = $sources_types[$source];
 
-			$source_info = $this->sources_model->getSource($source);
-//			error_log("source_info -> " . print_r($source_info, 1));
+			$source_info = $this->sources_model->getSource($source);//
+			// error_log("source_info -> " . print_r($source_info, 1));
 			$source_uri = $source_info['uri'];
-			$source_id = $source_info['source_id'];
-//			error_log("source_id -> $source_id");
+			$source_id = $source_info['source_id'];//
+			// error_log("source_id -> $source_id");
 			
 			
 			// Fetch any sources that the user has count display group level access to
-			$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_count_display_group_access_to");
-//			error_log("sources ------>------> $returned_sources");
+			$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_count_display_group_access_to");//
+			// error_log("sources ------>------> $returned_sources");
 			$accessible_sources_array = json_decode($returned_sources, 1);
 //			$accessible_source_ids = array_values($accessible_sources_array);
 			$accessible_source_ids_array = array();
 			if ( ! array_key_exists('error', $accessible_sources_array)) {
 				foreach ( $accessible_sources_array as $s ) {
 					$accessible_source_ids_array[$s['source_id']] = $s['source_id'];
-				}
-//				error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
+				}//
+				// error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
 			}
 			$open_access_flag = 0;
 			// Check whether the user has count display level access to this source and hence we will set restrictedAccess records to openAccess records for source
-			if (array_key_exists($source_id, $accessible_source_ids_array)) {
-//				error_log("SET TO OPENACCESS");
+			if (array_key_exists($source_id, $accessible_source_ids_array)) {//
+				// error_log("SET TO OPENACCESS");
 				$open_access_flag = 1;
 			}
 		
@@ -940,8 +940,8 @@ class Discover_federated extends MY_Controller {
 			return 0;
 		}
 
-
-//		error_log("term -> " . $term . " -> " . urldecode($term));
+//
+		// error_log("term -> " . $term . " -> " . urldecode($term));
 		$variants_json = array();
 		$term = html_entity_decode($term);
 //		$term = urldecode($term);
@@ -961,60 +961,60 @@ class Discover_federated extends MY_Controller {
 			$sources_types = $this->sources_model->getSourcesTypes();
 			$type = $sources_types[$source];
 
-			$source_info = $this->sources_model->getSource($source);
-//			error_log("source_info -> " . print_r($source_info, 1));
+			$source_info = $this->sources_model->getSource($source);//
+			// error_log("source_info -> " . print_r($source_info, 1));
 			$source_uri = $source_info['uri'];
-			$source_id = $source_info['source_id'];
-//			error_log("source_id -> $source_id");
+			$source_id = $source_info['source_id'];//
+			// error_log("source_id -> $source_id");
 			
 			
 			// Fetch any sources that the user has count display group level access to
-			$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_count_display_group_access_to");
-//			error_log("sources ------>------> $returned_sources");
+			$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_count_display_group_access_to");//
+			// error_log("sources ------>------> $returned_sources");
 			$accessible_sources_array = json_decode($returned_sources, 1);
 //			$accessible_source_ids = array_values($accessible_sources_array);
 			$accessible_source_ids_array = array();
 			if ( ! array_key_exists('error', $accessible_sources_array)) {
 				foreach ( $accessible_sources_array as $s ) {
 					$accessible_source_ids_array[$s['source_id']] = $s['source_id'];
-				}
-//				error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
+				}//
+				// error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
 			}
 			$open_access_flag = 0;
 			// Check whether the user has count display level access to this source and hence we will set restrictedAccess records to openAccess records for source
 			if (array_key_exists($source_id, $accessible_source_ids_array)) {
-				error_log("SET TO OPENACCESS");
+			//	error_log("SET TO OPENACCESS");
 				$open_access_flag = 1;
 			}
 			
 			// Fetch any sources that the user has source display group level access to
-			$source_display_sources_returned = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_source_display_group_access_to");
-//			error_log("sources source_display ------>------> $source_display_sources_returned");
+			$source_display_sources_returned = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_source_display_group_access_to");//
+			// error_log("sources source_display ------>------> $source_display_sources_returned");
 			$accessible_source_display_array = json_decode($source_display_sources_returned, 1);
 //			$accessible_source_ids = array_values($accessible_sources_array);
 			$accessible_source_display_ids_array = array();
 			if ( ! array_key_exists('error', $accessible_source_display_array)) {
 				foreach ( $accessible_source_display_array as $s ) {
 					$accessible_source_display_ids_array[$s['source_id']] = $s['source_id'];
-				}
-//				error_log("accessible_source_display_ids_array -> " . print_r($accessible_source_display_ids_array, 1));
+				}//
+				// error_log("accessible_source_display_ids_array -> " . print_r($accessible_source_display_ids_array, 1));
 			}
 			
 			// Return error if the user isn't a member of the source display group for this source
 			if ( ! array_key_exists($source_id, $accessible_source_display_ids_array)) {
-				// error_log("Do not return this source!!!");
+				//// error_log("Do not return this source!!!");
 				echo json_encode(array('error' => 'Unable to display source records because you user account is not a member of a source display group for this source'));
 				return;
 			}
 			
 			if ( preg_match('/openAccess/i', $sharing_policy)) {
-				error_log("hello1");
+			//	error_log("hello1");
 				$variants = $this->getVariantsElasticSearch($term, $source, "openAccess");
 				
 				// If this user has restrictedAccess to this source then also get all the restrictedAccess variants and combine them with the openAccess ones
 				
 				if ( $open_access_flag ) {
-					error_log("hello2");
+				//	error_log("hello2");
 					$restricted_variants = $this->getVariantsElasticSearch($term, $source, "restrictedAccess");
 					$variants = array_merge($variants, $restricted_variants);
 				}
@@ -1022,8 +1022,8 @@ class Discover_federated extends MY_Controller {
 				// Get the dynamic display fields that can be changed by user in settings interface
 				$this->load->model('settings_model');
 				
-				$display_fields = $this->settings_model->getDisplayFieldsForSharingPolicy('openAccess');
-//				error_log("DS -> " . print_r($display_fields, 1));
+				$display_fields = $this->settings_model->getDisplayFieldsForSharingPolicy('openAccess');//
+				// error_log("DS -> " . print_r($display_fields, 1));
 				$variants_json['display_fields'] = $display_fields;
 				ksort($variants);
 				foreach ( $variants as $variant ) {
@@ -1038,7 +1038,7 @@ class Discover_federated extends MY_Controller {
 						}
 					}
 				}
-                                // error_log("hello2 -------> " . print_r($variants_json, 1));
+                                //// error_log("hello2 -------> " . print_r($variants_json, 1));
 				echo json_encode($variants_json);
 //				$this->output->set_content_type('application/json')->set_output(json_encode($variants_json));
 			}
@@ -1048,7 +1048,7 @@ class Discover_federated extends MY_Controller {
 				// Get the dynamic display fields that can be changed by user in settings interface
 				$this->load->model('settings_model');
 				$display_fields = $this->settings_model->getDisplayFieldsForSharingPolicy('linkedAccess');
-								// error_log("DS -> " . print_r($display_fields, 1));
+								//// error_log("DS -> " . print_r($display_fields, 1));
 				// $this->data['display_fields'] = $display_fields;
 				$variants['display_fields'] = $display_fields;
 				$sources_types = $this->sources_model->getSourcesTypes();
@@ -1132,8 +1132,8 @@ class Discover_federated extends MY_Controller {
 
 
 			foreach ( $individual_record_display_fields as $individual_record_display_field ) {
-				if ( array_key_exists($individual_record_display_field['name'], $variant) ) {
-//					error_log("key -> " . $individual_record_display_field['name']);
+				if ( array_key_exists($individual_record_display_field['name'], $variant) ) {//
+					// error_log("key -> " . $individual_record_display_field['name']);
 					if ( $individual_record_display_field['name'] == "cafevariome_id" ) {
 						$variant_json[$this->config->item('cvid_prefix') . $variant['cafevariome_id']][$individual_record_display_field['name']] = $this->config->item('cvid_prefix') . $variant[$individual_record_display_field['name']];
 					}
@@ -1141,8 +1141,8 @@ class Discover_federated extends MY_Controller {
 						$variant_json[$this->config->item('cvid_prefix') . $variant['cafevariome_id']][$individual_record_display_field['name']] = $variant[$individual_record_display_field['name']];
 					}
 				}
-			}
-//			error_log("variant json -> " . print_r($variant_json, 1));
+			}//
+			// error_log("variant json -> " . print_r($variant_json, 1));
 //			$this->output->set_content_type('application/json')->set_output(json_encode($variant_json));
 			echo json_encode($variant_json);
 		}
@@ -1159,20 +1159,20 @@ class Discover_federated extends MY_Controller {
 			}
 		}
 		elseif ( $variant['sharing_policy'] === "restrictedAccess" ) {
-			if (isset($_SERVER['PHP_AUTH_USER'])) { // Basic authentication method of accessing (used by non-local website based traffic)
-//				error_log("AUTH -> " . $_SERVER['PHP_AUTH_USER'] . " -> " . $_SERVER['PHP_AUTH_PW']);
+			if (isset($_SERVER['PHP_AUTH_USER'])) { // Basic authentication method of accessing (used by non-local website based traffic)//
+				// error_log("AUTH -> " . $_SERVER['PHP_AUTH_USER'] . " -> " . $_SERVER['PHP_AUTH_PW']);
 				$username = $_SERVER['PHP_AUTH_USER'];
-				$password = $_SERVER['PHP_AUTH_PW'];
-//				error_log(print_r($_SERVER, 1));
+				$password = $_SERVER['PHP_AUTH_PW'];//
+				// error_log(print_r($_SERVER, 1));
 				
 				$this->load->model('general_model');
 				$is_valid = $this->general_model->authenticateUser($username, $password);
 				if ( $is_valid ) {
-					$user_id = $is_valid['id'];
-//					error_log("VALID -> " . print_r($is_valid, 1));
+					$user_id = $is_valid['id'];//
+					// error_log("VALID -> " . print_r($is_valid, 1));
 				}
-				else {
-//					error_log("NOT VALID");
+				else {//
+					// error_log("NOT VALID");
 					$response_code = "401";
 					$response_text = $this->http_response_code($response_code);
 					header("HTTP/1.0 $response_code $response_text");
@@ -1186,8 +1186,8 @@ class Discover_federated extends MY_Controller {
 			$source_id = $this->sources_model->getSourceIDFromName($variant['source']);
 			$current_source_groups = $this->sources_model->getSourceGroups($source_id);
 			$source_group_ids = array();
-			foreach ( $current_source_groups as $source_group ) {
-//				error_log("source group -> " . $source_group['group_id']);
+			foreach ( $current_source_groups as $source_group ) {//
+				// error_log("source group -> " . $source_group['group_id']);
 				$source_group_ids[] = $source_group['group_id'];
 			}
 
@@ -1200,8 +1200,8 @@ class Discover_federated extends MY_Controller {
 			foreach ($this->ion_auth->get_users_groups($user_id)->result() as $group) {
 //				echo "groupid -> " . $group->id . " groupname -> " . $group->name . " description -> " . $group->description;
 //				$groups_in[] = $group->id;
-				$user_group_ids[] = $group->id;
-//				error_log("user group -> " . $group->id);
+				$user_group_ids[] = $group->id;//
+				// error_log("user group -> " . $group->id);
 			}
 			
 			// Check whether the user is a group that this source belongs to
@@ -1217,8 +1217,8 @@ class Discover_federated extends MY_Controller {
 					$variant_json = array();
 //					ksort($variant);
 					foreach ( $individual_record_display_fields as $individual_record_display_field ) {
-						if ( array_key_exists($individual_record_display_field['name'], $variant) ) {
-//							error_log("key -> " . $individual_record_display_field['name']);
+						if ( array_key_exists($individual_record_display_field['name'], $variant) ) {//
+							// error_log("key -> " . $individual_record_display_field['name']);
 							if ( $individual_record_display_field['name'] == "cafevariome_id" ) {
 								$variant_json[$this->config->item('cvid_prefix') . $variant['cafevariome_id']][$individual_record_display_field['name']] = $this->config->item('cvid_prefix') . $variant[$individual_record_display_field['name']];
 							}
@@ -1226,8 +1226,8 @@ class Discover_federated extends MY_Controller {
 								$variant_json[$this->config->item('cvid_prefix') . $variant['cafevariome_id']][$individual_record_display_field['name']] = $variant[$individual_record_display_field['name']];
 							}
 						}
-					}
-//					error_log("variant json -> " . print_r($variant_json, 1));
+					}//
+					// error_log("variant json -> " . print_r($variant_json, 1));
 					$this->output->set_content_type('application/json')->set_output(json_encode($variant_json));
 				}
 				
@@ -1265,17 +1265,17 @@ class Discover_federated extends MY_Controller {
 	function lookup() {
 //		$this->load->model('search_model');
 		// process posted form data
-		$keyword = $this->input->post('term');
-//		error_log("lookup -> " . $keyword);
+		$keyword = $this->input->post('term');//
+		// error_log("lookup -> " . $keyword);
 		$data['response'] = 'false'; //Set default response
-		$query = $this->search_model->lookupAutocomplete($keyword); //Search DB
-//		error_log("got past query");
+		$query = $this->search_model->lookupAutocomplete($keyword); //Search DB//
+		// error_log("got past query");
 		if (!empty($query)) {
 			$data['response'] = 'true';
 			$data['message'] = array();
 			$json_array = array();
-			foreach ($query->result() as $row) {
-//				error_log("TESTING -> " . $row->term);
+			foreach ($query->result() as $row) {//
+				// error_log("TESTING -> " . $row->term);
 //				$data['message'][] = array('label' => $row->term,
 //					'value' => $row->term,
 //					'description' => $row->term,
@@ -1292,8 +1292,8 @@ class Discover_federated extends MY_Controller {
 		
 
 			echo json_encode($json_array); //echo json string if ajax request
-//			$d = json_encode($json_array);
-//			error_log($d);
+//			$d = json_encode($json_array);//
+			// error_log($d);
 //		}
 //		else {
 //			$this->load->view('search/index', $data); //Load html view of search results
@@ -1425,11 +1425,11 @@ $("#'.$key.'_tree")
         $iSortingCols = $this->input->get_post('iSortingCols', true);
         $sSearch = $this->input->get_post('sSearch', true);
         $sEcho = $this->input->get_post('sEcho', true);
-		$path = $this->input->get_post('path', true);
-//		error_log("path -> $path sEcho -> " . $sEcho . " iDisplayStart -> " . $iDisplayStart . " iDisplayLength -> " . $iDisplayLength . " sSortDir_0 -> " . $sSortDir_0 . " iSortCol_0 -> " . $iSortCol_0 . " iSortingCols -> " . $iSortingCols . " sSearch -> " . $sSearch);
+		$path = $this->input->get_post('path', true);//
+		// error_log("path -> $path sEcho -> " . $sEcho . " iDisplayStart -> " . $iDisplayStart . " iDisplayLength -> " . $iDisplayLength . " sSortDir_0 -> " . $sSortDir_0 . " iSortCol_0 -> " . $iSortCol_0 . " iSortingCols -> " . $iSortingCols . " sSearch -> " . $sSearch);
 //		$path_array = explode('/', $path);
-//		$path_count = count($path_array);
-//		error_log("path array count -> $path_count -> " . print_r($path_array, 1));
+//		$path_count = count($path_array);//
+		// error_log("path array count -> $path_count -> " . print_r($path_array, 1));
 //		if ( $path_count == 7 ) { // TODO: Had to do a bit of a hack here since linkedAccess variants don't have the display_type in the URL so do this here as a hack to add it manually as html so that the correct parts of the URI string are extracted
 //			array_push($path_array, "html");
 //		}
@@ -1440,8 +1440,8 @@ $("#'.$key.'_tree")
 		$sharing_policy = $this->input->get_post('sharing_policy', true);
 		$source = $this->input->get_post('source', true);
 		$term = $this->input->get_post('term', true);
-		
-//		error_log("data -> $sharing_policy $source $term");
+		//
+		// error_log("data -> $sharing_policy $source $term");
 
 //		if ( $this->config->item('use_elasticsearch')) {
 			$variants = $this->getVariantsElasticSearch($term, $source, $sharing_policy);
@@ -1452,14 +1452,14 @@ $("#'.$key.'_tree")
 		$iTotalRecords = count($variants);
 		
 		// Ordering
-		if (isset($iSortCol_0)) {
-//			error_log("ordering");
+		if (isset($iSortCol_0)) {//
+			// error_log("ordering");
 			$sort = array();
-			foreach ($variants as $key => $row) {
-//				error_log("direction -> $sSortDir_0");
+			foreach ($variants as $key => $row) {//
+				// error_log("direction -> $sSortDir_0");
 				if ( $iSortCol_0 == 0 ) {
-					foreach ($variants as $key => $row) {
-//						error_log("key -> $key | row -> $row -> " . $row['cafevariome_id']);
+					foreach ($variants as $key => $row) {//
+						// error_log("key -> $key | row -> $row -> " . $row['cafevariome_id']);
 						$sort[$key] = $row['cafevariome_id'];
 					}
 					if ( $sSortDir_0 == "desc" ) {
@@ -1470,8 +1470,8 @@ $("#'.$key.'_tree")
 					}
 				}
 				elseif ( $iSortCol_0 == 1 ) {
-					foreach ($variants as $key => $row) {
-//						error_log("key -> $key | row -> $row -> " . $row['cafevariome_id']);
+					foreach ($variants as $key => $row) {//
+						// error_log("key -> $key | row -> $row -> " . $row['cafevariome_id']);
 						$sort[$key] = $row['gene'];
 					}
 					if ( $sSortDir_0 == "desc" ) {
@@ -1482,8 +1482,8 @@ $("#'.$key.'_tree")
 					}
 				}
 				elseif ( $iSortCol_0 == 2 ) {
-					foreach ($variants as $key => $row) {
-//						error_log("key -> $key | row -> $row -> " . $row['cafevariome_id']);
+					foreach ($variants as $key => $row) {//
+						// error_log("key -> $key | row -> $row -> " . $row['cafevariome_id']);
 						$sort[$key] = $row['ref'];
 					}
 					if ( $sSortDir_0 == "desc" ) {
@@ -1494,8 +1494,8 @@ $("#'.$key.'_tree")
 					}
 				}
 				elseif ( $iSortCol_0 == 3 ) {
-					foreach ($variants as $key => $row) {
-//						error_log("key -> $key | row -> $row -> " . $row['cafevariome_id']);
+					foreach ($variants as $key => $row) {//
+						// error_log("key -> $key | row -> $row -> " . $row['cafevariome_id']);
 						$sort[$key] = $row['hgvs'];
 					}
 					if ( $sSortDir_0 == "desc" ) {
@@ -1506,8 +1506,8 @@ $("#'.$key.'_tree")
 					}
 				}
 				elseif ( $iSortCol_0 == 4 ) {
-					foreach ($variants as $key => $row) {
-//						error_log("key -> $key | row -> $row -> " . $row['cafevariome_id']);
+					foreach ($variants as $key => $row) {//
+						// error_log("key -> $key | row -> $row -> " . $row['cafevariome_id']);
 						$sort[$key] = $row['phenotype'];
 					}
 					if ( $sSortDir_0 == "desc" ) {
@@ -1518,8 +1518,8 @@ $("#'.$key.'_tree")
 					}
 				}
 				elseif ( $iSortCol_0 == 5 ) {
-					foreach ($variants as $key => $row) {
-//						error_log("key -> $key | row -> $row -> " . $row['cafevariome_id']);
+					foreach ($variants as $key => $row) {//
+						// error_log("key -> $key | row -> $row -> " . $row['cafevariome_id']);
 						$sort[$key] = $row['source'];
 					}
 					if ( $sSortDir_0 == "desc" ) {
@@ -1533,18 +1533,18 @@ $("#'.$key.'_tree")
 		}
 		
 		// Filtering
-		if (isset($sSearch) && !empty($sSearch)) {
-//			error_log("filtering");
+		if (isset($sSearch) && !empty($sSearch)) {//
+			// error_log("filtering");
 			$bSearchable = $this->input->get_post('bSearchable_0', true);
-			if (isset($bSearchable) && $bSearchable == 'true') {
-//				error_log("search -> $bSearchable -> $sSearch");
+			if (isset($bSearchable) && $bSearchable == 'true') {//
+				// error_log("search -> $bSearchable -> $sSearch");
 				foreach ( $variants as $id => $variant ) { // Go through all the variants
 					$unset_flag = 0;
-					foreach ( $variant as $key => $value ) { // Now search all values against the supplied search term
-//						error_log("key -> $key | value -> $value");
+					foreach ( $variant as $key => $value ) { // Now search all values against the supplied search term//
+						// error_log("key -> $key | value -> $value");
 						if (preg_match("/$sSearch/i", $value)) { // Case insensitive regex to match the search term to the current value
-							$unset_flag = 1;
-//							error_log("match $id -> $key --> $sSearch -> $value");
+							$unset_flag = 1;//
+							// error_log("match $id -> $key --> $sSearch -> $value");
 						}
 					}
 					if ( ! $unset_flag ) { // Variant didn't match the search term so remove it from the array so that it doesn't get displayed
@@ -1556,8 +1556,8 @@ $("#'.$key.'_tree")
 		$iTotalDisplayRecords = count($variants); // Get the number of records after filtering. If there's nothing filtered then this should equal $iTotalRecords - http://datatables.net/forums/discussion/comment/2661
 
 		// Paging
-		if (isset($iDisplayStart) && $iDisplayLength != '-1') {
-//			error_log("paging -> limit in controller $iDisplayLength $iDisplayStart");
+		if (isset($iDisplayStart) && $iDisplayLength != '-1') {//
+			// error_log("paging -> limit in controller $iDisplayLength $iDisplayStart");
 			$variant_count = 0;
 			foreach ($variants as $id => $variant) {
 				if ( $iDisplayLength != 0 ) {
@@ -1620,8 +1620,8 @@ $("#'.$key.'_tree")
 		// Loop through the variants that are left (if any filtering/paging has been done) and create the json for outputting to the datatable
 		foreach ( $variants as $variant ) {
 			$row = array();
-			foreach ( $display_fields as $display_field ) {
-//				error_log("display_field -> " . $display_field['name']);
+			foreach ( $display_fields as $display_field ) {//
+				// error_log("display_field -> " . $display_field['name']);
 				if ( array_key_exists($display_field['name'], $variant) ) {
 					if ( $display_field['name'] == "cafevariome_id" ) {
 //						echo "<td>" . $this->config->item('cvid_prefix') . $variant[$display_field['name']] . "</td>";
@@ -1645,13 +1645,13 @@ $("#'.$key.'_tree")
 				else {
 					$row[] = "-";
 				}
-			}
-//			error_log(print_r($row, 1));
+			}//
+			// error_log(print_r($row, 1));
 			$output['aaData'][] = $row;
 			
 		}
-
-//		error_log(print_r(json_encode($output), 1));
+//
+		// error_log(print_r(json_encode($output), 1));
 //		$this->output->set_header('Content-Type: application/json; charset=utf-8');
 //		echo json_encode($output);
 		
@@ -1667,8 +1667,8 @@ $("#'.$key.'_tree")
 		// Get the dynamic display fields that can be changed by user in settings interface
 		$sharing_policy = $this->input->post('sharing_policy');
 		$this->load->model('settings_model');
-		$display_fields = $this->settings_model->getDisplayFieldsForSharingPolicy($sharing_policy);
-//		error_log("df -> " . print_r($display_fields, 1));
+		$display_fields = $this->settings_model->getDisplayFieldsForSharingPolicy($sharing_policy);//
+		// error_log("df -> " . print_r($display_fields, 1));
 		$columns = array();
 		// Set the header columns of the table
 		foreach ( $display_fields as $display_field ) {
@@ -1745,8 +1745,8 @@ $("#'.$key.'_tree")
 			$table_structure = $this->general_model->describeTable("variants");
 			foreach ($table_structure as $fields) {
 				$search_fields[] = $fields['name'];
-			}
-//			error_log("---> " . print_r($table_structure, 1));
+			}//
+			// error_log("---> " . print_r($table_structure, 1));
 //			$search_fields = array('all');
 		}
 		else {
@@ -2112,22 +2112,22 @@ $("#'.$key.'_tree")
 	
 	function runAPISearch($source_uri, $source, $term) {
 		$term = urlencode($term);
-		error_log("term -> " . $term);
+	//	error_log("term -> " . $term);
 		$counts = @file_get_contents($source_uri . "/discover/variantcount/$term/$node_source/json");
-		error_log($source_uri . "/discover/variantcount/$term/$source/json");
-		error_log("decode -> " . json_decode($counts));
+	//	error_log($source_uri . "/discover/variantcount/$term/$source/json");
+	//	error_log("decode -> " . json_decode($counts));
 		$counts = json_decode($counts, TRUE);
 		$hacked_counts = array();
 		if ( ! empty($counts)) {
 			foreach ( $counts as $key => $value ) {
-				foreach ( $value as $k => $v) {
-//					error_log("key: $k value: $v");
+				foreach ( $value as $k => $v) {//
+					// error_log("key: $k value: $v");
 					$hacked_counts[$k] = $v;
 				}
 			}
-		}
-//		error_log("counts from federatedAPI -> " . print_r($counts, 1));
-//		error_log("hacked -> " . print_r($hacked_counts, 1));
+		}//
+		// error_log("counts from federatedAPI -> " . print_r($counts, 1));//
+		// error_log("hacked -> " . print_r($hacked_counts, 1));
 		return $hacked_counts;
 
 	}
@@ -2153,10 +2153,10 @@ $("#'.$key.'_tree")
 		}
 		else {
 			$variants = @file_get_contents($source_uri . "/discover/variants/$term/$node_source/$sharing_policy/$format");
-		}
-//		error_log($source_uri . "/discover/variants/$term/$node_source/$sharing_policy/$format");
-//		$variants = json_decode($variants, TRUE);
-//		error_log("variants -> " . print_r($variants, 1));
+		}//
+		// error_log($source_uri . "/discover/variants/$term/$node_source/$sharing_policy/$format");
+//		$variants = json_decode($variants, TRUE);//
+		// error_log("variants -> " . print_r($variants, 1));
 //		echo $variants;
 		return $variants;
 
@@ -2171,8 +2171,8 @@ $("#'.$key.'_tree")
 			'source' => $source_name
 		);
 		$source_uri = "http://www.cafevariome.org";
-		$counts = federatedAPI($source_uri, $central_data);
-//		error_log("counts from federatedAPI -> " . print_r($counts, 1));
+		$counts = federatedAPI($source_uri, $central_data);//
+		// error_log("counts from federatedAPI -> " . print_r($counts, 1));
 		return $counts;
 
 	}
@@ -2204,8 +2204,8 @@ $("#'.$key.'_tree")
 		);
 	}
 	
-	private function writeExcel($term, $source, $variants, $display_fields) {
-//		error_log("variants ---> " . print_r($variants, 1));
+	private function writeExcel($term, $source, $variants, $display_fields) {//
+		// error_log("variants ---> " . print_r($variants, 1));
 		$this->load->library('phpexcel/PHPExcel');
 		$sheet = $this->phpexcel->getActiveSheet();
 		
@@ -2225,15 +2225,15 @@ $("#'.$key.'_tree")
 		
 		// Next print the actual variant data
 		$row = 2; // Start outputting data from row 2 (row 1 is the header)
-		foreach ($variants as $variant) {
-//			error_log("v -> " . print_r($variant, 1));
-//			error_log("ROW -> $row");
+		foreach ($variants as $variant) {//
+			// error_log("v -> " . print_r($variant, 1));//
+			// error_log("ROW -> $row");
 			$letter = "A";
-			foreach ( $display_fields as $display_field ) {
-//				error_log("starting -> " . print_r($display_field, 1));
-//				error_log("starting ds -> " . $display_field['name']);
-				$letter_number = $letter . $row;
-//				error_log("row is $row -> $letter $letter_number");
+			foreach ( $display_fields as $display_field ) {//
+				// error_log("starting -> " . print_r($display_field, 1));//
+				// error_log("starting ds -> " . $display_field['name']);
+				$letter_number = $letter . $row;//
+				// error_log("row is $row -> $letter $letter_number");
 				if ( isset($variant[$display_field['name']])) {
 					if ( $display_field['name'] == "cafevariome_id" ) {
 						$sheet->SetCellValue($letter_number, $this->config->item('cvid_prefix') . $variant['cafevariome_id']);

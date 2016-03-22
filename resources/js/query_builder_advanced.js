@@ -136,27 +136,27 @@ $(document).ready(function () {
     //     });
     // });
 
-    $("#loader").addClass('hide');
+    // $("#loader").addClass('hide');
     $network_key = $("#network_key").val();
-    $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
-        dataType: 'json',
-        delay: 200,
-        type: 'POST',
-        success: function (json) {
-            $.each(json, function (attribute, value) {
-                $('select.advanced_keys1').append($('<option>').text(attribute).attr('value', attribute));
-                advanced_keys.push(attribute);
-                var index = value.indexOf("not all values displayed");
-                if(index != -1) {
-                    value.splice(index, 1);
-                    value.push("----------------------", "not all values might be displayed");
-                }
+    // $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
+    //     dataType: 'json',
+    //     delay: 200,
+    //     type: 'POST',
+    //     success: function (json) {
+    //         $.each(json, function (attribute, value) {
+    //             $('select.advanced_keys1').append($('<option>').text(attribute).attr('value', attribute));
+    //             advanced_keys.push(attribute);
+    //             var index = value.indexOf("not all values displayed");
+    //             if(index != -1) {
+    //                 value.splice(index, 1);
+    //                 value.push("----------------------", "not all values might be displayed");
+    //             }
                 
-                advanced_values[attribute] = value;
-            });
-            $("#loader").addClass('hide');
-        }
-    });
+    //             advanced_values[attribute] = value;
+    //         });
+    //         $("#loader").addClass('hide');
+    //     }
+    // });
 
     // advanced
     $(document).on('change', '.keys', function () {

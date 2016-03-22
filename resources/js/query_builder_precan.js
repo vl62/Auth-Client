@@ -138,7 +138,7 @@ $(document).ready(function () {
     var tab_id = $('.nav-tabs li:first').addClass('active').children().attr('href');
     $("#" + tab_id.substring(1)).addClass('active');
 
-    $("#loader").addClass('hide');
+    // $("#loader").addClass('hide');
     $network_key = $("#network_key").val();
     $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
 //        $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/5b7a1ae7ac7fa0a4a4c7cedac1982dba',
@@ -159,6 +159,11 @@ $(document).ready(function () {
                 phenotype_values[attribute] = value;
                 
             });
+            // $("#loader").addClass('hide');
+        },
+        complete: function() {
+            console.log(phenotype_values);
+            console.log(advanced_values);
             $("#loader").addClass('hide');
         }
     });

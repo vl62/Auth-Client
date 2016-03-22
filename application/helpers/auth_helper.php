@@ -37,7 +37,7 @@ function authPostRequest($token, $data, $uri) {
    	$session_status = json_decode($result, 1);
     curl_close($ch);
 
-    error_log("session: " . print_r($session_status, 1));
+    // error_log("session: " . print_r($session_status, 1));
     // return $result;
 
     if(isset($session_status['error']) && $session_status['error'] == "Token is not valid") {
