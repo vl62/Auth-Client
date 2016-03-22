@@ -179,33 +179,36 @@ $(document).ready(function () {
     //     });
     // });
 
-    $("#loader").addClass('hide');
     $network_key = $("#network_key").val();
-    $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
-        dataType: 'json',
-        delay: 200,
-        type: 'POST',
-        success: function (json) {
-            $.each(json, function (attribute, value) {
-                if(attribute == "Age [by start of this year]") {
-                    value = [];
-                    for(var i=40; i<111; ++i)   
-                        value.push(i);
-                    value.splice(index, 1);
-                    value.push("----------------------", "not all values might be displayed");
-                } else {
-                    var index = value.indexOf("not all values displayed");
-                    if(index != -1) {
-                        value.splice(index, 1);
-                        value.push("----------------------", "not all values might be displayed");
-                    }
-                }
+    // $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
+    //     dataType: 'json',
+    //     delay: 200,
+    //     type: 'POST',
+    //     success: function (json) {
+    //         $.each(json, function (attribute, value) {
+    //             if(attribute == "Age [by start of this year]") {
+    //                 value = [];
+    //                 for(var i=40; i<111; ++i)   
+    //                     value.push(i);
+    //                 value.splice(index, 1);
+    //                 value.push("----------------------", "not all values might be displayed");
+    //             } else {
+    //                 var index = value.indexOf("not all values displayed");
+    //                 if(index != -1) {
+    //                     value.splice(index, 1);
+    //                     value.push("----------------------", "not all values might be displayed");
+    //                 }
+    //             }
                 
-                advanced_values[attribute] = value;
-            });
-            $("#loader").addClass('hide');
-        }
-    });
+    //             advanced_values[attribute] = value;
+    //         });
+    //         // $("#loader").addClass('hide');
+    //     },
+    //     complete: function() {
+    //         console.log(advanced_values);
+    //         $("#loader").addClass('hide');
+    //     }
+    // });
 
     // advanced
     $(document).on('change', '.keys', function () {

@@ -174,15 +174,13 @@ $(document).ready(function () {
     var tab_id = $('.nav-tabs li:first').addClass('active').children().attr('href');
     $("#" + tab_id.substring(1)).addClass('active');
 
-    $("#loader").addClass('hide');
     $network_key = $("#network_key").val();
     $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
-//        $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/5b7a1ae7ac7fa0a4a4c7cedac1982dba',
-        // $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/f75ef233eb89ba76a4187912cd6f909d',
         dataType: 'json',
         delay: 200,
         type: 'POST',
         success: function (json) {
+            
             $.each(json, function (attribute, value) {
                if(attribute == "Age [by start of this year]") {
                     value = [];
@@ -199,10 +197,16 @@ $(document).ready(function () {
                 }
                 
                 phenotype_values[attribute] = value;
-                
+                advanced_values[attribute] = value;
             });
+            
+        },
+        complete: function() {
+            console.log(phenotype_values);
+            console.log(advanced_values);
             $("#loader").addClass('hide');
         }
+
     });
 
     // Phenotype

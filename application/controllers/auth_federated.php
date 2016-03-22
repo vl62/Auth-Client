@@ -94,6 +94,8 @@ class Auth_federated extends MY_Controller {
                     redirect('404');
             }
 
+            error_log("User: " . $this->input->post('email') . " has logged in || " . date("Y-m-d H:i:s"));
+
             // error_log("Session_data: " . print_r($this->input->post(), 1));
             
                 $session_data = array(
@@ -136,6 +138,7 @@ class Auth_federated extends MY_Controller {
 	//log the user out
 	function logout()
 	{
+        error_log("User: " . $this->session->userdata('email') . " has logged out || " . date("Y-m-d H:i:s"));
 //                if (get_cookie('identity')) delete_cookie('identity');
 //                if (get_cookie('remember_code'))    delete_cookie('remember_code');
 

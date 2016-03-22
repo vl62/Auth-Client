@@ -16,13 +16,13 @@ class Authcheck {
 //			error_log("site_requires_login -> " . $CFG->item("site_requires_login"));
 //			$segment = $this->CI->uri->segment(2);
 			if ( preg_match("/federated/", strtolower($current))) {
-				error_log("Authcheck hook allowing FEDERATED -> " . strtolower($current));
+				// error_log("Authcheck hook allowing FEDERATED -> " . strtolower($current));
 			}
 			elseif ( preg_match("/get_phenotype_attributes_nr_list/", strtolower($current))) {
-				error_log("Authcheck hook allowing get_phenotype_attributes_nr_list -> " . strtolower($current));
+				// error_log("Authcheck hook allowing get_phenotype_attributes_nr_list -> " . strtolower($current));
 			}
                         elseif ( preg_match("/get_json_for_phenotype_lookup/", strtolower($current))) {
-				error_log("Authcheck hook allowing get_json_for_phenotype_lookup -> " . strtolower($current));
+				// error_log("Authcheck hook allowing get_json_for_phenotype_lookup -> " . strtolower($current));
 			}
 			elseif ( strtolower($current) != "css" ) { // Ignore it if the css controller is being called
 //				if ( $this->config->item('discovery_requires_login')) {
