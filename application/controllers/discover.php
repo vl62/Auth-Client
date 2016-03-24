@@ -803,6 +803,8 @@ class Discover extends MY_Controller {
     }
 
     function query($network = '') {
+        $time_in = new DateTime();
+        error_log("Query time in: " . date("Y-m-d H:i:s"));
         $view_derids = $this->session->userdata('view_derids');
 
         // Check if there's a network key supplied in the URL, if not then check if it's set in the session, if not then redirect back to the select network page
@@ -913,7 +915,11 @@ class Discover extends MY_Controller {
         $data['view_derids'] = $view_derids;
         $data['sources_full'] = $sources;
 
-        
+        $time_out = new DateTime();
+        error_log("Query time out: " . date("Y-m-d H:i:s"));
+        $interval = $time_out->diff($time_in);
+        error_log($interval->format('%im:%ss'));
+        // error_log("Time diff: " . $now2->diff($now1)->format('%im:%ss'));
 
         $this->load->view('pages/sources_table', $data); // Don't use _render as headers are already sent, html output from the view is sent back to ajax function and appended to div
     }
