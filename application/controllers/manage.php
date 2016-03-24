@@ -30,20 +30,35 @@ class manage extends MY_Controller {
 
 		foreach($include_records_ids as $value) {
 			
-			$query = $this->db->query("SELECT record_id FROM variants WHERE record_id = '".$value."'");
+			$query = $this->db->query("SELECT record_id FROM variants WHERE record_id = '".$value."' LIMIT 1");
 			if ($value == '') {
 				continue;
 			}
 			elseif ($query->num_rows() != 0) {
 
-				$data=array('included'=>1, 'IE_date_time'=> date('Y-m-d H:i:s'));
-				$this->db->where('record_id',$value);
+				$query_included  = $this->db->query("SELECT included FROM variants WHERE record_id = '".$value."' LIMIT 1");
+				$included = $query_included->row();
+				$included = $included->included;
 				
 
-				if($this->db->update('variants',$data)){
-					echo '<p style="text-align: left; color:green"><em>' . 'Successfully included: ' . $value . '</em></p>';
-					$success_flag = 1;
-				}else
+				if ($included == 1){
+				 		echo '<p style="text-align: left; color:blue"><em>' . 'Already included: ' . $value . '</em></p>';
+				 		$success_flag = 1;
+					}
+
+				else if ($included == 0)
+				{
+					$data=array('included'=>1, 'IE_date_time'=> date('Y-m-d H:i:s'));
+					$this->db->where('record_id',$value);
+					
+
+					if($this->db->update('variants',$data)){
+						echo '<p style="text-align: left; color:green"><em>' . 'Successfully included: ' . $value . '</em></p>';
+						$success_flag = 1;
+						}
+
+				}
+				else
 					{
 					echo '<p style="text-align: left; color:red"><em>' . 'Failed to included: ' . $value . '</em></p>';
 						}
@@ -78,21 +93,34 @@ class manage extends MY_Controller {
 
 		foreach($exclude_records_ids as $value) {
 			
-			$query = $this->db->query("SELECT record_id FROM variants WHERE record_id = '".$value."'");
+			$query = $this->db->query("SELECT record_id FROM variants WHERE record_id = '".$value."' LIMIT 1");
 			
 			if ($value == '') {
 				continue;
 			}
 			elseif ($query->num_rows() != 0) {
 
-				$data=array('included'=>0, 'IE_date_time'=>date('Y-m-d H:i:s'));
-				$this->db->where('record_id',$value);
-				
+				$query_included  = $this->db->query("SELECT included FROM variants WHERE record_id = '".$value."' LIMIT 1");
+				$included = $query_included->row();
+				$included = $included->included;
 
-				if($this->db->update('variants',$data)){
-					echo '<p style="text-align: left; color:green"><em>' . 'Successfully excluded: ' . $value . '</em></p>';
-					$success_flag = 1;
-				}else
+				if ($included == 0){
+				 		echo '<p style="text-align: left; color:blue"><em>' . 'Already excluded: ' . $value . '</em></p>';
+				 		$success_flag = 1;
+					}
+
+				else if ($included == 1)
+				{
+					$data=array('included'=>0, 'IE_date_time'=> date('Y-m-d H:i:s'));
+					$this->db->where('record_id',$value);
+					
+
+					if($this->db->update('variants',$data)){
+						echo '<p style="text-align: left; color:green"><em>' . 'Successfully excluded: ' . $value . '</em></p>';
+						$success_flag = 1;
+						}
+				}
+				else
 					{
 					echo '<p style="text-align: left; color:red"><em>' . 'Failed to excluded: ' . $value . '</em></p>';
 					}
