@@ -500,9 +500,286 @@ $(document).ready(function () {
                 $('#waiting_advanced').hide(500);
                 $("#query_result_advanced").html(data);
                 // $("#query_result_advanced h4").html(output_query_string);
+            }, 
+            complete: function() {
+                $("#query_for_disp").append('&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" id="add_query" class="btn btn-warning">Save As Canned Query</button>');
             }
         });
     }
+
+    // $(".container").append('&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" id="add_query" class="btn btn-warning">Display</button>');
+    // $("#query_for_disp").append('&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" id="add_query" class="btn btn-warning">Display</button>');
+    
+    $("#save_query").click(function(e) {
+        $source = $("select[name='save_source']").val();
+        $case_control = $("select[name='save_case_control']").val();
+        $notes = $("textarea[name='notes']").val();
+        $queryString = $("#add_query").parent().html().split("&nbsp;")[0]
+        if($source == -1) $("#err_source").removeClass('hide');
+        else $("#err_source").addClass('hide');
+
+        if($case_control == -1) $("#err_case_control").removeClass('hide');
+        else $("#err_case_control").addClass('hide');
+
+        if($source == -1 || $case_control == -1) return;
+
+        $.extend($arr, {"queryString": $queryString, "source": $source, "case_control": $case_control, "notes": $notes});
+
+        $.ajax({
+            url: baseurl + 'discover/save_query',
+            type: 'POST',
+            dataType: 'JSON',
+            data: {json: $arr},
+        }).done(function() {
+            $("#modal_add_query").modal('hide');
+        });
+        
+    });
+
+    $("select[name='source']").change(function(e) {
+        $source = $("select[name='source']").val();
+        $case_control = $("select[name='case_control']").val();
+        $show_all = $("input[name='show_all']").attr('checked') == "checked" ? 1 : 0;
+
+        if($source != -1 && $case_control != -1) 
+        {
+            $.ajax({
+                url: baseurl + 'discover/get_precan',   
+                type: 'POST',
+                dataType: 'JSON',
+                data: {'source': $source, 'case_control': $case_control},
+            }).done(function(data) {
+                // console.log(data);
+                // console.log(data.precan_active.length);
+                // console.log(data.precan_inactive.length);
+                $("#precannedContainer .precan_active").remove();
+                $("#precannedContainer .precan_inactive").remove();
+                $("#precannedContainer br").remove();
+
+                $.each(data.precan_active, function(index, val) {
+                    $("#precannedContainer").append('\n\
+                        <div class="row-fluid precan_active" style="margin-top: 20px;">\n\
+                            <div class="span7 offset2 pagination-centered">\n\
+                                <label class="radio">\n\
+                                    <input type="radio" name="precannedQueries" value="' + val['api'] + '">' + val['queryString'] + '\n\
+                                </label>\n\
+                            </div>\n\
+                            <div class="span3 pagination-centered">\n\
+                            <button type="button" class="btn btn-warning precan_deactivate">Deactivate</button>\n\
+                            <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                            </div>\n\
+                        </div>');
+                });
+
+                if($("input[name='show_all']").attr('checked') == "checked") {
+                    $.each(data.precan_inactive, function(index, val) {
+                        $("#precannedContainer").append('\n\
+                            <div class="row-fluid precan_inactive" style="margin-top: 20px;">\n\
+                                <div class="span7 offset2 pagination-centered">\n\
+                                    <label class="radio">\n\
+                                        <input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + val['queryString'] + '\n\
+                                    </label>\n\
+                                </div>\n\
+                                <div class="span3 pagination-centered">\n\
+                                <button type="button" class="btn btn-success precan_activate">Activate</button>\n\
+                                <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                                </div>\n\
+                            </div>');
+                    });     
+                } else {
+                    $.each(data.precan_inactive, function(index, val) {
+                        $("#precannedContainer").append('\n\
+                            <div class="row-fluid precan_inactive hide" style="margin-top: 20px;">\n\
+                                <div class="span7 offset2 pagination-centered">\n\
+                                    <label class="radio">\n\
+                                        <input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + val['queryString'] + '\n\
+                                    </label>\n\
+                                </div>\n\
+                                <div class="span3 pagination-centered">\n\
+                                <button type="button" class="btn btn-success precan_activate">Activate</button>\n\
+                                <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                                </div>\n\
+                            </div>');
+                    });
+                }     
+            });
+        }
+    });
+
+    $("select[name='case_control']").change(function(e) {
+        $source = $("select[name='source']").val();
+        $case_control = $("select[name='case_control']").val();
+        $show_all = $("input[name='show_all']").attr('checked') == "checked" ? 1 : 0;
+
+        if($source != -1 && $case_control != -1) 
+        {
+            $.ajax({
+                url: baseurl + 'discover/get_precan',   
+                type: 'POST',
+                dataType: 'JSON',
+                data: {'source': $source, 'case_control': $case_control},
+            }).done(function(data) {
+                // console.log(data);
+                // console.log(data.precan_active.length);
+                // console.log(data.precan_inactive.length);
+                $("#precannedContainer .precan_active").remove();
+                $("#precannedContainer .precan_inactive").remove();
+                $("#precannedContainer br").remove();
+
+                $.each(data.precan_active, function(index, val) {
+                    $("#precannedContainer").append('\n\
+                        <div class="row-fluid precan_active" style="margin-top: 20px;">\n\
+                            <div class="span7 offset2 pagination-centered">\n\
+                                <label class="radio">\n\
+                                    <input type="radio" name="precannedQueries" value="' + val['api'] + '">' + val['queryString'] + '\n\
+                                </label>\n\
+                            </div>\n\
+                            <div class="span3 pagination-centered">\n\
+                            <button type="button" class="btn btn-warning precan_deactivate">Deactivate</button>\n\
+                            <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                            </div>\n\
+                        </div>');
+                });
+
+                if($("input[name='show_all']").attr('checked') == "checked") {
+                    $.each(data.precan_inactive, function(index, val) {
+                        $("#precannedContainer").append('\n\
+                            <div class="row-fluid precan_inactive" style="margin-top: 20px;">\n\
+                                <div class="span7 offset2 pagination-centered">\n\
+                                    <label class="radio">\n\
+                                        <input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + val['queryString'] + '\n\
+                                    </label>\n\
+                                </div>\n\
+                                <div class="span3 pagination-centered">\n\
+                                <button type="button" class="btn btn-success precan_activate">Activate</button>\n\
+                                <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                                </div>\n\
+                            </div>');
+                    });     
+                } else {
+                    $.each(data.precan_inactive, function(index, val) {
+                        $("#precannedContainer").append('\n\
+                            <div class="row-fluid precan_inactive hide" style="margin-top: 20px;">\n\
+                                <div class="span7 offset2 pagination-centered">\n\
+                                    <label class="radio">\n\
+                                        <input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + val['queryString'] + '\n\
+                                    </label>\n\
+                                </div>\n\
+                                <div class="span3 pagination-centered">\n\
+                                <button type="button" class="btn btn-success precan_activate">Activate</button>\n\
+                                <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                                </div>\n\
+                            </div>');
+                    });
+                }     
+            });
+        }
+    });    
+
+    $("input[name='show_all']").change(function(e) {
+        if($(this).attr('checked') == "checked")
+            $("#precannedContainer .precan_inactive").removeClass('hide');
+        else
+            $("#precannedContainer .precan_inactive").addClass('hide');
+    });
+
+    $(document).on('click', '.precan_activate', function () {
+        $source = $("select[name='source']").val();
+        $case_control = $("select[name='case_control']").val();
+
+        $dat = $(this);
+        $api = $(this).parent().prev().find('input').val();
+        $queryString = $(this).parent().prev().find('label').clone().find("input").remove().end().html();
+        $.ajax({
+            url: baseurl + 'discover/precan_status/',
+            type: 'POST',
+            dataType: 'JSON',
+            data: {'status': "activate", 'source': $source, 'case_control': $case_control, 'queryString': $queryString},
+        }).done(function() {
+            
+
+            $('\n\
+            <div class="row-fluid precan_active" style="margin-top: 20px;">\n\
+                <div class="span7 offset2 pagination-centered">\n\
+                    <label class="radio">\n\
+                        <input type="radio" name="precannedQueries" value="' + $queryString + '">' + $queryString + '\n\
+                    </label>\n\
+                </div>\n\
+                <div class="span3 pagination-centered">\n\
+                <button type="button" class="btn btn-warning precan_deactivate">Deactivate</button>\n\
+                <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                </div>\n\
+            </div>').insertAfter(".precan_inactive:first");
+
+            $dat.parent().parent().remove();
+        });
+        
+    });
+
+    $(document).on('click', '.precan_deactivate', function () {
+        $source = $("select[name='source']").val();
+        $case_control = $("select[name='case_control']").val();
+
+        $dat = $(this);
+        $api = $(this).parent().prev().find('input').val();
+        $queryString = $(this).parent().prev().find('label').clone().find("input").remove().end().html();
+         $.ajax({
+            url: baseurl + 'discover/precan_status/',
+            type: 'POST',
+            dataType: 'JSON',
+            data: {'status': "deactivate", 'source': $source, 'case_control': $case_control, 'queryString': $queryString},
+        }).done(function() {
+            
+            if($("input[name='show_all']").attr('checked') == "checked") {
+                $('\n\
+                <div class="row-fluid precan_inactive" style="margin-top: 20px;">\n\
+                    <div class="span7 offset2 pagination-centered">\n\
+                        <label class="radio">\n\
+                            <input type="radio" disabled name="precannedQueries" value="' + $queryString + '">' + $queryString + '\n\
+                        </label>\n\
+                    </div>\n\
+                    <div class="span3 pagination-centered">\n\
+                    <button type="button" class="btn btn-success precan_activate">Activate</button>\n\
+                    <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                    </div>\n\
+                </div>').insertAfter(".precan_active:first");
+            } else {
+                $('\n\
+                <div class="row-fluid precan_inactive hide" style="margin-top: 20px;">\n\
+                    <div class="span7 offset2 pagination-centered">\n\
+                        <label class="radio">\n\
+                            <input type="radio" disabled name="precannedQueries" value="' + $queryString + '">' + $queryString + '\n\
+                        </label>\n\
+                    </div>\n\
+                    <div class="span3 pagination-centered">\n\
+                    <button type="button" class="btn btn-success precan_activate">Activate</button>\n\
+                    <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                    </div>\n\
+                </div>').insertAfter(".precan_active:first");
+            }
+
+            $dat.parent().parent().remove();
+        });
+    });
+
+    $(document).on('click', '.precan_delete', function () {
+        $source = $("select[name='source']").val();
+        $case_control = $("select[name='case_control']").val();
+
+        $dat = $(this);
+         $.ajax({
+            url: baseurl + 'discover/precan_status/',
+            type: 'POST',
+            dataType: 'JSON',
+            data: {'status': "delete", 'source': $source, 'case_control': $case_control, 'queryString': $(this).parent().prev().find('input').val()},
+        }).done(function(data) {
+            $dat.parent().parent().remove();
+        });
+    });
+
+    $(document).on('click', '#add_query', function () {
+        $("#modal_add_query").modal('show');
+    });
 
     function getJSON_advanced() {
 
