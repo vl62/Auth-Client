@@ -218,7 +218,7 @@ class Query extends CafeVariome {
         $query_statement_for_display = str_replace('\[', '[', $query_statement_for_display);
         $query_statement_for_display = str_replace('\]', ']', $query_statement_for_display);
 //        $query_statement_for_display = str_replace('_', ' ', $query_statement_for_display);
-        print "<h4>$query_statement_for_display</h4>";
+        print "<h4 id='query_for_disp'>$query_statement_for_display</h4>";
         return $query_statement;
     }
 

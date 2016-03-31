@@ -140,7 +140,7 @@ class Auth_federated extends MY_Controller {
 	{
         if($this->session->userdata('email'))
             error_log("User: " . $this->session->userdata('email') . " has logged out || " . date("Y-m-d H:i:s"));
-//                if (get_cookie('identity')) delete_cookie('identity');
+//                if (get_cookie('identity')) delete_cookie('identity'); 
 //                if (get_cookie('remember_code'))    delete_cookie('remember_code');
 
                 $this->session->destroy();
