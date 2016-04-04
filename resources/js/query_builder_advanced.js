@@ -111,10 +111,10 @@ function add_symbol_advanced($symbol) {
 
             $("." + ["advanced_keys" + $advanced_count]).select2({placeholder: "--Select an attribute--"});
 
-            $options_1 = add_options($option.format(["span2", "input-medium conditions", "", ""]), $advanced_option_1);
+            $options_1 = add_options($option.format(["span2", "input-small conditions", "", ""]), $advanced_option_1);
             $("#advanced" + $advanced_count).append($options_1);
 
-            $options_2 = add_options($option.format(["span2", "input-medium advanced_values\" disabled ", "", ""]), $advanced_option_2);
+            $options_2 = add_options($option.format(["span2", "input-large advanced_values\" disabled ", "", ""]), $advanced_option_2);
             $("#advanced" + $advanced_count).append($options_2);
 
             $("#advanced" + $advanced_count).append($add_remove_btn_advanced.format(["offset1"]));
@@ -161,7 +161,7 @@ $(document).ready(function () {
     // advanced
     $(document).on('change', '.keys', function () {
         $current_advanced_values = $(this).parent().parent().find('.advanced_values').prop('disabled', '').parent();
-        $new_advanced_values = add_options($option.format(["span2", "input-medium advanced_values", "", ""]), $advanced_option_2.concat(advanced_values[$(this).val()]));
+        $new_advanced_values = add_options($option.format(["span2", "input-large advanced_values", "", ""]), $advanced_option_2.concat(advanced_values[$(this).val()]));
         $current_advanced_values.replaceWith($new_advanced_values);
     });
 

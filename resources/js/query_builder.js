@@ -116,10 +116,10 @@ function add_symbol($symbol) {
 //                    allowClear: true
             });
 
-            $options_1 = add_options($option.format(["span2", "input-medium conditions", "", ""]), $phenotype_option_1);
+            $options_1 = add_options($option.format(["span2", "input-small conditions", "", ""]), $phenotype_option_1);
             $("#phenotype" + $phenotype_count).append($options_1);
 
-            $options_2 = add_options($option.format(["span2", "input-medium phenotype_values\" disabled ", "", ""]), $phenotype_option_2);
+            $options_2 = add_options($option.format(["span2", "input-large phenotype_values\" disabled ", "", ""]), $phenotype_option_2);
             $("#phenotype" + $phenotype_count).append($options_2);
 
             $("#phenotype" + $phenotype_count).append($add_remove_btn.format(["offset1"]));
@@ -162,7 +162,7 @@ $(document).ready(function () {
     // Phenotype
     $(document).on('change', '.keys', function () {
         $current_phenotype_values = $(this).parent().parent().find('.phenotype_values').prop('disabled', '').parent();
-        $new_phenotype_values = add_options($option.format(["span2", "input-medium phenotype_values", "", ""]), $phenotype_option_2.concat(phenotype_values[$(this).val()]));
+        $new_phenotype_values = add_options($option.format(["span2", "input-large phenotype_values", "", ""]), $phenotype_option_2.concat(phenotype_values[$(this).val()]));
         $current_phenotype_values.replaceWith($new_phenotype_values);
     });
 
