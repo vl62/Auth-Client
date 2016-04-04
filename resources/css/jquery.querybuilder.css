@@ -282,7 +282,13 @@ li.select2-result {
     font-size: 0.875em;
 }
 
+.input-xlarge {
+    width: 330px;
+}
 
+.conditions {
+    margin-left: 30px;
+}
 
 
 
