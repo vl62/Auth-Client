@@ -208,11 +208,11 @@ class Query extends CafeVariome {
 //            error_log("AFTER query_element -> $statement_id -> $query_element -> $query_statement");
         }
         $query_statement = str_replace('##', '', $query_statement);
-        // error_log("query_statement -> $query_statement");
+        error_log("query_statement -> $query_statement");
 
         $query_statement_for_display = $query_statement;
-        $query_statement_for_display = str_replace('_d', '', $query_statement_for_display); // Remove the appended numeric index name so that it isn't displayed to the user
-        $query_statement_for_display = str_replace('_raw', '', $query_statement_for_display);
+        $query_statement_for_display = str_replace('_d:', ':', $query_statement_for_display); // Remove the appended numeric index name so that it isn't displayed to the user
+        $query_statement_for_display = str_replace('_raw:', ':', $query_statement_for_display);
         $query_statement_for_display = str_replace('_missing_', 'missing', $query_statement_for_display);
         $query_statement_for_display = str_replace('_exists_', 'exists', $query_statement_for_display);
         $query_statement_for_display = str_replace('\[', '[', $query_statement_for_display);
