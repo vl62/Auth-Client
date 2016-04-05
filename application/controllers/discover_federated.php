@@ -24,7 +24,7 @@ class Discover_federated extends MY_Controller {
 	function variantcount($term, $user_id, $network_key, $network_threshold) {
 
 		$network_threshold = authPostRequest('', array('network_key' => $network_key), $this->config->item('auth_server') . "/auth_accounts/get_network_threshold");
-       // error_log("threshold: " . $network_threshold);
+  //      error_log("threshold: " . $network_threshold);
         $this->load->model('federated_model');
         $installation_threshold = $this->federated_model->get_variant_cutoff();
        // error_log("cutoff: " . $installation_threshold);
@@ -220,18 +220,190 @@ class Discover_federated extends MY_Controller {
 		echo json_encode($all_source_counts);
 	}
 	
-		// Fetch any sources that the user has group level access to
-//		$returned_sources = authPostRequest('', array('user_id' => $user_id, 'installation_key' => $this->config->item('installation_key')), $this->config->item('auth_server') . "/api/auth_general/get_sources_for_installation_that_user_id_has_count_display_group_access_to");//
-		// error_log("sources ------>------> $returned_sources");
-//		$accessible_sources_array = json_decode($returned_sources, 1);
-////		$accessible_source_ids = array_values($accessible_sources_array);
-//		$accessible_source_ids_array = array();
-//		if ( ! array_key_exists('error', $accessible_sources_array)) {
-//			foreach ( $accessible_sources_array as $s ) {
-//				$accessible_source_ids_array[$s['source_id']] = $s['source_id'];
-//			}//
-			// error_log("accessible_source_ids -> " . print_r($accessible_source_ids_array, 1));
-//		}
+	function variantcount2($term, $user_id, $network_key, $network_threshold) {
+
+		// $network_threshold = authPostRequest('', array('network_key' => $network_key), $this->config->item('auth_server') . "/auth_accounts/get_network_threshold");
+  //      error_log("threshold: " . $network_threshold);
+        $this->load->model('federated_model');
+        $installation_threshold = $this->federated_model->get_variant_cutoff();
+       // error_log("cutoff: " . $installation_threshold);
+        $threshold = $installation_threshold > $network_threshold ? $installation_threshold : $network_threshold;
+       // error_log($threshold);
+//
+		// error_log("variantcount_federated -> $term");
+		$term = urldecode($term);
+		$term = html_entity_decode($term);
+//		$token = $this->session->userdata('Token');//
+		// error_log("token ---> $token ---> $user_id");
+//		
+		// Check the network key exists and that this installation is a member of the network
+		// Fetch any sources that the user has count display group level access to
+		// Fetch any sources that the user has source display group level access to
+		
+		$info = json_decode(authPostRequest('', array(
+			'user_id' => $user_id, 
+			'network_key' => $network_key, 
+			'installation_key' => $this->config->item('installation_key')), 
+		$this->config->item('auth_server') . "/api/auth_general/check_installation_and_get_sources"), 1);
+
+		if ( $info == 'false' )
+			show_error("The network key check failed for discover_federated/variantcount - the requesting installation might not be part of the specified network");
+
+		$accessible_sources_array = $info['accessible_sources_array'];
+		$accessible_source_display_array = $info['accessible_source_display_array'];
+		$displayable_sources = $info['displayable_sources'];
+
+		$accessible_source_ids_array = array();
+		if ( ! array_key_exists('error', $accessible_sources_array)) 
+			foreach ( $accessible_sources_array as $s ) $accessible_source_ids_array[$s['source_id']] = $s['source_id'];
+
+		$accessible_source_display_ids_array = array();
+		if ( ! array_key_exists('error', $accessible_source_display_array))
+			foreach ( $accessible_source_display_array as $s ) 
+				$accessible_source_display_ids_array[$s['source_id']] = $s['source_id'];
+
+
+		$this->load->model('sources_model');
+		// Get the sources for this installation which are to be search (any that are not federated i.e. local sources)
+		$sources = $this->sources_model->getSourcesForFederatedQuery();//
+		// error_log("sources -> " . print_r($sources, 1));
+		$all_source_counts = array();
+		foreach ($sources as $source_array ) {
+			//
+			// error_log('source ---> ' . print_r($source_array, 1));
+			$source = $source_array['name'];
+			
+			$open_access_flag = 0;
+			// Check whether the user can access restrictedAccess variants in this source
+			// Get the ID of the source and fetch the groups that it belongs to
+			$source_id = $source_array['source_id'];
+			if (array_key_exists($source_id, $accessible_source_ids_array)) {//
+				// error_log("SET TO OPENACCESS!!");
+				$open_access_flag = 1;
+			}
+
+			if(!in_array($source_id, $displayable_sources)) continue;
+			if ( ! array_key_exists($source_id, $accessible_source_display_ids_array)) {//
+				// error_log("Do not return this source!!!");
+				$all_source_counts[$source] = array("openAccess" => "BLOCKED", "linkedAccess" => "BLOCKED", "restrictedAccess" => "BLOCKED");
+				continue;
+			}
+			
+
+			$es_index = $this->config->item('site_title');
+			$es_index = preg_replace('/\s+/', '', $es_index);
+			$es_index = strtolower($es_index);
+			$this->elasticsearch->set_index($es_index);
+			$this->elasticsearch->set_type("variants");
+			$query = array();
+			$query['size'] = 0;
+						
+			$this->load->model('settings_model');
+			$search_fields = $this->settings_model->getSearchFields("search_fields");
+
+			if ( ! empty($search_fields) ) { // Specific search fields are specified in admin interface so only search on these
+				$search_fields_elasticsearch = array();
+				foreach ($search_fields as $fields) {
+					$search_fields_elasticsearch[] = $fields['field_name'];
+				}//
+				// error_log("search fields -> " . print_r($search_fields, 1));
+				$query['query']['bool']['must'][] = array('query_string' => array("fields" => $search_fields_elasticsearch, "query" => "$term", 'default_operator' => "AND"));
+			}
+			else { // Otherwise search across all fields
+				$query['query']['bool']['must'][] = array('query_string' => array("query" => "$term", 'default_operator' => "AND"));
+			}
+						
+			$query['query']['bool']['must'][] = array("term" => array("source" => $source));
+			$query['query']['bool']['must'][] = array("term" => array("included" => 1));
+
+			$query['facets']['sharing_policy']['terms'] = array('field' => "sharing_policy");
+                        //
+                       // error_log(print_r($query, 1));
+			$query = json_encode($query);
+                        
+		//	error_log("query ----> $query");
+//                        return;
+                        
+			$es_data = $this->elasticsearch->query_dsl($query);
+			$counts = array();//
+			// error_log("SOURCE -> $source");
+			
+//			$counts['openAccess'] = "";
+//			$counts['restrictedAccess'] = "";
+//			$counts['openAccess'] = "";
+			if ( ! empty($es_data)) { // Check there's some data returned from ES
+				foreach ( $es_data['facets']['sharing_policy']['terms'] as $facet_sharing_policy ) {
+					$sp_es = $facet_sharing_policy['term'];//
+					// error_log($sp_es . " -----> " . $facet_sharing_policy['count']);
+					if ( $sp_es == "openaccess" ) {
+						$sp_es = "openAccess";
+						// Check if the access policy exists for the source (meaning there are already counts), if it does then add the counts, otherwise set the count
+						if ( array_key_exists($sp_es, $counts)) {
+							$counts[$sp_es] += $facet_sharing_policy['count'];
+						}
+						else {
+							$counts[$sp_es] = $facet_sharing_policy['count'];
+						}
+					}
+				
+					$openaccess_to_restrictedaccess_count = 0;
+					if ( $sp_es == "restrictedaccess" ) {
+						if ( $open_access_flag ) { // If the user is in a group that has access to this source then set to openAccess
+							$sp_es = "openAccess";
+							// Check if the access policy exists for the source (meaning there are already counts), if it does then add the counts, otherwise set the count
+							if ( array_key_exists($sp_es, $counts)) {
+								$counts[$sp_es] += $facet_sharing_policy['count'];
+							}
+							else {
+								$counts[$sp_es] = $facet_sharing_policy['count'];
+							}//
+							// error_log("restrictedAccess -> openAccess -> " . $facet_sharing_policy['count']);
+						}
+						else {
+							$sp_es = "restrictedAccess";
+							$counts[$sp_es] = $facet_sharing_policy['count'];
+						}
+					}
+				
+					if ( $sp_es == "linkedaccess" ) {
+						$sp_es = "linkedAccess";
+						$counts[$sp_es] = $facet_sharing_policy['count'];
+					}
+				}
+//				$counts[$sp_es] = $facet_sharing_policy['count'];
+//				if ( $open_access_flag ) { 
+//					$counts['openAccess'] += $openaccess_to_restrictedaccess_count;
+//				}
+				
+			}
+			if ( ! empty($counts)) { // Only add the sources that have some counts returned
+//				$all_source_counts[$source . "_" . $this->config->item('installation_key')] = $counts;
+//				$all_source_counts[$source . "_" . $this->config->item('site_title')] = $counts;
+				
+				if(isset($counts['openAccess']))
+					$counts['openAccess'] = $counts['openAccess'] > $threshold ? $counts['openAccess'] : "THRESHOLD";
+				
+				if(isset($counts['linkedAccess']))
+					$counts['linkedAccess'] = $counts['linkedAccess'] > $threshold ? $counts['linkedAccess'] : "THRESHOLD";
+
+				if(isset($counts['restrictedAccess']))
+					$counts['restrictedAccess'] = $counts['restrictedAccess'] > $threshold ? $counts['restrictedAccess'] : "THRESHOLD";
+
+				$all_source_counts[$source] = $counts;//
+				// error_log(print_r($counts, 1));
+			}
+			else {
+				$all_source_counts[$source] = array("openAccess" => 0, "linkedAccess" => 0, "restrictedAccess" => 0);//
+				// error_log("empty counts");
+			}
+			
+			
+		}
+		$all_source_counts['site_title'] = $this->config->item('site_title');//
+		// error_log(print_r($all_source_counts, 1));
+//		return $all_source_counts;
+		echo json_encode($all_source_counts);
+	}
 	
 	function variants ($term, $source, $sharing_policy, $format = NULL, $user_id = NULL) {//
 		// error_log("term -> " . $term . " -> " . urldecode($term));

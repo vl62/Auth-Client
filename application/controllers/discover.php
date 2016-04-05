@@ -469,10 +469,15 @@ class Discover extends MY_Controller {
 
         $token = $this->session->userdata('Token');
         $data = authPostRequest($token, array('network_key' => $network_key), $this->config->item('auth_server') . "/api/auth/get_all_installations_for_network");
-        $federated_installs = stripslashes($data);
+
+        $data = stripslashes($data);
+        $data = json_decode($data, 1);
+        if (array_key_exists('error', $data)) show_error($data['error']);
+        
         //// error_log("federated_installs -> $federated_installs");
         // Set the federated installs in the session so they can be used by variantcount
-        $this->session->set_userdata(array('federated_installs' => $federated_installs));
+        $this->session->set_userdata(array('federated_installs' => $data['installation_urls']));
+        $this->session->set_userdata(array('network_threshold' => $data['network_threshold']));
 
         $this->load->library('elasticsearch');
         $check_if_running = $this->elasticsearch->check_if_running();
@@ -867,9 +872,9 @@ class Discover extends MY_Controller {
         $term = urlencode($term);
 
         // Get the federated installs to search from session (set when the discovery interface first loads)
-        $federated_installs = $this->session->userdata('federated_installs');
+        $federated_installs_array = $this->session->userdata('federated_installs');
 ////        error_log("f -> $federated_installs");
-        $federated_installs_array = json_decode($federated_installs, 1);
+        // $federated_installs_array = json_decode($federated_installs, 1);
 
         // If there's some federated installs to search then go through each one and get the variant counts
         if (!empty($federated_installs_array)) {
@@ -879,6 +884,9 @@ class Discover extends MY_Controller {
                 $c = 0;
 
                 // authPostRequest('', array('query' => $data['term'], 'token' => $this->session->userdata('Token')), $this->config->item('auth_server') . "/auth_accounts/set_query_term");
+
+                $network_threshold = $this->session->userdata('network_threshold');
+                // $network_threshold = authPostRequest('', array('network_key' => $network_to_search), $this->config->item('auth_server') . "/auth_accounts/get_network_threshold");
 
                 foreach ($federated_installs_array as $install) {
                     $c++;
@@ -901,12 +909,10 @@ class Discover extends MY_Controller {
                     );
                     $context = stream_context_create($opts);
 
-                    $network_threshold = authPostRequest('', array('network_key' => $network_key), $this->config->item('auth_server') . "/auth_accounts/get_network_threshold");
-
                     $all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key/$network_threshold", false, $context);
 //                  $all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key");
 ////                    error_log(print_r($http_response_header, 1));
-                    //// error_log("all_counts_json -> $all_counts_json");
+                    error_log("all_counts_json -> $all_counts_json");
                     //// error_log("--------------------------");
 
                     $all_counts = json_decode($all_counts_json, 1);
