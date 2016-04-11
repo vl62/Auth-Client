@@ -225,6 +225,9 @@ class Discover_federated extends MY_Controller {
 		error_log($precan_source);
 		error_log(urldecode($precan_source));
 
+		$precan_source = urldecode($precan_source);
+		$precan_source = html_entity_decode($precan_source);
+
         $this->load->model('federated_model');
         $installation_threshold = $this->federated_model->get_variant_cutoff();
        // error_log("cutoff: " . $installation_threshold);
@@ -274,7 +277,7 @@ class Discover_federated extends MY_Controller {
 			// error_log('source ---> ' . print_r($source_array, 1));
 			$source = $source_array['name'];
 
-			$precan_source = urldecode($precan_source);
+			// $precan_source = urldecode($precan_source);
 
 			error_log($precan_source);
 			error_log($source . " (" . $this->config->item('site_title') . ")");
