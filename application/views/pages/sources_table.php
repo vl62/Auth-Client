@@ -36,9 +36,9 @@ $(function (){
 							<?php if ( $this->config->item('show_sources_in_discover')): ?>
 								<?php $federated_source = preg_replace('/__install.*/', '', $source); ?>
 								<?php if ( $source_types[$source] == "federated" ): ?>
-									<td><a><?php echo $sources_full[$source]; ?></a></td>
+									<td><a class="results_source" id="<?php echo $install_uri[$source] ?>"><?php echo $sources_full[$source]; ?></a></td>
 								<?php else: ?>
-									<td><a><?php echo $sources_full[$source]; ?></a></td>
+									<td><a class="results_source"><?php echo $sources_full[$source]; ?></a></td>
 								<?php endif; ?>
 							<?php endif; ?>
 							<td>

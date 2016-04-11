@@ -24,7 +24,7 @@ class Discover extends MY_Controller {
     }
     
     public $sources;
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
     public function index($network_key = '') {
         redirect("discover/proceed_to_query/query_builder");
         // Check if there's a network key supplied in the URL, if not then check if it's set in the session, if not then redirect back to the select network page
@@ -47,7 +47,10 @@ class Discover extends MY_Controller {
 //////      error_log("network_master_group_test -> " . $network_master_group_test);
 //      // Check if user is a member of the master network group, if not then don't allow to proceed further and show error message
 //      if ( ! $network_master_group_test ) {
-//          show_error("You are not a member of the master group for this network so cannot access any discovery interfaces. In order to search any networks you need to get an administrator to add you to the master network group for each network.");
+//          show_error("You are not a member of the master group for this network so 
+//          
+//          
+//          cannot access any discovery interfaces. In order to search any networks you need to get an administrator to add you to the master network group for each network.");
 //      }
 //      
 //      $this->title = "Discover";
@@ -498,6 +501,7 @@ class Discover extends MY_Controller {
         $basic = $this->session->userdata('query_builder_basic') == "yes" ? 1 : 0;
         $advanced = $this->session->userdata('query_builder_advanced') == "yes" ? 1 : 0;
         $precan = $this->session->userdata('query_builder_precan') == "yes" ? 1 : 0;
+        $this->data['create_precan_query'] = $this->session->userdata('create_precan_query');
 
         if($basic && !$advanced && !$precan)  {
             if(PHENOTYPE_CATEGORIES) {
@@ -511,8 +515,20 @@ class Discover extends MY_Controller {
 
             if(true) {
                 /* Version 2 */
+
+                $json = json_decode(file_get_contents(base_url() . "resources/precanned.json"), 1);
+                if($json)
+                foreach ($json as $key => $value) {
+                    if(isset($value['network_key']) && $value['network_key'] == $network_key)
+                        if(!isset($this->data['precanned_queries']))
+                            $this->data['precanned_queries'][] = $value['source'];
+                        else {
+                            if(!in_array($value['source'], $this->data['precanned_queries']))
+                                $this->data['precanned_queries'][] = $value['source'];
+                        }
+                }
+
                 if(PHENOTYPE_CATEGORIES) {
-                    $this->data['precanned_queries'] = json_decode(file_get_contents(base_url() . "resources/precanned.json"), 1);
                     $this->javascript = array('mustache.min.js', 'query_builder_config.js', 'query_builder_precan_v2_category.js', 'query_builder_advanced_v2_category.js');
                 } else {
                     $this->data['precanned_queries'] = json_decode(file_get_contents(base_url() . "resources/precanned.json"), 1);
@@ -828,28 +844,13 @@ class Discover extends MY_Controller {
 
     function query($network = '') {
         $time_in = new DateTime();
-        error_log("Query time in: " . date("Y-m-d H:i:s"));
+        error_log("Query time in: " . date("Y-m-d H:i:sa"));
         $view_derids = $this->session->userdata('view_derids');
 
-        // Check if there's a network key supplied in the URL, if not then check if it's set in the session, if not then redirect back to the select network page
-//      if ( $network_key ) {
-//          $this->session->set_userdata(array('network_key' => $network_key));
-//      }
-//      else {
-//          $network_key = $this->session->userdata('network_key');
-//          if ( ! $network_key ) {
-//              redirect('discover/proceed_to_query/standard_search', 'refresh');
-//          }
-//      }
-//      $this->data['network_key'] = $network_key;
-
         $query = $this->input->post('jsonAPI');
-////        error_log("STARTING QUERY");
-
         $network_to_search = $query['network_to_search'];
+        
         $this->data['network_key'] = $network_to_search;
-////        error_log("network_to_search -> " . $network_to_search . " -> " . $network);
-
 
         $parameters = array('syntax' => 'elasticsearch');
         $this->load->library('CafeVariome/Query', $parameters, 'query');
@@ -857,49 +858,34 @@ class Discover extends MY_Controller {
         $term = $query_statement;
         error_log("User: " . $this->session->userdata('email') . " query statement: $query_statement || " . date("Y-m-d H:i:s"));
         if ($term) {
-////            error_log("POST -> " . print_r($_POST, true));
             $data['term'] = $term;
-////            error_log("Term: " . $term);
+//            error_log("Term: " . $term);
         } else {
             show_error("You must specify a search term");
         }
         
-//        return;
-        
         $sources = array();
         $sources = $this->sources_model->getSources();
-
         $term = urlencode($term);
 
-        // Get the federated installs to search from session (set when the discovery interface first loads)
-        $federated_installs_array = $this->session->userdata('federated_installs');
-////        error_log("f -> $federated_installs");
-        // $federated_installs_array = json_decode($federated_installs, 1);
+        // Base url set from precan query
+        // $base_url = isset($query['base_url']) ? $query['base_url'] : "";
 
+        // Get the federated installs to search from session (set when the discovery interface first loads)
+        $federated_installs_array = isset($query['base_url']) ? array(array('network_key' => $network, 'installation_base_url' => $query['base_url'])) : $this->session->userdata('federated_installs');
         // If there's some federated installs to search then go through each one and get the variant counts
         if (!empty($federated_installs_array)) {
 //          $this->variantcount_curl_multi($federated_installs_array, $term);
             if (!array_key_exists('error', $federated_installs_array)) {
-////                error_log("federated_installs_array -> " . print_r($federated_installs_array, 1));
                 $c = 0;
-
-                // authPostRequest('', array('query' => $data['term'], 'token' => $this->session->userdata('Token')), $this->config->item('auth_server') . "/auth_accounts/set_query_term");
-
                 $network_threshold = $this->session->userdata('network_threshold');
-                // $network_threshold = authPostRequest('', array('network_key' => $network_to_search), $this->config->item('auth_server') . "/auth_accounts/get_network_threshold");
-
                 foreach ($federated_installs_array as $install) {
                     $c++;
                     $network_key = $install['network_key'];
-////                    error_log("NETWORK KEY -> $network_key");
                     $install_uri = $install['installation_base_url'];
+                    if($install_uri == "http://www164.lamp.le.ac.uk/prepadcentral/") continue;
                     $install_uri = rtrim($install_uri, "/");
                     $user_id = $this->ion_auth->user()->row()->id;
-                    //// error_log("STARTING --> $term ---> " . $install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key");
-//                  $this->variantcount_federated($term);
-//                  $contents = curl_get_contents($install_uri . "/discover/variantcount_federated/$term");
-////                    error_log("calling -> " . $install_uri . "/discover/query_federated/$term");
-//                    if($install_uri !== "http://143.210.153.155/cafevariome_client") continue;
                     // Set the timeout for each call to federated installs to 5 seconds
                     $opts = array('http' =>
                         array(
@@ -908,29 +894,23 @@ class Discover extends MY_Controller {
                         )
                     );
                     $context = stream_context_create($opts);
-
-                    $all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount2/$term/$user_id/$network_key/$network_threshold", false, $context);
-//                  $all_counts_json = @file_get_contents($install_uri . "/discover_federated/variantcount/$term/$user_id/$network_key");
-////                    error_log(print_r($http_response_header, 1));
-                    error_log("all_counts_json -> $all_counts_json");
-                    //// error_log("--------------------------");
-
+                    $url = $install_uri . "/discover_federated/variantcount2/$term/$user_id/$network_key/$network_threshold" . 
+                        (isset($query['base_url']) ? "/" . urlencode($query['source']) : "");
+                    
+                    $time1 = new DateTime();
+                    $all_counts_json = @file_get_contents($url, false, $context);
+                    $time2 = new DateTime();
+                    $interval = $time2->diff($time1);
+                    error_log("url: $install_uri || time: " . $interval->format('%im:%ss') . " || counts -> $all_counts_json");
                     $all_counts = json_decode($all_counts_json, 1);
                     $federated_site_title = $all_counts['site_title'];
                     unset($all_counts['site_title']);
-////                    error_log("all counts decoded -> " . print_r($all_counts, 1));
                     if (!empty($all_counts)) {
                         foreach ($all_counts as $federated_source => $counts_for_source) {
-
                             $federated_source_name = $federated_source . "__install_$c";
-////                            error_log("counts for source $federated_source_name -> " . print_r($counts_for_source, 1));
-////                            error_log("adding to " . $federated_source);
                             $sources[$federated_source_name] = "$federated_source ($federated_site_title)";
-////                            error_log("sources_full adding -> " . print_r($sources, 1));
                             $data['counts'][$federated_source_name] = $counts_for_source;
                             $data['install_uri'][$federated_source_name] = $install_uri;
-////                            error_log("-----------> " . print_r($this->data['install_uri'], 1));
-
                             $data['source_types'][$federated_source_name] = "federated";
                         }
                     }
@@ -945,9 +925,9 @@ class Discover extends MY_Controller {
         error_log("Query time out: " . date("Y-m-d H:i:s"));
         $interval = $time_out->diff($time_in);
         error_log($interval->format('%im:%ss'));
-        // error_log("Time diff: " . $now2->diff($now1)->format('%im:%ss'));
 
         $this->load->view('pages/sources_table', $data); // Don't use _render as headers are already sent, html output from the view is sent back to ajax function and appended to div
+        authPostRequest('', array('query' => $data['term'], 'network_key' => $network_to_search, 'email' => $this->session->userdata('email'), 'date_time' => date("Y-m-d H:i:s")), $this->config->item('auth_server') . "/auth_accounts/set_query_term");
     }
 
     function save_query() {
@@ -960,7 +940,11 @@ class Discover extends MY_Controller {
 
         $data = $this->input->post('json');
         $data['user_email'] = $this->session->userdata('email');
-        $data['date_time'] = date("Y-m-d h:i:sa");
+
+        $date = new DateTime();
+        $date->setTimezone(new DateTimeZone('GMT'));
+        $data['date_time'] = $date->format('Y-m-d H:i:s') . " GMT";
+        // $data['date_time'] = date("Y-m-d h:i:sa");
         $data['status'] = 1;
         
         // error_log(print_r($data, 1));
@@ -979,6 +963,7 @@ class Discover extends MY_Controller {
     function get_precan() {
         $source = $this->input->post('source');
         $case_control = $this->input->post('case_control');
+        $network_key = $this->input->post('network_key');
 
         $json = json_decode(file_get_contents(base_url() . "resources/precanned.json"), 1);
 
@@ -986,7 +971,7 @@ class Discover extends MY_Controller {
         $precan_inactive = [];
 
         foreach ($json as $api) {
-            if($api['source'] == $source && $api['case_control'] == $case_control) {
+            if($api['source'] == $source && $api['case_control'] == $case_control && $api['network_key'] == $network_key) {
                 if($api['status'] == 1)
                     $precan_active[] = array('api' => htmlspecialchars(json_encode($api)), 'queryString' => $api['queryString']);
                 elseif($api['status'] == -1)
@@ -1000,6 +985,7 @@ class Discover extends MY_Controller {
     function precan_status() {
         $source = $this->input->post('source');
         $case_control = $this->input->post('case_control');
+        $network_key = $this->input->post('network_key');
 
         $status = $this->input->post('status');
         $queryString = htmlentities($this->input->post('queryString'));
