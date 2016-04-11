@@ -897,6 +897,10 @@ class Discover extends MY_Controller {
                     $url = $install_uri . "/discover_federated/variantcount2/$term/$user_id/$network_key/$network_threshold" . 
                         (isset($query['base_url']) ? "/" . urlencode($query['source']) : "");
                     
+                    $src = urlencode($query['source']);
+                    error_log($src);
+                    error_log(urldecode($src));
+
                     $time1 = new DateTime();
                     $all_counts_json = @file_get_contents($url, false, $context);
                     $time2 = new DateTime();

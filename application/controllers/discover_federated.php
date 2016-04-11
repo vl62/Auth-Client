@@ -221,6 +221,10 @@ class Discover_federated extends MY_Controller {
 	}
 	
 	function variantcount2($term, $user_id, $network_key, $network_threshold, $precan_source = false) {
+
+		error_log($precan_source);
+		error_log(urldecode($precan_source));
+
         $this->load->model('federated_model');
         $installation_threshold = $this->federated_model->get_variant_cutoff();
        // error_log("cutoff: " . $installation_threshold);
