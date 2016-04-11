@@ -84,7 +84,7 @@ class Discover_federated extends MY_Controller {
 		// error_log("sources -> " . print_r($sources, 1));
 		$all_source_counts = array();
 		foreach ($sources as $source_array ) {
-			//
+
 			// error_log('source ---> ' . print_r($source_array, 1));
 			$source = $source_array['name'];
 			
@@ -220,10 +220,7 @@ class Discover_federated extends MY_Controller {
 		echo json_encode($all_source_counts);
 	}
 	
-	function variantcount2($term, $user_id, $network_key, $network_threshold) {
-
-		// $network_threshold = authPostRequest('', array('network_key' => $network_key), $this->config->item('auth_server') . "/auth_accounts/get_network_threshold");
-  //      error_log("threshold: " . $network_threshold);
+	function variantcount2($term, $user_id, $network_key, $network_threshold, $precan_source = false) {
         $this->load->model('federated_model');
         $installation_threshold = $this->federated_model->get_variant_cutoff();
        // error_log("cutoff: " . $installation_threshold);
@@ -272,6 +269,8 @@ class Discover_federated extends MY_Controller {
 			//
 			// error_log('source ---> ' . print_r($source_array, 1));
 			$source = $source_array['name'];
+
+			if($precan_source && $precan_source != $source . "(" . $this->config->item('site_title') . ")") continue;
 			
 			$open_access_flag = 0;
 			// Check whether the user can access restrictedAccess variants in this source

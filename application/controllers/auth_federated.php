@@ -123,7 +123,8 @@ class Auth_federated extends MY_Controller {
                     'query_builder_basic'       => $this->input->post('query_builder_basic'),
                     'query_builder_advanced'    => $this->input->post('query_builder_advanced'),
                     'query_builder_precan'      => $this->input->post('query_builder_precan'),
-                    'view_derids'               => $this->input->post('view_derids')
+                    'view_derids'               => $this->input->post('view_derids'),
+                    'create_precan_query'       => $this->input->post('create_precan_query')
                 );
                 
                 $this->session->set_userdata($session_data);

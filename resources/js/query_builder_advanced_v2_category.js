@@ -383,6 +383,9 @@ $(document).ready(function () {
         var queryString = validate_query_string($("input#queryString").val().toUpperCase(), label_counter + 64);
 
         $("#query_result_advanced").empty();
+
+        $("select[name='save_source']").html('');
+        $("select[name='save_source']").append('<option value="-1">Select case/control</option>');
        
         $idCount = 1;
         phe = validate_advanced("buildQueryEvent");
@@ -500,9 +503,17 @@ $(document).ready(function () {
                 $('#waiting_advanced').hide(500);
                 $("#query_result_advanced").html(data);
                 // $("#query_result_advanced h4").html(output_query_string);
+                
+                $.each($("a.results_source"), function(index, val) {
+                    var source = $(this).html();
+                    var url = $(this).attr('id');
+                    if(!$(this).parent().parent().find("a[data-content='The display of record counts has been limited to specific users for this source.']").length > 0)
+                        $("select[name='save_source']").append("<option class='sss' id='" + url + "' value='" + source + "'>" + source + "</option>");
+                });
             }, 
             complete: function() {
-                $("#query_for_disp").append('&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" id="add_query" class="btn btn-warning">Save As Canned Query</button>');
+                if($('input[name="create_precan_query"]').val() == "yes")
+                    $("#query_for_disp").append('&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" id="add_query" class="btn btn-warning">Save As Canned Query</button>');
             }
         });
     }
@@ -512,6 +523,8 @@ $(document).ready(function () {
     
     $("#save_query").click(function(e) {
         $source = $("select[name='save_source']").val();
+        $url = $("select[name='save_source'] option:selected").attr('id');
+        
         $case_control = $("select[name='save_case_control']").val();
         $notes = $("textarea[name='notes']").val();
         $queryString = $("#add_query").parent().html().split("&nbsp;")[0]
@@ -523,7 +536,7 @@ $(document).ready(function () {
 
         if($source == -1 || $case_control == -1) return;
 
-        $.extend($arr, {"queryString": $queryString, "source": $source, "case_control": $case_control, "notes": $notes});
+        $.extend($arr, {"network_key": $network_key, "base_url": $url, "queryString": $queryString, "source": $source, "case_control": $case_control, "notes": $notes});
 
         $.ajax({
             url: baseurl + 'discover/save_query',
@@ -532,6 +545,8 @@ $(document).ready(function () {
             data: {json: $arr},
         }).done(function() {
             $("#modal_add_query").modal('hide');
+            if($("select[name='source']").find("option[value='" + $source + "']").length == 0)
+                $("select[name='source']").append("<option value='" + $source + "'>" + $source + "</option>");
         });
         
     });
@@ -547,7 +562,7 @@ $(document).ready(function () {
                 url: baseurl + 'discover/get_precan',   
                 type: 'POST',
                 dataType: 'JSON',
-                data: {'source': $source, 'case_control': $case_control},
+                data: {'source': $source, 'case_control': $case_control, 'network_key': $network_key},
             }).done(function(data) {
                 // console.log(data);
                 // console.log(data.precan_active.length);
@@ -617,7 +632,7 @@ $(document).ready(function () {
                 url: baseurl + 'discover/get_precan',   
                 type: 'POST',
                 dataType: 'JSON',
-                data: {'source': $source, 'case_control': $case_control},
+                data: {'source': $source, 'case_control': $case_control, 'network_key': $network_key},
             }).done(function(data) {
                 // console.log(data);
                 // console.log(data.precan_active.length);
@@ -694,7 +709,7 @@ $(document).ready(function () {
             url: baseurl + 'discover/precan_status/',
             type: 'POST',
             dataType: 'JSON',
-            data: {'status': "activate", 'source': $source, 'case_control': $case_control, 'queryString': $queryString},
+            data: {'status': "activate", 'source': $source, 'case_control': $case_control, 'queryString': $queryString, 'network_key': $network_key},
         }).done(function() {
             
 
@@ -727,7 +742,7 @@ $(document).ready(function () {
             url: baseurl + 'discover/precan_status/',
             type: 'POST',
             dataType: 'JSON',
-            data: {'status': "deactivate", 'source': $source, 'case_control': $case_control, 'queryString': $queryString},
+            data: {'status': "deactivate", 'source': $source, 'case_control': $case_control, 'queryString': $queryString, 'network_key': $network_key},
         }).done(function() {
             
             if($("input[name='show_all']").attr('checked') == "checked") {
@@ -771,7 +786,7 @@ $(document).ready(function () {
             url: baseurl + 'discover/precan_status/',
             type: 'POST',
             dataType: 'JSON',
-            data: {'status': "delete", 'source': $source, 'case_control': $case_control, 'queryString': $(this).parent().prev().find('input').val()},
+            data: {'status': "delete", 'source': $source, 'case_control': $case_control, 'queryString': $(this).parent().prev().find('input').val(), 'network_key': $network_key},
         }).done(function(data) {
             $dat.parent().parent().remove();
         });

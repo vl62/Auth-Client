@@ -48,7 +48,7 @@
 
                 <div id="tab-precanned" class="tab-pane">
                     <div class="" id="genotypeContainer">
-                        <?php if(isset($precanned_queries)): ?>
+                        
                         <div class="row-fluid">
                             <div class="span12 pagination-centered">
                                 <button class="btn btn-large input-block-level btn-info btn-collapse" id="collapsePrecanned" data-collapseStatus="false" style="text-align: left">
@@ -63,9 +63,11 @@
                                 <div class="span3 offset2">
                                     <select name="source" class="input-large">
                                         <option value="-1">Select a source</option> 
-                                        <option value="source1">Source 1</option>
-                                        <option value="source2">Source 2</option>
-                                        <option value="source3">Source 3</option>
+                                        <?php if(isset($precanned_queries)): ?>
+                                            <?php foreach ($precanned_queries as $key => $value): ?>
+                                                <option value="<?php echo $value; ?>"><?php echo $value; ?></option>    
+                                            <?php endforeach;?>
+                                        <?php endif; ?>
                                     </select>
                                 </div>
                                 <div class="span3">
@@ -85,7 +87,7 @@
                                 </div> -->
                             </div>
                         </div> 
-                        <?php endif; ?>
+                        
 
                         <br>
                         <div class="row-fluid">
@@ -162,9 +164,6 @@
                         <p class="hide" style="color: red;" id="err_source">Required</p>
                         <select name="save_source" class="input-large">
                             <option value="-1">Select a source</option>
-                            <option value="source1">Source 1</option>
-                            <option value="source2">Source 2</option>
-                            <option value="source3">Source 3</option>
                         </select> <br> <br>
                         <p class="hide" style="color: red;" id="err_case_control">Required</p>
                         <select name="save_case_control" class="input-large">
@@ -185,3 +184,5 @@
         </div>
     </div>
 </div>
+
+<input type="hidden" name="create_precan_query" value="<?php echo $create_precan_query; ?>">
