@@ -270,6 +270,11 @@ class Discover_federated extends MY_Controller {
 			// error_log('source ---> ' . print_r($source_array, 1));
 			$source = $source_array['name'];
 
+			error_log($precan_source);
+			error_log($source . " (" . $this->config->item('site_title') . ")");
+			error_log($precan_source . " " . $source . " (" . $this->config->item('site_title') . ")");
+			error_log($precan_source && $precan_source != $source . " (" . $this->config->item('site_title') . ")");
+			
 			if($precan_source && $precan_source != $source . " (" . $this->config->item('site_title') . ")") continue;
 			
 			$open_access_flag = 0;
