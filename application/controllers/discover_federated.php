@@ -270,7 +270,7 @@ class Discover_federated extends MY_Controller {
 			// error_log('source ---> ' . print_r($source_array, 1));
 			$source = $source_array['name'];
 
-			if($precan_source && $precan_source != $source . "(" . $this->config->item('site_title') . ")") continue;
+			if($precan_source && $precan_source != $source . " (" . $this->config->item('site_title') . ")") continue;
 			
 			$open_access_flag = 0;
 			// Check whether the user can access restrictedAccess variants in this source
