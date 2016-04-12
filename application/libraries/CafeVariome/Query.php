@@ -201,6 +201,29 @@ class Query extends CafeVariome {
         $query_statement = preg_replace('/\b(\d+)\b/', "##$1##", $query_statement);
 //		error_log("queryStatement: $query_statement");
         foreach ($query_array as $statement_id => $query_element) {
+            // only for epad
+            if(strpos($query_element, "Age_\\[by_start_of_this_year\\]_d") !== FALSE)
+            { 
+                if(strpos($query_element, "_d:>=") !== FALSE) {
+                    $splits = explode("_d:>=", $query_element);
+                    $splits[1] = date("Y") - $splits[1] - 1;
+                    $query_element = implode("_d:<=", $splits);
+                } elseif(strpos($query_element, "_d:<=") !== FALSE) {
+                    $splits = explode("_d:<=", $query_element);
+                    $splits[1] = date("Y") - $splits[1] - 1;
+                    $query_element = implode("_d:>=", $splits);
+                } elseif(strpos($query_element, "_d:<") !== FALSE) {
+                    $splits = explode("_d:<", $query_element);
+                    $splits[1] = date("Y") - $splits[1] - 1;
+                    $query_element = implode("_d:>", $splits);
+                } elseif(strpos($query_element, "_d:>") !== FALSE) {
+                    $splits = explode("_d:>", $query_element);
+                    $splits[1] = date("Y") - $splits[1] - 1;
+                    $query_element = implode("_d:<", $splits);
+                }
+            }
+            
+
             $statement_id = "##" . $statement_id . "##";
             $query_element = "##(" . $query_element . ")##";
 //            error_log("BEFORE query_element -> $statement_id -> $query_element -> $query_statement");
@@ -208,7 +231,7 @@ class Query extends CafeVariome {
 //            error_log("AFTER query_element -> $statement_id -> $query_element -> $query_statement");
         }
         $query_statement = str_replace('##', '', $query_statement);
-        error_log("query_statement -> $query_statement");
+        // error_log("query_statement -> $query_statement");
 
         $query_statement_for_display = $query_statement;
         $query_statement_for_display = str_replace('_d:', ':', $query_statement_for_display); // Remove the appended numeric index name so that it isn't displayed to the user
