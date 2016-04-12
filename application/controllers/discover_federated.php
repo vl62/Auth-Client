@@ -221,10 +221,6 @@ class Discover_federated extends MY_Controller {
 	}
 	
 	function variantcount2($term, $user_id, $network_key, $network_threshold, $precan_source = false) {
-
-		error_log($precan_source);
-		error_log(urldecode($precan_source));
-
 		$precan_source = urldecode($precan_source);
 		$precan_source = html_entity_decode($precan_source);
 
@@ -233,13 +229,9 @@ class Discover_federated extends MY_Controller {
        // error_log("cutoff: " . $installation_threshold);
         $threshold = $installation_threshold > $network_threshold ? $installation_threshold : $network_threshold;
        // error_log($threshold);
-//
-		// error_log("variantcount_federated -> $term");
 		$term = urldecode($term);
 		$term = html_entity_decode($term);
-//		$token = $this->session->userdata('Token');//
-		// error_log("token ---> $token ---> $user_id");
-//		
+
 		// Check the network key exists and that this installation is a member of the network
 		// Fetch any sources that the user has count display group level access to
 		// Fetch any sources that the user has source display group level access to
@@ -266,24 +258,13 @@ class Discover_federated extends MY_Controller {
 			foreach ( $accessible_source_display_array as $s ) 
 				$accessible_source_display_ids_array[$s['source_id']] = $s['source_id'];
 
-
 		$this->load->model('sources_model');
 		// Get the sources for this installation which are to be search (any that are not federated i.e. local sources)
 		$sources = $this->sources_model->getSourcesForFederatedQuery();//
 		// error_log("sources -> " . print_r($sources, 1));
 		$all_source_counts = array();
 		foreach ($sources as $source_array ) {
-			//
-			// error_log('source ---> ' . print_r($source_array, 1));
 			$source = $source_array['name'];
-
-			// $precan_source = urldecode($precan_source);
-
-			error_log($precan_source);
-			error_log($source . " (" . $this->config->item('site_title') . ")");
-			error_log($precan_source . " " . $source . " (" . $this->config->item('site_title') . ")");
-			error_log($precan_source && $precan_source != $source . " (" . $this->config->item('site_title') . ")");
-
 			if($precan_source && $precan_source != $source . " (" . $this->config->item('site_title') . ")") continue;
 			
 			$open_access_flag = 0;
