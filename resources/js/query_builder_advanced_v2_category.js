@@ -513,7 +513,7 @@ $(document).ready(function () {
             }, 
             complete: function() {
                 if($('input[name="create_precan_query"]').val() == "yes")
-                    $("#query_for_disp").append('&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" id="add_query" class="btn btn-warning">Save As Canned Query</button>');
+                    $("#tab-advanced #query_for_disp").append('&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" id="add_query" class="btn btn-warning">Save As Canned Query</button>');
             }
         });
     }
@@ -524,7 +524,7 @@ $(document).ready(function () {
     $("#save_query").click(function(e) {
         $source = $("select[name='save_source']").val();
         $url = $("select[name='save_source'] option:selected").attr('id');
-        
+
         $case_control = $("select[name='save_case_control']").val();
         $notes = $("textarea[name='notes']").val();
         $queryString = $("#add_query").parent().html().split("&nbsp;")[0]
@@ -548,7 +548,6 @@ $(document).ready(function () {
             if($("select[name='source']").find("option[value='" + $source + "']").length == 0)
                 $("select[name='source']").append("<option value='" + $source + "'>" + $source + "</option>");
         });
-        
     });
 
     $("select[name='source']").change(function(e) {
