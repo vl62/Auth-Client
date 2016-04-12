@@ -868,9 +868,7 @@ class Discover extends MY_Controller {
         $sources = $this->sources_model->getSources();
         $term = urlencode($term);
 
-        // Base url set from precan query
-        // $base_url = isset($query['base_url']) ? $query['base_url'] : "";
-
+        // Check if Base url is set from precan query else
         // Get the federated installs to search from session (set when the discovery interface first loads)
         $federated_installs_array = isset($query['base_url']) ? array(array('network_key' => $network, 'installation_base_url' => $query['base_url'])) : $this->session->userdata('federated_installs');
         // If there's some federated installs to search then go through each one and get the variant counts
@@ -896,10 +894,6 @@ class Discover extends MY_Controller {
                     $context = stream_context_create($opts);
                     $url = $install_uri . "/discover_federated/variantcount2/$term/$user_id/$network_key/$network_threshold" . 
                         (isset($query['base_url']) ? "/" . urlencode($query['source']) : "");
-                    
-                    $src = urlencode($query['source']);
-                    error_log($src);
-                    error_log(urldecode($src));
 
                     $time1 = new DateTime();
                     $all_counts_json = @file_get_contents($url, false, $context);
