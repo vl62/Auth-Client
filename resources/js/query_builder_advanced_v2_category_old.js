@@ -574,55 +574,57 @@ $(document).ready(function () {
                 dataType: 'JSON',
                 data: {'source': $source, 'case_control': $case_control, 'network_key': $network_key},
             }).done(function(data) {
-                console.log(data);
+                // console.log(data);
                 // console.log(data.precan_active.length);
                 // console.log(data.precan_inactive.length);
-                $(".searchable > tr").remove();
+                $("#precannedContainer .precan_active").remove();
+                $("#precannedContainer .precan_inactive").remove();
+                $("#precannedContainer br").remove();
 
                 $.each(data.precan_active, function(index, val) {
-                    $("tbody.searchable").append('\n\
-                        <tr class="pre_active">\n\
-                            <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '</td>\n\
-                            <td><div>' + val['queryString'] + '</div></td>\n\
-                            <td><div>' + val['user_email'] + '</div></td>\n\
-                            <td><div>' + val['date_time'] + '</div></td>\n\
-                            <td>\n\
-                                <a class="btn btn-small btn-warning precan_deactivate" href="#"><i class="icon-remove"></i></a>\n\
-                                <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                                <a class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
-                            </td>\n\
-                        </tr>');
+                    $("#precannedContainer").append('\n\
+                        <div class="row-fluid precan_active" style="margin-top: 20px;">\n\
+                            <div class="span7 offset2 pagination-centered">\n\
+                                <label class="radio">\n\
+                                    <input type="radio" name="precannedQueries" value="' + val['api'] + '">' + val['queryString'] + '\n\
+                                </label>\n\
+                            </div>\n\
+                            <div class="span3 pagination-centered">\n\
+                            <button type="button" class="btn btn-warning precan_deactivate">Deactivate</button>\n\
+                            <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                            </div>\n\
+                        </div>');
                 });
 
                 if($("input[name='show_all']").attr('checked') == "checked") {
                     $.each(data.precan_inactive, function(index, val) {
-                        $("tbody.searchable").append('\n\
-                            <tr class="pre_inactive">\n\
-                                <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '</td>\n\
-                                <td><div>' + val['queryString'] + '</div></td>\n\
-                                <td><div>' + val['user_email'] + '</div></td>\n\
-                                <td><div>' + val['date_time'] + '</div></td>\n\
-                                <td>\n\
-                                    <a class="btn btn-small btn-success precan_activate" href="#"><i class="icon-ok"></i></a>\n\
-                                    <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                                    <a class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
-                                </td>\n\
-                            </tr>');
+                        $("#precannedContainer").append('\n\
+                            <div class="row-fluid precan_inactive" style="margin-top: 20px;">\n\
+                                <div class="span7 offset2 pagination-centered">\n\
+                                    <label class="radio">\n\
+                                        <input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + val['queryString'] + '\n\
+                                    </label>\n\
+                                </div>\n\
+                                <div class="span3 pagination-centered">\n\
+                                <button type="button" class="btn btn-success precan_activate">Activate</button>\n\
+                                <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                                </div>\n\
+                            </div>');
                     });     
                 } else {
                     $.each(data.precan_inactive, function(index, val) {
-                        $("tbody.searchable").append('\n\
-                            <tr class="pre_inactive hide">\n\
-                                <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '</td>\n\
-                                <td><div>' + val['queryString'] + '</div></td>\n\
-                                <td><div>' + val['user_email'] + '</div></td>\n\
-                                <td><div>' + val['date_time'] + '</div></td>\n\
-                                <td>\n\
-                                    <a class="btn btn-small btn-success precan_activate" href="#"><i class="icon-ok"></i></a>\n\
-                                    <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                                    <a class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
-                                </td>\n\
-                            </tr>');
+                        $("#precannedContainer").append('\n\
+                            <div class="row-fluid precan_inactive hide" style="margin-top: 20px;">\n\
+                                <div class="span7 offset2 pagination-centered">\n\
+                                    <label class="radio">\n\
+                                        <input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + val['queryString'] + '\n\
+                                    </label>\n\
+                                </div>\n\
+                                <div class="span3 pagination-centered">\n\
+                                <button type="button" class="btn btn-success precan_activate">Activate</button>\n\
+                                <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                                </div>\n\
+                            </div>');
                     });
                 }     
             });
@@ -642,90 +644,99 @@ $(document).ready(function () {
                 dataType: 'JSON',
                 data: {'source': $source, 'case_control': $case_control, 'network_key': $network_key},
             }).done(function(data) {
-                 console.log(data);
+                // console.log(data);
                 // console.log(data.precan_active.length);
                 // console.log(data.precan_inactive.length);
-                $(".searchable > tr").remove();
+                $("#precannedContainer .precan_active").remove();
+                $("#precannedContainer .precan_inactive").remove();
+                $("#precannedContainer br").remove();
 
                 $.each(data.precan_active, function(index, val) {
-                    $("tbody.searchable").append('\n\
-                        <tr class="pre_active">\n\
-                            <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '</td>\n\
-                            <td><div>' + val['queryString'] + '</div></td>\n\
-                            <td><div>' + val['user_email'] + '</div></td>\n\
-                            <td><div>' + val['date_time'] + '</div></td>\n\
-                            <td>\n\
-                                <a class="btn btn-small btn-warning precan_deactivate" href="#"><i class="icon-remove"></i></a>\n\
-                                <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                                <a class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
-                            </td>\n\
-                        </tr>');
+                    $("#precannedContainer").append('\n\
+                        <div class="row-fluid precan_active" style="margin-top: 20px;">\n\
+                            <div class="span7 offset2 pagination-centered">\n\
+                                <label class="radio">\n\
+                                    <input type="radio" name="precannedQueries" value="' + val['api'] + '">' + val['queryString'] + '\n\
+                                </label>\n\
+                            </div>\n\
+                            <div class="span3 pagination-centered">\n\
+                            <button type="button" class="btn btn-warning precan_deactivate">Deactivate</button>\n\
+                            <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                            </div>\n\
+                        </div>');
                 });
 
                 if($("input[name='show_all']").attr('checked') == "checked") {
                     $.each(data.precan_inactive, function(index, val) {
-                        $("tbody.searchable").append('\n\
-                            <tr class="pre_inactive">\n\
-                                <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '</td>\n\
-                                <td><div>' + val['queryString'] + '</div></td>\n\
-                                <td><div>' + val['user_email'] + '</div></td>\n\
-                                <td><div>' + val['date_time'] + '</div></td>\n\
-                                <td>\n\
-                                    <a class="btn btn-small btn-success precan_activate" href="#"><i class="icon-ok"></i></a>\n\
-                                    <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                                    <a class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim()) + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
-                                </td>\n\
-                            </tr>');
+                        $("#precannedContainer").append('\n\
+                            <div class="row-fluid precan_inactive" style="margin-top: 20px;">\n\
+                                <div class="span7 offset2 pagination-centered">\n\
+                                    <label class="radio">\n\
+                                        <input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + val['queryString'] + '\n\
+                                    </label>\n\
+                                </div>\n\
+                                <div class="span3 pagination-centered">\n\
+                                <button type="button" class="btn btn-success precan_activate">Activate</button>\n\
+                                <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                                </div>\n\
+                            </div>');
                     });     
                 } else {
                     $.each(data.precan_inactive, function(index, val) {
-                        $("tbody.searchable").append('\n\
-                            <tr class="pre_inactive hide">\n\
-                                <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '</td>\n\
-                                <td><div>' + val['queryString'] + '</div></td>\n\
-                                <td><div>' + val['user_email'] + '</div></td>\n\
-                                <td><div>' + val['date_time'] + '</div></td>\n\
-                                <td>\n\
-                                    <a class="btn btn-small btn-success precan_activate" href="#"><i class="icon-ok"></i></a>\n\
-                                    <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                                    <a class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim()) + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
-                                </td>\n\
-                            </tr>');
+                        $("#precannedContainer").append('\n\
+                            <div class="row-fluid precan_inactive hide" style="margin-top: 20px;">\n\
+                                <div class="span7 offset2 pagination-centered">\n\
+                                    <label class="radio">\n\
+                                        <input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + val['queryString'] + '\n\
+                                    </label>\n\
+                                </div>\n\
+                                <div class="span3 pagination-centered">\n\
+                                <button type="button" class="btn btn-success precan_activate">Activate</button>\n\
+                                <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                                </div>\n\
+                            </div>');
                     });
                 }     
-            })
-            .always(function() {
-                $("[rel=popover]").popover({placement:'right'});
             });
         }
-    }); 
-    
-    
+    });    
+
     $("input[name='show_all']").change(function(e) {
         if($(this).attr('checked') == "checked")
-            $(".searchable > .pre_inactive").removeClass('hide');
+            $("#precannedContainer .precan_inactive").removeClass('hide');
         else
-            $(".searchable > .pre_inactive").addClass('hide');
+            $("#precannedContainer .precan_inactive").addClass('hide');
     });
 
     $(document).on('click', '.precan_activate', function () {
-        $ths = $(this);
         $source = $("select[name='source']").val();
         $case_control = $("select[name='case_control']").val();
 
-        $dat = $(this).parent().parent();
+        $dat = $(this);
         $api = $(this).parent().prev().find('input').val();
-        $queryString = $(this).parent().parent().find('input').val();
+        $queryString = $(this).parent().prev().find('label').clone().find("input").remove().end().html();
         $.ajax({
             url: baseurl + 'discover/precan_status/',
             type: 'POST',
             dataType: 'JSON',
             data: {'status': "activate", 'source': $source, 'case_control': $case_control, 'queryString': $queryString, 'network_key': $network_key},
         }).done(function() {
-            $dat = $dat.remove();
-            $dat = $dat.removeClass('pre_inactive').addClass('pre_active');
-            $(".searchable").prepend($dat);
-            $(".searchable tr:first").find('td a.precan_activate').removeClass('precan_activate').addClass('precan_deactivate').removeClass('btn-success').addClass('btn-warning').children().removeClass('icon-ok').addClass('icon-remove');
+            
+
+            $('\n\
+            <div class="row-fluid precan_active" style="margin-top: 20px;">\n\
+                <div class="span7 offset2 pagination-centered">\n\
+                    <label class="radio">\n\
+                        <input type="radio" name="precannedQueries" value="' + $queryString + '">' + $queryString + '\n\
+                    </label>\n\
+                </div>\n\
+                <div class="span3 pagination-centered">\n\
+                <button type="button" class="btn btn-warning precan_deactivate">Deactivate</button>\n\
+                <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                </div>\n\
+            </div>').insertAfter(".precan_inactive:first");
+
+            $dat.parent().parent().remove();
         });
         
     });
@@ -734,33 +745,49 @@ $(document).ready(function () {
         $source = $("select[name='source']").val();
         $case_control = $("select[name='case_control']").val();
 
-        $dat = $(this).parent().parent();
+        $dat = $(this);
         $api = $(this).parent().prev().find('input').val();
-        $queryString = $(this).parent().parent().find('input').val();
+        $queryString = $(this).parent().prev().find('label').clone().find("input").remove().end().html();
          $.ajax({
             url: baseurl + 'discover/precan_status/',
             type: 'POST',
             dataType: 'JSON',
             data: {'status': "deactivate", 'source': $source, 'case_control': $case_control, 'queryString': $queryString, 'network_key': $network_key},
         }).done(function() {
+            
             if($("input[name='show_all']").attr('checked') == "checked") {
-                $dat = $dat.remove();
-                $dat = $dat.removeClass('pre_active').addClass('pre_inactive');
-                $(".searchable").append($dat);
-                $(".searchable tr:last").find('td a.precan_deactivate').removeClass('precan_deactivate').addClass('precan_activate').removeClass('btn-warning').addClass('btn-success').children().removeClass('icon-remove').addClass('icon-ok');
+                $('\n\
+                <div class="row-fluid precan_inactive" style="margin-top: 20px;">\n\
+                    <div class="span7 offset2 pagination-centered">\n\
+                        <label class="radio">\n\
+                            <input type="radio" disabled name="precannedQueries" value="' + $queryString + '">' + $queryString + '\n\
+                        </label>\n\
+                    </div>\n\
+                    <div class="span3 pagination-centered">\n\
+                    <button type="button" class="btn btn-success precan_activate">Activate</button>\n\
+                    <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                    </div>\n\
+                </div>').insertAfter(".precan_active:first");
             } else {
-                $dat = $dat.remove();
-                $dat = $dat.removeClass('pre_active').addClass('pre_inactive').addClass('hide');
-                $(".searchable").append($dat);
-                $(".searchable tr:last").find('td a.precan_deactivate').removeClass('precan_deactivate').addClass('precan_activate').removeClass('btn-warning').addClass('btn-success').children().removeClass('icon-remove').addClass('icon-ok');
+                $('\n\
+                <div class="row-fluid precan_inactive hide" style="margin-top: 20px;">\n\
+                    <div class="span7 offset2 pagination-centered">\n\
+                        <label class="radio">\n\
+                            <input type="radio" disabled name="precannedQueries" value="' + $queryString + '">' + $queryString + '\n\
+                        </label>\n\
+                    </div>\n\
+                    <div class="span3 pagination-centered">\n\
+                    <button type="button" class="btn btn-success precan_activate">Activate</button>\n\
+                    <button type="button" class="btn btn-danger precan_delete">Delete</button>\n\
+                    </div>\n\
+                </div>').insertAfter(".precan_active:first");
             }
+
+            $dat.parent().parent().remove();
         });
     });
 
     $(document).on('click', '.precan_delete', function () {
-
-        if(!confirm("Are you sure you want to delete this precanned query?")) return;
-
         $source = $("select[name='source']").val();
         $case_control = $("select[name='case_control']").val();
 
@@ -769,7 +796,7 @@ $(document).ready(function () {
             url: baseurl + 'discover/precan_status/',
             type: 'POST',
             dataType: 'JSON',
-            data: {'status': "delete", 'source': $source, 'case_control': $case_control, 'queryString': $(this).parent().parent().find('input').val(), 'network_key': $network_key},
+            data: {'status': "delete", 'source': $source, 'case_control': $case_control, 'queryString': $(this).parent().prev().find('input').val(), 'network_key': $network_key},
         }).done(function(data) {
             $dat.parent().parent().remove();
         });

@@ -971,9 +971,9 @@ class Discover extends MY_Controller {
         foreach ($json as $api) {
             if($api['source'] == $source && $api['case_control'] == $case_control && $api['network_key'] == $network_key) {
                 if($api['status'] == 1)
-                    $precan_active[] = array('api' => htmlspecialchars(json_encode($api)), 'queryString' => $api['queryString']);
+                    $precan_active[] = array('api' => htmlspecialchars(json_encode($api)), 'queryString' => $api['queryString'], 'user_email' => $api['user_email'], 'date_time' => $api['date_time'], 'notes' => $api['notes']);
                 elseif($api['status'] == -1)
-                    $precan_inactive[] = array('api' => htmlspecialchars(json_encode($api)), 'queryString' => $api['queryString']);
+                    $precan_inactive[] = array('api' => htmlspecialchars(json_encode($api)), 'queryString' => $api['queryString'], 'user_email' => $api['user_email'], 'date_time' => $api['date_time'], 'notes' => $api['notes']);
             }
         }
 
@@ -986,12 +986,12 @@ class Discover extends MY_Controller {
         $network_key = $this->input->post('network_key');
 
         $status = $this->input->post('status');
-        $queryString = htmlentities($this->input->post('queryString'));
+        $queryString = json_decode(($this->input->post('queryString')), 1);
 
         $json = json_decode(file_get_contents(base_url() . "resources/precanned.json"), 1);
-
         foreach ($json as $key => $api) {
-            if($api['queryString'] == $queryString && $api['source'] == $source && $api['case_control'] == $case_control) {
+            if($queryString == $api) {
+                error_log("matched");
                 switch($status) {
                     case "activate":
                         $json[$key]['status'] = 1;
@@ -1003,9 +1003,7 @@ class Discover extends MY_Controller {
                         $json[$key]['status'] = 0;
                     break;
                 }
-                error_log(print_r($json[$key], 1));
             }
-                
         }
 
         $json = json_encode($json);

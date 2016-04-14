@@ -290,6 +290,17 @@ li.select2-result {
     margin-left: 30px;
 }
 
+#precan_table th, #precan_table td {
+    border-bottom: 1px solid #ddd;
+    padding: 5px;
+    text-align: left;
+}
 
+#precan_table td {
+    word-wrap: break-word; width:100%; text-align: center;
+}
 
+#precan_table tr.hide {
+    display: none;
+}
 

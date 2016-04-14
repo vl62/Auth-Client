@@ -193,13 +193,19 @@ class Query extends CafeVariome {
             }
         }
 
-//        error_log("query array -> " . print_r($query_array, 1));
-
         $query_statement = $query['queryStatement'];
-//        error_log("QUERY STATEMENT -> $query_statement");
 //        Add hashes to make sure that numbers on their own don't get replace (e.g. BRCA2 would get replaced if there's a statement ID of 2 after first initial)
         $query_statement = preg_replace('/\b(\d+)\b/', "##$1##", $query_statement);
-//		error_log("queryStatement: $query_statement");
+        foreach ($query_array as $statement_id => $query_element) {
+            $statement_id = "##" . $statement_id . "##";
+            $query_element = "##(" . $query_element . ")##";
+            $query_statement = preg_replace("/$statement_id/", "$query_element", $query_statement);
+        }
+        $query_statement = str_replace('##', '', $query_statement);
+
+        $query_stmt = $query['queryStatement'];
+//        Add hashes to make sure that numbers on their own don't get replace (e.g. BRCA2 would get replaced if there's a statement ID of 2 after first initial)
+        $query_stmt = preg_replace('/\b(\d+)\b/', "##$1##", $query_stmt);
         foreach ($query_array as $statement_id => $query_element) {
             // only for epad
             if(strpos($query_element, "Age_\\[by_start_of_this_year\\]_d") !== FALSE)
@@ -223,24 +229,19 @@ class Query extends CafeVariome {
                 }
             }
             
-
             $statement_id = "##" . $statement_id . "##";
             $query_element = "##(" . $query_element . ")##";
-//            error_log("BEFORE query_element -> $statement_id -> $query_element -> $query_statement");
-            $query_statement = preg_replace("/$statement_id/", "$query_element", $query_statement);
-//            error_log("AFTER query_element -> $statement_id -> $query_element -> $query_statement");
+            $query_stmt = preg_replace("/$statement_id/", "$query_element", $query_stmt);
         }
-        $query_statement = str_replace('##', '', $query_statement);
-        // error_log("query_statement -> $query_statement");
+        $query_stmt = str_replace('##', '', $query_stmt);
 
-        $query_statement_for_display = $query_statement;
+        $query_statement_for_display = $query_stmt;
         $query_statement_for_display = str_replace('_d:', ':', $query_statement_for_display); // Remove the appended numeric index name so that it isn't displayed to the user
         $query_statement_for_display = str_replace('_raw:', ':', $query_statement_for_display);
         $query_statement_for_display = str_replace('_missing_', 'missing', $query_statement_for_display);
         $query_statement_for_display = str_replace('_exists_', 'exists', $query_statement_for_display);
         $query_statement_for_display = str_replace('\[', '[', $query_statement_for_display);
         $query_statement_for_display = str_replace('\]', ']', $query_statement_for_display);
-//        $query_statement_for_display = str_replace('_', ' ', $query_statement_for_display);
         print "<h4 id='query_for_disp'>$query_statement_for_display</h4>";
         return $query_statement;
     }
