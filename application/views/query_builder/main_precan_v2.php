@@ -82,13 +82,49 @@
                                         <input type="checkbox" name="show_all" value="show_all"> Show All
                                     </label>
                                 </div>
-                                <!-- <div class="span2">
-                                    <button type="button" id="btnDisplay" class="btn btn-primary">Display</button>
-                                </div> -->
+                            </div>
+                            <hr>
+
+                            <div class="row-fluid">
+                                <div class="span4 offset8">
+                                    <div class="input-prepend">
+                                        <span class="add-on"><a href="#">Filter</a></span>
+                                        <input id="filter" type="text">
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="span12" style="overflow: scroll; width: 95%; margin-left: 20px;">
+                                    
+                                    <table class="table-striped" id="precan_table" style="table-layout:fixed; width: 900px;">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 10px; text-align: center;"></th>
+                                                <th style="width: 400px; text-align: center;">Query</th>
+                                                <th style="width: 150px; text-align: center;">User</th>
+                                                <th style="width: 100px; text-align: center;">Date &amp; Time</th>
+                                                <th style="width: 100px; text-align: center;">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="searchable">
+                                        <tr></tr>
+                                            <!-- <tr>
+                                                <td><input type="radio"></td>
+                                                <td> 
+                                                    <div style="">(Age_[by_start_of_this_year]:<1950) AND (Number_of_APOE-e4_alleles:>1) and (Age_[by_start_of_this_year]:<1950) AND (Number_of_APOE-e4_alleles:>1) or (Age_[by_start_of_this_year]:<1950) AND (Number_of_APOE-e4_alleles:>1) and (Age_[by_start_of_this_year]:<1950) AND (Number_of_APOE-e4_alleles:>1) or (Age_[by_start_of_this_year]:<1950) AND (Number_of_APOE-e4_alleles:>1)</div>
+                                                </td>
+                                                <td> <div>dhiwabenzene@gmail.comdhiwabenzene@gmail.comdhiwabenzene@gmail.com</div> </td>
+                                                <td> <div>2016-04-05 01:43:14pm </div> </td>
+                                                <td>
+                                                    <a data-placement="bottom" rel="popover" data-content="Deactivate Query" class="btn btn-small btn-warning precan_deactivate" href="#" data-original-title=""><i class=" icon-remove"></i></a>
+                                <a data-placement="bottom" rel="popover" data-content="Delete Query" class="btn btn-small btn-danger precan_delete" href="#" data-original-title=""><i class=" icon-trash"></i></a>
+                                                </td>
+                                            </tr> -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div> 
                         
-
                         <br>
                         <div class="row-fluid">
                             <div class="pagination-centered">
