@@ -394,9 +394,6 @@ $(document).ready(function () {
         var queryString = validate_query_string($("input#queryString").val().toUpperCase(), label_counter + 64);
 
         $("#query_result_advanced").empty();
-
-        $("select[name='save_source']").html('');
-        $("select[name='save_source']").append('<option value="-1">Select case/control</option>');
        
         $idCount = 1;
         phe = validate_advanced("buildQueryEvent");
@@ -513,14 +510,6 @@ $(document).ready(function () {
                 // console.log(output_query_string);
                 $('#waiting_advanced').hide(500);
                 $("#query_result_advanced").html(data);
-                // $("#query_result_advanced h4").html(output_query_string);
-                
-                $.each($("a.results_source"), function(index, val) {
-                    var source = $(this).html();
-                    var url = $(this).attr('id');
-                    if(!$(this).parent().parent().find("a[data-content='The display of record counts has been limited to specific users for this source.']").length > 0)
-                        $("select[name='save_source']").append("<option class='sss' id='" + url + "' value='" + source + "'>" + source + "</option>");
-                });
             }, 
             complete: function() {
                 if($('input[name="create_precan_query"]').val() == "yes")
@@ -582,7 +571,7 @@ $(document).ready(function () {
                 $.each(data.precan_active, function(index, val) {
                     $("tbody.searchable").append('\n\
                         <tr class="pre_active">\n\
-                            <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '</td>\n\
+                            <td><input type="radio" name="precannedQueries" value="' + val['api'] + '">' + '</td>\n\
                             <td><div>' + val['queryString'] + '</div></td>\n\
                             <td><div>' + val['user_email'] + '</div></td>\n\
                             <td><div>' + val['date_time'] + '</div></td>\n\
@@ -650,7 +639,7 @@ $(document).ready(function () {
                 $.each(data.precan_active, function(index, val) {
                     $("tbody.searchable").append('\n\
                         <tr class="pre_active">\n\
-                            <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '</td>\n\
+                            <td><input type="radio" name="precannedQueries" value="' + val['api'] + '">' + '</td>\n\
                             <td><div>' + val['queryString'] + '</div></td>\n\
                             <td><div>' + val['user_email'] + '</div></td>\n\
                             <td><div>' + val['date_time'] + '</div></td>\n\
@@ -725,6 +714,8 @@ $(document).ready(function () {
             $dat = $dat.remove();
             $dat = $dat.removeClass('pre_inactive').addClass('pre_active');
             $(".searchable").prepend($dat);
+            $(".searchable tr:first td input").attr('checked', false);
+            $(".searchable tr:first td input").attr('disabled', false);
             $(".searchable tr:first").find('td a.precan_activate').removeClass('precan_activate').addClass('precan_deactivate').removeClass('btn-success').addClass('btn-warning').children().removeClass('icon-ok').addClass('icon-remove');
         });
         
@@ -747,15 +738,21 @@ $(document).ready(function () {
                 $dat = $dat.remove();
                 $dat = $dat.removeClass('pre_active').addClass('pre_inactive');
                 $(".searchable").append($dat);
+                $(".searchable tr:last td input").attr('checked', false);
+                $(".searchable tr:last td input").attr('disabled', true);
                 $(".searchable tr:last").find('td a.precan_deactivate').removeClass('precan_deactivate').addClass('precan_activate').removeClass('btn-warning').addClass('btn-success').children().removeClass('icon-remove').addClass('icon-ok');
             } else {
                 $dat = $dat.remove();
                 $dat = $dat.removeClass('pre_active').addClass('pre_inactive').addClass('hide');
                 $(".searchable").append($dat);
+                $(".searchable tr:last td input").attr('checked', false);
+                $(".searchable tr:last td input").attr('disabled', true);
                 $(".searchable tr:last").find('td a.precan_deactivate').removeClass('precan_deactivate').addClass('precan_activate').removeClass('btn-warning').addClass('btn-success').children().removeClass('icon-remove').addClass('icon-ok');
             }
         });
     });
+
+    // #precan_table > tbody > tr:nth-child(3) > td:nth-child(1) > input[type="radio"]
 
     $(document).on('click', '.precan_delete', function () {
 
@@ -776,6 +773,16 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '#add_query', function () {
+        $("select[name='save_source']").html('');
+        $("select[name='save_source']").append('<option value="-1">Select a source</option>');
+        
+        $.each($("#tab-advanced a.results_source"), function(index, val) {
+            var source = $(this).html();
+            var url = $(this).attr('id');
+            if(!$(this).parent().parent().find("a[data-content='The display of record counts has been limited to specific users for this source.']").length > 0)
+                $("select[name='save_source']").append("<option class='sss' id='" + url + "' value='" + source + "'>" + source + "</option>");
+        });
+
         $("#modal_add_query").modal('show');
     });
 
