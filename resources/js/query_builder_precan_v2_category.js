@@ -352,7 +352,7 @@ $(document).ready(function () {
                 dataType: 'html',
                 delay: 200,
                 type: 'POST',
-                data: {'jsonAPI': $arr},
+                data: {'jsonAPI': $arr, 'precan': true},
                 success: function (data) {
     //                        alert('test -> ' + data);
                     $('#waiting_precanned').hide(500);

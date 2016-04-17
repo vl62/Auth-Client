@@ -34,7 +34,8 @@
 							</tr>
 						</thead>
 						<tbody>
-							<?php foreach ( $messages as $key => $message ): ?>
+
+							<?php if(isset($messages)) foreach ( $messages as $key => $message ): ?>
 							<tr data-tt-id="<?php echo $message['message_id']; ?>" <?php if ( $message['message_id'] != $message['thread_id'] ): ?>data-tt-parent-id="<?php echo $message['thread_id']; ?>" <?php endif; ?>>
 								<td><input type="checkbox" name="case" value="inbox_<?php echo $message['message_id']; ?>" class="case" id="inbox_<?php echo $message['message_id']; ?>" style="margin:10px"  /></td>
 								<td><?php echo $message['username']; ?></td>

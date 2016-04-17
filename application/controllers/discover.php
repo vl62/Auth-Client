@@ -847,6 +847,7 @@ class Discover extends MY_Controller {
         error_log("Query time in: " . date("Y-m-d H:i:sa"));
         $view_derids = $this->session->userdata('view_derids');
 
+        $is_precan = $this->input->post('precan') ? true : false;
         $query = $this->input->post('jsonAPI');
         $network_to_search = $query['network_to_search'];
         
@@ -924,8 +925,15 @@ class Discover extends MY_Controller {
         $interval = $time_out->diff($time_in);
         error_log($interval->format('%im:%ss'));
 
+        if($is_precan) {
+            $query_log_id = authPostRequest('', array('query' => $data['term'], 'network_key' => $network_to_search, 'email' => $this->session->userdata('email'), 'date_time' => date("Y-m-d H:i:s")), $this->config->item('auth_server') . "/auth_accounts/set_query_term_precan");
+            $data['query_log_id'] = $query_log_id;
+        }
+        else
+            $query_log_id = authPostRequest('', array('query' => $data['term'], 'network_key' => $network_to_search, 'email' => $this->session->userdata('email'), 'date_time' => date("Y-m-d H:i:s")), $this->config->item('auth_server') . "/auth_accounts/set_query_term");
+
+        
         $this->load->view('pages/sources_table', $data); // Don't use _render as headers are already sent, html output from the view is sent back to ajax function and appended to div
-        authPostRequest('', array('query' => $data['term'], 'network_key' => $network_to_search, 'email' => $this->session->userdata('email'), 'date_time' => date("Y-m-d H:i:s")), $this->config->item('auth_server') . "/auth_accounts/set_query_term");
     }
 
     function save_query() {
@@ -991,7 +999,6 @@ class Discover extends MY_Controller {
         $json = json_decode(file_get_contents(base_url() . "resources/precanned.json"), 1);
         foreach ($json as $key => $api) {
             if($queryString == $api) {
-                error_log("matched");
                 switch($status) {
                     case "activate":
                         $json[$key]['status'] = 1;
@@ -1523,7 +1530,7 @@ class Discover extends MY_Controller {
 
 
 
-    function variants_federated_restricted($term, $source, $federated_install_uri) {
+    function variants_federated_restricted($term, $source, $federated_install_uri, $precan_log_id = false) {
         
         if($this->session->userdata('view_derids') == "no")
             show_error("You don't have sufficient privilages to access this url");
@@ -1577,6 +1584,8 @@ class Discover extends MY_Controller {
             $source_owner = @file_get_contents($federated_install_uri . "/discover_federated/get_source_owner/$source");
             $source_owner = json_decode($source_owner, 1);
 
+            if($precan_log_id)
+                authPostRequest('', array('log_id' => $precan_log_id, 'derids' => json_encode(array_values($variants))), $this->config->item('auth_server') . "/auth_accounts/set_derids");
             
             $this->_render('pages/variantstab_restricted');
 
@@ -1588,13 +1597,7 @@ class Discover extends MY_Controller {
             $this->load->view('federated/pages/variantstab_restricted', $data);
             $this->output->set_header("Content-Type: text/html");
         }
-
     }
-
-
-
-
-
 
     // This is the call that's used to get variants from a federated installs in a network
     // The URL is used to make the call to the variants_json function in the discover_federated controller in the federated install
