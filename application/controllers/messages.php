@@ -21,6 +21,9 @@ class Messages extends MY_Controller {
 		}
 		$this->data['user_id'] = $user_id = $this->session->userdata("user_id");
 		$this->data['messages'] = json_decode(authPostRequest('', array("user_id" => $user_id), $this->config->item('auth_server') . "/api/auth_general/get_inbox_messages"), 1);
+
+		error_log(count($this->data['messages']));
+
 		$this->data['sent_messages'] = json_decode(authPostRequest('', array("user_id" => $user_id), $this->config->item('auth_server') . "/api/auth_general/get_sent_messages"), 1);
 
 		$this->_render('messages/inbox');	

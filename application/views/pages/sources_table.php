@@ -159,7 +159,7 @@ $(function (){
 											<a href="#" rel="popover" data-content="Unable to display records since the number of counts is less than the threshold value." data-original-title="Records"><i class="icon-question-sign"></i></a> 
 
 										<?php else: ?>
-											<a href="<?php echo base_url();?>discover/variants_federated_restricted/<?php echo urlencode($term);?>/<?php echo $federated_source;?>/<?php echo urlencode(base64_encode($install_uri[$source]));?>" target="_blank" rel="popover" data-content="Click to view the DerIDs and email address of the source owner." data-original-title="Get DerIDs"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
+											<a href="<?php echo base_url();?>discover/variants_federated_restricted/<?php echo urlencode($term);?>/<?php echo $federated_source;?>/<?php echo urlencode(base64_encode($install_uri[$source]));?>/<?php echo isset($query_log_id) ? $query_log_id : ''; ?>" target="_blank" rel="popover" data-content="Click to view the DerIDs and email address of the source owner." data-original-title="Get DerIDs"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
 										<?php endif; ?>
 									<?php else: ?>
 										<?php if ( $count['restrictedAccess'] === "THRESHOLD"): ?>
