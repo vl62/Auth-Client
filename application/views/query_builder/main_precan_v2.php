@@ -98,7 +98,7 @@
                                     <table class="table-striped" id="precan_table" style="table-layout:fixed; width: 900px;">
                                         <thead>
                                             <tr>
-                                                <th style="width: 10px; text-align: center;"></th>
+                                                <th style="width: 60px; text-align: center;"></th>
                                                 <th style="width: 400px; text-align: center;">Query</th>
                                                 <th style="width: 150px; text-align: center;">User</th>
                                                 <th style="width: 100px; text-align: center;">Date &amp; Time</th>

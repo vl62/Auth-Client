@@ -571,14 +571,15 @@ $(document).ready(function () {
                 $.each(data.precan_active, function(index, val) {
                     $("tbody.searchable").append('\n\
                         <tr class="pre_active">\n\
-                            <td><input type="radio" name="precannedQueries" value="' + val['api'] + '">' + '</td>\n\
+                            <td><input type="radio" name="precannedQueries" value="' + val['api'] + '">' + '\n\
+                                <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
+                            </td>\n\
                             <td><div>' + val['queryString'] + '</div></td>\n\
                             <td><div>' + val['user_email'] + '</div></td>\n\
                             <td><div>' + val['date_time'] + '</div></td>\n\
                             <td>\n\
                                 <a class="btn btn-small btn-warning precan_deactivate" href="#"><i class="icon-remove"></i></a>\n\
                                 <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                                <a class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
                             </td>\n\
                         </tr>');
                 });
@@ -587,14 +588,15 @@ $(document).ready(function () {
                     $.each(data.precan_inactive, function(index, val) {
                         $("tbody.searchable").append('\n\
                             <tr class="pre_inactive">\n\
-                                <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '</td>\n\
+                                <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '\n\
+                                    <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
+                                </td>\n\
                                 <td><div>' + val['queryString'] + '</div></td>\n\
                                 <td><div>' + val['user_email'] + '</div></td>\n\
                                 <td><div>' + val['date_time'] + '</div></td>\n\
                                 <td>\n\
                                     <a class="btn btn-small btn-success precan_activate" href="#"><i class="icon-ok"></i></a>\n\
                                     <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                                    <a class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
                                 </td>\n\
                             </tr>');
                     });     
@@ -602,18 +604,22 @@ $(document).ready(function () {
                     $.each(data.precan_inactive, function(index, val) {
                         $("tbody.searchable").append('\n\
                             <tr class="pre_inactive hide">\n\
-                                <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '</td>\n\
+                                <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '\n\
+                                    <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
+                                </td>\n\
                                 <td><div>' + val['queryString'] + '</div></td>\n\
                                 <td><div>' + val['user_email'] + '</div></td>\n\
                                 <td><div>' + val['date_time'] + '</div></td>\n\
                                 <td>\n\
                                     <a class="btn btn-small btn-success precan_activate" href="#"><i class="icon-ok"></i></a>\n\
                                     <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                                    <a class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
                                 </td>\n\
                             </tr>');
                     });
                 }     
+            })
+            .always(function() {
+                $("[rel=popover]").popover({placement:'bottom'});
             });
         }
     });
@@ -639,14 +645,15 @@ $(document).ready(function () {
                 $.each(data.precan_active, function(index, val) {
                     $("tbody.searchable").append('\n\
                         <tr class="pre_active">\n\
-                            <td><input type="radio" name="precannedQueries" value="' + val['api'] + '">' + '</td>\n\
+                            <td><input type="radio" name="precannedQueries" value="' + val['api'] + '">' + '\n\
+                                <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
+                            </td>\n\
                             <td><div>' + val['queryString'] + '</div></td>\n\
                             <td><div>' + val['user_email'] + '</div></td>\n\
                             <td><div>' + val['date_time'] + '</div></td>\n\
                             <td>\n\
                                 <a class="btn btn-small btn-warning precan_deactivate" href="#"><i class="icon-remove"></i></a>\n\
                                 <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                                <a class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
                             </td>\n\
                         </tr>');
                 });
@@ -655,14 +662,15 @@ $(document).ready(function () {
                     $.each(data.precan_inactive, function(index, val) {
                         $("tbody.searchable").append('\n\
                             <tr class="pre_inactive">\n\
-                                <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '</td>\n\
+                                <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '\n\
+                                    <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim()) + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
+                                </td>\n\
                                 <td><div>' + val['queryString'] + '</div></td>\n\
                                 <td><div>' + val['user_email'] + '</div></td>\n\
                                 <td><div>' + val['date_time'] + '</div></td>\n\
                                 <td>\n\
                                     <a class="btn btn-small btn-success precan_activate" href="#"><i class="icon-ok"></i></a>\n\
                                     <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                                    <a class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim()) + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
                                 </td>\n\
                             </tr>');
                     });     
@@ -670,21 +678,22 @@ $(document).ready(function () {
                     $.each(data.precan_inactive, function(index, val) {
                         $("tbody.searchable").append('\n\
                             <tr class="pre_inactive hide">\n\
-                                <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '</td>\n\
+                                <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '\n\
+                                    <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim()) + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
+                                </td>\n\
                                 <td><div>' + val['queryString'] + '</div></td>\n\
                                 <td><div>' + val['user_email'] + '</div></td>\n\
                                 <td><div>' + val['date_time'] + '</div></td>\n\
                                 <td>\n\
                                     <a class="btn btn-small btn-success precan_activate" href="#"><i class="icon-ok"></i></a>\n\
                                     <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                                    <a class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim()) + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
                                 </td>\n\
                             </tr>');
                     });
                 }     
             })
             .always(function() {
-                $("[rel=popover]").popover({placement:'right'});
+                $("[rel=popover]").popover({placement:'bottom'});
             });
         }
     }); 
