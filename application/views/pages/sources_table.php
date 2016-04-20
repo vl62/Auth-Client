@@ -159,7 +159,12 @@ $(function (){
 											<a href="#" rel="popover" data-content="Unable to display records since the number of counts is less than the threshold value." data-original-title="Records"><i class="icon-question-sign"></i></a> 
 
 										<?php else: ?>
-											<a href="<?php echo base_url();?>discover/variants_federated_restricted/<?php echo urlencode($term);?>/<?php echo $federated_source;?>/<?php echo urlencode(base64_encode($install_uri[$source]));?>/<?php echo isset($query_log_id) ? $query_log_id : ''; ?>" target="_blank" rel="popover" data-content="Click to view the DerIDs and email address of the source owner." data-original-title="Get DerIDs"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
+											<?php if(isset($query_log_id)): ?>
+												<a href="<?php echo base_url();?>discover/variants_federated_restricted/<?php echo urlencode($term);?>/<?php echo $federated_source;?>/<?php echo urlencode(base64_encode($install_uri[$source]));?>/<?php echo $query_log_id . '/' . urlencode($date_time); ?>" target="_blank" rel="popover" data-content="Click to view the DerIDs and email address of the source owner." data-original-title="Get DerIDs"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
+											<?php else: ?>
+												<a href="<?php echo base_url();?>discover/variants_federated_restricted/<?php echo urlencode($term . '|' . $display_query);?>/<?php echo $federated_source;?>/<?php echo urlencode(base64_encode($install_uri[$source]));?>" target="_blank" rel="popover" data-content="Click to view the DerIDs and email address of the source owner." data-original-title="Get DerIDs"> <?php echo img(base_url('resources/images/cafevariome/request.png'));?></a>
+											<?php endif; ?>
+											
 										<?php endif; ?>
 									<?php else: ?>
 										<?php if ( $count['restrictedAccess'] === "THRESHOLD"): ?>
@@ -173,6 +178,7 @@ $(function (){
 									<a rel="popover" data-content="Sorry, there are no records of this type available." data-original-title="Access Records"> <?php echo img(base_url('resources/images/cafevariome/cross.png'));?></a>
 								<?php endif; ?>
 							
+
 							
 							<!--
 							<?php if ( array_key_exists('restrictedAccess', $count )) : ?>

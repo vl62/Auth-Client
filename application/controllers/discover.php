@@ -856,8 +856,9 @@ class Discover extends MY_Controller {
         $parameters = array('syntax' => 'elasticsearch');
         $this->load->library('CafeVariome/Query', $parameters, 'query');
         $query_statement = $this->query->parse($query);
-        $term = $query_statement;
-        error_log("User: " . $this->session->userdata('email') . " query statement: $query_statement || " . date("Y-m-d H:i:s"));
+        $term = $query_statement[0];
+
+        error_log("User: " . $this->session->userdata('email') . " query statement: " . $query_statement[0] . " || " . date("Y-m-d H:i:s"));
         if ($term) {
             $data['term'] = $term;
 //            error_log("Term: " . $term);
@@ -928,11 +929,13 @@ class Discover extends MY_Controller {
         if($is_precan) {
             $query_log_id = authPostRequest('', array('query' => $data['term'], 'network_key' => $network_to_search, 'email' => $this->session->userdata('email'), 'date_time' => date("Y-m-d H:i:s")), $this->config->item('auth_server') . "/auth_accounts/set_query_term_precan");
             $data['query_log_id'] = $query_log_id;
+            $data['date_time'] = $query['date_time'];
         }
-        else
+        else {
+            $data['display_query'] = $query_statement[1];
             $query_log_id = authPostRequest('', array('query' => $data['term'], 'network_key' => $network_to_search, 'email' => $this->session->userdata('email'), 'date_time' => date("Y-m-d H:i:s")), $this->config->item('auth_server') . "/auth_accounts/set_query_term");
+        }
 
-        
         $this->load->view('pages/sources_table', $data); // Don't use _render as headers are already sent, html output from the view is sent back to ajax function and appended to div
     }
 
@@ -1530,38 +1533,32 @@ class Discover extends MY_Controller {
 
 
 
-    function variants_federated_restricted($term, $source, $federated_install_uri, $precan_log_id = false) {
+    function variants_federated_restricted($term, $source, $federated_install_uri, $precan_log_id = false, $date_time = false) {
         
         if($this->session->userdata('view_derids') == "no")
             show_error("You don't have sufficient privilages to access this url");
 
         $federated_install_uri = base64_decode(urldecode($federated_install_uri));
 
-
         $term = urldecode($term);
         $term = html_entity_decode($term);
-        $this->data['term'] = $term;
+
+        if(!$precan_log_id) {
+            $this->data['term'] = explode("|", $term)[1];
+            $term = explode("|", $term)[0];    
+        } else {
+            $this->data['term'] = $term;
+        }
+
         $this->data['source'] = $source;
-        // $this->data['sharing_policy'] = $sharing_policy;
-
-        // $user_id = $this->ion_auth->user()->row()->id;
-
-
 
         $user_logged = false;
 
-
-        if ($this->ion_auth->user()->row()->id)
-            {   
-                $user_logged = true;
-            }
-
-
+        if ($this->ion_auth->user()->row()->id)   
+            $user_logged = true;
  
         if ($user_logged == false)
-            {   
                 redirect('auth/login', 'refresh');
-            }
         else {
             $user_id = $this->ion_auth->user()->row()->id;
             $sharing_policy = "restrictedAccess";
@@ -1574,18 +1571,24 @@ class Discover extends MY_Controller {
             
             $variants = json_decode($variants, 1);
 
-            if (array_key_exists('error', $variants)) {
+            if (array_key_exists('error', $variants))
                 show_error($variants['error']);
-            }
-
-            // $sql = "SELECT * FROM sources WHERE name = '$source'";
-            // $query = $this->db->query($sql);
 
             $source_owner = @file_get_contents($federated_install_uri . "/discover_federated/get_source_owner/$source");
             $source_owner = json_decode($source_owner, 1);
 
-            if($precan_log_id)
-                authPostRequest('', array('log_id' => $precan_log_id, 'derids' => json_encode(array_values($variants))), $this->config->item('auth_server') . "/auth_accounts/set_derids");
+            if($precan_log_id) {
+                $date_time = urldecode($date_time);
+                $date_time = html_entity_decode($date_time);
+
+                $val = json_decode(authPostRequest('', array('log_id' => $precan_log_id, 'derids' => json_encode(array_values($variants))), $this->config->item('auth_server') . "/auth_accounts/set_derids"), 1);
+
+                $data['precan_log_id'] = $precan_log_id;
+                $json = json_decode(file_get_contents(base_url() . "resources/precanned.json"), 1);
+                foreach ($json as $api)
+                    if($api['date_time'] == $date_time && $val['network'] == $api['network_key']) 
+                        $data['api'] = $api;
+            }
             
             $this->_render('pages/variantstab_restricted');
 
