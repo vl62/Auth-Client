@@ -106,19 +106,40 @@
                                             </tr>
                                         </thead>
                                         <tbody class="searchable">
-                                        <tr></tr>
-                                            <!-- <tr>
-                                                <td><input type="radio"></td>
-                                                <td> 
-                                                    <div style="">(Age_[by_start_of_this_year]:<1950) AND (Number_of_APOE-e4_alleles:>1) and (Age_[by_start_of_this_year]:<1950) AND (Number_of_APOE-e4_alleles:>1) or (Age_[by_start_of_this_year]:<1950) AND (Number_of_APOE-e4_alleles:>1) and (Age_[by_start_of_this_year]:<1950) AND (Number_of_APOE-e4_alleles:>1) or (Age_[by_start_of_this_year]:<1950) AND (Number_of_APOE-e4_alleles:>1)</div>
-                                                </td>
-                                                <td> <div>dhiwabenzene@gmail.comdhiwabenzene@gmail.comdhiwabenzene@gmail.com</div> </td>
-                                                <td> <div>2016-04-05 01:43:14pm </div> </td>
-                                                <td>
-                                                    <a data-placement="bottom" rel="popover" data-content="Deactivate Query" class="btn btn-small btn-warning precan_deactivate" href="#" data-original-title=""><i class=" icon-remove"></i></a>
-                                <a data-placement="bottom" rel="popover" data-content="Delete Query" class="btn btn-small btn-danger precan_delete" href="#" data-original-title=""><i class=" icon-trash"></i></a>
-                                                </td>
-                                            </tr> -->
+                                            <tr></tr>
+                                            <?php if(isset($precanned_queries) && isset($precan_active)): ?>
+                                                <?php foreach ($precan_active as $val): ?>
+                                                    <tr class="pre_active">
+                                                        <td><input type="radio" name="precannedQueries" value=" <?php echo $val['api'] ?> ">
+                                                            <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="<?php echo $val['notes'] == "" ? "No notes available" : $val['notes'] ?>" data-original-title=""><i class="icon-info-sign"></i></a>
+                                                        </td>
+                                                        <td><div><?php echo $val['queryString'] ?></div></td>
+                                                        <td><div><?php echo $val['user_email'] ?></div></td>
+                                                        <td><div><?php echo $val['date_time'] ?></div></td>
+                                                        <td>
+                                                            <a class="btn btn-small btn-warning precan_deactivate" href="#"><i class="icon-remove"></i></a>
+                                                            <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
+
+                                            <?php if(isset($precanned_queries) && isset($precan_active)): ?>
+                                                <?php foreach ($precan_inactive as $val): ?>
+                                                    <tr class="pre_inactive hide">
+                                                        <td><input type="radio" disabled name="precannedQueries" value=" <?php echo $val['api'] ?> ">
+                                                            <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="<?php $val['notes'] == "" ? "No notes available" : $val['notes'] ?>" data-original-title=""><i class="icon-info-sign"></i></a>
+                                                        </td>
+                                                        <td><div><?php echo $val['queryString'] ?></div></td>
+                                                        <td><div><?php echo $val['user_email'] ?></div></td>
+                                                        <td><div><?php echo $val['date_time'] ?></div></td>
+                                                        <td>
+                                                            <a class="btn btn-small btn-success precan_activate" href="#"><i class="icon-ok"></i></a>
+                                                            <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
                                         </tbody>
                                     </table>
                                 </div>
