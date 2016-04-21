@@ -517,15 +517,26 @@ class Discover extends MY_Controller {
                 /* Version 2 */
 
                 $json = json_decode(file_get_contents(base_url() . "resources/precanned.json"), 1);
-                if($json)
-                foreach ($json as $key => $value) {
-                    if(isset($value['network_key']) && $value['network_key'] == $network_key)
-                        if(!isset($this->data['precanned_queries']))
-                            $this->data['precanned_queries'][] = $value['source'];
-                        else {
-                            if(!in_array($value['source'], $this->data['precanned_queries']))
+                if($json) {
+
+                    $this->data['precan_active'] = [];
+                    $this->data['precan_inactive'] = [];
+
+                    foreach ($json as $key => $value) {
+                        if(isset($value['network_key']) && $value['network_key'] == $network_key) {
+                            if(!isset($this->data['precanned_queries']))
                                 $this->data['precanned_queries'][] = $value['source'];
+                            else {
+                                if(!in_array($value['source'], $this->data['precanned_queries']))
+                                    $this->data['precanned_queries'][] = $value['source'];
+                            }
+
+                            if($value['status'] == 1)
+                                $this->data['precan_active'][] = array('api' => htmlspecialchars(json_encode($value)), 'queryString' => $value['queryString'], 'user_email' => $value['user_email'], 'date_time' => $value['date_time'], 'notes' => $value['notes']);
+                            elseif($value['status'] == -1)
+                                $this->data['precan_inactive'][] = array('api' => htmlspecialchars(json_encode($value)), 'queryString' => $value['queryString'], 'user_email' => $value['user_email'], 'date_time' => $value['date_time'], 'notes' => $value['notes']);
                         }
+                    }
                 }
 
                 if(PHENOTYPE_CATEGORIES) {
