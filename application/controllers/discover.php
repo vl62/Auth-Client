@@ -532,9 +532,9 @@ class Discover extends MY_Controller {
                             }
 
                             if($value['status'] == 1)
-                                $this->data['precan_active'][] = array('api' => htmlspecialchars(json_encode($value)), 'queryString' => $value['queryString'], 'user_email' => $value['user_email'], 'date_time' => $value['date_time'], 'notes' => $value['notes']);
+                                $this->data['precan_active'][] = array('api' => htmlspecialchars(json_encode($value)), 'queryString' => $value['queryString'], 'user_email' => $value['user_email'], 'date_time' => $value['date_time'], 'notes' => $value['notes'], 'source' => $value['source'], 'case_control' => $value['case_control']);
                             elseif($value['status'] == -1)
-                                $this->data['precan_inactive'][] = array('api' => htmlspecialchars(json_encode($value)), 'queryString' => $value['queryString'], 'user_email' => $value['user_email'], 'date_time' => $value['date_time'], 'notes' => $value['notes']);
+                                $this->data['precan_inactive'][] = array('api' => htmlspecialchars(json_encode($value)), 'queryString' => $value['queryString'], 'user_email' => $value['user_email'], 'date_time' => $value['date_time'], 'notes' => $value['notes'], 'source' => $value['source'], 'case_control' => $value['case_control']);
                         }
                     }
                 }
@@ -991,11 +991,30 @@ class Discover extends MY_Controller {
         $precan_inactive = [];
 
         foreach ($json as $api) {
-            if($api['source'] == $source && $api['case_control'] == $case_control && $api['network_key'] == $network_key) {
+
+            if($source == -1 && $case_control == -1 && $api['network_key'] == $network_key) {
                 if($api['status'] == 1)
-                    $precan_active[] = array('api' => htmlspecialchars(json_encode($api)), 'queryString' => $api['queryString'], 'user_email' => $api['user_email'], 'date_time' => $api['date_time'], 'notes' => $api['notes']);
+                    $precan_active[] = array('api' => htmlspecialchars(json_encode($api)), 'queryString' => $api['queryString'], 'user_email' => $api['user_email'], 'date_time' => $api['date_time'], 'notes' => $api['notes'], 'source' => $api['source'], 'case_control' => $api['case_control']);
                 elseif($api['status'] == -1)
-                    $precan_inactive[] = array('api' => htmlspecialchars(json_encode($api)), 'queryString' => $api['queryString'], 'user_email' => $api['user_email'], 'date_time' => $api['date_time'], 'notes' => $api['notes']);
+                    $precan_inactive[] = array('api' => htmlspecialchars(json_encode($api)), 'queryString' => $api['queryString'], 'user_email' => $api['user_email'], 'date_time' => $api['date_time'], 'notes' => $api['notes'], 'source' => $api['source'], 'case_control' => $api['case_control']);
+
+            } else if($source == -1 && $api['case_control'] == $case_control && $api['network_key'] == $network_key) {
+                if($api['status'] == 1)
+                    $precan_active[] = array('api' => htmlspecialchars(json_encode($api)), 'queryString' => $api['queryString'], 'user_email' => $api['user_email'], 'date_time' => $api['date_time'], 'notes' => $api['notes'], 'source' => $api['source'], 'case_control' => $api['case_control']);
+                elseif($api['status'] == -1)
+                    $precan_inactive[] = array('api' => htmlspecialchars(json_encode($api)), 'queryString' => $api['queryString'], 'user_email' => $api['user_email'], 'date_time' => $api['date_time'], 'notes' => $api['notes'], 'source' => $api['source'], 'case_control' => $api['case_control']);
+
+            } else if($api['source'] == $source && $case_control == -1 && $api['network_key'] == $network_key) {
+                if($api['status'] == 1)
+                    $precan_active[] = array('api' => htmlspecialchars(json_encode($api)), 'queryString' => $api['queryString'], 'user_email' => $api['user_email'], 'date_time' => $api['date_time'], 'notes' => $api['notes'], 'source' => $api['source'], 'case_control' => $api['case_control']);
+                elseif($api['status'] == -1)
+                    $precan_inactive[] = array('api' => htmlspecialchars(json_encode($api)), 'queryString' => $api['queryString'], 'user_email' => $api['user_email'], 'date_time' => $api['date_time'], 'notes' => $api['notes'], 'source' => $api['source'], 'case_control' => $api['case_control']);
+
+            } else if($api['source'] == $source && $api['case_control'] == $case_control && $api['network_key'] == $network_key) {
+                if($api['status'] == 1)
+                    $precan_active[] = array('api' => htmlspecialchars(json_encode($api)), 'queryString' => $api['queryString'], 'user_email' => $api['user_email'], 'date_time' => $api['date_time'], 'notes' => $api['notes'], 'source' => $api['source'], 'case_control' => $api['case_control']);
+                elseif($api['status'] == -1)
+                    $precan_inactive[] = array('api' => htmlspecialchars(json_encode($api)), 'queryString' => $api['queryString'], 'user_email' => $api['user_email'], 'date_time' => $api['date_time'], 'notes' => $api['notes'], 'source' => $api['source'], 'case_control' => $api['case_control']);    
             }
         }
 
