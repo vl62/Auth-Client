@@ -304,3 +304,8 @@ li.select2-result {
     display: none;
 }
 
+.cannedStyle {
+    width: 1200px;
+    margin-left: -130px;
+}
+

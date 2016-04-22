@@ -95,14 +95,16 @@
                                 <hr>
                                 <div class="span12" style="overflow: scroll; width: 95%; margin-left: 20px;">
                                     
-                                    <table class="table-striped" id="precan_table" style="table-layout:fixed; width: 900px;">
+                                    <table class="" id="precan_table" style="table-layout:fixed; width: 1200px;">
                                         <thead>
                                             <tr>
-                                                <th style="width: 60px; text-align: center;"></th>
-                                                <th style="width: 400px; text-align: center;">Query</th>
-                                                <th style="width: 150px; text-align: center;">User</th>
-                                                <th style="width: 100px; text-align: center;">Date &amp; Time</th>
-                                                <th style="width: 100px; text-align: center;">Action</th>
+                                                <th style="text-align: center; width: 40px;"></th>
+                                                <th style="text-align: center; width: 50px;">Source</th>
+                                                <th style="text-align: center; width: 50px;">Case/Control</th>
+                                                <th style="text-align: center; width: 200px;">Query</th>
+                                                <th style="text-align: center; width: 100px;">User</th>
+                                                <th style="text-align: center; width: 50px;">Date &amp; Time</th>
+                                                <th style="text-align: center; width: 100px;">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody class="searchable">
@@ -110,9 +112,11 @@
                                             <?php if(isset($precanned_queries) && isset($precan_active)): ?>
                                                 <?php foreach ($precan_active as $val): ?>
                                                     <tr class="pre_active">
-                                                        <td><input type="radio" name="precannedQueries" value=" <?php echo $val['api'] ?> ">
+                                                        <td><input type="radio" name="precannedQueries" value=" <?php // echo $val['api'] ?> ">
                                                             <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="<?php echo $val['notes'] == "" ? "No notes available" : $val['notes'] ?>" data-original-title=""><i class="icon-info-sign"></i></a>
                                                         </td>
+                                                        <td><div><?php echo $val['source'] ?></div></td>
+                                                        <td><div><?php echo $val['case_control'] ?></div></td>
                                                         <td><div><?php echo $val['queryString'] ?></div></td>
                                                         <td><div><?php echo $val['user_email'] ?></div></td>
                                                         <td><div><?php echo $val['date_time'] ?></div></td>
@@ -130,6 +134,8 @@
                                                         <td><input type="radio" disabled name="precannedQueries" value=" <?php echo $val['api'] ?> ">
                                                             <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="<?php $val['notes'] == "" ? "No notes available" : $val['notes'] ?>" data-original-title=""><i class="icon-info-sign"></i></a>
                                                         </td>
+                                                        <td><div><?php echo $val['source'] ?></div></td>
+                                                        <td><div><?php echo $val['case_control'] ?></div></td>
                                                         <td><div><?php echo $val['queryString'] ?></div></td>
                                                         <td><div><?php echo $val['user_email'] ?></div></td>
                                                         <td><div><?php echo $val['date_time'] ?></div></td>

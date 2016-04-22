@@ -175,51 +175,23 @@ $(document).ready(function () {
 
     $('#filter').keyup(function () {
         var rex = new RegExp($(this).val(), 'i');
-        $('.searchable tr').hide();
-        $('.searchable tr').filter(function () {
-            return rex.test($(this).text());
-        }).show();
 
-    })
+        if($("input[name='show_all']").attr('checked') != "checked") {
+            $('.searchable tr.pre_active').hide();
+            $('.searchable tr.pre_active').filter(function () {
+                return rex.test($(this).text());
+            }).show();
+        } else {
+            $('.searchable tr').hide();
+            $('.searchable tr').filter(function () {
+                return rex.test($(this).text());
+            }).show();
+        }
 
-    // $('#precan_table').dataTable({responsive: true});
-
-    // $('#queryString').on('input', function(evt) {
-    //     $(this).val(function (_, val) {
-    //         return val.toUpperCase();
-    //     });
-    // });
+        
+    });
 
     $network_key = $("#network_key").val();
-    // $.ajax({url: baseurl + 'admin/get_phenotype_attributes_for_network/' + $network_key,
-    //     dataType: 'json',
-    //     delay: 200,
-    //     type: 'POST',
-    //     success: function (json) {
-    //         $.each(json, function (attribute, value) {
-    //             if(attribute == "Age [by start of this year]") {
-    //                 value = [];
-    //                 for(var i=40; i<111; ++i)   
-    //                     value.push(i);
-    //                 value.splice(index, 1);
-    //                 value.push("----------------------", "not all values might be displayed");
-    //             } else {
-    //                 var index = value.indexOf("not all values displayed");
-    //                 if(index != -1) {
-    //                     value.splice(index, 1);
-    //                     value.push("----------------------", "not all values might be displayed");
-    //                 }
-    //             }
-                
-    //             advanced_values[attribute] = value;
-    //         });
-    //         // $("#loader").addClass('hide');
-    //     },
-    //     complete: function() {
-    //         console.log(advanced_values);
-    //         $("#loader").addClass('hide');
-    //     }
-    // });
 
     // advanced
     $(document).on('change', '.keys', function () {
@@ -243,30 +215,6 @@ $(document).ready(function () {
                 .find('option:contains("--Select a value--")').attr('selected', 'selected')
                 .parent().prev().remove();
     });
-
-    // Rest
-    // $(document).on('click', ".btn-collapse", function () {
-    //     $parent = $(this).parent().parent().parent();
-
-    //     if ($(this).attr("data-collapseStatus") === "false") {
-    //         $(this).removeClass("btn-info").addClass("btn-success");
-    //         $(this).find('i').removeClass("icon-chevron-left").addClass("icon-chevron-down");
-    //         $($(this).parent().parent().next().collapse('show')).addClass('container_border');
-    //         $(this).attr("data-collapseStatus", "true");
-    //         $parent.prev().children('a').removeClass('disabled');
-
-    //     } else {
-    //         $collapse = true;
-    //         $collapse = validate_advanced("collapseEvent");
-    //         if ($collapse) {
-    //             $(this).removeClass("btn-success").addClass("btn-info");
-    //             $(this).find('i').removeClass("icon-chevron-down").addClass("icon-chevron-left");
-    //             $($(this).parent().parent().next().collapse('hide')).removeClass("container_border");
-    //             $(this).attr("data-collapseStatus", "false");
-    //             $parent.prev().children('a').addClass('disabled');
-    //         }
-    //     }
-    // });
 
     $(document).on('click', 'button.add_advanced', function () {
 
@@ -302,21 +250,6 @@ $(document).ready(function () {
             $(this).html(String.fromCharCode(64 + label_counter));
         });
     });
-
-    // AND-OR Toggle Function
-    // $(document).on('click', ".btn-toggle", function () {
-    //     if ($("a", this).hasClass("disabled"))
-    //         return;
-    //     if ($(this).find('.btn-primary').length > 0) {
-    //         if ($(this).parent().attr('id') === "advancedContainer") {
-    //             $(this).parent().find('.logic_advanced .btn').toggleClass('active');
-    //             $(this).parent().parent().find('.logic_advanced .btn').toggleClass('btn-primary');
-    //         } else {
-    //             $(this).find('.btn').toggleClass('active');
-    //             $(this).find('.btn').toggleClass('btn-primary');
-    //         }
-    //     }
-    // });
 
     $(document).on('click', '.icon-remove-circle', function () {
         $(this).parent().siblings('input').val('').focus();
@@ -550,78 +483,123 @@ $(document).ready(function () {
         });
     });
 
+    function update_canned_queries(data) {
+        $(".searchable > tr").remove();
+
+        $.each(data.precan_active, function(index, val) {
+            $("tbody.searchable").append('\n\
+                <tr class="pre_active">\n\
+                    <td><input type="radio" name="precannedQueries" value="' + val['api'] + '">' + '\n\
+                        <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
+                    </td>\n\
+                    <td><div>' + val['source'] + '</div></td>\n\
+                    <td><div>' + val['case_control'] + '</div></td>\n\
+                    <td><div>' + val['queryString'] + '</div></td>\n\
+                    <td><div>' + val['user_email'] + '</div></td>\n\
+                    <td><div>' + val['date_time'] + '</div></td>\n\
+                    <td>\n\
+                        <a class="btn btn-small btn-warning precan_deactivate" href="#"><i class="icon-remove"></i></a>\n\
+                        <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
+                    </td>\n\
+                </tr>');
+        });
+
+        if($("input[name='show_all']").attr('checked') == "checked") {
+            $.each(data.precan_inactive, function(index, val) {
+                $("tbody.searchable").append('\n\
+                    <tr class="pre_inactive">\n\
+                        <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '\n\
+                            <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
+                        </td>\n\
+                        <td><div>' + val['source'] + '</div></td>\n\
+                        <td><div>' + val['case_control'] + '</div></td>\n\
+                        <td><div>' + val['queryString'] + '</div></td>\n\
+                        <td><div>' + val['user_email'] + '</div></td>\n\
+                        <td><div>' + val['date_time'] + '</div></td>\n\
+                        <td>\n\
+                            <a class="btn btn-small btn-success precan_activate" href="#"><i class="icon-ok"></i></a>\n\
+                            <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
+                        </td>\n\
+                    </tr>');
+            });     
+        } else {
+            $.each(data.precan_inactive, function(index, val) {
+                $("tbody.searchable").append('\n\
+                    <tr class="pre_inactive hide">\n\
+                        <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '\n\
+                            <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
+                        </td>\n\
+                        <td><div>' + val['source'] + '</div></td>\n\
+                        <td><div>' + val['case_control'] + '</div></td>\n\
+                        <td><div>' + val['queryString'] + '</div></td>\n\
+                        <td><div>' + val['user_email'] + '</div></td>\n\
+                        <td><div>' + val['date_time'] + '</div></td>\n\
+                        <td>\n\
+                            <a class="btn btn-small btn-success precan_activate" href="#"><i class="icon-ok"></i></a>\n\
+                            <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
+                        </td>\n\
+                    </tr>');
+            });
+        }
+    }
+
+    $('.nav-tabs a').click(function(e) {
+
+        // if ($(this).attr('id') === "isPhenotype")
+        //     $parent = $(this).parent().parent().parent();
+        // else
+        //     $parent = $(this).parent().parent();
+
+        // if ($(this).attr("data-collapseStatus") === "false") {
+        //     $(this).removeClass("btn-info").addClass("btn-success");
+        //     $(this).find('i').removeClass("icon-chevron-left").addClass("icon-chevron-down");
+        //     $($(this).parent().parent().next().collapse('show')).addClass('container_border');
+        //     $(this).attr("data-collapseStatus", "true");
+        //     $parent.prev().children('a').removeClass('disabled');
+
+        // } else {
+        //     $collapse = true;
+
+        //     switch ($(this).parent().parent().next().attr('id')) {
+                
+        //         case "phenotypeContainer":
+        //             $collapse = validate_Phenotype("collapseEvent");
+        //             break;
+               
+        //     }
+        //     if ($collapse) {
+        //         $(this).removeClass("btn-success").addClass("btn-info");
+        //         $(this).find('i').removeClass("icon-chevron-down").addClass("icon-chevron-left");
+        //         $($(this).parent().parent().next().collapse('hide')).removeClass("container_border");
+        //         $(this).attr("data-collapseStatus", "false");
+        //         $parent.prev().children('a').addClass('disabled');
+        //     }
+        // }
+        
+        if($(this).html() == "Precanned Query") {
+            $(this).parent().parent().parent().find('.tab-content').addClass('cannedStyle');
+        } else {
+            $(this).parent().parent().parent().find('.tab-content').removeClass('cannedStyle');
+        }
+    });
+
     $("select[name='source']").change(function(e) {
         $source = $("select[name='source']").val();
         $case_control = $("select[name='case_control']").val();
         $show_all = $("input[name='show_all']").attr('checked') == "checked" ? 1 : 0;
 
-        if($source != -1 && $case_control != -1) 
-        {
-            $.ajax({
-                url: baseurl + 'discover/get_precan',   
-                type: 'POST',
-                dataType: 'JSON',
-                data: {'source': $source, 'case_control': $case_control, 'network_key': $network_key},
-            }).done(function(data) {
-                console.log(data);
-                // console.log(data.precan_active.length);
-                // console.log(data.precan_inactive.length);
-                $(".searchable > tr").remove();
-
-                $.each(data.precan_active, function(index, val) {
-                    $("tbody.searchable").append('\n\
-                        <tr class="pre_active">\n\
-                            <td><input type="radio" name="precannedQueries" value="' + val['api'] + '">' + '\n\
-                                <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
-                            </td>\n\
-                            <td><div>' + val['queryString'] + '</div></td>\n\
-                            <td><div>' + val['user_email'] + '</div></td>\n\
-                            <td><div>' + val['date_time'] + '</div></td>\n\
-                            <td>\n\
-                                <a class="btn btn-small btn-warning precan_deactivate" href="#"><i class="icon-remove"></i></a>\n\
-                                <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                            </td>\n\
-                        </tr>');
-                });
-
-                if($("input[name='show_all']").attr('checked') == "checked") {
-                    $.each(data.precan_inactive, function(index, val) {
-                        $("tbody.searchable").append('\n\
-                            <tr class="pre_inactive">\n\
-                                <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '\n\
-                                    <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
-                                </td>\n\
-                                <td><div>' + val['queryString'] + '</div></td>\n\
-                                <td><div>' + val['user_email'] + '</div></td>\n\
-                                <td><div>' + val['date_time'] + '</div></td>\n\
-                                <td>\n\
-                                    <a class="btn btn-small btn-success precan_activate" href="#"><i class="icon-ok"></i></a>\n\
-                                    <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                                </td>\n\
-                            </tr>');
-                    });     
-                } else {
-                    $.each(data.precan_inactive, function(index, val) {
-                        $("tbody.searchable").append('\n\
-                            <tr class="pre_inactive hide">\n\
-                                <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '\n\
-                                    <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
-                                </td>\n\
-                                <td><div>' + val['queryString'] + '</div></td>\n\
-                                <td><div>' + val['user_email'] + '</div></td>\n\
-                                <td><div>' + val['date_time'] + '</div></td>\n\
-                                <td>\n\
-                                    <a class="btn btn-small btn-success precan_activate" href="#"><i class="icon-ok"></i></a>\n\
-                                    <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                                </td>\n\
-                            </tr>');
-                    });
-                }     
-            })
-            .always(function() {
-                $("[rel=popover]").popover({placement:'bottom'});
-            });
-        }
+        $.ajax({
+            url: baseurl + 'discover/get_precan',   
+            type: 'POST',
+            dataType: 'JSON',
+            data: {'source': $source, 'case_control': $case_control, 'network_key': $network_key},
+        }).done(function(data) {
+            console.log(data);
+            update_canned_queries(data);
+        })
+        .always(function() {
+            $("[rel=popover]").popover({placement:'bottom'});
+        });
     });
 
     $("select[name='case_control']").change(function(e) {
@@ -629,81 +607,26 @@ $(document).ready(function () {
         $case_control = $("select[name='case_control']").val();
         $show_all = $("input[name='show_all']").attr('checked') == "checked" ? 1 : 0;
 
-        if($source != -1 && $case_control != -1) 
-        {
-            $.ajax({
-                url: baseurl + 'discover/get_precan',   
-                type: 'POST',
-                dataType: 'JSON',
-                data: {'source': $source, 'case_control': $case_control, 'network_key': $network_key},
-            }).done(function(data) {
-                 console.log(data);
-                // console.log(data.precan_active.length);
-                // console.log(data.precan_inactive.length);
-                $(".searchable > tr").remove();
-
-                $.each(data.precan_active, function(index, val) {
-                    $("tbody.searchable").append('\n\
-                        <tr class="pre_active">\n\
-                            <td><input type="radio" name="precannedQueries" value="' + val['api'] + '">' + '\n\
-                                <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim())  + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
-                            </td>\n\
-                            <td><div>' + val['queryString'] + '</div></td>\n\
-                            <td><div>' + val['user_email'] + '</div></td>\n\
-                            <td><div>' + val['date_time'] + '</div></td>\n\
-                            <td>\n\
-                                <a class="btn btn-small btn-warning precan_deactivate" href="#"><i class="icon-remove"></i></a>\n\
-                                <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                            </td>\n\
-                        </tr>');
-                });
-
-                if($("input[name='show_all']").attr('checked') == "checked") {
-                    $.each(data.precan_inactive, function(index, val) {
-                        $("tbody.searchable").append('\n\
-                            <tr class="pre_inactive">\n\
-                                <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '\n\
-                                    <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim()) + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
-                                </td>\n\
-                                <td><div>' + val['queryString'] + '</div></td>\n\
-                                <td><div>' + val['user_email'] + '</div></td>\n\
-                                <td><div>' + val['date_time'] + '</div></td>\n\
-                                <td>\n\
-                                    <a class="btn btn-small btn-success precan_activate" href="#"><i class="icon-ok"></i></a>\n\
-                                    <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                                </td>\n\
-                            </tr>');
-                    });     
-                } else {
-                    $.each(data.precan_inactive, function(index, val) {
-                        $("tbody.searchable").append('\n\
-                            <tr class="pre_inactive hide">\n\
-                                <td><input type="radio" disabled name="precannedQueries" value="' + val['api'] + '">' + '\n\
-                                    <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="' + (val['notes'].trim() == "" ? "No notes available" : val['notes'].trim()) + '" data-original-title=""><i class="icon-info-sign"></i></a>\n\
-                                </td>\n\
-                                <td><div>' + val['queryString'] + '</div></td>\n\
-                                <td><div>' + val['user_email'] + '</div></td>\n\
-                                <td><div>' + val['date_time'] + '</div></td>\n\
-                                <td>\n\
-                                    <a class="btn btn-small btn-success precan_activate" href="#"><i class="icon-ok"></i></a>\n\
-                                    <a class="btn btn-small btn-danger precan_delete" href="#"><i class="icon-trash"></i></a>\n\
-                                </td>\n\
-                            </tr>');
-                    });
-                }     
-            })
-            .always(function() {
-                $("[rel=popover]").popover({placement:'bottom'});
-            });
-        }
+        $.ajax({
+            url: baseurl + 'discover/get_precan',   
+            type: 'POST',
+            dataType: 'JSON',
+            data: {'source': $source, 'case_control': $case_control, 'network_key': $network_key},
+        }).done(function(data) {
+             console.log(data);
+             update_canned_queries(data); 
+        })
+        .always(function() {
+            $("[rel=popover]").popover({placement:'bottom'});
+        });
     }); 
     
     
     $("input[name='show_all']").change(function(e) {
         if($(this).attr('checked') == "checked")
-            $(".searchable > .pre_inactive").removeClass('hide');
+            $(".searchable > .pre_inactive").show();
         else
-            $(".searchable > .pre_inactive").addClass('hide');
+            $(".searchable > .pre_inactive").hide();
     });
 
     $(document).on('click', '.precan_activate', function () {
