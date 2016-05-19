@@ -3560,6 +3560,14 @@ $(document).ready(function() {
         if(data == "expired")
             window.location = baseurl + "auth_federated/logout";
     });
+
+    $("#derid_next").click(function(event) {
+        
+    });
+
+    $("#derid_prev").click(function(event) {
+        
+    });
 });
 
 
