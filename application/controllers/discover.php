@@ -872,7 +872,7 @@ class Discover extends MY_Controller {
         error_log("User: " . $this->session->userdata('email') . " query statement: " . $query_statement[0] . " || " . date("Y-m-d H:i:s"));
         if ($term) {
             $data['term'] = $term;
-//            error_log("Term: " . $term);
+           error_log("Term: " . $term);
         } else {
             show_error("You must specify a search term");
         }

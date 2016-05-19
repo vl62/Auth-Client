@@ -253,14 +253,6 @@ $(document).ready(function () {
 
         } else {
             $collapse = true;
-
-            switch ($(this).parent().parent().next().attr('id')) {
-                
-                case "phenotypeContainer":
-                    $collapse = validate_Phenotype("collapseEvent");
-                    break;
-               
-            }
             if ($collapse) {
                 $(this).removeClass("btn-success").addClass("btn-info");
                 $(this).find('i').removeClass("icon-chevron-down").addClass("icon-chevron-left");
@@ -272,15 +264,27 @@ $(document).ready(function () {
     });
 
     $(document).on('click', 'button.add', function () {
+        collapse = $(this).closest("div[id$='Container']").parent().find('.btn-collapse');
+
         parentId = $(this).closest("div[id$='Container']").attr('id');
         add_symbol(parentId);
         $("#" + parentId).find(".remove").removeClass('hidden');
         $add_btn = $(this).remove();
+
+        collapse.removeClass("btn-success").addClass("btn-info");
+        collapse.find('i').removeClass("icon-chevron-down").addClass("icon-chevron-left")
+        $(collapse.parent().parent().next().collapse('hide')).removeClass("container_border");
+
+        collapse.removeClass("btn-info").addClass("btn-success");
+        collapse.find('i').removeClass("icon-chevron-left").addClass("icon-chevron-down");
+        $(collapse.parent().parent().next().collapse('show')).addClass('container_border');
+
     });
 
     $(document).on('click', 'button.remove', function () {
 
-        // parent = $(this).closest('.row-fluid');
+        collapse = $(this).closest("div[id$='Container']").parent().find('.btn-collapse');
+        container = $(this).closest("div[id$='Container']");
 
         if ($(this).closest('.row-fluid').is(":first-child")) {
             $(this).closest('.row-fluid').next().remove();
@@ -297,6 +301,18 @@ $(document).ready(function () {
 
         $(this).closest('.row-fluid').remove();
 
+        collapse.removeClass("btn-success").addClass("btn-info");
+        collapse.find('i').removeClass("icon-chevron-down").addClass("icon-chevron-left")
+        $(collapse.parent().parent().next().collapse('hide')).removeClass("container_border");
+
+        collapse.removeClass("btn-info").addClass("btn-success");
+        collapse.find('i').removeClass("icon-chevron-left").addClass("icon-chevron-down");
+        $(collapse.parent().parent().next().collapse('show')).addClass('container_border');
+
+        if (navigator.appVersion.indexOf("MSIE 10") !== -1) {
+            container.css('height', '0px');
+            container.css('height', 'auto');
+        }
     });
 
     // AND-OR Toggle Function
@@ -345,7 +361,7 @@ $(document).ready(function () {
             var $arr = $.parseJSON($("input[name='precannedQueries']:checked").val());
             $arr.network_to_search = $network_key;
             console.log(JSON.stringify($arr, null, '\t'));
-    //        alert("queryString -> " + JSON.stringify($arr));
+            // alert("queryString -> " + JSON.stringify($arr));
 
             $('#waiting_precanned').show(500);
             $.ajax({url: baseurl + 'discover/query/' + $network_key,

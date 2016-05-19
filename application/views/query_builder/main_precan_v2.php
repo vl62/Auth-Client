@@ -112,7 +112,7 @@
                                             <?php if(isset($precanned_queries) && isset($precan_active)): ?>
                                                 <?php foreach ($precan_active as $val): ?>
                                                     <tr class="pre_active">
-                                                        <td><input type="radio" name="precannedQueries" value=" <?php // echo $val['api'] ?> ">
+                                                        <td><input type="radio" name="precannedQueries" value=" <?php  echo $val['api'] ?> ">
                                                             <a style="margin-left: 10px;" class="btn btn-small btn-info precan_info" href="#" rel="popover" data-content="<?php echo $val['notes'] == "" ? "No notes available" : $val['notes'] ?>" data-original-title=""><i class="icon-info-sign"></i></a>
                                                         </td>
                                                         <td><div><?php echo $val['source'] ?></div></td>

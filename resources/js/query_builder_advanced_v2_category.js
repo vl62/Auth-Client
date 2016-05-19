@@ -188,6 +188,21 @@ $(document).ready(function () {
             }).show();
         }
 
+        collapse = $(this).closest("div[id$='Container']").parent().find('.btn-collapse');
+        container = $(this).closest("div[id$='Container']");
+        
+        collapse.removeClass("btn-success").addClass("btn-info");
+        collapse.find('i').removeClass("icon-chevron-down").addClass("icon-chevron-left")
+        $(collapse.parent().parent().next().collapse('hide')).removeClass("container_border");
+
+        collapse.removeClass("btn-info").addClass("btn-success");
+        collapse.find('i').removeClass("icon-chevron-left").addClass("icon-chevron-down");
+        $(collapse.parent().parent().next().collapse('show')).addClass('container_border');
+
+        if (navigator.appVersion.indexOf("MSIE 10") !== -1) {
+            container.css('height', '0px');
+            container.css('height', 'auto');
+        }
         
     });
 
@@ -217,16 +232,27 @@ $(document).ready(function () {
     });
 
     $(document).on('click', 'button.add_advanced', function () {
+        collapse = $(this).closest("div[id$='Container']").parent().find('.btn-collapse');
 
-        parentId = $(this).closest("div[id$='Container']").attr('id');
-        add_symbol_advanced(parentId);
-        $("#" + parentId).find(".remove_advanced").removeClass('hidden');
+        $this = $(this).closest("div[id$='Container']");
+        $this.removeClass('container_border');
+        add_symbol_advanced($(this).closest("div[id$='Container']").attr('id'));
+        $(this).closest("div[id$='Container']").find(".remove_advanced").removeClass('hidden');
         $add_btn = $(this).remove();
+
+        collapse.removeClass("btn-success").addClass("btn-info");
+        collapse.find('i').removeClass("icon-chevron-down").addClass("icon-chevron-left")
+        $(collapse.parent().parent().next().collapse('hide')).removeClass("container_border");
+
+        collapse.removeClass("btn-info").addClass("btn-success");
+        collapse.find('i').removeClass("icon-chevron-left").addClass("icon-chevron-down");
+        $(collapse.parent().parent().next().collapse('show')).addClass('container_border');
     });
 
     $(document).on('click', 'button.remove_advanced', function () {
 
-        // parent = $(this).closest('.row-fluid');
+        collapse = $(this).closest("div[id$='Container']").parent().find('.btn-collapse');
+        container = $(this).closest("div[id$='Container']");
 
         if ($(this).closest('.row-fluid').is(":first-child")) {
             // $(this).closest('.row-fluid').next().remove();
@@ -249,6 +275,19 @@ $(document).ready(function () {
             $(this).removeClass().addClass(get_badge_colour(label_counter));
             $(this).html(String.fromCharCode(64 + label_counter));
         });
+
+        collapse.removeClass("btn-success").addClass("btn-info");
+        collapse.find('i').removeClass("icon-chevron-down").addClass("icon-chevron-left")
+        $(collapse.parent().parent().next().collapse('hide')).removeClass("container_border");
+
+        collapse.removeClass("btn-info").addClass("btn-success");
+        collapse.find('i').removeClass("icon-chevron-left").addClass("icon-chevron-down");
+        $(collapse.parent().parent().next().collapse('show')).addClass('container_border');
+
+        if (navigator.appVersion.indexOf("MSIE 10") !== -1) {
+            container.css('height', '0px');
+            container.css('height', 'auto');
+        }
     });
 
     $(document).on('click', '.icon-remove-circle', function () {
@@ -587,7 +626,7 @@ $(document).ready(function () {
         $source = $("select[name='source']").val();
         $case_control = $("select[name='case_control']").val();
         $show_all = $("input[name='show_all']").attr('checked') == "checked" ? 1 : 0;
-
+        $this = $(this);
         $.ajax({
             url: baseurl + 'discover/get_precan',   
             type: 'POST',
@@ -599,6 +638,22 @@ $(document).ready(function () {
         })
         .always(function() {
             $("[rel=popover]").popover({placement:'bottom'});
+            
+            collapse = $this.closest("div[id$='Container']").parent().find('.btn-collapse');
+            container = $this.closest("div[id$='Container']");
+            
+            collapse.removeClass("btn-success").addClass("btn-info");
+            collapse.find('i').removeClass("icon-chevron-down").addClass("icon-chevron-left")
+            $(collapse.parent().parent().next().collapse('hide')).removeClass("container_border");
+
+            collapse.removeClass("btn-info").addClass("btn-success");
+            collapse.find('i').removeClass("icon-chevron-left").addClass("icon-chevron-down");
+            $(collapse.parent().parent().next().collapse('show')).addClass('container_border');
+
+            if (navigator.appVersion.indexOf("MSIE 10") !== -1) {
+                container.css('height', '0px');
+                container.css('height', 'auto');
+            }
         });
     });
 
@@ -606,6 +661,7 @@ $(document).ready(function () {
         $source = $("select[name='source']").val();
         $case_control = $("select[name='case_control']").val();
         $show_all = $("input[name='show_all']").attr('checked') == "checked" ? 1 : 0;
+        $this = $(this);
 
         $.ajax({
             url: baseurl + 'discover/get_precan',   
@@ -618,6 +674,22 @@ $(document).ready(function () {
         })
         .always(function() {
             $("[rel=popover]").popover({placement:'bottom'});
+
+            collapse = $this.closest("div[id$='Container']").parent().find('.btn-collapse');
+            container = $this.closest("div[id$='Container']");
+            
+            collapse.removeClass("btn-success").addClass("btn-info");
+            collapse.find('i').removeClass("icon-chevron-down").addClass("icon-chevron-left")
+            $(collapse.parent().parent().next().collapse('hide')).removeClass("container_border");
+
+            collapse.removeClass("btn-info").addClass("btn-success");
+            collapse.find('i').removeClass("icon-chevron-left").addClass("icon-chevron-down");
+            $(collapse.parent().parent().next().collapse('show')).addClass('container_border');
+
+            if (navigator.appVersion.indexOf("MSIE 10") !== -1) {
+                container.css('height', '0px');
+                container.css('height', 'auto');
+            }
         });
     }); 
     
@@ -627,6 +699,23 @@ $(document).ready(function () {
             $(".searchable > .pre_inactive").show();
         else
             $(".searchable > .pre_inactive").hide();
+
+        $this = $(this);
+        collapse = $this.closest("div[id$='Container']").parent().find('.btn-collapse');
+        container = $this.closest("div[id$='Container']");
+        
+        collapse.removeClass("btn-success").addClass("btn-info");
+        collapse.find('i').removeClass("icon-chevron-down").addClass("icon-chevron-left")
+        $(collapse.parent().parent().next().collapse('hide')).removeClass("container_border");
+
+        collapse.removeClass("btn-info").addClass("btn-success");
+        collapse.find('i').removeClass("icon-chevron-left").addClass("icon-chevron-down");
+        $(collapse.parent().parent().next().collapse('show')).addClass('container_border');
+
+        if (navigator.appVersion.indexOf("MSIE 10") !== -1) {
+            container.css('height', '0px');
+            container.css('height', 'auto');
+        }
     });
 
     $(document).on('click', '.precan_activate', function () {
