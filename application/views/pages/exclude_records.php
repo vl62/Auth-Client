@@ -7,19 +7,14 @@ textarea {
 
 </style>
 
-
 <div class="container">
 
-<h3>Submit the Records IDs to EXCLUDE them from the Study</h3>
+	<h3>Submit the Records IDs to EXCLUDE them from the Study</h3>
 
-<form>
-  <textarea name="content"></textarea>
-  <BR>
-  <input type="submit" value="Submit">
-</form>
+	<form>
+		<textarea name="content"></textarea> <br>
+		<input type="submit" value="Submit">
+	</form> <br> <br>
 
-</BR>
-</BR>
   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "manage";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
-
 </div>
