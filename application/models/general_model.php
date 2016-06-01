@@ -322,9 +322,13 @@ class General_model extends CI_Model {
 	}
 
 	public function get_excluded_records($mul = 1) {
-		$ids = $this->db->select('record_id')->from('variants')->where('included', '0')->limit($mul > 0 ? 10*$mul : 0, $mul > 0 ? 10*$mul-1 : 0)->get()->result_array();
+	error_log($mul);
+//		$ids = $this->db->select('record_id')->from('variants')->where('included', '0')->limit(15,1)->get()->result_array();
+	
+		$ids = $this->db->select('record_id')->from('variants')->where('included', '0')->limit($mul > 0 ? 10 : 0, $mul > 0 ? 10*($mul-1) : 0)->get()->result_array();
 		$counts = $this->db->select('count(record_id)')->from('variants')->where('included', '0')->get()->result_array();
-		error_log(print_r($counts, 1));
+		error_log("in general model");
+		error_log(print_r($ids,1));
 		return array($counts[0]['count(record_id)'], $ids);
 	}
 	
