@@ -2990,7 +2990,7 @@ class Admin extends MY_Controller {
                 $json_data[] = array("attribute" => $d['phenotype_attribute'], "value" => rtrim($d['phenotype_values'], "|"));
             }
             if (!file_exists('resources/phenotype_lookup_data/')) {
-                mkdir('resources/phenotype_lookup_data/', 0777, true);
+                mkdir('resources/phenotype_lookup_data/', 777, true);
             }
             file_put_contents("resources/phenotype_lookup_data/" . $row['network_key'] . ".json", json_encode($json_data));
         }
