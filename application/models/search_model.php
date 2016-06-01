@@ -253,6 +253,7 @@ class Search_model extends CI_Model {
 
 	function getVariantsForRefHGVS($ref_hgvs, $source, $sharing_policy = NULL) {
 //		print "source -> $source <br />";
+		error_log(print_r($ref_hgvs, 1));
 		$this->db->where('source', $source);
 		$this->db->where('ref', $ref_hgvs['ref']);
 		$this->db->where('hgvs', urldecode($ref_hgvs['hgvs']));
@@ -264,7 +265,7 @@ class Search_model extends CI_Model {
 			$this->db->where('sharing_policy', 'openAccess');
 		}
 		$query = $this->db->get('variants');
-//		error_log($this->db->last_query());
+		error_log("Last query: " . $this->db->last_query());
 		$variants = array();
 		foreach ($query->result() as $variant) {
 			$variant_data = array();

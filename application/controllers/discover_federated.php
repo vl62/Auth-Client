@@ -312,10 +312,10 @@ class Discover_federated extends MY_Controller {
 
 			$query['facets']['sharing_policy']['terms'] = array('field' => "sharing_policy");
                         //
-                       // error_log(print_r($query, 1));
+                       error_log(print_r($query, 1));
 			$query = json_encode($query);
                         
-		//	error_log("query ----> $query");
+			error_log("query ----> $query");
 //                        return;
                         
 			$es_data = $this->elasticsearch->query_dsl($query);
