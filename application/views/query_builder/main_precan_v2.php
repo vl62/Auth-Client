@@ -249,3 +249,39 @@
 </div>
 
 <input type="hidden" name="create_precan_query" value="<?php echo $create_precan_query; ?>">
+
+<div class="modal hide fade in" style="" id="chooseDerid" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close closeModal" data-dismiss="modal">&times;</button>
+                <!-- <h4 class="modal-title">DerIDs range selector</h4> -->
+            </div>
+            <div class="modal-body" id="" style="text-align: center;">
+                <h4>Total DerIDs available: <span id="total_derid_count">n/a</span></h4>
+                <input type="text" id="derids_count" placeholder="Enter a value">
+                <p id="derid_error" style="color: red;"></p>
+                <h4>Select your choice:</h4>
+                
+                <div style="width: 100px; margin: 0 auto;">
+                    <div class="radio">
+                        <label><input type="radio" name="optradio" value="random">Random</label>
+                    </div>
+                    <div class="radio">
+                        <label><input type="radio" name="optradio" value="first">First</label>
+                    </div>
+                    <div class="radio disabled">
+                        <label><input type="radio" name="optradio" value="last">Last</label>
+                    </div>
+                </div>
+                <p id="derid_error2" style="color: red;"></p>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="show_derids2">Show</button>
+                <button type="button" class="btn btn-default closeModal" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

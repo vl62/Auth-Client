@@ -1563,7 +1563,7 @@ class Discover extends MY_Controller {
 
 
 
-    function variants_federated_restricted($term, $source, $federated_install_uri, $precan_log_id = false, $date_time = false) {
+    function variants_federated_restricted($term, $source, $federated_install_uri, $precan_log_id = false, $date_time = false, $count = false, $view_type = false) {
         
         if($this->session->userdata('view_derids') == "no")
             show_error("You don't have sufficient privilages to access this url");
@@ -1606,6 +1606,18 @@ class Discover extends MY_Controller {
 
             $source_owner = @file_get_contents($federated_install_uri . "/discover_federated/get_source_owner/$source");
             $source_owner = json_decode($source_owner, 1);
+
+            if($view_type == "first") {
+                $variants = array_slice($variants, 0, $count);    
+            } else if($view_type == "last") {
+                $variants = array_slice($variants, -$count, $count, true);    
+            } else if($view_type == "random") {
+                $k = array_rand($variants, $count);
+                foreach ($k as $value) {
+                    $var[$value] = $variants[$value];
+                }
+                $variants = $var;
+            }
 
             if($precan_log_id) {
                 $date_time = urldecode($date_time);
