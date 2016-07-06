@@ -28,7 +28,7 @@ class manage extends MY_Controller {
 		$this->_render('pages/include_records');
 		$include_records_ids_input = $this->input->get('content', TRUE);
 		$include_records_reason = $this->input->get('reason', TRUE) ? $this->input->get('reason', TRUE) : "N/A";
-		error_log($include_records_reason);
+		// error_log($include_records_reason);
 		$include_records_ids = explode("\n", $include_records_ids_input);
 		$user_id = $this->ion_auth->user()->row()->id;  // get user id 1st June
 
@@ -53,7 +53,8 @@ class manage extends MY_Controller {
 										'record_id' => $value, 
 										'action' => 'included', 
 										'user' => $user_id, 
-										'date_time' =>  date('Y-m-d H:i:s')
+										'date_time' =>  date('Y-m-d H:i:s'),
+										'reason' => $include_records_reason
 										); // added 1st june
 						$this->db->insert('IElog',$log_data);  // added 1st June					
 						echo '<p style="text-align: left; color:green"><em>' . 'Successfully included: ' . $value . '</em></p>';
@@ -80,6 +81,10 @@ class manage extends MY_Controller {
 		$this->title = "Cafe Variome - Manage";
 		$this->_render('pages/exclude_records');
 		$exclude_records_ids_input = $this->input->get('content', TRUE);
+		
+		$exclude_records_reason = $this->input->get('reason', TRUE) ? $this->input->get('reason', TRUE) : "N/A";
+		// error_log($exclude_records_reason);
+
 		$exclude_records_ids = explode("\n", $exclude_records_ids_input);
 		$user_id = $this->ion_auth->user()->row()->id;  // get user id 1st June
 
@@ -102,7 +107,7 @@ class manage extends MY_Controller {
 					$this->db->where('record_id',$value);
 
 					if($this->db->update('variants',$data)) {
-						$log_data = array('record_id' => $value, 'action' => 'excluded', 'user' => $user_id, 'date_time' =>  date('Y-m-d H:i:s')); // added 1st june
+						$log_data = array('record_id' => $value, 'action' => 'excluded', 'user' => $user_id, 'date_time' =>  date('Y-m-d H:i:s'), 'reason' => $exclude_records_reason); // added 1st june
 						$this->db->insert('IElog',$log_data);  // added 1st June					
 						echo '<p style="text-align: left; color:green"><em>' . 'Successfully excluded: ' . $value . '</em></p>';
 						$success_flag = 1;

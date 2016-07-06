@@ -8,13 +8,15 @@ textarea {
 </style>
 
 <div class="container">
-
 	<h3>Submit the Records IDs to EXCLUDE them from the Study</h3>
 
 	<form>
 		<textarea name="content"></textarea> <br>
-		<input type="submit" value="Submit">
+
+		<h3>Reason for exclusion (optional)</h3>
+  		<textarea name="reason" id="reason" style="width: 700px; height: 200px;" maxlength="12"></textarea><br>
+		<input type="submit" value="Submit"> <em>(max. 512 characters)</em>
 	</form> <br> <br>
 
-  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo base_url() . "manage";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
+  <p><a href="<?php echo base_url() . "manage";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
 </div>
