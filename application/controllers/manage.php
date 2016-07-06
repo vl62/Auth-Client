@@ -9,11 +9,10 @@ class manage extends MY_Controller {
 		error_log("doing page");
 
 		$tmp = $this->general_model->get_excluded_records($id);
-		error_log(print_r($tmp[1],1));
+		// error_log(print_r($tmp[1],1));
 		$this->data['record_ids'] = $tmp[1];
 		$count = $tmp[0];
-		error_log($count);
-		if($count/10 == $id)
+		if((int)($count/10)+1 == $id)
 			$this->data['final'] = "yes";
 		else
 			$this->data['final'] = "no";
