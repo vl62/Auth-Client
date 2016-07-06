@@ -26,7 +26,7 @@ class manage extends MY_Controller {
 		$this->title = "Cafe Variome - Manage";
 		$this->_render('pages/include_records');
 		$include_records_ids_input = $this->input->get('content', TRUE);
-		$include_records_reason = $this->input->get('reason', TRUE) ? $this->input->get('reason', TRUE) : "N/A";
+		$include_records_reason = $this->input->get('reason', TRUE) ? $this->input->get('reason', TRUE) : NULL;
 		// error_log($include_records_reason);
 		$include_records_ids = explode("\n", $include_records_ids_input);
 		$user_id = $this->ion_auth->user()->row()->id;  // get user id 1st June
@@ -81,7 +81,7 @@ class manage extends MY_Controller {
 		$this->_render('pages/exclude_records');
 		$exclude_records_ids_input = $this->input->get('content', TRUE);
 		
-		$exclude_records_reason = $this->input->get('reason', TRUE) ? $this->input->get('reason', TRUE) : "N/A";
+		$exclude_records_reason = $this->input->get('reason', TRUE) ? $this->input->get('reason', TRUE) : NULL;
 		// error_log($exclude_records_reason);
 
 		$exclude_records_ids = explode("\n", $exclude_records_ids_input);
