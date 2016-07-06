@@ -6,3 +6,4 @@
 resources/elastic_search_status_complete
 resources/phenotype_lookup_data/*
 application/logs/*
+resources/precanned.json
