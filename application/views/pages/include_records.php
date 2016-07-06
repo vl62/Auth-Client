@@ -13,10 +13,10 @@ textarea {
 	<form>
   		<textarea name="content" id="content"></textarea> <br>
 		
-		<h3>Reason for inclusion</h3>
+		<h3>Reason for inclusion (optional)</h3>
   		<textarea name="reason" id="reason" style="width: 700px; height: 200px;"></textarea> <br>
 
-  		<input type="submit" value="Submit">
+  		<input type="submit" value="Submit"> <em>(max. 512 characters)</em>
 	</form> <br> <br>
   	<p><a href="<?php echo base_url() . "manage";?>" class="btn" ><i class="icon-step-backward"></i> Go back</a></p>
 </div>
