@@ -350,7 +350,8 @@ class Discover_federated extends MY_Controller {
 							}
 							else {
 								$counts[$sp_es] = $facet_sharing_policy['count'];
-							}//
+							}
+							$counts["restrictedAccess"] = 0;
 							// error_log("restrictedAccess -> openAccess -> " . $facet_sharing_policy['count']);
 						}
 						else {
