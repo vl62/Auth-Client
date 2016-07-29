@@ -113,6 +113,16 @@ class Network_model extends CI_Model {
 		return $query;
 	}
 	
-	
+	function get_new_logs($date_time) {
+		$data = $this->db
+			->select("record_id, action, date_time as reason_date_time, user as user_id, reason")
+			->from("IElog")
+			->where("date_time >", $date_time)
+			->order_by("record_id")
+			->get()
+			->result_array();
+		// error_log(print_r($data, 1));
+		return $data;
+	}	
 	
 }

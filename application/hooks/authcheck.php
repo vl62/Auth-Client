@@ -10,7 +10,7 @@ class Authcheck {
 		$this->CI->load->library("ion_auth");
 		$this->CI->load->helper('url');
 		$current = $this->CI->uri->uri_string();
-		
+
 		$CFG =& load_class('Config', 'core');
 		if ( $CFG->item("site_requires_login") == "on" ) {
 //			error_log("site_requires_login -> " . $CFG->item("site_requires_login"));
@@ -18,10 +18,13 @@ class Authcheck {
 			if ( preg_match("/federated/", strtolower($current))) {
 				// error_log("Authcheck hook allowing FEDERATED -> " . strtolower($current));
 			}
+			elseif(preg_match("/cron/", strtolower($current))) {
+
+			}
 			elseif ( preg_match("/get_phenotype_attributes_nr_list/", strtolower($current))) {
 				// error_log("Authcheck hook allowing get_phenotype_attributes_nr_list -> " . strtolower($current));
 			}
-                        elseif ( preg_match("/get_json_for_phenotype_lookup/", strtolower($current))) {
+            elseif ( preg_match("/get_json_for_phenotype_lookup/", strtolower($current))) {
 				// error_log("Authcheck hook allowing get_json_for_phenotype_lookup -> " . strtolower($current));
 			}
 			elseif ( strtolower($current) != "css" ) { // Ignore it if the css controller is being called
