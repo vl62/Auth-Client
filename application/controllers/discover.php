@@ -922,7 +922,7 @@ class Discover extends MY_Controller {
                             $sources[$federated_source_name] = "$federated_source ($federated_site_title)";
                             $data['counts'][$federated_source_name] = $counts_for_source;
                             
-                            $counts_for_log = $counts_for_source['restrictedAccess'];
+                            $counts_for_log = $counts_for_source['restrictedAccess'] + $counts_for_source['openAccess'];
 
                             $data['install_uri'][$federated_source_name] = $install_uri;
                             $data['source_types'][$federated_source_name] = "federated";
