@@ -921,6 +921,9 @@ class Discover extends MY_Controller {
                             $federated_source_name = $federated_source . "__install_$c";
                             $sources[$federated_source_name] = "$federated_source ($federated_site_title)";
                             $data['counts'][$federated_source_name] = $counts_for_source;
+                            
+                            $counts_for_log = $counts_for_source['restrictedAccess'];
+
                             $data['install_uri'][$federated_source_name] = $install_uri;
                             $data['source_types'][$federated_source_name] = "federated";
                         }
@@ -938,7 +941,7 @@ class Discover extends MY_Controller {
         error_log($interval->format('%im:%ss'));
 
         if($is_precan) {
-            $query_log_id = authPostRequest('', array('query' => $data['term'], 'network_key' => $network_to_search, 'email' => $this->session->userdata('email'), 'date_time' => date("Y-m-d H:i:s")), $this->config->item('auth_server') . "/auth_accounts/set_query_term_precan");
+            $query_log_id = authPostRequest('', array('query' => $data['term'], 'counts' => $counts_for_log, 'network_key' => $network_to_search, 'email' => $this->session->userdata('email'), 'date_time' => date("Y-m-d H:i:s")), $this->config->item('auth_server') . "/auth_accounts/set_query_term_precan");
             $data['query_log_id'] = $query_log_id;
             $data['date_time'] = $query['date_time'];
         }
