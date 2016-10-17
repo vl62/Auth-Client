@@ -14,4 +14,9 @@ class Cron extends MY_Controller {
 		$this->load->model('network_model');
 		echo json_encode($this->network_model->get_new_logs($date_time));
 	}
+
+	public function get_derids() {
+		$this->load->model('network_model');
+		echo json_encode($this->network_model->get_derids());
+	}
 }
