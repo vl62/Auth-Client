@@ -329,7 +329,7 @@ $(document).ready(function () {
             // console.log(key + " " + val);
             val = val.trim();
             if(val != "") {
-                console.log(val.length);
+                // console.log(val.length);
                 if(val.length == 3 && val.charCodeAt(1) >=65 && val.charCodeAt(1) <= alpha_max) {
                     arr.push(val[1]);
                     alpha = true;
@@ -362,9 +362,7 @@ $(document).ready(function () {
     var output_query_string = "";
 
     $("#buildQuery_advanced").click(function () {
-
         var queryString = validate_query_string($("input#queryString").val().toUpperCase(), label_counter + 64);
-
         $("#query_result_advanced").empty();
        
         $idCount = 1;
@@ -407,10 +405,9 @@ $(document).ready(function () {
     
 
     function build_query() {
-            $genotype_advanced = $('#logic_genotype_advanced .active').html();
+        $genotype_advanced = $('#logic_genotype_advanced .active').html();
         $phen_phen = $('.logic_advanced .active').html() ? $('.logic_advanced .active').html() : "";
 
-        
         $coordinate = $sequence = $gene = $hgvs = $phen = $other = "";
 
         $query = "";
@@ -418,16 +415,22 @@ $(document).ready(function () {
             if(val == "AND" || val == "OR")
                 $query = $query + val + " ";
             else {
-                if(val.length == 1)
+
+                if(val.length == 1) {
+                    console.log(val + " 1 " + (val.charCodeAt(0) - 64));
                     $query = $query + (val.charCodeAt(0) - 64) + " ";
-                else if(val[0] == '(')
-                    $query = $query + val[0] + (val.charCodeAt(1) - 64) + " ";
-                else
-                    $query = $query + (val.charCodeAt(0) - 64) + val[1] + " ";
+                }
+                else if(val[0] == '(') {
+                    console.log(val + " " + val.slice(0, -1) + " 2 " + (val.charCodeAt(val.length-1) - 64));
+                    $query = $query + val.slice(0, -1) + (val.charCodeAt(val.length-1) - 64) + " ";
+                }
+                else if(val[val.length-1]){
+                    console.log(val + " " + val.slice(0) + " 3 " + (val.charCodeAt(0) - 64));
+                    $query = $query + (val.charCodeAt(0) - 64) + val.slice(1) + " ";
+                }
             }   
         });
-
-        // console.log($query);
+        console.log($query);
 
         $arr = {
             "queryMetadata": {
