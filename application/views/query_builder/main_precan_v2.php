@@ -1,3 +1,9 @@
+<?php 
+    date_default_timezone_set('Europe/London');
+    function my_cmp($a, $b) {
+        return strtotime($a['date_time']) < strtotime($b['date_time']) ? 1 : -1;
+    };
+ ?>
 <div class="container" style="margin-bottom: 200px;">
     <div class="row-fluid" id="genotype_phenotype">
         <div class="span12 pagination-centered">
@@ -63,9 +69,9 @@
                                 <div class="span3 offset2">
                                     <select name="source" class="input-large">
                                         <option value="-1">Select a source</option> 
-                                        <?php if(isset($precanned_queries)): ?>
+                                        <?php if(isset($precanned_queries)): sort($precanned_queries);?>
                                             <?php foreach ($precanned_queries as $key => $value): ?>
-                                                <option value="<?php echo $value; ?>"><?php echo $value; ?></option>    
+                                                <option value="<?php echo $value; ?>"><?php echo $value; ?></option>
                                             <?php endforeach;?>
                                         <?php endif; ?>
                                     </select>
@@ -109,7 +115,10 @@
                                         </thead>
                                         <tbody class="searchable">
                                             <tr></tr>
-                                            <?php if(isset($precanned_queries) && isset($precan_active)): ?>
+                                            <?php if(isset($precanned_queries) && isset($precan_active)): 
+                                                usort($precan_active, "my_cmp");
+                                            ?>
+
                                                 <?php foreach ($precan_active as $val): ?>
                                                     <tr class="pre_active">
                                                         <td><input type="radio" name="precannedQueries" value=" <?php  echo $val['api'] ?> ">
@@ -128,7 +137,8 @@
                                                 <?php endforeach; ?>
                                             <?php endif; ?>
 
-                                            <?php if(isset($precanned_queries) && isset($precan_active)): ?>
+                                            <?php if(isset($precanned_queries) && isset($precan_active)): 
+                                                usort($precan_inactive, "my_cmp"); ?>
                                                 <?php foreach ($precan_inactive as $val): ?>
                                                     <tr class="pre_inactive hide">
                                                         <td><input type="radio" disabled name="precannedQueries" value=" <?php echo $val['api'] ?> ">
@@ -250,6 +260,7 @@
 
 <input type="hidden" name="create_precan_query" value="<?php echo $create_precan_query; ?>">
 
+<!-- Events for the following modal window are coded in  resources/js/query_builder_config.js -->
 <div class="modal hide fade in" style="" id="chooseDerid" role="dialog">
     <div class="modal-dialog">
         <!-- Modal content-->
