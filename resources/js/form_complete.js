@@ -48,20 +48,20 @@ var BP_ORG_SITE = (BP_ORG == "") ? BP_SITE : BP_ORG + " " + BP_SITE;
 
 jQuery(document).ready(function(){
   // Install any CSS we need (check to make sure it hasn't been loaded)
-  if (jQuery('link[href$="' + BP_SEARCH_SERVER + '/javascripts/JqueryPlugins/autocomplete/jquery.autocomplete.css"]')) {
-    jQuery("head").append("<link>");
-    css = jQuery("head").children(":last");
-    css.attr({
-      rel:  "stylesheet",
-      type: "text/css",
-      href: BP_SEARCH_SERVER + "/javascripts/JqueryPlugins/autocomplete/jquery.autocomplete.css"
-    });
-  }
+  // if (jQuery('link[href$="' + BP_SEARCH_SERVER + '/javascripts/JqueryPlugins/autocomplete/jquery.autocomplete.css"]')) {
+  //   jQuery("head").append("<link>");
+  //   css = jQuery("head").children(":last");
+  //   css.attr({
+  //     rel:  "stylesheet",
+  //     type: "text/css",
+  //     href: BP_SEARCH_SERVER + "/javascripts/JqueryPlugins/autocomplete/jquery.autocomplete.css"
+  //   });
+  // }
 
   // Grab the specific scripts we need and fires the start event
-  jQuery.getScript(BP_SEARCH_SERVER + "/javascripts/JqueryPlugins/autocomplete/crossdomain_autocomplete.js",function(){
-    formComplete_setup_functions();
-  });
+  // jQuery.getScript(BP_SEARCH_SERVER + "/javascripts/JqueryPlugins/autocomplete/crossdomain_autocomplete.js",function(){
+  //   formComplete_setup_functions();
+  // });
 });
 
 function formComplete_formatItem(row) {
