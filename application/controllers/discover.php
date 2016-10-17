@@ -21,6 +21,7 @@ class Discover extends MY_Controller {
                 redirect('admin/discovery_denied', 'refresh');
             }
         }
+        date_default_timezone_set('Europe/London');
     }
     
     public $sources;
@@ -675,12 +676,24 @@ class Discover extends MY_Controller {
     private $qData = array();
     private $ambigious = array();
     private $cnt;
+    
     function validate_query_string() {
 
         $str = $this->input->post('query_string');
         $str = str_replace("AND", "+", $str);
         $str = str_replace("OR", "-", $str);
-        $str = "(" . $str . ")";
+        
+        $c = 0;
+        for ($i = 0; $i < strlen($str); $i++){
+            if ($str[$i] === '(') $c++;
+            if ($str[$i] === ')') $c--;
+            if ($i < strlen($str)-1 && $c == 0){
+                $str = "(" . $str . ")";
+                break;
+            }
+        }
+                
+//        $str = "(" . $str . ")";
         $this->validate_exp($str, 0, 1);
         if($this->AMBIGUITY) {
             //// error_log("ambigious");
@@ -826,6 +839,19 @@ class Discover extends MY_Controller {
     }
 
     function validate_exp($s, $pos, $cnt) {
+        $co = 0;
+        $cc = 0;
+        for ($i = 0; $i < strlen($s); $i++){
+            if ($s[$i] === '(') $co++;
+            if ($s[$i] === ')') $cc++;
+        }
+
+        if ($co != $cc){
+            $this->AMBIGUITY = true;
+            array_push($this->ambigious, "Brackets are not equal");
+            return;
+        }
+            
         while($pos < strlen($s)) {
 
             if($s[$pos] == '(') {
@@ -1021,7 +1047,15 @@ class Discover extends MY_Controller {
             }
         }
 
+        usort($precan_active, array($this, "my_cmp"));
+        usort($precan_inactive, array($this, "my_cmp"));
+
         echo json_encode(array('status' => "success", 'precan_active' => $precan_active, 'precan_inactive' => $precan_inactive));
+    }
+
+
+    function my_cmp($a, $b) {
+        return strtotime($a['date_time']) < strtotime($b['date_time']) ? 1 : -1;
     }
 
     function precan_status() {
@@ -1564,8 +1598,6 @@ class Discover extends MY_Controller {
         }
     }
 
-
-
     function variants_federated_restricted($term, $source, $federated_install_uri, $precan_log_id = false, $date_time = false, $count = false, $view_type = false) {
         
         if($this->session->userdata('view_derids') == "no")
@@ -1610,18 +1642,6 @@ class Discover extends MY_Controller {
             $source_owner = @file_get_contents($federated_install_uri . "/discover_federated/get_source_owner/$source");
             $source_owner = json_decode($source_owner, 1);
 
-            if($view_type == "first") {
-                $variants = array_slice($variants, 0, $count);    
-            } else if($view_type == "last") {
-                $variants = array_slice($variants, -$count, $count, true);    
-            } else if($view_type == "random") {
-                $k = array_rand($variants, $count);
-                foreach ($k as $value) {
-                    $var[$value] = $variants[$value];
-                }
-                $variants = $var;
-            }
-
             if($precan_log_id) {
                 $date_time = urldecode($date_time);
                 $date_time = html_entity_decode($date_time);
@@ -1633,7 +1653,27 @@ class Discover extends MY_Controller {
                 foreach ($json as $api)
                     if($api['date_time'] == $date_time && $val['network'] == $api['network_key']) 
                         $data['api'] = $api;
+
+                $variants = json_decode(authPostRequest('', array('derids' => json_encode(array_values($variants))), $this->config->item('auth_server') . "/cron/derid_flag_status_check"), 1);
+
+                if($count < count($variants['out'])) {
+                    if($count == 0) {
+                        $variants['out'] = Array();
+                    } else if($view_type == "first") {
+                        $variants['out'] = array_slice($variants['out'], 0, $count);
+                    } else if($view_type == "last") {
+                        $variants['out'] = array_slice($variants['out'], -$count, $count, true);    
+                    } else if($view_type == "random") {
+                        $k = array_rand($variants['out'], $count);
+                        foreach ($k as $value) {
+                            $var[$value] = $variants['out'][$value];
+                        }
+                        $variants['out'] = $var;
+                    }
+                }
             }
+
+            $variants['total'] = $count;
             
             $this->_render('pages/variantstab_restricted');
 
