@@ -124,5 +124,14 @@ class Network_model extends CI_Model {
 		// error_log(print_r($data, 1));
 		return $data;
 	}	
+
+	function get_derids() {
+		$data = $this->db
+			->select("record_id, included, source")
+			->from("variants")
+			->get()
+			->result_array();
+		return $data;
+	}
 	
 }
