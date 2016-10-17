@@ -14,9 +14,12 @@ $build                      = ["GRCh38","hg38","GRCh37","hg19","hg18","NCBI Buil
 var link = "";
 $(document).on('click', '.show_dialog', function(e) {
 	e.preventDefault();
+
 	link = $(this).attr('href');
 
 	$("#total_derid_count").html($(this).parent().prev().html().trim());
+	$("#derids_count").val('');
+	$("input[type=radio][name=optradio]").prop('checked', false);
 	$("#chooseDerid").modal({
 		backdrop: 'static',
   		keyboard: false
@@ -26,6 +29,10 @@ $(document).on('click', '.show_dialog', function(e) {
 
 $(document).on('click', '#show_derids2', function(e) {
 	e.preventDefault();
+
+	$("#derid_error").html("");
+	$("#derid_error2").html("");
+	
 	var count = $("#derids_count").val().trim();
 	if(isNaN(parseFloat(count)) || !isFinite(count)) {
 		$("#derid_error").html("Error: Value is either null or not numberic");
@@ -38,19 +45,21 @@ $(document).on('click', '#show_derids2', function(e) {
 	if(count > totalcount) {
 		$("#derid_error").html("Error: Value cannot be greater than the total count.");
 		return;
-	} else if(count <= 0) {
-		$("#derid_error").html("Error: Value cannot be less than or equal to zero.");
+	} else if(count < 0) {
+		$("#derid_error").html("Error: Value cannot be less than zero.");
 		return;
 	}
 
-	$("#derid_error").html("");
+	
 
 	view_type = $("input[name=optradio]:checked").val();
 
-	if(view_type.length == 0) {
+	if(view_type == undefined) {
 		$("#derid_error2").html("Error: Select any one of the above choice.");
 		return;
 	}
+
+	// $("#chooseDerid").modal('hide');
 
 	console.log(view_type);
 	window.open(link + "/" + count + "/" + view_type);
