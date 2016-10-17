@@ -10,11 +10,11 @@ textarea {
 <div class="container">
 	<h3>Submit the Records IDs to INCLUDE them from the Study</h3>
 
-	<form>
+	<form method="post">
   		<textarea name="content" id="content"></textarea> <br>
 		
 		<h3>Reason for inclusion (optional)</h3>
-  		<textarea name="reason" id="reason" style="width: 700px; height: 200px;"></textarea> <br>
+  		<textarea name="reason" id="reason" style="width: 700px; height: 200px;" maxlength="512"></textarea> <br>
 
   		<input type="submit" value="Submit"> <em>(max. 512 characters)</em>
 	</form> <br> <br>
