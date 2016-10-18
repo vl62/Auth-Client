@@ -41,10 +41,7 @@ class manage extends MY_Controller {
 				$included = $query_included->row();
 				$included = $included->included;
 
-				if ($included == 1) {
-			 		echo '<p style="text-align: left; color:blue"><em>' . 'Already included: ' . $value . '</em></p>';
-			 		$success_flag = 1;
-				} else if ($included == 0) {
+				if ($included == 0 || $included == 1) {
 					$data=array('included'=>1, 'IE_date_time'=> date('Y-m-d H:i:s'));
 					$this->db->where('record_id',$value);					
 					if($this->db->update('variants',$data)) {
@@ -98,10 +95,7 @@ class manage extends MY_Controller {
 				$included = $query_included->row();
 				$included = $included->included;
 
-				if ($included == 0){
-			 		echo '<p style="text-align: left; color:blue"><em>' . 'Already excluded: ' . $value . '</em></p>';
-			 		$success_flag = 1;
-				} else if ($included == 1) {
+				if ($included == 0 || $included == 1) {
 					$data=array('included'=>0, 'IE_date_time'=> date('Y-m-d H:i:s'));
 					$this->db->where('record_id',$value);
 
@@ -111,9 +105,9 @@ class manage extends MY_Controller {
 						echo '<p style="text-align: left; color:green"><em>' . 'Successfully excluded: ' . $value . '</em></p>';
 						$success_flag = 1;
 					}
-				}
-				else
+				} else {
 					echo '<p style="text-align: left; color:red"><em>' . 'Failed to excluded: ' . $value . '</em></p>';
+				}
 			}
 			else {
 				echo '<p style="text-align: left; color:red"><em>' . 'Failed to find: ' . $value . '</em></p>';
