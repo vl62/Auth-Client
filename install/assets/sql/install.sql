@@ -18803,7 +18803,7 @@ INSERT INTO `settings` (`setting_id`, `name`, `value`, `info`, `validation_rules
 (29, 'discovery_requires_login', 'off', 'If set to on then discovery searches cannot be done unless a user is logged in.', 'xss_clean'),
 (30, 'show_sources_in_discover', 'on', 'If set to off then only the search box will be shown in the discovery interface (i.e. not the sources to search)', 'xss_clean'),
 (31, 'use_elasticsearch', 'on', 'If set to on then elasticsearch will be used instead of the basic search (elasticsearch needs to be running of course)', 'xss_clean'),
-(32, 'auth_server', 'https://www112.lamp.le.ac.uk/cafevariome_auth', 'Central Cafe Variome Auth server url (WARNING: do not change)', 'xss_clean'),
+(32, 'auth_server', 'https://www40.lamp.le.ac.uk/cafevariome_auth', 'Central Cafe Variome Auth server url (WARNING: do not change)', 'xss_clean'),
 (33, 'installation_key', '', 'Unique key for this installation (WARNING: do not change this value unless you know what you are doing)', 'xss_clean'),
 (34, 'all_records_require_an_id', 'on', 'Checks whether all records have a record ID during import (which must be unique)', 'xss_clean'),
 (35, 'site_requires_login', 'off', 'If enabled then users will be required to log in to access any part of the site. If not logged in they will be presented with a login form.', 'xss_clean'),

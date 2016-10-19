@@ -37,7 +37,7 @@
 // The following values will probably need to be changed.
 $db['default']['username'] = "lampuser";
 $db['default']['password'] = "changeme";
-$db['default']['database'] = "cafevariome_client";
+$db['default']['database'] = "cv_client";
 
 // The following values can probably stay the same.
 $db['default']['hostname'] = "127.0.0.1";
