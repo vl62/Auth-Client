@@ -63,7 +63,7 @@ class Auth extends MY_Controller {
 		}
                 
                 // $fp = @fsockopen("auth.cafevariome.org", 80, $errno, $errstr, 30);
-                $fp = @fsockopen("www112.lamp.le.ac.uk", 80, $errno, $errstr, 30);
+                $fp = @fsockopen("www40.lamp.le.ac.uk", 80, $errno, $errstr, 30);
                 if ($fp) {
                     redirect(base_url("/auth_federated/login"));
                 }
